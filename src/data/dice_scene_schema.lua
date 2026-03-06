@@ -1,0 +1,51 @@
+return {
+    board = {
+        image_path = "resources/textures/wood.png",
+    },
+    tray_camera = {
+        locked = true,
+        yaw = 0.00,
+        pitch = 0.62,
+        distance = 14.1,
+    },
+    box = {
+        half_x = 7.2,
+        half_y = 3.4,
+        height = 10,
+        depth = 25,
+        wall_thickness = 0.25,
+        wall_bounce = 0.75,
+        friction = 0.01,
+        linear_damping = 0.12,
+        angular_damping = 0.12,
+        border_height = 0.74,
+    },
+    regions = {
+        d6_ratio = 2 / 3,
+        unified = {
+            x_center = 0.0,
+            y_back = -3.05,
+            y_front = 3.05,
+            half_back = 4.9,
+            half_front = 6.6,
+            bounce = 0.34,
+            slide_damping = 0.90,
+        },
+        main = {
+            parent = "unified",
+            slot = "main",
+            y_back = -3.05,
+            y_front = 3.05,
+            bounce = 0.34,
+            slide_damping = 0.90,
+        },
+        mini = {
+            parent = "unified",
+            slot = "mini",
+            y_back = -3.05,
+            y_front = 3.05,
+            bounce = 0.34,
+            slide_damping = 0.90,
+        },
+    },
+}
