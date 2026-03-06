@@ -1,0 +1,90 @@
+#ifdef PIXEL
+
+uniform float time;
+uniform float alpha;
+uniform vec2 screen;
+uniform vec4 logoRect;
+uniform float strokeMapMix;
+extern Image strokeMap;
+
+const vec3 inkDry = vec3(0.11, 0.07, 0.04);
+const vec3 inkMid = vec3(0.20, 0.12, 0.06);
+const vec3 inkWet = vec3(0.36, 0.22, 0.11);
+
+float hash(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+}
+
+float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+
+float fbm(vec2 p) {
+    float v = 0.0;
+    float a = 0.5;
+    for (int i = 0; i < 4; ++i) {
+        v += a * noise(p);
+        p = p * 2.05 + vec2(8.4, -6.7);
+        a *= 0.5;
+    }
+    return v;
+}
+
+float stroke_axis_order(vec2 uv, float paperN) {
+    float axis = uv.x * 1.05 + uv.y * 0.16;
+    axis += (paperN - 0.5) * 0.08;
+    axis += 0.03 * sin(uv.y * 18.0 + time * 0.9);
+    return clamp(axis, 0.0, 1.0);
+}
+
+vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords) {
+    vec2 safeScreen = max(screen, vec2(1.0, 1.0));
+    vec2 rectSize = max(logoRect.zw, vec2(1.0, 1.0));
+    vec2 uv = (screen_coords - logoRect.xy) / rectSize;
+    uv = clamp(uv, vec2(0.0, 0.0), vec2(1.0, 1.0));
+
+    vec2 nshift = vec2(time * 0.05, -time * 0.03);
+
+    float paper = fbm(uv * vec2(9.0, 7.0) + nshift);
+    float detail = fbm(uv * vec2(22.0, 15.0) + vec2(time * 0.11, time * 0.07));
+    float grain = hash(screen_coords * 1.7 + time * 36.0) - 0.5;
+
+    float axisOrder = stroke_axis_order(uv, paper);
+    float mapOrder = Texel(strokeMap, uv).r;
+    float strokeOrder = mix(axisOrder, mapOrder, clamp(strokeMapMix * 1.15, 0.0, 1.0));
+
+    float progress = clamp(time * 0.52, 0.0, 1.08);
+    float strokeDelta = progress - strokeOrder;
+
+    float revealBody = smoothstep(-0.10, 0.00, strokeDelta);
+    float revealSoft = smoothstep(-0.20, -0.04, strokeDelta) * 0.55;
+    float reveal = clamp(revealBody + revealSoft, 0.0, 1.0);
+
+    // Fresh ink is brighter near the moving tip, then dries darker.
+    float tipBand = exp(-pow((strokeDelta - 0.01) * 26.0, 2.0));
+    float freshTip = smoothstep(-0.02, 0.06, strokeDelta) * (1.0 - smoothstep(0.08, 0.20, strokeDelta));
+    float dryMix = smoothstep(0.05, 0.35, strokeDelta);
+    float wick = smoothstep(-0.18, 0.02, strokeDelta) * (0.85 + 0.15 * detail);
+
+    vec3 ink = mix(inkWet, inkDry, dryMix);
+    ink = mix(ink, inkMid, freshTip * 0.55);
+    ink += vec3(tipBand * 0.10);
+    ink *= mix(0.88, 1.0, wick);
+    ink *= 0.92 + 0.08 * paper;
+    ink += vec3(grain * 0.05);
+    ink = clamp(ink, 0.0, 1.0);
+
+    float outAlpha = clamp(alpha, 0.0, 1.0) * reveal * (0.90 + 0.10 * wick);
+    return vec4(ink, outAlpha);
+}
+
+#endif
