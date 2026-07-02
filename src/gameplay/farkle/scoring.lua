@@ -25,8 +25,7 @@ local function normalize_roll(values)
         end
 
         value = tonumber(value)
-        if value and value >= 1 and value <= 6 then
-            value = math.floor(value)
+        if value and value >= 1 and value <= 6 and value == math.floor(value) then
             entries[#entries + 1] = {
                 roll_pos = roll_pos,
                 source_index = source_index,
@@ -169,6 +168,12 @@ local function add_single_groups(groups, value, dice_by_value)
     end
 end
 
+local function first_die_number(group, field)
+    local die = group.dice and group.dice[1] or nil
+    local value = die and tonumber(die[field]) or nil
+    return value or math.huge
+end
+
 function Scoring.normalize_roll(values)
     return normalize_roll(values)
 end
@@ -198,6 +203,16 @@ function Scoring.get_scoring_groups(values)
     table.sort(groups, function(a, b)
         if a.score == b.score then
             if a.dice_count == b.dice_count then
+                if a.kind == b.kind then
+                    local a_roll_pos = first_die_number(a, "roll_pos")
+                    local b_roll_pos = first_die_number(b, "roll_pos")
+                    if a_roll_pos == b_roll_pos then
+                        local a_source_index = first_die_number(a, "source_index")
+                        local b_source_index = first_die_number(b, "source_index")
+                        return a_source_index < b_source_index
+                    end
+                    return a_roll_pos < b_roll_pos
+                end
                 return a.kind < b.kind
             end
             return a.dice_count > b.dice_count

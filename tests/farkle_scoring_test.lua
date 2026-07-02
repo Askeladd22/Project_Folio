@@ -116,6 +116,46 @@ local function test_normalize_roll_preserves_source_index()
     assert_eq(entries[1].source_index, 42, "source_index should be preserved")
 end
 
+local function test_normalize_roll_ignores_in_range_fractional_faces()
+    local entries = Scoring.normalize_roll({1.9, 5.5, 1, "5"})
+    assert_eq(#entries, 2, "fractional die faces should be ignored")
+    assert_eq(entries[1].value, 1, "integer one should remain")
+    assert_eq(entries[2].value, 5, "integer numeric string five should remain")
+end
+
+local function test_duplicate_single_groups_have_deterministic_order_and_ids()
+    local groups = Scoring.get_scoring_groups({
+        {value = 1, index = 30},
+        {value = 1, index = 10},
+        {value = 5, index = 20},
+    })
+
+    assert_eq(#groups, 3, "duplicate singles should all be available")
+    assert_eq(groups[1].kind, "single_one", "first group should be a single one")
+    assert_eq(groups[1].id, "single_one:1", "first single one should get first sorted id")
+    assert_eq(groups[1].dice[1].roll_pos, 1, "first single one should keep earlier roll position")
+    assert_eq(groups[1].dice[1].source_index, 30, "first single one should keep source index")
+    assert_eq(groups[2].kind, "single_one", "second group should be a single one")
+    assert_eq(groups[2].id, "single_one:2", "second single one should get second sorted id")
+    assert_eq(groups[2].dice[1].roll_pos, 2, "second single one should keep later roll position")
+    assert_eq(groups[2].dice[1].source_index, 10, "second single one should keep source index")
+    assert_eq(groups[3].kind, "single_five", "single five should sort after single ones by score")
+    assert_eq(groups[3].id, "single_five:3", "single five should get post-sort id")
+end
+
+local function test_find_group_kind_fallback_returns_first_deterministic_duplicate()
+    local groups = Scoring.get_scoring_groups({
+        {value = 1, index = 30},
+        {value = 1, index = 10},
+        {value = 5, index = 20},
+    })
+    local found = Scoring.find_group(groups, "single_one")
+
+    assert_eq(found, groups[1], "kind fallback should return first deterministic single one")
+    assert_eq(found.id, "single_one:1", "kind fallback should return the first sorted id")
+    assert_eq(found.dice[1].source_index, 30, "kind fallback should preserve deterministic first source")
+end
+
 local function test_find_group_matches_id_or_kind()
     local groups = Scoring.get_scoring_groups({1, 2, 5, 3})
     local one = find_group(groups, "single_one")
@@ -137,6 +177,9 @@ local tests = {
     {name = "normalize_roll_ignores_invalid_values", fn = test_normalize_roll_ignores_invalid_values},
     {name = "normalize_roll_ignores_outside_range_non_integers", fn = test_normalize_roll_ignores_outside_range_non_integers},
     {name = "normalize_roll_preserves_source_index", fn = test_normalize_roll_preserves_source_index},
+    {name = "normalize_roll_ignores_in_range_fractional_faces", fn = test_normalize_roll_ignores_in_range_fractional_faces},
+    {name = "duplicate_single_groups_have_deterministic_order_and_ids", fn = test_duplicate_single_groups_have_deterministic_order_and_ids},
+    {name = "find_group_kind_fallback_returns_first_deterministic_duplicate", fn = test_find_group_kind_fallback_returns_first_deterministic_duplicate},
     {name = "find_group_matches_id_or_kind", fn = test_find_group_matches_id_or_kind},
 }
 
