@@ -20,6 +20,14 @@ local function assert_false(value, message)
     end
 end
 
+local function prepare_turn_with_one_kept()
+    local match = Match.new()
+    assert_true(match:applyRoll({1, 2, 3, 4, 2, 3}).ok, "initial roll should be accepted")
+    assert_true(match:keepGroup("single_one").ok, "single one should be kept")
+    assert_true(match:reroll().ok, "reroll should be accepted after keeping")
+    return match
+end
+
 local function test_keep_bank_and_pass_turn()
     local match = Match.new()
 
@@ -43,11 +51,9 @@ end
 local function test_bust_clears_turn_and_passes()
     local match = Match.new()
 
-    assert_true(match:applyRoll({1, 2, 3, 4, 2, 3}).ok, "initial roll should be accepted")
-    assert_true(match:keepGroup("single_one").ok, "single one should be kept")
-    assert_true(match:reroll().ok, "reroll should be accepted after keeping")
+    local match = prepare_turn_with_one_kept()
 
-    local bust = match:applyRoll({2, 3, 4, 6})
+    local bust = match:applyRoll({2, 2, 3, 3, 4})
     assert_true(bust.ok, "bust roll should be accepted")
     assert_true(bust.bust, "roll should bust")
     assert_eq(match.players[1].score, 0, "bust should not bank score")
@@ -87,6 +93,53 @@ local function test_rejects_invalid_actions()
     assert_eq(match.turn_score, 0, "failed keep should not mutate turn score")
 end
 
+local function test_reroll_rejects_too_few_dice_without_mutating_state()
+    local match = prepare_turn_with_one_kept()
+
+    local result = match:applyRoll({2, 2, 3, 3})
+
+    assert_false(result.ok, "too few dice should be rejected")
+    assert_eq(result.reason, "invalid_roll", "too few dice rejection reason")
+    assert_eq(match.current_player_index, 1, "invalid roll should not pass turn")
+    assert_eq(match.phase, "awaiting_roll", "invalid roll should keep awaiting roll")
+    assert_eq(match.turn_score, 100, "invalid roll should keep turn score")
+    assert_eq(match.available_dice, 5, "invalid roll should keep available dice")
+    assert_eq(#match.latest_roll, 0, "invalid roll should not store latest roll")
+    assert_eq(#match.latest_groups, 0, "invalid roll should not store latest groups")
+    assert_eq(#match.kept_dice, 1, "invalid roll should keep already kept dice")
+end
+
+local function test_reroll_rejects_too_many_dice_without_mutating_state()
+    local match = prepare_turn_with_one_kept()
+
+    local result = match:applyRoll({1, 2, 3, 4, 5, 6})
+
+    assert_false(result.ok, "too many dice should be rejected")
+    assert_eq(result.reason, "invalid_roll", "too many dice rejection reason")
+    assert_eq(match.current_player_index, 1, "invalid roll should not pass turn")
+    assert_eq(match.phase, "awaiting_roll", "invalid roll should keep awaiting roll")
+    assert_eq(match.turn_score, 100, "invalid roll should keep turn score")
+    assert_eq(match.available_dice, 5, "invalid roll should keep available dice")
+    assert_eq(#match.latest_roll, 0, "invalid roll should not store latest roll")
+    assert_eq(#match.latest_groups, 0, "invalid roll should not store latest groups")
+    assert_eq(#match.kept_dice, 1, "invalid roll should keep already kept dice")
+end
+
+local function test_returned_groups_are_cloned()
+    local match = Match.new()
+
+    local roll = match:applyRoll({1, 2, 3, 4, 2, 3})
+    assert_true(roll.ok, "roll should be accepted")
+    assert_true(roll.groups[1] ~= nil, "roll should return at least one group")
+    assert_true(roll.groups[1].dice[1] ~= nil, "returned group should include dice")
+
+    roll.groups[1].score = 9999
+    roll.groups[1].dice[1].value = 6
+
+    assert_eq(match.latest_groups[1].score, 100, "mutating returned group should not mutate stored group")
+    assert_eq(match.latest_groups[1].dice[1].value, 1, "mutating returned die should not mutate stored die")
+end
+
 local function test_game_over_when_target_reached()
     local match = Match.new({target_score = 100})
 
@@ -107,6 +160,9 @@ local tests = {
     {name = "bust_clears_turn_and_passes", fn = test_bust_clears_turn_and_passes},
     {name = "hot_dice_resets_available_dice", fn = test_hot_dice_resets_available_dice},
     {name = "rejects_invalid_actions", fn = test_rejects_invalid_actions},
+    {name = "reroll_rejects_too_few_dice_without_mutating_state", fn = test_reroll_rejects_too_few_dice_without_mutating_state},
+    {name = "reroll_rejects_too_many_dice_without_mutating_state", fn = test_reroll_rejects_too_many_dice_without_mutating_state},
+    {name = "returned_groups_are_cloned", fn = test_returned_groups_are_cloned},
     {name = "game_over_when_target_reached", fn = test_game_over_when_target_reached},
 }
 

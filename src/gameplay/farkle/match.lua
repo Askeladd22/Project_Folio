@@ -101,7 +101,11 @@ function Match:applyRoll(values)
     end
 
     local roll = Scoring.normalize_roll(values)
-    local groups = Scoring.get_scoring_groups(values)
+    if #roll ~= self.available_dice then
+        return {ok = false, reason = "invalid_roll"}
+    end
+
+    local groups = Scoring.get_scoring_groups(roll)
 
     if #groups == 0 then
         self.last_event = "bust"
