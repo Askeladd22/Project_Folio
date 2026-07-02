@@ -103,6 +103,19 @@ local function test_normalize_roll_ignores_invalid_values()
     assert_eq(entries[3].source_index, 42, "table index should become source index")
 end
 
+local function test_normalize_roll_ignores_outside_range_non_integers()
+    local entries = Scoring.normalize_roll({6.9, 0.9, 1, 5})
+    assert_eq(#entries, 2, "outside-range non-integers should be ignored")
+    assert_eq(entries[1].value, 1, "valid one should remain")
+    assert_eq(entries[2].value, 5, "valid five should remain")
+end
+
+local function test_normalize_roll_preserves_source_index()
+    local entries = Scoring.normalize_roll({{value = 5, source_index = 42}})
+    assert_eq(#entries, 1, "valid table entry should be normalized")
+    assert_eq(entries[1].source_index, 42, "source_index should be preserved")
+end
+
 local function test_find_group_matches_id_or_kind()
     local groups = Scoring.get_scoring_groups({1, 2, 5, 3})
     local one = find_group(groups, "single_one")
@@ -122,6 +135,8 @@ local tests = {
     {name = "best_group_prefers_score_then_dice_count", fn = test_best_group_prefers_score_then_dice_count},
     {name = "table_roll_entries_keep_source_indices", fn = test_table_roll_entries_keep_source_indices},
     {name = "normalize_roll_ignores_invalid_values", fn = test_normalize_roll_ignores_invalid_values},
+    {name = "normalize_roll_ignores_outside_range_non_integers", fn = test_normalize_roll_ignores_outside_range_non_integers},
+    {name = "normalize_roll_preserves_source_index", fn = test_normalize_roll_preserves_source_index},
     {name = "find_group_matches_id_or_kind", fn = test_find_group_matches_id_or_kind},
 }
 

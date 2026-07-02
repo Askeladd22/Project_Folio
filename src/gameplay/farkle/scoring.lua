@@ -17,19 +17,21 @@ local function normalize_roll(values)
 
         if type(item) == "table" then
             value = item.value
-            source_index = item.index or roll_pos
+            if item.source_index ~= nil then
+                source_index = item.source_index
+            elseif item.index ~= nil then
+                source_index = item.index
+            end
         end
 
         value = tonumber(value)
-        if value then
+        if value and value >= 1 and value <= 6 then
             value = math.floor(value)
-            if value >= 1 and value <= 6 then
-                entries[#entries + 1] = {
-                    roll_pos = roll_pos,
-                    source_index = source_index,
-                    value = value,
-                }
-            end
+            entries[#entries + 1] = {
+                roll_pos = roll_pos,
+                source_index = source_index,
+                value = value,
+            }
         end
     end
     return entries
