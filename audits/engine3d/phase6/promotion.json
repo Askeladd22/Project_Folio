@@ -1,0 +1,16 @@
+{
+  "promoted": [
+    "src/engine3d/geometry.lua",
+    "src/engine3d/face_texture.lua",
+    "experiments/farkle_roguelite/dice.lua"
+  ],
+  "changed_existing": [
+    "experiments/farkle_roguelite/manuscript-farkle.love",
+    "src/engine3d/geometry.lua",
+    "experiments/farkle_roguelite/dice.lua"
+  ],
+  "physics_and_main_unchanged": true,
+  "natural_seed_54001_identical": true,
+  "wire_screenshots_identical": true,
+  "backup_sha256": "c11e3f67600f8c11de65d05accf52981c167847aeef87f7f16d4478498da9799"
+}

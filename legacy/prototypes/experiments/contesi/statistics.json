@@ -1,0 +1,378 @@
+{
+  "intervals": [
+    {
+      "config": "bivio",
+      "agent": "random",
+      "wilson95": [
+        0.9120897778248941,
+        0.9352825893322704
+      ]
+    },
+    {
+      "config": "bivio",
+      "agent": "greedy",
+      "wilson95": [
+        0.9281846805316479,
+        0.9491301730975011
+      ]
+    },
+    {
+      "config": "bivio",
+      "agent": "planner",
+      "wilson95": [
+        0.8404511410405705,
+        0.871181954110264
+      ]
+    },
+    {
+      "config": "bivio",
+      "agent": "planner_no_rerolls",
+      "wilson95": [
+        0.6693822508091875,
+        0.7098892445026176
+      ]
+    },
+    {
+      "config": "bivio",
+      "agent": "fixed_BCD",
+      "wilson95": [
+        0.8326395200502815,
+        0.8640223318645605
+      ]
+    },
+    {
+      "config": "bivio",
+      "agent": "fixed_ACD",
+      "wilson95": [
+        0.8243218309076294,
+        0.8563706948888208
+      ]
+    },
+    {
+      "config": "bivio",
+      "agent": "greedy_fixed_BCD",
+      "wilson95": [
+        0.921728133147533,
+        0.9436097258928223
+      ]
+    },
+    {
+      "config": "bivio",
+      "agent": "greedy_fixed_ACD",
+      "wilson95": [
+        0.9238773493378977,
+        0.9454528412320556
+      ]
+    },
+    {
+      "config": "ponti",
+      "agent": "random",
+      "wilson95": [
+        0.9254911725624734,
+        0.9468332666546785
+      ]
+    },
+    {
+      "config": "ponti",
+      "agent": "greedy",
+      "wilson95": [
+        0.9482954037452289,
+        0.9659485165327013
+      ]
+    },
+    {
+      "config": "ponti",
+      "agent": "planner",
+      "wilson95": [
+        0.8966589128425922,
+        0.9217690507249873
+      ]
+    },
+    {
+      "config": "ponti",
+      "agent": "planner_no_rerolls",
+      "wilson95": [
+        0.7659433361879618,
+        0.8019658238973463
+      ]
+    },
+    {
+      "config": "ponti",
+      "agent": "fixed_BCD",
+      "wilson95": [
+        0.8918909444293617,
+        0.9175542731966224
+      ]
+    },
+    {
+      "config": "ponti",
+      "agent": "fixed_ACD",
+      "wilson95": [
+        0.865549047686269,
+        0.8939920258197406
+      ]
+    },
+    {
+      "config": "ponti",
+      "agent": "greedy_fixed_BCD",
+      "wilson95": [
+        0.9532478001579565,
+        0.9699788660615691
+      ]
+    },
+    {
+      "config": "ponti",
+      "agent": "greedy_fixed_ACD",
+      "wilson95": [
+        0.8908326098943614,
+        0.9166164419668236
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "agent": "random",
+      "wilson95": [
+        0.845144883539001,
+        0.8754709575534287
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "agent": "greedy",
+      "wilson95": [
+        0.7958337561356736,
+        0.8299642111288048
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "agent": "planner",
+      "wilson95": [
+        0.8248412592741987,
+        0.856849349404651
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "agent": "planner_no_rerolls",
+      "wilson95": [
+        0.6359116374776543,
+        0.6774863875957846
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "agent": "fixed_BCD",
+      "wilson95": [
+        0.8243218309076294,
+        0.8563706948888208
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "agent": "fixed_ACD",
+      "wilson95": [
+        0.625791362971902,
+        0.6676450044535472
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "agent": "greedy_fixed_BCD",
+      "wilson95": [
+        0.9201180659341153,
+        0.9422255444590417
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "agent": "greedy_fixed_ACD",
+      "wilson95": [
+        0.7121570256067873,
+        0.7509534318265747
+      ]
+    }
+  ],
+  "paired": [
+    {
+      "config": "asimmetrico",
+      "a": "planner",
+      "b": "greedy",
+      "delta_pp": 2.8000000000000003,
+      "paired95_pp": [
+        0.6920581987828366,
+        4.907941801217164
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "a": "planner",
+      "b": "planner_no_rerolls",
+      "delta_pp": 18.45,
+      "paired95_pp": [
+        16.33185502217777,
+        20.568144977822232
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "a": "planner",
+      "b": "fixed_BCD",
+      "delta_pp": 0.05,
+      "paired95_pp": [
+        -0.047999999999999994,
+        0.148
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "a": "planner",
+      "b": "fixed_ACD",
+      "delta_pp": 19.45,
+      "paired95_pp": [
+        17.123410421339045,
+        21.776589578660957
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "a": "greedy",
+      "b": "greedy_fixed_BCD",
+      "delta_pp": -11.85,
+      "paired95_pp": [
+        -13.451480200132274,
+        -10.248519799867726
+      ]
+    },
+    {
+      "config": "asimmetrico",
+      "a": "greedy",
+      "b": "greedy_fixed_ACD",
+      "delta_pp": 8.15,
+      "paired95_pp": [
+        6.821359226445095,
+        9.478640773554906
+      ]
+    },
+    {
+      "config": "bivio",
+      "a": "planner",
+      "b": "greedy",
+      "delta_pp": -8.3,
+      "paired95_pp": [
+        -10.009739656452533,
+        -6.590260343547468
+      ]
+    },
+    {
+      "config": "bivio",
+      "a": "planner",
+      "b": "planner_no_rerolls",
+      "delta_pp": 16.650000000000002,
+      "paired95_pp": [
+        14.548624519164715,
+        18.751375480835286
+      ]
+    },
+    {
+      "config": "bivio",
+      "a": "planner",
+      "b": "fixed_BCD",
+      "delta_pp": 0.75,
+      "paired95_pp": [
+        -0.6462472213585874,
+        2.1462472213585873
+      ]
+    },
+    {
+      "config": "bivio",
+      "a": "planner",
+      "b": "fixed_ACD",
+      "delta_pp": 1.55,
+      "paired95_pp": [
+        0.0424624008647732,
+        3.0575375991352267
+      ]
+    },
+    {
+      "config": "bivio",
+      "a": "greedy",
+      "b": "greedy_fixed_BCD",
+      "delta_pp": 0.6,
+      "paired95_pp": [
+        -0.5678006641527473,
+        1.7678006641527473
+      ]
+    },
+    {
+      "config": "bivio",
+      "a": "greedy",
+      "b": "greedy_fixed_ACD",
+      "delta_pp": 0.4,
+      "paired95_pp": [
+        -0.32011662665014823,
+        1.1201166266501483
+      ]
+    },
+    {
+      "config": "ponti",
+      "a": "planner",
+      "b": "greedy",
+      "delta_pp": -4.8,
+      "paired95_pp": [
+        -6.197982097515017,
+        -3.4020179024849826
+      ]
+    },
+    {
+      "config": "ponti",
+      "a": "planner",
+      "b": "planner_no_rerolls",
+      "delta_pp": 12.55,
+      "paired95_pp": [
+        10.765255240958119,
+        14.33474475904188
+      ]
+    },
+    {
+      "config": "ponti",
+      "a": "planner",
+      "b": "fixed_BCD",
+      "delta_pp": 0.44999999999999996,
+      "paired95_pp": [
+        -0.19248691248643984,
+        1.0924869124864396
+      ]
+    },
+    {
+      "config": "ponti",
+      "a": "planner",
+      "b": "fixed_ACD",
+      "delta_pp": 2.9499999999999997,
+      "paired95_pp": [
+        1.323680629351149,
+        4.576319370648851
+      ]
+    },
+    {
+      "config": "ponti",
+      "a": "greedy",
+      "b": "greedy_fixed_BCD",
+      "delta_pp": -0.44999999999999996,
+      "paired95_pp": [
+        -1.2986879129496272,
+        0.3986879129496271
+      ]
+    },
+    {
+      "config": "ponti",
+      "a": "greedy",
+      "b": "greedy_fixed_ACD",
+      "delta_pp": 5.35,
+      "paired95_pp": [
+        4.176668735979662,
+        6.523331264020338
+      ]
+    }
+  ]
+}

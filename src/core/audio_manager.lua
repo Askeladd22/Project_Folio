@@ -115,6 +115,29 @@ function AudioManager.play_ui(event_name)
     return false
 end
 
+-- Original damped resonances: dry wood and a restrained metal overtone.
+-- Deterministic synthesis never consumes either gameplay random generator.
+local cue_specs={take={190,.13,.20},bank={360,.24,.19},loss={120,.18,.16},hot={480,.27,.19},medal={640,.20,.14}}
+local function make_material_cue(spec)
+    if not (love and love.sound and love.sound.newSoundData and love.audio and love.audio.newSource) then return nil end
+    local rate=44100;local n=math.floor(rate*spec[2])
+    local data=love.sound.newSoundData(n,rate,16,1)
+    for i=0,n-1 do
+        local t=i/rate;local attack=math.min(1,t/.003)
+        local envelope=attack*math.exp(-t*28)*(1-i/n)
+        local f=spec[1]*math.pi*2
+        local sample=(math.sin(f*t)+.35*math.sin(f*2.71*t)+.13*math.sin(f*5.13*t))*spec[3]*envelope
+        data:setSample(i,sample)
+    end
+    return love.audio.newSource(data,'static')
+end
+function AudioManager.play_farkle(event)
+    local spec=cue_specs[event];if not spec then return false end
+    local key='farkle_'..event
+    if not sources[key] then sources[key]=make_material_cue(spec) end
+    return AudioManager.play(key)
+end
+
 function AudioManager.register_music_source(id, source, opts)
     if not source then return nil end
     local key = id or tostring(source)

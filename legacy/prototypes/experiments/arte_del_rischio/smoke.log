@@ -1,0 +1,21 @@
+PASS isolated identity, four D6 and six face pigment mappings
+PASS A physical roll, partial reroll, holds, picking, input lock
+PASS A resize picking
+PASS B physical roll, partial reroll, holds, picking, input lock
+PASS B resize picking
+SCREENSHOT preview-720.png
+PASS C physical roll, partial reroll, holds, picking, input lock
+PASS C resize picking
+SCREENSHOT preview-1080.png
+PASS controlled C change, bank, next turn, paid physical Tentation
+PASS eight-turn result; original save path never used
+SCREENSHOT preview-work-1080.png
+Physical samples: 8/64
+Physical samples: 16/64
+Physical samples: 24/64
+Physical samples: 32/64
+Physical samples: 40/64
+Physical samples: 48/64
+Physical samples: 56/64
+Physical samples: 64/64
+PASS 64 physical initial rolls, 256 face observations: 51,40,44,38,42,41

@@ -1,0 +1,9 @@
+PASS isolated identity and original four-die color mapping
+SCREENSHOT preview-physical.png
+PASS actual physical roll/reroll, picking, consumed die pose, input lock
+SCREENSHOT preview-choice.png
+PASS controlled UI: partial bank, next session, first folio, choice, protected failure
+SCREENSHOT preview-1080.png
+SCREENSHOT preview-720.png
+PASS resized input, transfer status, consumed die, once-per-folio persistence
+PASS complete two-folio run and telemetry; no mass simulation

@@ -1,0 +1,15 @@
+{
+  "changed_in_candidate": [
+    "main.lua"
+  ],
+  "added_in_candidate": [
+    "src/engine3d/spawn_clearance.lua"
+  ],
+  "active_unchanged": 93,
+  "backup_sha256": "73787a664fdafeb1aa9c01b0a4ad9c48292204408c8fa19ba325ce51db19a7d4",
+  "candidate_sha256": "dce2d9cb6fb896089f520d402ca98515d336568022769db547a066ccf1454ed8",
+  "tests": {
+    "unit": 0,
+    "regressions": 0
+  }
+}

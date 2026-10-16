@@ -3,7 +3,7 @@ local Physics = require "src.engine3d.physics"
 local body = Physics.body
 
 local graphics_get_image = rawget(love.graphics, "getImage") or love.graphics.newImage
-local graphics_transform = rawget(love.graphics, "transform")
+local face_texture = require "src.engine3d.face_texture"
 
 local function newD6Body(size)
   if not size then size=1 end
@@ -28,16 +28,7 @@ function d6.image(n,a,b,c,d,e,f,g,h)
   if not (a and b and c and d and g and h) then return end
   local pip = d6.faceValueMap[n] or n
   local img=graphics_get_image("resources/dice/"..pip..".png")
-  love.graphics.push()
-  if graphics_transform then
-    local ok = graphics_transform(a,b,c,d,g,h)
-    if not ok then
-      love.graphics.pop()
-      return
-    end
-  end
-  love.graphics.draw(img,0,0,0,1/img:getWidth(),1/img:getHeight())
-  love.graphics.pop()
+  face_texture.draw(img,a,b,c,d,e,f,g,h)
 end
 
 local function newD8Body(size)

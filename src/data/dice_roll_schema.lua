@@ -1,7 +1,7 @@
 return {
     sizes = {
-        base = 0.92,
-        min = 0.74,
+        base = 0.80,
+        min = 0.64,
         scale_reference_dice_count = 6,
     },
     pool = {
@@ -14,7 +14,7 @@ return {
         x_inset = 0.36,
         main = {
             cols = 3,
-            row_spacing = 1.20,
+            row_spacing = 2.10,
         },
         mini = {
             cols = 2,

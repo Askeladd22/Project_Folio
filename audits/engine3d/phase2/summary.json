@@ -1,0 +1,1767 @@
+{
+  "AB": {
+    "distribution": {
+      "requested": 300,
+      "accepted": 300,
+      "first_attempt_accepted": 297,
+      "unresolved": [],
+      "timeout_events": 0,
+      "technical_failures": 0,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 3.804888888888884,
+      "mean_seconds_accepted": 3.804888888888884,
+      "counts_conditional_on_acceptance": [
+        311,
+        313,
+        303,
+        283,
+        330,
+        260
+      ]
+    },
+    "sequence": {
+      "requested": 100,
+      "accepted": 100,
+      "first_attempt_accepted": 98,
+      "unresolved": [],
+      "timeout_events": 0,
+      "technical_failures": 0,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 3.824000000000002,
+      "mean_seconds_accepted": 3.824000000000002,
+      "counts_conditional_on_acceptance": [
+        93,
+        121,
+        87,
+        99,
+        91,
+        109
+      ]
+    },
+    "fps": {
+      "requested": 60,
+      "accepted": 60,
+      "first_attempt_accepted": 60,
+      "unresolved": [],
+      "timeout_events": 0,
+      "technical_failures": 0,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 4.212222222222225,
+      "mean_seconds_accepted": 4.212222222222225,
+      "counts_conditional_on_acceptance": [
+        90,
+        45,
+        70,
+        70,
+        45,
+        40
+      ]
+    },
+    "replayA": {
+      "requested": 1,
+      "accepted": 1,
+      "first_attempt_accepted": 1,
+      "unresolved": [],
+      "timeout_events": 0,
+      "technical_failures": 0,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 5.1,
+      "mean_seconds_accepted": 5.1,
+      "counts_conditional_on_acceptance": [
+        1,
+        0,
+        0,
+        1,
+        2,
+        2
+      ]
+    },
+    "replayB": {
+      "requested": 1,
+      "accepted": 1,
+      "first_attempt_accepted": 1,
+      "unresolved": [],
+      "timeout_events": 0,
+      "technical_failures": 0,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 5.1,
+      "mean_seconds_accepted": 5.1,
+      "counts_conditional_on_acceptance": [
+        1,
+        0,
+        0,
+        1,
+        2,
+        2
+      ]
+    },
+    "recovery_reasons": {
+      "ambiguous": 5
+    },
+    "csv_note": "ambiguous_events in C CSV includes escaped events; use recovery_reasons from explicit log for exact classification. No event omitted."
+  },
+  "C": {
+    "distribution": {
+      "requested": 300,
+      "accepted": 126,
+      "first_attempt_accepted": 55,
+      "unresolved": [
+        {
+          "ordinal": 1,
+          "seed": "50001",
+          "fps": "60",
+          "seconds": 3.5333333333333
+        },
+        {
+          "ordinal": 2,
+          "seed": "50002",
+          "fps": "60",
+          "seconds": 1.95
+        },
+        {
+          "ordinal": 3,
+          "seed": "50003",
+          "fps": "60",
+          "seconds": 3.2333333333333
+        },
+        {
+          "ordinal": 4,
+          "seed": "50004",
+          "fps": "60",
+          "seconds": 2.4833333333333
+        },
+        {
+          "ordinal": 5,
+          "seed": "50005",
+          "fps": "60",
+          "seconds": 2.3
+        },
+        {
+          "ordinal": 6,
+          "seed": "50006",
+          "fps": "60",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 7,
+          "seed": "50007",
+          "fps": "60",
+          "seconds": 3.3
+        },
+        {
+          "ordinal": 10,
+          "seed": "50010",
+          "fps": "60",
+          "seconds": 2.45
+        },
+        {
+          "ordinal": 11,
+          "seed": "50011",
+          "fps": "60",
+          "seconds": 1.65
+        },
+        {
+          "ordinal": 16,
+          "seed": "50016",
+          "fps": "60",
+          "seconds": 1.4
+        },
+        {
+          "ordinal": 17,
+          "seed": "50017",
+          "fps": "60",
+          "seconds": 3.8333333333333
+        },
+        {
+          "ordinal": 19,
+          "seed": "50019",
+          "fps": "60",
+          "seconds": 2.35
+        },
+        {
+          "ordinal": 20,
+          "seed": "50020",
+          "fps": "60",
+          "seconds": 2.1166666666667
+        },
+        {
+          "ordinal": 22,
+          "seed": "50022",
+          "fps": "60",
+          "seconds": 3.7333333333333
+        },
+        {
+          "ordinal": 23,
+          "seed": "50023",
+          "fps": "60",
+          "seconds": 3.3333333333333
+        },
+        {
+          "ordinal": 25,
+          "seed": "50025",
+          "fps": "60",
+          "seconds": 2.5833333333333
+        },
+        {
+          "ordinal": 26,
+          "seed": "50026",
+          "fps": "60",
+          "seconds": 3.2666666666667
+        },
+        {
+          "ordinal": 28,
+          "seed": "50028",
+          "fps": "60",
+          "seconds": 2.2666666666667
+        },
+        {
+          "ordinal": 30,
+          "seed": "50030",
+          "fps": "60",
+          "seconds": 2.3333333333333
+        },
+        {
+          "ordinal": 31,
+          "seed": "50031",
+          "fps": "60",
+          "seconds": 2.3166666666667
+        },
+        {
+          "ordinal": 34,
+          "seed": "50034",
+          "fps": "60",
+          "seconds": 1.9
+        },
+        {
+          "ordinal": 36,
+          "seed": "50036",
+          "fps": "60",
+          "seconds": 2.7
+        },
+        {
+          "ordinal": 37,
+          "seed": "50037",
+          "fps": "60",
+          "seconds": 3.4666666666667
+        },
+        {
+          "ordinal": 42,
+          "seed": "50042",
+          "fps": "60",
+          "seconds": 3.6833333333333
+        },
+        {
+          "ordinal": 43,
+          "seed": "50043",
+          "fps": "60",
+          "seconds": 1.7833333333333
+        },
+        {
+          "ordinal": 44,
+          "seed": "50044",
+          "fps": "60",
+          "seconds": 1.45
+        },
+        {
+          "ordinal": 47,
+          "seed": "50047",
+          "fps": "60",
+          "seconds": 7.9833333333333
+        },
+        {
+          "ordinal": 49,
+          "seed": "50049",
+          "fps": "60",
+          "seconds": 2.2666666666667
+        },
+        {
+          "ordinal": 51,
+          "seed": "50051",
+          "fps": "60",
+          "seconds": 2.1166666666667
+        },
+        {
+          "ordinal": 52,
+          "seed": "50052",
+          "fps": "60",
+          "seconds": 2.35
+        },
+        {
+          "ordinal": 55,
+          "seed": "50055",
+          "fps": "60",
+          "seconds": 2.7166666666667
+        },
+        {
+          "ordinal": 56,
+          "seed": "50056",
+          "fps": "60",
+          "seconds": 2.3666666666667
+        },
+        {
+          "ordinal": 57,
+          "seed": "50057",
+          "fps": "60",
+          "seconds": 2.6
+        },
+        {
+          "ordinal": 59,
+          "seed": "50059",
+          "fps": "60",
+          "seconds": 2.5333333333333
+        },
+        {
+          "ordinal": 62,
+          "seed": "50062",
+          "fps": "60",
+          "seconds": 1.9
+        },
+        {
+          "ordinal": 63,
+          "seed": "50063",
+          "fps": "60",
+          "seconds": 2.2333333333333
+        },
+        {
+          "ordinal": 64,
+          "seed": "50064",
+          "fps": "60",
+          "seconds": 2.4166666666667
+        },
+        {
+          "ordinal": 65,
+          "seed": "50065",
+          "fps": "60",
+          "seconds": 2.55
+        },
+        {
+          "ordinal": 66,
+          "seed": "50066",
+          "fps": "60",
+          "seconds": 3.1666666666667
+        },
+        {
+          "ordinal": 68,
+          "seed": "50068",
+          "fps": "60",
+          "seconds": 2.3
+        },
+        {
+          "ordinal": 71,
+          "seed": "50071",
+          "fps": "60",
+          "seconds": 2.6833333333333
+        },
+        {
+          "ordinal": 75,
+          "seed": "50075",
+          "fps": "60",
+          "seconds": 2.1333333333333
+        },
+        {
+          "ordinal": 76,
+          "seed": "50076",
+          "fps": "60",
+          "seconds": 1.3833333333333
+        },
+        {
+          "ordinal": 78,
+          "seed": "50078",
+          "fps": "60",
+          "seconds": 2.2166666666667
+        },
+        {
+          "ordinal": 79,
+          "seed": "50079",
+          "fps": "60",
+          "seconds": 4.4
+        },
+        {
+          "ordinal": 81,
+          "seed": "50081",
+          "fps": "60",
+          "seconds": 2.2333333333333
+        },
+        {
+          "ordinal": 82,
+          "seed": "50082",
+          "fps": "60",
+          "seconds": 2.4833333333333
+        },
+        {
+          "ordinal": 84,
+          "seed": "50084",
+          "fps": "60",
+          "seconds": 1.7333333333333
+        },
+        {
+          "ordinal": 85,
+          "seed": "50085",
+          "fps": "60",
+          "seconds": 1.75
+        },
+        {
+          "ordinal": 86,
+          "seed": "50086",
+          "fps": "60",
+          "seconds": 2.8833333333333
+        },
+        {
+          "ordinal": 88,
+          "seed": "50088",
+          "fps": "60",
+          "seconds": 1.9
+        },
+        {
+          "ordinal": 90,
+          "seed": "50090",
+          "fps": "60",
+          "seconds": 3.3
+        },
+        {
+          "ordinal": 91,
+          "seed": "50091",
+          "fps": "60",
+          "seconds": 2.25
+        },
+        {
+          "ordinal": 93,
+          "seed": "50093",
+          "fps": "60",
+          "seconds": 2.4166666666667
+        },
+        {
+          "ordinal": 94,
+          "seed": "50094",
+          "fps": "60",
+          "seconds": 1.7833333333333
+        },
+        {
+          "ordinal": 95,
+          "seed": "50095",
+          "fps": "60",
+          "seconds": 2.35
+        },
+        {
+          "ordinal": 96,
+          "seed": "50096",
+          "fps": "60",
+          "seconds": 2.3833333333333
+        },
+        {
+          "ordinal": 97,
+          "seed": "50097",
+          "fps": "60",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 99,
+          "seed": "50099",
+          "fps": "60",
+          "seconds": 1.9333333333333
+        },
+        {
+          "ordinal": 100,
+          "seed": "50100",
+          "fps": "60",
+          "seconds": 3.3
+        },
+        {
+          "ordinal": 101,
+          "seed": "50101",
+          "fps": "60",
+          "seconds": 2.25
+        },
+        {
+          "ordinal": 102,
+          "seed": "50102",
+          "fps": "60",
+          "seconds": 1.9333333333333
+        },
+        {
+          "ordinal": 104,
+          "seed": "50104",
+          "fps": "60",
+          "seconds": 1.7333333333333
+        },
+        {
+          "ordinal": 106,
+          "seed": "50106",
+          "fps": "60",
+          "seconds": 3.1666666666667
+        },
+        {
+          "ordinal": 107,
+          "seed": "50107",
+          "fps": "60",
+          "seconds": 2.6666666666667
+        },
+        {
+          "ordinal": 108,
+          "seed": "50108",
+          "fps": "60",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 110,
+          "seed": "50110",
+          "fps": "60",
+          "seconds": 1.8333333333333
+        },
+        {
+          "ordinal": 114,
+          "seed": "50114",
+          "fps": "60",
+          "seconds": 2.85
+        },
+        {
+          "ordinal": 115,
+          "seed": "50115",
+          "fps": "60",
+          "seconds": 1.9833333333333
+        },
+        {
+          "ordinal": 116,
+          "seed": "50116",
+          "fps": "60",
+          "seconds": 2.1166666666667
+        },
+        {
+          "ordinal": 118,
+          "seed": "50118",
+          "fps": "60",
+          "seconds": 4.3
+        },
+        {
+          "ordinal": 120,
+          "seed": "50120",
+          "fps": "60",
+          "seconds": 2.25
+        },
+        {
+          "ordinal": 122,
+          "seed": "50122",
+          "fps": "60",
+          "seconds": 3.2833333333333
+        },
+        {
+          "ordinal": 124,
+          "seed": "50124",
+          "fps": "60",
+          "seconds": 1.7166666666667
+        },
+        {
+          "ordinal": 125,
+          "seed": "50125",
+          "fps": "60",
+          "seconds": 2.4333333333333
+        },
+        {
+          "ordinal": 128,
+          "seed": "50128",
+          "fps": "60",
+          "seconds": 2.1
+        },
+        {
+          "ordinal": 129,
+          "seed": "50129",
+          "fps": "60",
+          "seconds": 1.8166666666667
+        },
+        {
+          "ordinal": 130,
+          "seed": "50130",
+          "fps": "60",
+          "seconds": 2.4
+        },
+        {
+          "ordinal": 132,
+          "seed": "50132",
+          "fps": "60",
+          "seconds": 3.0833333333333
+        },
+        {
+          "ordinal": 133,
+          "seed": "50133",
+          "fps": "60",
+          "seconds": 2.1666666666667
+        },
+        {
+          "ordinal": 135,
+          "seed": "50135",
+          "fps": "60",
+          "seconds": 3.7
+        },
+        {
+          "ordinal": 138,
+          "seed": "50138",
+          "fps": "60",
+          "seconds": 2.0833333333333
+        },
+        {
+          "ordinal": 139,
+          "seed": "50139",
+          "fps": "60",
+          "seconds": 3.25
+        },
+        {
+          "ordinal": 140,
+          "seed": "50140",
+          "fps": "60",
+          "seconds": 2.65
+        },
+        {
+          "ordinal": 141,
+          "seed": "50141",
+          "fps": "60",
+          "seconds": 1.6
+        },
+        {
+          "ordinal": 142,
+          "seed": "50142",
+          "fps": "60",
+          "seconds": 2.0833333333333
+        },
+        {
+          "ordinal": 143,
+          "seed": "50143",
+          "fps": "60",
+          "seconds": 6.55
+        },
+        {
+          "ordinal": 145,
+          "seed": "50145",
+          "fps": "60",
+          "seconds": 1.8166666666667
+        },
+        {
+          "ordinal": 146,
+          "seed": "50146",
+          "fps": "60",
+          "seconds": 2.1166666666667
+        },
+        {
+          "ordinal": 147,
+          "seed": "50147",
+          "fps": "60",
+          "seconds": 1.3
+        },
+        {
+          "ordinal": 148,
+          "seed": "50148",
+          "fps": "60",
+          "seconds": 2.0833333333333
+        },
+        {
+          "ordinal": 153,
+          "seed": "50153",
+          "fps": "60",
+          "seconds": 2.1
+        },
+        {
+          "ordinal": 154,
+          "seed": "50154",
+          "fps": "60",
+          "seconds": 4.8833333333333
+        },
+        {
+          "ordinal": 155,
+          "seed": "50155",
+          "fps": "60",
+          "seconds": 2.7333333333333
+        },
+        {
+          "ordinal": 156,
+          "seed": "50156",
+          "fps": "60",
+          "seconds": 1.2666666666667
+        },
+        {
+          "ordinal": 159,
+          "seed": "50159",
+          "fps": "60",
+          "seconds": 1.7
+        },
+        {
+          "ordinal": 160,
+          "seed": "50160",
+          "fps": "60",
+          "seconds": 3.3333333333333
+        },
+        {
+          "ordinal": 161,
+          "seed": "50161",
+          "fps": "60",
+          "seconds": 3.3333333333333
+        },
+        {
+          "ordinal": 162,
+          "seed": "50162",
+          "fps": "60",
+          "seconds": 2.1333333333333
+        },
+        {
+          "ordinal": 163,
+          "seed": "50163",
+          "fps": "60",
+          "seconds": 2.0666666666667
+        },
+        {
+          "ordinal": 164,
+          "seed": "50164",
+          "fps": "60",
+          "seconds": 2.3833333333333
+        },
+        {
+          "ordinal": 165,
+          "seed": "50165",
+          "fps": "60",
+          "seconds": 3.8833333333333
+        },
+        {
+          "ordinal": 167,
+          "seed": "50167",
+          "fps": "60",
+          "seconds": 2.4666666666667
+        },
+        {
+          "ordinal": 169,
+          "seed": "50169",
+          "fps": "60",
+          "seconds": 1.7833333333333
+        },
+        {
+          "ordinal": 170,
+          "seed": "50170",
+          "fps": "60",
+          "seconds": 2.3333333333333
+        },
+        {
+          "ordinal": 172,
+          "seed": "50172",
+          "fps": "60",
+          "seconds": 2.55
+        },
+        {
+          "ordinal": 176,
+          "seed": "50176",
+          "fps": "60",
+          "seconds": 1.9833333333333
+        },
+        {
+          "ordinal": 180,
+          "seed": "50180",
+          "fps": "60",
+          "seconds": 2.1833333333333
+        },
+        {
+          "ordinal": 182,
+          "seed": "50182",
+          "fps": "60",
+          "seconds": 4.55
+        },
+        {
+          "ordinal": 183,
+          "seed": "50183",
+          "fps": "60",
+          "seconds": 2.0833333333333
+        },
+        {
+          "ordinal": 188,
+          "seed": "50188",
+          "fps": "60",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 189,
+          "seed": "50189",
+          "fps": "60",
+          "seconds": 2.05
+        },
+        {
+          "ordinal": 192,
+          "seed": "50192",
+          "fps": "60",
+          "seconds": 4.4
+        },
+        {
+          "ordinal": 194,
+          "seed": "50194",
+          "fps": "60",
+          "seconds": 3.4
+        },
+        {
+          "ordinal": 195,
+          "seed": "50195",
+          "fps": "60",
+          "seconds": 1.8833333333333
+        },
+        {
+          "ordinal": 200,
+          "seed": "50200",
+          "fps": "60",
+          "seconds": 1.4333333333333
+        },
+        {
+          "ordinal": 201,
+          "seed": "50201",
+          "fps": "60",
+          "seconds": 3.1333333333333
+        },
+        {
+          "ordinal": 205,
+          "seed": "50205",
+          "fps": "60",
+          "seconds": 2.8
+        },
+        {
+          "ordinal": 207,
+          "seed": "50207",
+          "fps": "60",
+          "seconds": 2.1333333333333
+        },
+        {
+          "ordinal": 208,
+          "seed": "50208",
+          "fps": "60",
+          "seconds": 2.8333333333333
+        },
+        {
+          "ordinal": 210,
+          "seed": "50210",
+          "fps": "60",
+          "seconds": 1.7666666666667
+        },
+        {
+          "ordinal": 211,
+          "seed": "50211",
+          "fps": "60",
+          "seconds": 3.5333333333333
+        },
+        {
+          "ordinal": 212,
+          "seed": "50212",
+          "fps": "60",
+          "seconds": 2.0333333333333
+        },
+        {
+          "ordinal": 213,
+          "seed": "50213",
+          "fps": "60",
+          "seconds": 3.4333333333333
+        },
+        {
+          "ordinal": 215,
+          "seed": "50215",
+          "fps": "60",
+          "seconds": 1.9333333333333
+        },
+        {
+          "ordinal": 216,
+          "seed": "50216",
+          "fps": "60",
+          "seconds": 2.4833333333333
+        },
+        {
+          "ordinal": 217,
+          "seed": "50217",
+          "fps": "60",
+          "seconds": 4.2333333333333
+        },
+        {
+          "ordinal": 218,
+          "seed": "50218",
+          "fps": "60",
+          "seconds": 2.4333333333333
+        },
+        {
+          "ordinal": 219,
+          "seed": "50219",
+          "fps": "60",
+          "seconds": 2.0333333333333
+        },
+        {
+          "ordinal": 220,
+          "seed": "50220",
+          "fps": "60",
+          "seconds": 2.0
+        },
+        {
+          "ordinal": 222,
+          "seed": "50222",
+          "fps": "60",
+          "seconds": 4.15
+        },
+        {
+          "ordinal": 224,
+          "seed": "50224",
+          "fps": "60",
+          "seconds": 2.1833333333333
+        },
+        {
+          "ordinal": 226,
+          "seed": "50226",
+          "fps": "60",
+          "seconds": 4.3333333333333
+        },
+        {
+          "ordinal": 228,
+          "seed": "50228",
+          "fps": "60",
+          "seconds": 2.5666666666667
+        },
+        {
+          "ordinal": 229,
+          "seed": "50229",
+          "fps": "60",
+          "seconds": 2.95
+        },
+        {
+          "ordinal": 230,
+          "seed": "50230",
+          "fps": "60",
+          "seconds": 1.4166666666667
+        },
+        {
+          "ordinal": 234,
+          "seed": "50234",
+          "fps": "60",
+          "seconds": 2.1833333333333
+        },
+        {
+          "ordinal": 236,
+          "seed": "50236",
+          "fps": "60",
+          "seconds": 2.5
+        },
+        {
+          "ordinal": 240,
+          "seed": "50240",
+          "fps": "60",
+          "seconds": 2.5
+        },
+        {
+          "ordinal": 241,
+          "seed": "50241",
+          "fps": "60",
+          "seconds": 2.9166666666667
+        },
+        {
+          "ordinal": 242,
+          "seed": "50242",
+          "fps": "60",
+          "seconds": 2.1833333333333
+        },
+        {
+          "ordinal": 243,
+          "seed": "50243",
+          "fps": "60",
+          "seconds": 2.35
+        },
+        {
+          "ordinal": 245,
+          "seed": "50245",
+          "fps": "60",
+          "seconds": 2.7
+        },
+        {
+          "ordinal": 246,
+          "seed": "50246",
+          "fps": "60",
+          "seconds": 2.9333333333333
+        },
+        {
+          "ordinal": 247,
+          "seed": "50247",
+          "fps": "60",
+          "seconds": 2.45
+        },
+        {
+          "ordinal": 250,
+          "seed": "50250",
+          "fps": "60",
+          "seconds": 1.7
+        },
+        {
+          "ordinal": 251,
+          "seed": "50251",
+          "fps": "60",
+          "seconds": 2.7833333333333
+        },
+        {
+          "ordinal": 253,
+          "seed": "50253",
+          "fps": "60",
+          "seconds": 2.5833333333333
+        },
+        {
+          "ordinal": 255,
+          "seed": "50255",
+          "fps": "60",
+          "seconds": 1.85
+        },
+        {
+          "ordinal": 257,
+          "seed": "50257",
+          "fps": "60",
+          "seconds": 21.983333333333
+        },
+        {
+          "ordinal": 258,
+          "seed": "50258",
+          "fps": "60",
+          "seconds": 3.7
+        },
+        {
+          "ordinal": 259,
+          "seed": "50259",
+          "fps": "60",
+          "seconds": 2.4833333333333
+        },
+        {
+          "ordinal": 261,
+          "seed": "50261",
+          "fps": "60",
+          "seconds": 2.4
+        },
+        {
+          "ordinal": 262,
+          "seed": "50262",
+          "fps": "60",
+          "seconds": 1.7833333333333
+        },
+        {
+          "ordinal": 263,
+          "seed": "50263",
+          "fps": "60",
+          "seconds": 2.25
+        },
+        {
+          "ordinal": 264,
+          "seed": "50264",
+          "fps": "60",
+          "seconds": 2.5666666666667
+        },
+        {
+          "ordinal": 266,
+          "seed": "50266",
+          "fps": "60",
+          "seconds": 2.6333333333333
+        },
+        {
+          "ordinal": 267,
+          "seed": "50267",
+          "fps": "60",
+          "seconds": 2.0
+        },
+        {
+          "ordinal": 268,
+          "seed": "50268",
+          "fps": "60",
+          "seconds": 3.5333333333333
+        },
+        {
+          "ordinal": 270,
+          "seed": "50270",
+          "fps": "60",
+          "seconds": 2.0
+        },
+        {
+          "ordinal": 271,
+          "seed": "50271",
+          "fps": "60",
+          "seconds": 3.9333333333333
+        },
+        {
+          "ordinal": 274,
+          "seed": "50274",
+          "fps": "60",
+          "seconds": 1.85
+        },
+        {
+          "ordinal": 275,
+          "seed": "50275",
+          "fps": "60",
+          "seconds": 2.25
+        },
+        {
+          "ordinal": 279,
+          "seed": "50279",
+          "fps": "60",
+          "seconds": 1.55
+        },
+        {
+          "ordinal": 280,
+          "seed": "50280",
+          "fps": "60",
+          "seconds": 2.0666666666667
+        },
+        {
+          "ordinal": 282,
+          "seed": "50282",
+          "fps": "60",
+          "seconds": 2.8833333333333
+        },
+        {
+          "ordinal": 283,
+          "seed": "50283",
+          "fps": "60",
+          "seconds": 1.9833333333333
+        },
+        {
+          "ordinal": 284,
+          "seed": "50284",
+          "fps": "60",
+          "seconds": 4.0833333333333
+        },
+        {
+          "ordinal": 286,
+          "seed": "50286",
+          "fps": "60",
+          "seconds": 1.95
+        },
+        {
+          "ordinal": 287,
+          "seed": "50287",
+          "fps": "60",
+          "seconds": 3.15
+        },
+        {
+          "ordinal": 292,
+          "seed": "50292",
+          "fps": "60",
+          "seconds": 2.3833333333333
+        },
+        {
+          "ordinal": 296,
+          "seed": "50296",
+          "fps": "60",
+          "seconds": 2.55
+        },
+        {
+          "ordinal": 298,
+          "seed": "50298",
+          "fps": "60",
+          "seconds": 3.4166666666667
+        },
+        {
+          "ordinal": 299,
+          "seed": "50299",
+          "fps": "60",
+          "seconds": 2.3666666666667
+        }
+      ],
+      "timeout_events": 1,
+      "technical_failures": 174,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 2.736055555555546,
+      "mean_seconds_accepted": 2.8062169312169223,
+      "counts_conditional_on_acceptance": [
+        177,
+        127,
+        111,
+        118,
+        119,
+        104
+      ]
+    },
+    "sequence": {
+      "requested": 100,
+      "accepted": 46,
+      "first_attempt_accepted": 21,
+      "unresolved": [
+        {
+          "ordinal": 4,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.0833333333333
+        },
+        {
+          "ordinal": 5,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.2333333333333
+        },
+        {
+          "ordinal": 6,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.7666666666667
+        },
+        {
+          "ordinal": 7,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.5
+        },
+        {
+          "ordinal": 10,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.1833333333333
+        },
+        {
+          "ordinal": 11,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.8666666666667
+        },
+        {
+          "ordinal": 12,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.4833333333333
+        },
+        {
+          "ordinal": 15,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.4166666666667
+        },
+        {
+          "ordinal": 17,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.05
+        },
+        {
+          "ordinal": 20,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.05
+        },
+        {
+          "ordinal": 21,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.1
+        },
+        {
+          "ordinal": 22,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.05
+        },
+        {
+          "ordinal": 23,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.1
+        },
+        {
+          "ordinal": 25,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.1166666666667
+        },
+        {
+          "ordinal": 26,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.3166666666667
+        },
+        {
+          "ordinal": 27,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.9833333333333
+        },
+        {
+          "ordinal": 29,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.95
+        },
+        {
+          "ordinal": 33,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.2166666666667
+        },
+        {
+          "ordinal": 36,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.9333333333333
+        },
+        {
+          "ordinal": 37,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 38,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.7
+        },
+        {
+          "ordinal": 40,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.8666666666667
+        },
+        {
+          "ordinal": 41,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.25
+        },
+        {
+          "ordinal": 43,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.7333333333333
+        },
+        {
+          "ordinal": 45,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.8333333333333
+        },
+        {
+          "ordinal": 46,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.15
+        },
+        {
+          "ordinal": 50,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.1833333333333
+        },
+        {
+          "ordinal": 53,
+          "seed": "",
+          "fps": "60",
+          "seconds": 3.2333333333333
+        },
+        {
+          "ordinal": 54,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.3833333333333
+        },
+        {
+          "ordinal": 55,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.9166666666667
+        },
+        {
+          "ordinal": 56,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.6
+        },
+        {
+          "ordinal": 59,
+          "seed": "",
+          "fps": "60",
+          "seconds": 4.6833333333333
+        },
+        {
+          "ordinal": 60,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.3
+        },
+        {
+          "ordinal": 63,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.8166666666667
+        },
+        {
+          "ordinal": 65,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.5833333333333
+        },
+        {
+          "ordinal": 67,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.9833333333333
+        },
+        {
+          "ordinal": 68,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 69,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.5666666666667
+        },
+        {
+          "ordinal": 71,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 72,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.35
+        },
+        {
+          "ordinal": 76,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.9
+        },
+        {
+          "ordinal": 78,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.7666666666667
+        },
+        {
+          "ordinal": 79,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.4833333333333
+        },
+        {
+          "ordinal": 81,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.7666666666667
+        },
+        {
+          "ordinal": 83,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.85
+        },
+        {
+          "ordinal": 84,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.9166666666667
+        },
+        {
+          "ordinal": 85,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.9333333333333
+        },
+        {
+          "ordinal": 86,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.5833333333333
+        },
+        {
+          "ordinal": 87,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.3
+        },
+        {
+          "ordinal": 88,
+          "seed": "",
+          "fps": "60",
+          "seconds": 4.0333333333333
+        },
+        {
+          "ordinal": 91,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.3166666666667
+        },
+        {
+          "ordinal": 92,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.2166666666667
+        },
+        {
+          "ordinal": 95,
+          "seed": "",
+          "fps": "60",
+          "seconds": 2.2666666666667
+        },
+        {
+          "ordinal": 96,
+          "seed": "",
+          "fps": "60",
+          "seconds": 1.35
+        }
+      ],
+      "timeout_events": 0,
+      "technical_failures": 54,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 2.680166666666669,
+      "mean_seconds_accepted": 3.243478260869572,
+      "counts_conditional_on_acceptance": [
+        46,
+        67,
+        40,
+        41,
+        46,
+        36
+      ]
+    },
+    "fps": {
+      "requested": 60,
+      "accepted": 30,
+      "first_attempt_accepted": 20,
+      "unresolved": [
+        {
+          "ordinal": 1,
+          "seed": "70001",
+          "fps": "20",
+          "seconds": 1.8
+        },
+        {
+          "ordinal": 2,
+          "seed": "70001",
+          "fps": "30",
+          "seconds": 1.8
+        },
+        {
+          "ordinal": 3,
+          "seed": "70001",
+          "fps": "60",
+          "seconds": 1.8
+        },
+        {
+          "ordinal": 4,
+          "seed": "70001",
+          "fps": "144",
+          "seconds": 1.7916666666667
+        },
+        {
+          "ordinal": 5,
+          "seed": "70001",
+          "fps": "10",
+          "seconds": 3.6
+        },
+        {
+          "ordinal": 11,
+          "seed": "70003",
+          "fps": "20",
+          "seconds": 2.45
+        },
+        {
+          "ordinal": 12,
+          "seed": "70003",
+          "fps": "30",
+          "seconds": 2.4333333333333
+        },
+        {
+          "ordinal": 13,
+          "seed": "70003",
+          "fps": "60",
+          "seconds": 2.4333333333333
+        },
+        {
+          "ordinal": 14,
+          "seed": "70003",
+          "fps": "144",
+          "seconds": 2.4305555555556
+        },
+        {
+          "ordinal": 15,
+          "seed": "70003",
+          "fps": "10",
+          "seconds": 4.9
+        },
+        {
+          "ordinal": 21,
+          "seed": "70005",
+          "fps": "20",
+          "seconds": 1.95
+        },
+        {
+          "ordinal": 22,
+          "seed": "70005",
+          "fps": "30",
+          "seconds": 1.9333333333333
+        },
+        {
+          "ordinal": 23,
+          "seed": "70005",
+          "fps": "60",
+          "seconds": 1.9333333333333
+        },
+        {
+          "ordinal": 24,
+          "seed": "70005",
+          "fps": "144",
+          "seconds": 1.9305555555556
+        },
+        {
+          "ordinal": 25,
+          "seed": "70005",
+          "fps": "10",
+          "seconds": 3.9
+        },
+        {
+          "ordinal": 26,
+          "seed": "70006",
+          "fps": "20",
+          "seconds": 1.9
+        },
+        {
+          "ordinal": 27,
+          "seed": "70006",
+          "fps": "30",
+          "seconds": 1.9
+        },
+        {
+          "ordinal": 28,
+          "seed": "70006",
+          "fps": "60",
+          "seconds": 1.9
+        },
+        {
+          "ordinal": 29,
+          "seed": "70006",
+          "fps": "144",
+          "seconds": 1.8958333333333
+        },
+        {
+          "ordinal": 30,
+          "seed": "70006",
+          "fps": "10",
+          "seconds": 3.8
+        },
+        {
+          "ordinal": 41,
+          "seed": "70009",
+          "fps": "20",
+          "seconds": 1.4
+        },
+        {
+          "ordinal": 42,
+          "seed": "70009",
+          "fps": "30",
+          "seconds": 1.4
+        },
+        {
+          "ordinal": 43,
+          "seed": "70009",
+          "fps": "60",
+          "seconds": 1.4
+        },
+        {
+          "ordinal": 44,
+          "seed": "70009",
+          "fps": "144",
+          "seconds": 1.4027777777778
+        },
+        {
+          "ordinal": 45,
+          "seed": "70009",
+          "fps": "10",
+          "seconds": 2.8
+        },
+        {
+          "ordinal": 56,
+          "seed": "70012",
+          "fps": "20",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 57,
+          "seed": "70012",
+          "fps": "30",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 58,
+          "seed": "70012",
+          "fps": "60",
+          "seconds": 2.2
+        },
+        {
+          "ordinal": 59,
+          "seed": "70012",
+          "fps": "144",
+          "seconds": 2.1944444444444
+        },
+        {
+          "ordinal": 60,
+          "seed": "70012",
+          "fps": "10",
+          "seconds": 4.4
+        }
+      ],
+      "timeout_events": 0,
+      "technical_failures": 30,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 2.7031712962962984,
+      "mean_seconds_accepted": 3.0703703703703766,
+      "counts_conditional_on_acceptance": [
+        25,
+        25,
+        35,
+        20,
+        50,
+        25
+      ]
+    },
+    "replayA": {
+      "requested": 1,
+      "accepted": 1,
+      "first_attempt_accepted": 1,
+      "unresolved": [],
+      "timeout_events": 0,
+      "technical_failures": 0,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 2.15,
+      "mean_seconds_accepted": 2.15,
+      "counts_conditional_on_acceptance": [
+        1,
+        0,
+        3,
+        0,
+        2,
+        0
+      ]
+    },
+    "replayB": {
+      "requested": 1,
+      "accepted": 1,
+      "first_attempt_accepted": 1,
+      "unresolved": [],
+      "timeout_events": 0,
+      "technical_failures": 0,
+      "invalid_accepted": 0,
+      "value_mismatch": 0,
+      "mean_seconds_all_requests": 2.15,
+      "mean_seconds_accepted": 2.15,
+      "counts_conditional_on_acceptance": [
+        1,
+        0,
+        3,
+        0,
+        2,
+        0
+      ]
+    },
+    "recovery_reasons": {
+      "ambiguous": 52,
+      "escaped": 874,
+      "timeout": 1
+    },
+    "csv_note": "ambiguous_events in C CSV includes escaped events; use recovery_reasons from explicit log for exact classification. No event omitted."
+  }
+}

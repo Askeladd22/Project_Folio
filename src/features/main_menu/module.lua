@@ -4,7 +4,6 @@ local I18n = require("src.core.i18n")
 local MenuParticles = require("src.core.menu_particles")
 local Navigation = require("src.core.navigation")
 local RuntimeUI = require("src.core.runtime_ui")
-local SaveState = require("src.core.save_state")
 local Schema = require("src.core.schema")
 local SettingsState = require("src.core.settings_state")
 local MainMenuSchema = require("src.data.main_menu_schema")
@@ -297,18 +296,9 @@ local function get_scene_alpha()
 end
 
 local function detect_continue_state()
-    local exists = false
-    local ok, result = pcall(function()
-        return SaveState.exists()
-    end)
-    if ok then
-        exists = result and true or false
-    end
-    has_save_data = exists
-    local continue_item = find_menu_item("continue")
-    if continue_item then
-        continue_item.enabled = has_save_data
-    end
+    has_save_data = false
+    local item = find_menu_item("continue")
+    if item then item.enabled = false end
 end
 
 local function ensure_music()
@@ -358,50 +348,8 @@ local function begin_new_game()
     Navigation.go(NAVIGATION_NEW_GAME)
 end
 
-local function extract_saved_run_payload(data)
-    if type(data) ~= "table" then
-        return nil
-    end
-    if type(data.run) == "table" then
-        return data.run
-    end
-    if type(data.data) == "table" and type(data.kind) == "string" then
-        return data
-    end
-    if type(data.folio_set) == "string" and type(data.current_folio_index) == "number" then
-        return data
-    end
-    return nil
-end
-
 local function continue_game()
-    local ok, data_or_err = pcall(function()
-        local loaded, load_err = SaveState.load()
-        if load_err then
-            error(load_err)
-        end
-        return loaded
-    end)
-    local run_payload = ok and extract_saved_run_payload(data_or_err) or nil
-    if run_payload then
-        Navigation.go(NAVIGATION_CONTINUE, {
-            run_data = run_payload,
-        })
-        return
-    end
-
-    if has_save_data then
-        pcall(function()
-            SaveState.clear()
-        end)
-        detect_continue_state()
-        modal_message = tr_entry(MODAL_NO_SAVE_ENTRY)
-        modal_timer = 3
-        return
-    end
-
-    modal_message = tr_entry(MODAL_NO_SAVE_ENTRY)
-    modal_timer = 3
+    -- No Farkle resume format exists yet. Continue remains disabled.
 end
 
 local function compute_layout(w, h)

@@ -1,0 +1,12 @@
+{
+  "modified": [
+    "docs/GAME_DESIGN.md",
+    "tests/smoke/farkle_hud.lua",
+    "tests/smoke/integration.lua",
+    "src/gameplay/farkle/rules.lua",
+    "src/features/farkle/controller.lua",
+    "src/features/farkle/hud.lua"
+  ],
+  "protected_unchanged": 70,
+  "checkpoint_sha256": "2d7d6b7653f47ed9f5ccebc5dcb60d50fd4f656a3cd54e4aab3992f43236849b"
+}

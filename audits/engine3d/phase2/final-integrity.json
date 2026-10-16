@@ -1,0 +1,24 @@
+{
+  "active_files_checked": 89,
+  "active_changed": [],
+  "candidate_source_files": 151,
+  "candidate_changes_relative_to_active": [
+    "experiments/farkle_roguelite/hud.lua",
+    "experiments/farkle_roguelite/hud_model.lua",
+    "experiments/farkle_roguelite/ui.lua",
+    "main.lua",
+    "src/engine3d/containment.lua",
+    "src/engine3d/face_state.lua",
+    "src/engine3d/roll_resolution.lua",
+    "tests/containment_test.lua",
+    "tests/face_state_test.lua",
+    "tests/physical_retry_test.lua"
+  ],
+  "final_physical_trials": 462,
+  "archives": {
+    "AB-final.zip": "6aa7f7d6823d9f1337175ceb6ab4850c3d1ae1111abe8fd2a0955b1bec20ab87",
+    "AB-validated.zip": "1cd1e5dd793d404c660bf8076f285c702ea16ea3dde8aa520fac217c46def237",
+    "C-rejected.zip": "24d942396d3d7c69eb3b97bb1d0932d1d99af729a0a9a1d984743920839e237b"
+  },
+  "status": "Active D1/D2 unchanged. AB experimental. C rejected, not promoted."
+}

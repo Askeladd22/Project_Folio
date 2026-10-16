@@ -1,0 +1,5 @@
+{
+  "same_seed_results_and_steps": true,
+  "baseline": "audits/farkle-official/integration/integration.txt",
+  "current": "audits/farkle-promotion/after/integration/integration.txt"
+}

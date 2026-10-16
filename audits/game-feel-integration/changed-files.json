@@ -1,0 +1,10 @@
+[
+  "scripts/capture_turn_feel.py",
+  "tests/smoke/turn_feel.lua",
+  "src/core/audio_manager.lua",
+  "src/features/farkle/controller.lua",
+  "src/features/farkle/hud.lua",
+  "src/features/farkle/presentation.lua",
+  "src/features/farkle/presentation_view.lua",
+  "src/features/farkle/tray_view.lua"
+]

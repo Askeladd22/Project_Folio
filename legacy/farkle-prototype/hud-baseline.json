@@ -1,0 +1,8 @@
+{
+  "experiments/farkle_roguelite/rules.lua": "d90819c20be6d517ba8dbac7d250153ad3b99aaaadf2af3b57532f2f9c3ed9cb",
+  "experiments/farkle_roguelite/dice.lua": "bab1c89b1dc921e1dbdcbb06b1d72ca49271b9f603eccbf8b362e6e539a8a638",
+  "src/engine3d/physics.lua": "9a5bfbe041e86d946746e745d4ada05828a8f7d2b441258b672923f2747dfcf9",
+  "src/data/dice_scene_schema.lua": "8e444638f7b6f78371d11f3c5c06fc309eb96a22bd4f496c0f3c41a7611d9ed4",
+  "src/data/dice_roll_schema.lua": "af8d1d622717954f2506fc43c2181af5357bdd26fe6ad9055f10beac454d6030",
+  "src/data/tray_layout.lua": "71b495bb8a4cb69a2008329a9c0cc999c84f27289d39ad523ba14f5d6f64a495"
+}

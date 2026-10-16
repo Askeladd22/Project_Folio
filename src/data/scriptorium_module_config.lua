@@ -1,4 +1,17 @@
 return {
+    -- "legacy" restores the previous layout without changing saves or rules.
+    layout_mode = "desk",
+    -- Optional PNG layers. Each missing/unreadable image falls back independently.
+    desk_assets = {
+        background = "resources/ui/desk/background.png",
+        desk = "resources/ui/desk/desk.png",
+        lectern = "resources/ui/desk/lectern.png",
+        parchment = "resources/ui/desk/parchment.png",
+        commission_frame = "resources/ui/desk/commission_frame.png",
+        gloss_frame = "resources/ui/desk/gloss_frame.png",
+        palette_frame = "resources/ui/desk/palette_frame.png",
+        actions_frame = "resources/ui/desk/actions_frame.png",
+    },
     background_path = "resources/ui/game.png",
     prototype_no_background = true,
     reference_resolution = {

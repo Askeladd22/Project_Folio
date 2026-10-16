@@ -1,0 +1,39 @@
+bivio
+SAT omit=1 placements=12 witness:
+. verde giallo . . 
+. giallo verde . . 
+giallo verde . rosso blu 
+marrone nero . marrone nero 
+SAT omit=2 placements=12 witness:
+rosso blu . . . 
+blu rosso . . . 
+giallo verde . rosso blu 
+marrone nero . marrone nero 
+UNSAT triples omitting C or D: incompatible requirements of A and B.
+
+ponti
+SAT omit=1 placements=11 witness:
+marrone nero . marrone nero 
+blu rosso verde giallo blu 
+. . giallo verde . 
+. . . . . 
+SAT omit=2 placements=11 witness:
+marrone nero . marrone nero 
+blu rosso blu giallo blu 
+. blu rosso . . 
+. . . . . 
+UNSAT triples omitting C or D: incompatible requirements of A and B.
+
+asimmetrico
+SAT omit=1 placements=12 witness:
+. marrone nero . . 
+. nero marrone . . 
+rosso blu . rosso blu 
+giallo verde . blu rosso 
+SAT omit=2 placements=12 witness:
+rosso blu . . . 
+blu rosso . . . 
+rosso blu . rosso blu 
+giallo verde . blu rosso 
+UNSAT triples omitting C or D: incompatible requirements of A and B.
+

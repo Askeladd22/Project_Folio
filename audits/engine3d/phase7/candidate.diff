@@ -1,0 +1,92 @@
+--- active/main.lua
++++ candidate/main.lua
+@@ -843,7 +843,7 @@
+     local col = (slot_index - 1) % cols
+     local t = (cols > 1) and (col / (cols - 1)) or 0.5
+     local sx = safe_left + (safe_right - safe_left) * t
+-    return sx, sy
++    return sx, sy, side
+ end
+ 
+ local function spawn_initial_dice()
+@@ -1133,12 +1133,13 @@
+ end
+ ---@diagnostic enable: duplicate-set-field
+ 
+-local function pick_spawn_for_region(region, rnd)
++local function pick_spawn_for_region(region, rnd, forced_side)
+     local base_region = get_base_region(region)
+     local inset_y = DICE_REGION_SPAWN_INSET_Y
+     local min_y = base_region.y_back + inset_y
+     local max_y = base_region.y_front - inset_y
+     local side = math.floor(rnd() * 4) + 1
++    side = forced_side or side
+     local sx, sy
+ 
+     local function random_x_with_inset(y, inset)
+@@ -1171,7 +1172,7 @@
+         sx = random_x_with_inset(sy, DICE_REGION_SPAWN_CENTER_INSET)
+     end
+ 
+-    return sx, sy
++    return sx, sy, side
+ end
+ 
+ function rollAllDice(max_dice, roll_indices, recovery)
+@@ -1219,6 +1220,16 @@
+     end
+ 
+     table.sort(to_roll)
++
++    local Spawn=require('src.engine3d.spawn_clearance')
++    local spawn_rows,spawn_before={},{}
++    local spawn_cubes=true
++    for _,i in ipairs(to_roll) do
++        local d=dice[i];local b=d.body
++        if d.kind~='d6' then spawn_cubes=false end
++        spawn_before[i]={position=b.position,velocity=b.velocity,angular=b.angular,
++            asleep=b.asleep,sleep_timer=b.sleep_timer,wall_hits=b.wall_hits,value=d.value}
++    end
+     last_roll_indices = {}
+     for i = 1, #to_roll do
+         last_roll_indices[i] = to_roll[i]
+@@ -1249,7 +1260,7 @@
+         local die_entry = dice[i]
+         local region = get_region_for_die(die_entry)
+         local base_region = get_base_region(region)
+-        local sx, sy = pick_spawn_for_region(region, rnd)
++        local sx, sy, spawn_side = pick_spawn_for_region(region, rnd)
+         local rz = box.z * 0.5 + DICE_THROW_RZ_BASE + rnd() * DICE_THROW_RZ_RANDOM
+ 
+         local center_y = (base_region.y_back + base_region.y_front) * 0.5
+@@ -1290,6 +1301,30 @@
+             base_velocity[2] + (rnd() - 0.5) * noise,
+             base_velocity[3] + (rnd() - 0.5) * noise * DICE_THROW_NOISE_Z_MULT
+         }
++
++        spawn_rows[#spawn_rows+1]={index=i,body=die_entry.body,position=die_entry.body.position,
++            side=spawn_side,region=region,jitter=jitter}
++    end
++    if spawn_cubes then
++        local positions=Spawn.place(spawn_rows,function(row,retry_rng,side)
++            local x,y,chosen=pick_spawn_for_region(row.region,retry_rng,side)
++            return vector{x+row.jitter,y-row.jitter,row.position[3]},chosen
++        end)
++        if not positions then
++            -- Atomic failure: restore pre-launch bodies and use the existing
++            -- technical retry UI; never run an overlapping fallback layout.
++            for _,i in ipairs(to_roll) do
++                local b=dice[i].body;local old=spawn_before[i]
++                for _,key in ipairs{'position','velocity','angular','asleep','sleep_timer','wall_hits'} do b[key]=old[key] end
++                dice[i].value=old.value
++            end
++            diceSettled=true
++            if physicalResolution then physicalResolution.done=true end
++            Scriptorium.physicalFailure='Generazione senza spazio valido: ripeti il lancio tecnico.'
++            if Scriptorium.onPhysicalFailure then Scriptorium:onPhysicalFailure({reason='spawn_exhausted'}) end
++            return
++        end
++        for _,i in ipairs(to_roll) do dice[i].body.position=positions[i] end
+     end
+     
+     AudioManager.play_ui(DICE_ROLL_CONFIRM_SFX)

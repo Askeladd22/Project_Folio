@@ -1,0 +1,109 @@
+{
+  "canvas": [
+    1920,
+    1080
+  ],
+  "layers": {
+    "background": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "desk": [
+      0,
+      650,
+      1920,
+      430
+    ],
+    "lectern": [
+      480,
+      48,
+      960,
+      612
+    ],
+    "parchment": [
+      610,
+      62,
+      700,
+      568
+    ]
+  },
+  "ui": {
+    "commission": [
+      80,
+      116,
+      420,
+      510
+    ],
+    "glosses": [
+      1420,
+      116,
+      420,
+      510
+    ],
+    "dock": [
+      80,
+      682,
+      420,
+      236
+    ],
+    "actions": [
+      1420,
+      682,
+      420,
+      180
+    ],
+    "tray": [
+      530,
+      666,
+      860,
+      404
+    ]
+  },
+  "grid": {
+    "bounds": [
+      686,
+      168,
+      548,
+      436
+    ],
+    "rows": 4,
+    "columns": 5,
+    "cell": 100,
+    "gap": 12
+  },
+  "recommended_reserves_not_hitboxes": {
+    "header": [
+      650,
+      78,
+      620,
+      78
+    ],
+    "grid_margin": [
+      678,
+      160,
+      564,
+      452
+    ],
+    "row_labels": [
+      617,
+      196,
+      66,
+      406
+    ],
+    "dice_caption": [
+      540,
+      1040,
+      840,
+      38
+    ]
+  },
+  "source_sha256": {
+    "src/features/scriptorium/page_layout.lua": "fc33104cc7ad2f9f318af17406dd9fa34ba056a8268ed628a267763b35d3e5a1",
+    "src/features/scriptorium/desk_view.lua": "417ba0bdd6a3797b8e5d19cdd867047715ec64d5d9fdb78a3b243ce8d1bd8ff0",
+    "src/features/scriptorium/module.lua": "81812b8ae9163ab38c34ca49dd9d1f2a5152478829f9b4f67492304ba018f045",
+    "src/data/scriptorium_module_config.lua": "3ad1d5e86a65ed43b12e53f16e57d7bf372e3163a68eba361f48079fe5fa8498",
+    "main.lua": "b44ea4d3bba9704a87047cd2a6d481e572bf316d1901d02c182c0a62b22d18e0"
+  }
+}

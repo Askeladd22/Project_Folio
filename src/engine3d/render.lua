@@ -145,7 +145,7 @@ local render={}
 local tray_wood_texture = nil
 local board_mesh_cache = {key = nil, mesh = nil, corners = nil}
 local tray_border_cache = {key = nil, draw_calls = nil}
-local USE_TEXTURED_TRAY_BORDER = false
+local USE_TEXTURED_TRAY_BORDER = true
 
 local function fmt4(n)
   return string.format("%.4f", tonumber(n) or 0)
@@ -166,6 +166,8 @@ local function current_view_signature()
     fmt4(view.yaw),
     fmt4(view.pitch),
     fmt4(view.distance),
+    tostring(view.projection or 'perspective'),
+    fmt4(view.focus),
   }, "|")
 end
 
@@ -365,7 +367,6 @@ function render.bulb(action)
 end
 
 function render.die(action, die, body)
-  local cam=vector{view.get()}
   local projected={}
   local world={}
   local function draw_face_polygon(points, vertex_count)
@@ -460,7 +461,7 @@ function render.die(action, die, body)
       local baseColor = (die.faceColors and die.faceColors[i]) or die.color
       local color={ baseColor[1]*strength, baseColor[2]*strength, baseColor[3]*strength, baseColor[4] or 255 }
       local text={die.text[1]*strength,die.text[2]*strength,die.text[3]*strength}
-      local to_cam = cam - center_world
+      local to_cam = vector{view.to_camera(unpack(center_world))}
       local front = (normal..to_cam) > 0.0005
       action(z, function()
         if front then 
@@ -618,8 +619,11 @@ function render.tray_border(action, border_width, border_height, border_color)
   local tex = nil
   if USE_TEXTURED_TRAY_BORDER then
     if not tray_wood_texture then
-      local ok, img = pcall(love.graphics.newImage, "resources/textures/wood.png")
-      if ok then tray_wood_texture = img end
+      local ok, img = pcall(love.graphics.newImage, "resources/textures/tray/walnut.png")
+      if ok then
+        img:setFilter('linear','linear');img:setWrap('repeat','repeat')
+        tray_wood_texture = img
+      end
     end
     tex = tray_wood_texture
   end
@@ -664,9 +668,9 @@ function render.tray_border(action, border_width, border_height, border_color)
       if shade_norm > 1 then
         shade_norm = shade_norm / 255
       end
-      local r = (color[1] / 255) * shade_norm
-      local g = (color[2] / 255) * shade_norm
-      local b = (color[3] / 255) * shade_norm
+      local r = 1.0 * shade_norm
+      local g = .94 * shade_norm
+      local b = .86 * shade_norm
       local vtx = {
         {c1[1], c1[2], u1, v1, r, g, b, 1},
         {c2[1], c2[2], u2, v1, r, g, b, 1},
@@ -691,14 +695,15 @@ function render.tray_border(action, border_width, border_height, border_color)
         local ox1_seg, oy1_seg = lerp(ax_out, bx_out, t1), lerp(ay_out, by_out, t1)
         local ox2_seg, oy2_seg = lerp(ax_out, bx_out, t2), lerp(ay_out, by_out, t2)
 
-        local tu1, tu2 = t1, t2
+        local length=math.sqrt((bx_out-ax_out)^2+(by_out-ay_out)^2)
+        local tu1, tu2 = t1*length/24, t2*length/24
 
         if texture then
           local p1 = {view.project(ox1_seg, oy1_seg, z_bot)}
           local p2 = {view.project(ox2_seg, oy2_seg, z_bot)}
           local p3 = {view.project(ox2_seg, oy2_seg, z_top)}
           local p4 = {view.project(ox1_seg, oy1_seg, z_top)}
-          draw_textured_quad(p1, p2, p3, p4, color, shade, texture, tu1, 1, tu2, 0)
+          draw_textured_quad(p1, p2, p3, p4, color, shade, texture, tu1, (z_top-z_bot)/24, tu2, 0)
         else
           local p1 = {view.project(ox1_seg, oy1_seg, z_bot)}
           local p2 = {view.project(ox2_seg, oy2_seg, z_bot)}
@@ -717,7 +722,8 @@ function render.tray_border(action, border_width, border_height, border_color)
         local px1, py1 = lerp(ax, bx, t1), lerp(ay, by, t1)
         local px2, py2 = lerp(ax, bx, t2), lerp(ay, by, t2)
 
-        local u1, u2 = t1, t2
+        local length=math.sqrt((bx-ax)^2+(by-ay)^2)
+        local u1, u2 = t1*length/24, t2*length/24
 
         local p1 = {view.project(px2, py2, z_bot)}
         local p2 = {view.project(px1, py1, z_bot)}
@@ -725,7 +731,7 @@ function render.tray_border(action, border_width, border_height, border_color)
         local p4 = {view.project(px2, py2, z_top)}
 
         if texture then
-          draw_textured_quad(p1, p2, p3, p4, color, shade, texture, u2, 1, u1, 0)
+          draw_textured_quad(p1, p2, p3, p4, color, shade, texture, u2, (z_top-z_bot)/24, u1, 0)
         else
           draw_quad(p1, p2, p3, p4, color, shade)
         end
@@ -748,7 +754,9 @@ function render.tray_border(action, border_width, border_height, border_color)
         local p4 = {view.project(ix1, iy1, z)}
 
         if texture then
-          draw_textured_quad(p1, p2, p3, p4, color, shade, texture, t1, 0, t2, 1)
+          local length=math.sqrt((bx_out-ax_out)^2+(by_out-ay_out)^2)
+          local width=math.sqrt((ax_out-ax_in)^2+(ay_out-ay_in)^2)
+          draw_textured_quad(p1, p2, p3, p4, color, shade, texture, t1*length/24, .31, t2*length/24, .31+width/24)
         else
           draw_quad(p1, p2, p3, p4, color, shade)
         end

@@ -1,0 +1,7 @@
+{
+  "main.lua": "fbf8fc6e9117b8106f36ca308a292223931cea12bc16eb141aa174878331b553",
+  "experiments/farkle_roguelite/tray_view.lua": "c3ab3f0461a25561120a378d15eaaea4cf9aa7eff3658d3d485a5bd7ac3ef63a",
+  "src/engine3d/physics.lua": "9a5bfbe041e86d946746e745d4ada05828a8f7d2b441258b672923f2747dfcf9",
+  "experiments/farkle_roguelite/rules.lua": "d90819c20be6d517ba8dbac7d250153ad3b99aaaadf2af3b57532f2f9c3ed9cb",
+  "experiments/farkle_roguelite/dice.lua": "bab1c89b1dc921e1dbdcbb06b1d72ca49271b9f603eccbf8b362e6e539a8a638"
+}

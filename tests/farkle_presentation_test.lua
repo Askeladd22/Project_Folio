@@ -1,0 +1,41 @@
+local R=require('src.gameplay.farkle.rules')
+local ok,P=pcall(require,'src.features.farkle.presentation')
+assert(ok,'presentation module missing')
+local s=R.new();local p=P.new(s)
+local sample={score={age=0,groups={{ids={1,2},rolls={[1]=3,[2]=2}}}},shelf={[1]={roll=3},[2]={roll=4}}}
+local marked=P.contributing_dice(sample)
+assert(marked[1] and not marked[2],'same die from another throw must not be highlighted')
+sample.score.age=P.score_duration;assert(not next(P.contributing_dice(sample)))
+local function observe() P.observe(p,s,{},false) end
+local function roll(h) assert(R.start(s));observe();assert(R.settle(s,h));P.accepted(p,s.active);observe() end
+roll({1,5,2,3,4,6});R.toggle(s,1);observe();assert(not p.shelf[1],'editable selection is not held')
+assert(R.take(s));observe();assert(p.shelf[1].value==1 and p.shelf[1].id==1 and p.shelf[1].roll==1)
+assert(p.shelf[1].age==0);P.update(p,.1,false);assert(p.shelf[1].age==.1)
+R.toggle(s,2);assert(R.take(s));observe();assert(p.shelf[2].roll==1)
+roll({[3]=1,[4]=2,[5]=3,[6]=4});R.toggle(s,3);R.take(s);observe();assert(p.shelf[3].roll==2 and p.shelf[1].roll==1)
+assert(R.bank_turn(s));observe();assert(p.conclusion.kind=='bank' and p.conclusion.points==25 and p.conclusion.remaining==3)
+assert(R.next_turn(s));observe();assert(not next(p.shelf) and not p.conclusion)
+for count=1,6 do
+ s=R.new();p=P.new(s);roll({1,1,1,1,1,1})
+ for i=1,count do R.toggle(s,i) end;assert(R.take(s));observe()
+ local n=0;for i,e in pairs(p.shelf) do n=n+1;assert(e.id==i and e.value==1) end;assert(n==count)
+ if count==6 then assert(s.hot);assert(R.start(s));observe();assert(not next(p.shelf),'hot dice release all slots') end
+end
+s=R.new();p=P.new(s);roll({1,5,2,3,4,6});R.toggle(s,1);R.take(s);observe()
+roll({[2]=2,[3]=2,[4]=3,[5]=4,[6]=6});assert(p.conclusion.kind=='loss' and p.conclusion.points==10)
+P.update(p,0,true);assert(p.conclusion.age>=P.feedback_duration,'reduced animations immediate')
+s=R.new();s.medal='retry';p=P.new(s);roll({1,5,2,3,4,6});R.toggle(s,1);R.take(s);observe()
+roll({[2]=2,[3]=2,[4]=3,[5]=4,[6]=6});assert(s.phase=='rescue' and not p.conclusion and p.shelf[1])
+assert(R.rescue(s));observe();assert(p.shelf[1] and p.serial==2,'technical/medal requests do not overwrite accepted origin')
+local body={position={1,2,3}};P.observe(p,s,{{index=1,x=100,y=200}},true);assert(body.position[1]==1)
+local original=p.origins[1];P.accepted(p,{2});assert(p.origins[1]==original and p.origins[2]==3,'selective medal preserves other origins')
+assert(P.observe(p,s,{},false)==nil,'unchanged state must not repeat feedback/audio')
+s=R.new();p=P.new(s);roll({1,5,2,3,4,6});R.toggle(s,1)
+assert(R.bank_turn(s));assert(P.observe(p,s,{},true)=='bank')
+assert(P.observe(p,s,{},true)==nil,'bank audio fires only once')
+assert(p.conclusion.age==P.feedback_duration and p.shelf[1].age==P.transfer_duration)
+s=R.new();p=P.new(s);roll({1,1,1,1,1,1})
+for i=1,6 do R.toggle(s,i) end
+assert(R.bank_turn(s));observe();assert(s.phase=='upgrade')
+assert(R.choose_build(s,'engraved'));observe();assert(s.stage==2 and not p.conclusion and not next(p.shelf))
+print('PASS presentation selection/hold 1-6, origin, partial throws, hot dice, bank/loss, rescue and reduced motion')

@@ -4,15 +4,9 @@ local FEATURE_DIR = "src/features"
 
 local FEATURE_FILES = {
     FEATURE_DIR .. "/campaign_select/module.lua",
-    FEATURE_DIR .. "/init.lua",
     FEATURE_DIR .. "/main_menu/module.lua",
-    FEATURE_DIR .. "/reward/module.lua",
-    FEATURE_DIR .. "/run/module.lua",
-    FEATURE_DIR .. "/scriptorium/actions.lua",
-    FEATURE_DIR .. "/scriptorium/helpers.lua",
-    FEATURE_DIR .. "/scriptorium/hud.lua",
-    FEATURE_DIR .. "/scriptorium/module.lua",
-    FEATURE_DIR .. "/scriptorium/overlays.lua",
+    FEATURE_DIR .. "/scriptorium/desk_view.lua",
+    FEATURE_DIR .. "/scriptorium/page_layout.lua",
     FEATURE_DIR .. "/settings/module.lua",
     FEATURE_DIR .. "/startup_splash/module.lua",
 }

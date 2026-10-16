@@ -1,0 +1,1491 @@
+{
+  "moves": [
+    {
+      "old": "src/gameplay/folio/model.lua",
+      "new": "legacy/cromatic-system/src/gameplay/folio/model.lua",
+      "sha256": "fd143b9fdd3cf509d1f3f7eb9195e50dba19eb816d672a3100262a235d1df29c",
+      "bytes": 48267
+    },
+    {
+      "old": "src/gameplay/folio/turn.lua",
+      "new": "legacy/cromatic-system/src/gameplay/folio/turn.lua",
+      "sha256": "f63809b0c44b6bce9f0487676fb2478e981578b74dae57993ffa7cfb5c282ccf",
+      "bytes": 8321
+    },
+    {
+      "old": "src/gameplay/folio/window_patterns.lua",
+      "new": "legacy/cromatic-system/src/gameplay/folio/window_patterns.lua",
+      "sha256": "d05b2b67ad4e7fef750651bc31f93a7507ce6cee8f8e6d55b86b0380ddc8a0f4",
+      "bytes": 11571
+    },
+    {
+      "old": "src/gameplay/run/run.lua",
+      "new": "legacy/cromatic-system/src/gameplay/run/run.lua",
+      "sha256": "9a3ef523fef0d31610ba60d94b0521ca3ecce2ce5167f851763cce08d8e9306a",
+      "bytes": 13274
+    },
+    {
+      "old": "src/content/binders.lua",
+      "new": "legacy/cromatic-system/src/content/binders.lua",
+      "sha256": "35b5e802e2a685e0b169b99f6f59a8830932798f34c2eb24f1e27d78f003993e",
+      "bytes": 12684
+    },
+    {
+      "old": "src/content/commissions.lua",
+      "new": "legacy/cromatic-system/src/content/commissions.lua",
+      "sha256": "f75d87d93de3eefc32cac6f92ffb2aa7570c38f24cb15d9671f403950ab66fec",
+      "bytes": 2415
+    },
+    {
+      "old": "src/content/pigments.lua",
+      "new": "legacy/cromatic-system/src/content/pigments.lua",
+      "sha256": "0acfc8fdc250b3b61b26c990113cd19ea4084b9cd2724206f4244780ea5d1465",
+      "bytes": 26519
+    },
+    {
+      "old": "src/content.lua",
+      "new": "legacy/cromatic-system/src/content.lua",
+      "sha256": "71ba017ec91b198a2feb40efba1b8583e35bcbea0c0fb69ad2e003dbc86a0828",
+      "bytes": 155
+    },
+    {
+      "old": "src/core/dice_faces.lua",
+      "new": "legacy/cromatic-system/src/core/dice_faces.lua",
+      "sha256": "150594dd552aa4ef78e8469aa79e6972340c2dce66c4d5981836a59ffc068c21",
+      "bytes": 5742
+    },
+    {
+      "old": "src/core/json.lua",
+      "new": "legacy/cromatic-system/src/core/json.lua",
+      "sha256": "1321848ea41d929ff0fd2386e4d95a585272db5d367439e17360b156108aaba1",
+      "bytes": 6461
+    },
+    {
+      "old": "src/core/save_state.lua",
+      "new": "legacy/cromatic-system/src/core/save_state.lua",
+      "sha256": "684ffbc0d2e474e8d3048b22df86940b589aadd49802dc5c8699f455132b25d6",
+      "bytes": 3919
+    },
+    {
+      "old": "src/features/init.lua",
+      "new": "legacy/cromatic-system/src/features/init.lua",
+      "sha256": "44871b80502c34f90ac1c226415a2f5faf54a60a70d4540f06a8ddb8df45a510",
+      "bytes": 374
+    },
+    {
+      "old": "src/features/run/module.lua",
+      "new": "legacy/cromatic-system/src/features/run/module.lua",
+      "sha256": "43cf4c1e0d42eb8177926fa6a1669fe011fc5ce628f4c0237f96d06bba1fd669",
+      "bytes": 9455
+    },
+    {
+      "old": "src/features/reward/module.lua",
+      "new": "legacy/cromatic-system/src/features/reward/module.lua",
+      "sha256": "dd98f71ffe3536453b0fa40d674bf381d67946229f89afeffa2813d27fe93549",
+      "bytes": 12571
+    },
+    {
+      "old": "src/features/scriptorium/actions.lua",
+      "new": "legacy/cromatic-system/src/features/scriptorium/actions.lua",
+      "sha256": "ef40210009dfe7965063b2eea361814fe22902bc5e7f221f11fdeb756c45eeb1",
+      "bytes": 57680
+    },
+    {
+      "old": "src/features/scriptorium/helpers.lua",
+      "new": "legacy/cromatic-system/src/features/scriptorium/helpers.lua",
+      "sha256": "1536741b8062fd36d8e6f151b7c5bbbc6eefcab6ed939ad7ddd46325a6fd195d",
+      "bytes": 5117
+    },
+    {
+      "old": "src/features/scriptorium/hud.lua",
+      "new": "legacy/cromatic-system/src/features/scriptorium/hud.lua",
+      "sha256": "0827722c4d7424559c98a741be9b4ab8e4424cbcf97403a87c1a7002b564ad23",
+      "bytes": 104720
+    },
+    {
+      "old": "src/features/scriptorium/module.lua",
+      "new": "legacy/cromatic-system/src/features/scriptorium/module.lua",
+      "sha256": "81812b8ae9163ab38c34ca49dd9d1f2a5152478829f9b4f67492304ba018f045",
+      "bytes": 124807
+    },
+    {
+      "old": "src/features/scriptorium/overlays.lua",
+      "new": "legacy/cromatic-system/src/features/scriptorium/overlays.lua",
+      "sha256": "21643f9a299538815358399b0c5057083ffa56c460e068116f3d35e5175a813b",
+      "bytes": 84388
+    },
+    {
+      "old": "src/data/commissions.lua",
+      "new": "legacy/cromatic-system/src/data/commissions.lua",
+      "sha256": "2f26fa94d7c78217a4597ea058084cc77463d61e564f8c22c33e1af6ae0bb4c7",
+      "bytes": 6061
+    },
+    {
+      "old": "src/data/folio_schema.lua",
+      "new": "legacy/cromatic-system/src/data/folio_schema.lua",
+      "sha256": "9d2f9cc6e74b2bc096d0f9761726fa2b74834ddc4a86e52a44d1aae0911c0477",
+      "bytes": 777
+    },
+    {
+      "old": "src/data/folio_turn_reasons.lua",
+      "new": "legacy/cromatic-system/src/data/folio_turn_reasons.lua",
+      "sha256": "c6e038fca982562b9df74e71bc072bd92723541bbffbd85eea69c99553062a8f",
+      "bytes": 186
+    },
+    {
+      "old": "src/data/run_schema.lua",
+      "new": "legacy/cromatic-system/src/data/run_schema.lua",
+      "sha256": "0263e4b64309e9874d5b3e76c73a8d27e8726c8e25ca2378e5286aca04a12f86",
+      "bytes": 3430
+    },
+    {
+      "old": "src/data/save_persistence_schema.lua",
+      "new": "legacy/cromatic-system/src/data/save_persistence_schema.lua",
+      "sha256": "9bd2d49f18006f5d4ef960930c3930d5a8b0a15817123b0f6a583350d9ccd814",
+      "bytes": 268
+    },
+    {
+      "old": "src/data/reward_ui_schema.lua",
+      "new": "legacy/cromatic-system/src/data/reward_ui_schema.lua",
+      "sha256": "c79ac40aef6db75976ad6e43cbd90ba2de0556aa895f91233bc6e2bc38f04ba0",
+      "bytes": 1184
+    },
+    {
+      "old": "src/data/reward_tools.lua",
+      "new": "legacy/cromatic-system/src/data/reward_tools.lua",
+      "sha256": "147ebee98c7ad909aa9a9cbd4ace42a2a95b6cf9af98bf98e6814bb6feab947d",
+      "bytes": 1733
+    },
+    {
+      "old": "src/data/reward_flow_schema.lua",
+      "new": "legacy/cromatic-system/src/data/reward_flow_schema.lua",
+      "sha256": "1e0194116e144751774a76b3f6bd7d744935a77df0a46acefc0f7269fc54dcb4",
+      "bytes": 280
+    },
+    {
+      "old": "src/data/window_patterns_schema.lua",
+      "new": "legacy/cromatic-system/src/data/window_patterns_schema.lua",
+      "sha256": "1a1fb7d818da180380193e5f673f0dd36e08c3b630b4911eb285d976b4290daf",
+      "bytes": 3579
+    },
+    {
+      "old": "src/data/scriptorium_ui_schema.lua",
+      "new": "legacy/cromatic-system/src/data/scriptorium_ui_schema.lua",
+      "sha256": "2da34e7268ecb39e76dde97db9dd1127966ae66fa39d6417475538292316c1cd",
+      "bytes": 33953
+    },
+    {
+      "old": "src/data/scriptorium_layout.lua",
+      "new": "legacy/cromatic-system/src/data/scriptorium_layout.lua",
+      "sha256": "62517b8e1a421bc88ebf48119b7c924cfb8015e78736501f56b7ca8142afb6fb",
+      "bytes": 56039
+    },
+    {
+      "old": "tests/folio_flow_test.lua",
+      "new": "legacy/cromatic-system/tests/folio_flow_test.lua",
+      "sha256": "bca0f454d65bedff3df5974fdcba5b99433d2a8efc424ded66ee2c8378f5d177",
+      "bytes": 15635
+    },
+    {
+      "old": "tests/run_snapshot_test.lua",
+      "new": "legacy/cromatic-system/tests/run_snapshot_test.lua",
+      "sha256": "e4153ea225cd7ba2711fd16c85036def5d18cfd82f30f135abcd5b47fc64b2a3",
+      "bytes": 2483
+    },
+    {
+      "old": "tests/save_state_test.lua",
+      "new": "legacy/cromatic-system/tests/save_state_test.lua",
+      "sha256": "a38b6e8747f7da81bebe6b9fa6cd5c1f37cf1c1e39563b2d69555fa90cdec8fd",
+      "bytes": 4614
+    },
+    {
+      "old": "tests/gameplay_isolation_test.lua",
+      "new": "legacy/cromatic-system/tests/gameplay_isolation_test.lua",
+      "sha256": "e03ab4387aee91de83b5d73a9ea4aa70fed7363e2dce52746c100ef953b5c95d",
+      "bytes": 1174
+    },
+    {
+      "old": "experiments/intrecci/agents.lua",
+      "new": "legacy/prototypes/experiments/intrecci/agents.lua",
+      "sha256": "a80edcfb8ab3192a560f70494196b99fe4eaab97a1f34737ce092871fa383626",
+      "bytes": 2742
+    },
+    {
+      "old": "experiments/intrecci/games.csv",
+      "new": "legacy/prototypes/experiments/intrecci/games.csv",
+      "sha256": "977ecdfddf4a3ddf5b7f76d63780dbd0c6f1ce8d10ccd9b4cbbe6349d0399193",
+      "bytes": 929452
+    },
+    {
+      "old": "experiments/intrecci/README.md",
+      "new": "legacy/prototypes/experiments/intrecci/README.md",
+      "sha256": "a3ed2456a48a04f79990af370c7cdea3340d20a7ff69e01db3035ecafb6d15f5",
+      "bytes": 10254
+    },
+    {
+      "old": "experiments/intrecci/results.csv",
+      "new": "legacy/prototypes/experiments/intrecci/results.csv",
+      "sha256": "4c87fe780874058b0d852de8e2cb9b3e6295b9e977cf53e31c430f3f3265924d",
+      "bytes": 1124
+    },
+    {
+      "old": "experiments/intrecci/rules.lua",
+      "new": "legacy/prototypes/experiments/intrecci/rules.lua",
+      "sha256": "c7f51ebc52a0859fef7ea2fe0f9d09aadb0994169a51ff867f438eb302fb8552",
+      "bytes": 4193
+    },
+    {
+      "old": "experiments/intrecci/simulate.lua",
+      "new": "legacy/prototypes/experiments/intrecci/simulate.lua",
+      "sha256": "7cea5921b90b722c3c140094a7de56871747559702f0c292ca5fede0960580c3",
+      "bytes": 2346
+    },
+    {
+      "old": "experiments/intrecci/test.lua",
+      "new": "legacy/prototypes/experiments/intrecci/test.lua",
+      "sha256": "037001305b1ca2cd1d1b178fc081aae879539673ab9bf77bc5a5dde8ce19732d",
+      "bytes": 3322
+    },
+    {
+      "old": "experiments/contesi/agents.lua",
+      "new": "legacy/prototypes/experiments/contesi/agents.lua",
+      "sha256": "c1bc1a04c2b3dcbbb0931a73da9678b5900898977d2c4c377c565bd64ae92c68",
+      "bytes": 4158
+    },
+    {
+      "old": "experiments/contesi/analyse.py",
+      "new": "legacy/prototypes/experiments/contesi/analyse.py",
+      "sha256": "bede160df22f6a0113b42001a44a22937e935366b3e3c23530c9ee97c431d2ea",
+      "bytes": 1534
+    },
+    {
+      "old": "experiments/contesi/games.csv",
+      "new": "legacy/prototypes/experiments/contesi/games.csv",
+      "sha256": "0462b6deb96d2f64fa47a1c0164ebe47ff865cd2945a05401385d65890f6b8bd",
+      "bytes": 1770054
+    },
+    {
+      "old": "experiments/contesi/model.lua",
+      "new": "legacy/prototypes/experiments/contesi/model.lua",
+      "sha256": "13bf7ab34d8da9f9846060215be6aa1741057dd2f4a1b642ced694c2cd7dd0e3",
+      "bytes": 3323
+    },
+    {
+      "old": "experiments/contesi/README.md",
+      "new": "legacy/prototypes/experiments/contesi/README.md",
+      "sha256": "6a61e518095f783ae7b6d2b2e2aa7b86d749ccccb6e5bfcf4e6d72cdf157ec7f",
+      "bytes": 12357
+    },
+    {
+      "old": "experiments/contesi/results.csv",
+      "new": "legacy/prototypes/experiments/contesi/results.csv",
+      "sha256": "4a96d5a8e3df5bc239f235d7cf19a79284e74f321ae27ef648a8598f14758af8",
+      "bytes": 1673
+    },
+    {
+      "old": "experiments/contesi/simulate.lua",
+      "new": "legacy/prototypes/experiments/contesi/simulate.lua",
+      "sha256": "97b11b899040314cf2923b765231b14be67c2e5d0bde16afae27a2e1ba71500c",
+      "bytes": 2219
+    },
+    {
+      "old": "experiments/contesi/solver.lua",
+      "new": "legacy/prototypes/experiments/contesi/solver.lua",
+      "sha256": "bbfff5453c73072e5a8cf1887d28ce8a7234a6897f6114d45c455b6c7cc18cfb",
+      "bytes": 501
+    },
+    {
+      "old": "experiments/contesi/solver.txt",
+      "new": "legacy/prototypes/experiments/contesi/solver.txt",
+      "sha256": "7d40f2b553cd37de00a60873747ccd17effe7d3461fd76fb813e6057b506e3ca",
+      "bytes": 1004
+    },
+    {
+      "old": "experiments/contesi/statistics.json",
+      "new": "legacy/prototypes/experiments/contesi/statistics.json",
+      "sha256": "83ebdbc4921c0412718ef1efb38b02486a9419a45229e52a4e12ca0dbb48370a",
+      "bytes": 7731
+    },
+    {
+      "old": "experiments/contesi/test.lua",
+      "new": "legacy/prototypes/experiments/contesi/test.lua",
+      "sha256": "a4dcdb642c23d95e5d6132faf939bab7d8190dca127c224258183c5450272712",
+      "bytes": 1554
+    },
+    {
+      "old": "experiments/arte_del_rischio/agents.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/agents.lua",
+      "sha256": "ab3fc59ae5dd46a2bde5ebd6c1b9ed2b4f6c15632fdbe515a3a5740decf20f0f",
+      "bytes": 4686
+    },
+    {
+      "old": "experiments/arte_del_rischio/analyse.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/analyse.lua",
+      "sha256": "208a14d4fc8cd5a67aa5d9a3e4c265be402fa5bbf646ac53f8c4f1779d11a7b8",
+      "bytes": 3398
+    },
+    {
+      "old": "experiments/arte_del_rischio/app/conf.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/app/conf.lua",
+      "sha256": "f44cd239db007551624bd4828da59b22dbf31d05e51fac94f6992ae21ab4fa73",
+      "bytes": 236
+    },
+    {
+      "old": "experiments/arte_del_rischio/app/main.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/app/main.lua",
+      "sha256": "8327ba31ad2d313fac357de2098b41bae54e71e34c681357b0a7632e8797f518",
+      "bytes": 1586
+    },
+    {
+      "old": "experiments/arte_del_rischio/arte-del-rischio.love",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/arte-del-rischio.love",
+      "sha256": "aaa9301aba8e780ebbd633c0a8e7f39468aa9ccebfa974bd6ab7ee748b4948a5",
+      "bytes": 36535358
+    },
+    {
+      "old": "experiments/arte_del_rischio/exact-analysis.txt",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/exact-analysis.txt",
+      "sha256": "ef18aacb32c5541fc1f004bd42d55982ad6b98dcc284b5bf69451ec632f46abd",
+      "bytes": 1058
+    },
+    {
+      "old": "experiments/arte_del_rischio/games.csv",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/games.csv",
+      "sha256": "87115e2f2040ff34bf53fdea1d4c08824d3d4922a59a246331edc3a301d272f7",
+      "bytes": 1774122
+    },
+    {
+      "old": "experiments/arte_del_rischio/measured-tables.md",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/measured-tables.md",
+      "sha256": "08a4350c9578ed1a16c56da5c7ab32d7bcf71339848633a0ee552f1d6e46873a",
+      "bytes": 2404
+    },
+    {
+      "old": "experiments/arte_del_rischio/physical-sample.csv",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/physical-sample.csv",
+      "sha256": "e0e44b90f1c028887ec2cba784d5a7b71818b6375109262ee1365caa18e151ce",
+      "bytes": 75
+    },
+    {
+      "old": "experiments/arte_del_rischio/preview-1080.png",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/preview-1080.png",
+      "sha256": "13d84987609842fa427f5c9bfe4b92eb8129025d2c91dfb1a78384a36a9b98df",
+      "bytes": 2590685
+    },
+    {
+      "old": "experiments/arte_del_rischio/preview-720.png",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/preview-720.png",
+      "sha256": "8e33124cd5ed03278c38fdd7bf15e084ecae47decc273e87095b3f62bdd4dbef",
+      "bytes": 1198175
+    },
+    {
+      "old": "experiments/arte_del_rischio/preview-work-1080.png",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/preview-work-1080.png",
+      "sha256": "432a595bd48e9683c63c8a56b34c0c07cd342790d3f6f83c12cab8e4a48db2f1",
+      "bytes": 2568691
+    },
+    {
+      "old": "experiments/arte_del_rischio/README.md",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/README.md",
+      "sha256": "8b1adf3bfaa1bc56d78b4fda42c42558236ff0bceb26e0db1059b0d3dd7abeaf",
+      "bytes": 4095
+    },
+    {
+      "old": "experiments/arte_del_rischio/REPORT.md",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/REPORT.md",
+      "sha256": "3a3453d25b402bf37a0c8307103740454bf7b30bcb839a0a9feb70cee4c85d4d",
+      "bytes": 11389
+    },
+    {
+      "old": "experiments/arte_del_rischio/results.csv",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/results.csv",
+      "sha256": "83ff046aeacb6303d7caa8f847653c605eb499360f3dc2a0c3be5b42ec33abb0",
+      "bytes": 3384
+    },
+    {
+      "old": "experiments/arte_del_rischio/rng.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/rng.lua",
+      "sha256": "faa05776520450025dd8fc12873ea3033db38fa5333471aaa27343e3b7c94602",
+      "bytes": 293
+    },
+    {
+      "old": "experiments/arte_del_rischio/rules.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/rules.lua",
+      "sha256": "6528eeaceb19d13a25e4a7c5ff8b1c94e25720081c97280258dffd22c1956505",
+      "bytes": 3691
+    },
+    {
+      "old": "experiments/arte_del_rischio/simulate.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/simulate.lua",
+      "sha256": "369e0f943eeaba6b55358cf9d494728397a80e0d07fde10c0af9cc888205ecb5",
+      "bytes": 4290
+    },
+    {
+      "old": "experiments/arte_del_rischio/smoke-quick.log",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/smoke-quick.log",
+      "sha256": "3c147373a8c24247df6add67712fdc4d2fbcd1b8234cfe1837c98ce64aea973e",
+      "bytes": 510
+    },
+    {
+      "old": "experiments/arte_del_rischio/smoke.log",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/smoke.log",
+      "sha256": "66ba431a8b9f7beba69310d4429bd1df1879517c614f9d61aee54f725a3bfe10",
+      "bytes": 817
+    },
+    {
+      "old": "experiments/arte_del_rischio/smoke.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/smoke.lua",
+      "sha256": "645628d7b4812a54077d1673cd5e003b0ca086ac24e55f51962dcf94a0e1cc13",
+      "bytes": 6062
+    },
+    {
+      "old": "experiments/arte_del_rischio/summarize.py",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/summarize.py",
+      "sha256": "0a2acbb72935ef1ab5723550c7814a69bdab5bc7f75cf189dfc941a82ad3a738",
+      "bytes": 1684
+    },
+    {
+      "old": "experiments/arte_del_rischio/test.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/test.lua",
+      "sha256": "95e4cd3846cda1d3c85dc5fced0d05f33ad0e1c461f453aded96ba20e3088fe9",
+      "bytes": 2832
+    },
+    {
+      "old": "experiments/arte_del_rischio/ui.lua",
+      "new": "legacy/prototypes/experiments/arte_del_rischio/ui.lua",
+      "sha256": "adfcb6f7b7daacd26755b7b8f5769b245b860ca354d9df322ae61cfb7992d18b",
+      "bytes": 8317
+    },
+    {
+      "old": "experiments/folio_roguelite/analyse.lua",
+      "new": "legacy/prototypes/experiments/folio_roguelite/analyse.lua",
+      "sha256": "4be29cbdf4cb828337dbf76f39652e994a82a212f24384c26068ec48007a9342",
+      "bytes": 2144
+    },
+    {
+      "old": "experiments/folio_roguelite/analyse_bank.py",
+      "new": "legacy/prototypes/experiments/folio_roguelite/analyse_bank.py",
+      "sha256": "06306315f1b9a43a45d7eb19298030426194bb63add5f74270561450403a42fb",
+      "bytes": 888
+    },
+    {
+      "old": "experiments/folio_roguelite/app/conf.lua",
+      "new": "legacy/prototypes/experiments/folio_roguelite/app/conf.lua",
+      "sha256": "4c5de0107301bb86bb2f9101d217e42474970d0ec61e3d0c049ff44961bd42b9",
+      "bytes": 239
+    },
+    {
+      "old": "experiments/folio_roguelite/app/main.lua",
+      "new": "legacy/prototypes/experiments/folio_roguelite/app/main.lua",
+      "sha256": "8f2ac07b6366c9850c91a5a2f3973078d2608aa5f0e61d0e9a61d0dbd43f2a17",
+      "bytes": 1319
+    },
+    {
+      "old": "experiments/folio_roguelite/Avvia.cmd",
+      "new": "legacy/prototypes/experiments/folio_roguelite/Avvia.cmd",
+      "sha256": "ff25cfd5a9bd1277c6222d5b3cb2d77f35c4fe1d6cba14e5e5adfb26e24f57a9",
+      "bytes": 233
+    },
+    {
+      "old": "experiments/folio_roguelite/folio-roguelite.love",
+      "new": "legacy/prototypes/experiments/folio_roguelite/folio-roguelite.love",
+      "sha256": "4504c1ea89186871fa21ec4d4a2ae0cde91794d0a9a717b80a26acec69901804",
+      "bytes": 36531138
+    },
+    {
+      "old": "experiments/folio_roguelite/PLAN.md",
+      "new": "legacy/prototypes/experiments/folio_roguelite/PLAN.md",
+      "sha256": "84a70aa6d6a258f06d2b99cbeded8b78c8f52126ae53338ee0e18bb991ef9dd1",
+      "bytes": 1932
+    },
+    {
+      "old": "experiments/folio_roguelite/preview-1080.png",
+      "new": "legacy/prototypes/experiments/folio_roguelite/preview-1080.png",
+      "sha256": "ae44356d5e5ae914b5817aeb52965e67475655ddadea75355b5561edce9d4e94",
+      "bytes": 2512392
+    },
+    {
+      "old": "experiments/folio_roguelite/preview-720.png",
+      "new": "legacy/prototypes/experiments/folio_roguelite/preview-720.png",
+      "sha256": "b4cd06eeda7a86d2641796b80a290f8697463755d09b68f66f9781b96d11036c",
+      "bytes": 1170380
+    },
+    {
+      "old": "experiments/folio_roguelite/preview-choice.png",
+      "new": "legacy/prototypes/experiments/folio_roguelite/preview-choice.png",
+      "sha256": "e0d638c97fa5c260324829ec1f4583afefad70d6e1576fa503481eb33a832e14",
+      "bytes": 2298733
+    },
+    {
+      "old": "experiments/folio_roguelite/preview-physical.png",
+      "new": "legacy/prototypes/experiments/folio_roguelite/preview-physical.png",
+      "sha256": "25b3a6c247f49239ef84a91f24bb9c860aa88bb624732f40f63fbf6fae4adf50",
+      "bytes": 2516383
+    },
+    {
+      "old": "experiments/folio_roguelite/README.md",
+      "new": "legacy/prototypes/experiments/folio_roguelite/README.md",
+      "sha256": "9eb12b213ac8843ba785c885942db533d470c7c5fef58cf7e867aeef50dbaa34",
+      "bytes": 11903
+    },
+    {
+      "old": "experiments/folio_roguelite/rules.lua",
+      "new": "legacy/prototypes/experiments/folio_roguelite/rules.lua",
+      "sha256": "43f61eabf1b903ee38a9879f19bec1715a57df2fe59da29a3065a188cc504a9b",
+      "bytes": 4703
+    },
+    {
+      "old": "experiments/folio_roguelite/smoke.log",
+      "new": "legacy/prototypes/experiments/folio_roguelite/smoke.log",
+      "sha256": "4ab9a71a3082a27b9e1dd266ddb44e6292f09c914867f09da2772da30a3f7a6c",
+      "bytes": 485
+    },
+    {
+      "old": "experiments/folio_roguelite/smoke.lua",
+      "new": "legacy/prototypes/experiments/folio_roguelite/smoke.lua",
+      "sha256": "d6b96006d992b6636ac7d007bf50c4033e4cd342a975a2c202171743227ea30e",
+      "bytes": 4586
+    },
+    {
+      "old": "experiments/folio_roguelite/test.lua",
+      "new": "legacy/prototypes/experiments/folio_roguelite/test.lua",
+      "sha256": "f6b9b430e00173ca746a44ee3cd52100f0489d7627ec08064700e7800b83efe7",
+      "bytes": 2815
+    },
+    {
+      "old": "experiments/folio_roguelite/ui.lua",
+      "new": "legacy/prototypes/experiments/folio_roguelite/ui.lua",
+      "sha256": "c020166192a393adc784fe00e0376ae7903f4d866fca0cded683d03b35da88f0",
+      "bytes": 10084
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/AppRun",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/AppRun",
+      "sha256": "f5064deed237926b64c446429fa5da5f7f4454d0339e273c4a2f1b650cfd9268",
+      "bytes": 881
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/bin/love",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/bin/love",
+      "sha256": "7de20f39a7431e2da879c46ba29271b89a997c561d67c7065b1b1845291f2abe",
+      "bytes": 4204448
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libfreetype.so.6",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libfreetype.so.6",
+      "sha256": "0182bbea8b69ad054704dadc19aa3a9f88207900b4dc108efd8ab3604b50a5f4",
+      "bytes": 1112488
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libharfbuzz.so",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libharfbuzz.so",
+      "sha256": "4f979e5f08ea5fbab91bfabd6bcc9fb9268acac391ee1afce9fe8d56cfc7326f",
+      "bytes": 1057824
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/liblove-12.0.so",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/liblove-12.0.so",
+      "sha256": "2008dfac41bf2e7cdcf7e4e1d0137a14342393e3719e01c9d1cc7345fbef9d36",
+      "bytes": 4454368
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libluajit-5.1.so.2",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libluajit-5.1.so.2",
+      "sha256": "80da16cc581eb0ff0fe162c35266c9203bd14c2da9f2eb4a1476d21e05671fee",
+      "bytes": 577248
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libmodplug.so.1",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libmodplug.so.1",
+      "sha256": "a7adef37cf4a44c933ddecf9c80cc28c670ccf8a779349fb39f07c92b81e80a8",
+      "bytes": 344256
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libogg.so.0",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libogg.so.0",
+      "sha256": "6f29ec0bf375891262f2c8d089987a280a2f99701c0a0a87e297e31e8784b332",
+      "bytes": 39344
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libopenal.so.1",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libopenal.so.1",
+      "sha256": "86b722e041ce85bb1ae9208f0ca5e078b01eed1223211591779ab1f50e9e39f9",
+      "bytes": 1045200
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libSDL2-2.0.so.0",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libSDL2-2.0.so.0",
+      "sha256": "2486cc71023bf4d89fbfc8d6147e0228ffb1fcf565573fbbcacc3cd02c73bbb6",
+      "bytes": 2055520
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libtheoradec.so.1",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libtheoradec.so.1",
+      "sha256": "f8eef1967d31d2d26b651e719f4bd56128315a360bdc0c7aa998cb9e0db2752a",
+      "bytes": 100936
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libvorbis.so.0",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libvorbis.so.0",
+      "sha256": "5276e3459f86e8d5d62b407065fac112a567d33310e215a5090151d58cdb4309",
+      "bytes": 240624
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libvorbisfile.so.3",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libvorbisfile.so.3",
+      "sha256": "dcb9e45eb8f3febcd7f865a3e7a05e1fc0aca9b0be051705d12bbe83c775475f",
+      "bytes": 43664
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libz.so.1",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libz.so.1",
+      "sha256": "f8e18f46acf42e145c26beaf233f90aab05fd5466af2225bfb524d37166b830e",
+      "bytes": 117448
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/lib/libz.so.1.debug",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/lib/libz.so.1.debug",
+      "sha256": "e206771fd608190120fd5d4eb6ab5226c121ab73c791e611447e3f507725e43f",
+      "bytes": 11248
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/license.txt",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/license.txt",
+      "sha256": "d7840af7ce7e3d91d2f7fa6c74a6dcad2c3e61c97405285c76011cfc70e62040",
+      "bytes": 73087
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/love.desktop",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/love.desktop",
+      "sha256": "9706f7d1fb8c90d707aeeb17c6d9fe5f7d2569f87389192d14b41a628d9a3353",
+      "bytes": 253
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/love.svg",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/love.svg",
+      "sha256": "48b0f510791c70953bcfe9fe5eca47ec143eb547387eacdac266ad7bd59344c6",
+      "bytes": 73321
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/applications/love.desktop",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/applications/love.desktop",
+      "sha256": "9706f7d1fb8c90d707aeeb17c6d9fe5f7d2569f87389192d14b41a628d9a3353",
+      "bytes": 253
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/icons/hicolor/scalable/mimetypes/application-x-love-game.svg",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/icons/hicolor/scalable/mimetypes/application-x-love-game.svg",
+      "sha256": "8f50c575f9ca774f529c8bcbbc2a1d652cf38af5ac515d8842ae035f960e9eb5",
+      "bytes": 60514
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/bc.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/bc.lua",
+      "sha256": "3f66f33574e3a937148a35d6d3fc293807ea95f826ec80f6057eddf043d2b2b3",
+      "bytes": 5547
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/bcsave.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/bcsave.lua",
+      "sha256": "8c4fbe30a443805d6c3daf03a1eec22ef5280ab2c70d954c1e960fa00bbefd13",
+      "bytes": 17500
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_arm.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_arm.lua",
+      "sha256": "aca80b59c1e27740e366d49bee34ab0876d7ee67907eaaae915ab9c4f9d1485d",
+      "bytes": 19344
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_arm64.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_arm64.lua",
+      "sha256": "c36141f6c07beb3822a0104478d2090eca3f36d3e51f55a091b8a633049ac83e",
+      "bytes": 30690
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_arm64be.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_arm64be.lua",
+      "sha256": "9d843923fa65a55dbdfdd67792cef1e387e457fe56dfb3aa053383f93b5113be",
+      "bytes": 619
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips.lua",
+      "sha256": "a1574a1a11050ff755b023f0a84dea6ee77ef0c9343067fb7be5e73410a41bba",
+      "bytes": 22010
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips64.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips64.lua",
+      "sha256": "8c03108323845d7d5e5e3dc70fc5f1a5c6e0a83667004a5445d5c81bfbb218ea",
+      "bytes": 706
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips64el.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips64el.lua",
+      "sha256": "4f649731580de43e51762b6d7e3dc77ec06a21dc43121f0594e45edaad5dcda6",
+      "bytes": 717
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips64r6.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips64r6.lua",
+      "sha256": "c0c8df309f8a16c8b08272a3a41a385ae2bb23860a4b212619762d5ff4f0a118",
+      "bytes": 717
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips64r6el.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mips64r6el.lua",
+      "sha256": "1820e785dcaf0af41940d41ff78c673b75ce838dcdeccb550be7731d6af15040",
+      "bytes": 728
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mipsel.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_mipsel.lua",
+      "sha256": "c29cda3423b8627d1ce8ecc187d7280d81c2c3fef4530b4d7e62a7368b5fcf4f",
+      "bytes": 715
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_ppc.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_ppc.lua",
+      "sha256": "5684c4b86a5876d832f9a2e137ba37c9b69f3893cec7529e2a4cb8dc79aed318",
+      "bytes": 20301
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_x64.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_x64.lua",
+      "sha256": "425dc377364484aa4cd15f8118e404e328050383bf376eac93c34ca594119a73",
+      "bytes": 712
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_x86.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dis_x86.lua",
+      "sha256": "9f80c8ba508d87b8125b9bde5b253dc018baf0fc5c940aa51551b75968d7d111",
+      "bytes": 33826
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dump.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/dump.lua",
+      "sha256": "e4b273673638f3d5df9db8bd3d225460250c62c9dcb078dd1a998dfef7731b06",
+      "bytes": 20755
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/p.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/p.lua",
+      "sha256": "1a060ad109f5e7b8e000fb26dc1fec3b51cb26c1e55fce8641862115037d6cf3",
+      "bytes": 9104
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/v.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/v.lua",
+      "sha256": "f2c160b08fedc5450b5b212eaadf1f572f67c04e742c12750ab48ec4e84635d9",
+      "bytes": 5869
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/vmdef.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/vmdef.lua",
+      "sha256": "129903aef0a3dc0a3b28d453506efc453e1a3e57b306012a9797c6b4969cf457",
+      "bytes": 8110
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/zone.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/luajit-2.1/jit/zone.lua",
+      "sha256": "4eede63e5341b52adec2a3ef7a59c3e852d79d9202e6cd1860dd83647c6f40b4",
+      "bytes": 1002
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/mime/packages/love.xml",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/mime/packages/love.xml",
+      "sha256": "5b72ae3818ada71ec7fd69c2a27126dc5c759257e1ff203639655c389a24ccb1",
+      "bytes": 242
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/linux/share/pixmaps/love.svg",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/linux/share/pixmaps/love.svg",
+      "sha256": "48b0f510791c70953bcfe9fe5eca47ec143eb547387eacdac266ad7bd59344c6",
+      "bytes": 73321
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/changes.txt",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/changes.txt",
+      "sha256": "ee7dd8500838d4c51f0c7383fb6db6d442727cf8eebf795b69036856f0b55459",
+      "bytes": 96770
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/game.ico",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/game.ico",
+      "sha256": "c38ab2e55a2e537a8c069ea045765153ce72b84b915d87caf7d58d2da5e88328",
+      "bytes": 32032
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/license.txt",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/license.txt",
+      "sha256": "9a8b8b44bb9bec6734da2c19eca5a73030dc2cbea85c461b79cd2c815c7aff1e",
+      "bytes": 73037
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/love.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/love.dll",
+      "sha256": "2d076df74bea5d97ed5d1ca6f9df648b5c85e7b293b1e47b2baabf4bda8dd079",
+      "bytes": 7493632
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/love.exe",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/love.exe",
+      "sha256": "ad81ff0fee68e20604a442b3145d33c4d413b52e43fbdf4d0f230a813f6ef093",
+      "bytes": 53248
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/love.ico",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/love.ico",
+      "sha256": "5007d21cb7278da8e24280899aa015e23276a68c0d9429d02a2e7ed1b7e4a56d",
+      "bytes": 34675
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/lovec.exe",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/lovec.exe",
+      "sha256": "f8f42580295b64346a018f2c34f4f26b1f7d8e18eda66e9157eaba0008f02097",
+      "bytes": 52736
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/lua51.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/lua51.dll",
+      "sha256": "cf1ced5e335b82a1b55715892fb0e94f3299082eb9a4edea123f9a71edb3d6ed",
+      "bytes": 590848
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/msvcp140.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/msvcp140.dll",
+      "sha256": "a4c2229bdc2a2a630acdc095b4d86008e5c3e3bc7773174354f3da4f5beb9cde",
+      "bytes": 575056
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/msvcp140_1.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/msvcp140_1.dll",
+      "sha256": "91cd05c16c61c39788c47434602a59c17f5b08dbb3eee04ce85f8d5b70e8e604",
+      "bytes": 35808
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/msvcp140_2.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/msvcp140_2.dll",
+      "sha256": "713f17b253d802d283d306ce75647e37d83a546aeb1a881e5d9e529e856c007e",
+      "bytes": 268880
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/msvcp140_atomic_wait.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/msvcp140_atomic_wait.dll",
+      "sha256": "aede4ec454a82f146eb4a721e616e2086870107d88aabc6b0bd1eea0a505d935",
+      "bytes": 50664
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/msvcp140_codecvt_ids.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/msvcp140_codecvt_ids.dll",
+      "sha256": "d52d349fbbe6abc61965c07e04cc82d8ee0cea1de7faf90a838964e3f40acedd",
+      "bytes": 31744
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/OpenAL32.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/OpenAL32.dll",
+      "sha256": "3404b6af091657e261b7dd5fb44c8776d57785dc36257f310e33a602295d7a37",
+      "bytes": 1272832
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/readme.txt",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/readme.txt",
+      "sha256": "1d65fa1b46c46111eaad3af474fb5a7c1926b0dfd7587ac8f07c02b63ce48a30",
+      "bytes": 4843
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/SDL2.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/SDL2.dll",
+      "sha256": "4f2745c78c2c6222cc9dd7270fe1984e30a2a7a1461042679be80948d052b7f4",
+      "bytes": 1654784
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/vcruntime140.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/vcruntime140.dll",
+      "sha256": "02c6aa0e6e624411a9f19b0360a7865ab15908e26024510e5c38a9c08362c35a",
+      "bytes": 119888
+    },
+    {
+      "old": "resources/shaders/bloom/bin/12/win64/vcruntime140_1.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/12/win64/vcruntime140_1.dll",
+      "sha256": "7dd9aa02e271c68ca6d5f18d651d23a15d7259715af43326578f7dde27f37637",
+      "bytes": 49640
+    },
+    {
+      "old": "resources/shaders/bloom/bin/lib/linux/cimgui.so",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/lib/linux/cimgui.so",
+      "sha256": "57ea35a5abb74f5acc26a71d345c0b4b10b4e18534b97769de5b4d51953106da",
+      "bytes": 2071424
+    },
+    {
+      "old": "resources/shaders/bloom/bin/lib/win64/cimgui.dll",
+      "new": "legacy/old-assets/resources/shaders/bloom/bin/lib/win64/cimgui.dll",
+      "sha256": "3f1a9bdb09ec5cb4e2d6ee3d34faae050018bcf0124603106ede9ad0d75dcdfd",
+      "bytes": 972288
+    },
+    {
+      "old": "resources/shaders/bloom/data/bloom.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/bloom.lua",
+      "sha256": "f5172e0611279115884cc045110a228125a313311e1dc1945c6a4f27a297e405",
+      "bytes": 8249
+    },
+    {
+      "old": "resources/shaders/bloom/data/common.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/common.lua",
+      "sha256": "adce643b8a9799a21fd2f978778a7b44b268327f5fc4180ecf1cafff82485d26",
+      "bytes": 1133
+    },
+    {
+      "old": "resources/shaders/bloom/data/conf.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/conf.lua",
+      "sha256": "0c842b45f4b20028cc3185accb86a5fc68f77cf8ef38e828e11fc30f1bc06aec",
+      "bytes": 1206
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/cdef.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/cdef.lua",
+      "sha256": "20fe3c787b6b7f72fe6f686f655d96766523ed18ce8e4db2c89291bcf4c70cf0",
+      "bytes": 104009
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/enums.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/enums.lua",
+      "sha256": "4832f6c0832b587c5077fb7f0e715529cda762d6be8e40e955381ff9ada389aa",
+      "bytes": 24044
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/ignored_defaults.txt",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/ignored_defaults.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/ignored_out_arg.txt",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/ignored_out_arg.txt",
+      "sha256": "bd405292ad3ef858e1f4eb7edd9a22507750d0de1b0b7730b02ba0716f471c5c",
+      "bytes": 166
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/init.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/init.lua",
+      "sha256": "d5aea3a2934a774135842e1343020cb396acc405c1f7176f17dfb5c548751084",
+      "bytes": 425
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/love.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/love.lua",
+      "sha256": "abf6c642da8b153b8aec12c6b5f483e2b358e734ee60fb03b7c5b73cb357c3bb",
+      "bytes": 16097
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/master.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/master.lua",
+      "sha256": "9c1feca8560ff45d264767806e20766e01764ed15934dd69d6a4ebe5e5dab377",
+      "bytes": 42
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/overloads.txt",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/overloads.txt",
+      "sha256": "b0e19721446cea5833808a416c53b94030a81f6ad00456f7d90cd3d251bd72e6",
+      "bytes": 5430
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/shortcuts.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/shortcuts.lua",
+      "sha256": "7cc3a7b2fd31afc1178faf692859d44e0b5c5075707ba453d9f033d463f4eb8b",
+      "bytes": 2219
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/cimgui/wrap.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/cimgui/wrap.lua",
+      "sha256": "51331370c8b28cd6d79d1057a19c692c343f997aee4640a5f1e62a004867c042",
+      "bytes": 122647
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/frogl/init.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/frogl/init.lua",
+      "sha256": "c40f7cefdc0ffb0714eb21ea6bc100e0f637e5b7d47b09cb9826c870be1248e3",
+      "bytes": 12311
+    },
+    {
+      "old": "resources/shaders/bloom/data/lib/luastrict/strict.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/lib/luastrict/strict.lua",
+      "sha256": "11e81b55d240efdd6d989e9b599e8ff95e41639fab6fb86175c9aa9dd779910d",
+      "bytes": 992
+    },
+    {
+      "old": "resources/shaders/bloom/data/main.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/main.lua",
+      "sha256": "99fd89290aecf0b38bdb4f8bb3be8e155bb72ec00cd56f617191b5a1772e454b",
+      "bytes": 2074
+    },
+    {
+      "old": "resources/shaders/bloom/data/scene.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/scene.lua",
+      "sha256": "7f0abef523b77119afacb02acb140884860ba2c208c662324a2d3935dbf5850f",
+      "bytes": 1985
+    },
+    {
+      "old": "resources/shaders/bloom/data/shader/copy.FRG.glsl",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/shader/copy.FRG.glsl",
+      "sha256": "f0aa56e5db9b5f32a9ad8dc0d4812190ee62c89e0d59aeecdb98f03cfd01c679",
+      "bytes": 414
+    },
+    {
+      "old": "resources/shaders/bloom/data/shader/copy.VTX.glsl",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/shader/copy.VTX.glsl",
+      "sha256": "8a722c7ac920a5cccd9ef942443edd9283ba084eb30594e95e9d754f852507c6",
+      "bytes": 380
+    },
+    {
+      "old": "resources/shaders/bloom/data/shader/downsample.FRG.glsl",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/shader/downsample.FRG.glsl",
+      "sha256": "5c9d2f175e09126b739a2f4153f3ed94750cea863a595d59cd04c64a0879d12d",
+      "bytes": 4566
+    },
+    {
+      "old": "resources/shaders/bloom/data/shader/emissive.FRG.glsl",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/shader/emissive.FRG.glsl",
+      "sha256": "55d470f57e7b888f67a0fada6cf8c6f6d2a5c5fb82ded9b164b5fbc343816604",
+      "bytes": 757
+    },
+    {
+      "old": "resources/shaders/bloom/data/shader/emissive.VTX.glsl",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/shader/emissive.VTX.glsl",
+      "sha256": "e1af1e58d535e7a5097da80626afea63d4c319bfba02d2268cb5aee2184d1533",
+      "bytes": 184
+    },
+    {
+      "old": "resources/shaders/bloom/data/shader/profile_curve.FRG.glsl",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/shader/profile_curve.FRG.glsl",
+      "sha256": "f1948b7316466dfc7510d005a5a65d80b597eddcd62b75ea79ba812ceef85102",
+      "bytes": 720
+    },
+    {
+      "old": "resources/shaders/bloom/data/shader/tonemap.FRG.glsl",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/shader/tonemap.FRG.glsl",
+      "sha256": "03095709e519da2a03ae1de2c1332711f90db81194d9e938c0b5e25641c198f1",
+      "bytes": 1518
+    },
+    {
+      "old": "resources/shaders/bloom/data/shader/upsample.FRG.glsl",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/shader/upsample.FRG.glsl",
+      "sha256": "42dff227529570bb53efffa868e8965e77ba8f0907a2f0e86e6b868ce6c6090b",
+      "bytes": 1155
+    },
+    {
+      "old": "resources/shaders/bloom/data/temp.txt",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/temp.txt",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    {
+      "old": "resources/shaders/bloom/data/texture/tonemap_tony.exr",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/texture/tonemap_tony.exr",
+      "sha256": "d6ec833176c1a21fc94182ecbdd94b22a9f39505c16cc474b1231826eac3b45d",
+      "bytes": 1770571
+    },
+    {
+      "old": "resources/shaders/bloom/data/ui.lua",
+      "new": "legacy/old-assets/resources/shaders/bloom/data/ui.lua",
+      "sha256": "82249372ea1d0e37450fc8c4a3fb9554507c1effbe4b3f465914b684d0c6898d",
+      "bytes": 3420
+    },
+    {
+      "old": "resources/shaders/bloom/LICENSE",
+      "new": "legacy/old-assets/resources/shaders/bloom/LICENSE",
+      "sha256": "9558533d61615eacf79fdb5ae98d321859a72681df49fab3adeb5585b996bc98",
+      "bytes": 1069
+    },
+    {
+      "old": "resources/shaders/bloom/README.md",
+      "new": "legacy/old-assets/resources/shaders/bloom/README.md",
+      "sha256": "5114f2f7e0b7a0066e5efea6b40dacabb3f755109afcb6fdc5e91f841c4d4093",
+      "bytes": 579
+    },
+    {
+      "old": "resources/shaders/bloom/run.bat",
+      "new": "legacy/old-assets/resources/shaders/bloom/run.bat",
+      "sha256": "5649375da41acff41ded906377c81956d4cfbeb9cbe7094ad4db3147ed8ef8c6",
+      "bytes": 107
+    },
+    {
+      "old": "resources/shaders/bloom/run.sh",
+      "new": "legacy/old-assets/resources/shaders/bloom/run.sh",
+      "sha256": "2b4270331d6c6c9206967298befac184c9ffdc3e32efb91f60dad63cd6a38785",
+      "bytes": 262
+    },
+    {
+      "old": "resources/shaders/bloom/screenshot.png",
+      "new": "legacy/old-assets/resources/shaders/bloom/screenshot.png",
+      "sha256": "cd52dc1a0a22185a6981ff9854f3e50efd69974d61c90b00a24ce05244c05d9e",
+      "bytes": 725743
+    },
+    {
+      "old": "resources/shaders/pulse/davidbd.ttf",
+      "new": "legacy/old-assets/resources/shaders/pulse/davidbd.ttf",
+      "sha256": "8b9c0065059b945339580aaa423e98a25068f57142d9d787899efd735fecac31",
+      "bytes": 55576
+    },
+    {
+      "old": "resources/shaders/pulse/main.lua",
+      "new": "legacy/old-assets/resources/shaders/pulse/main.lua",
+      "sha256": "8b7caa9eed573f8192233bb8a6c12e15fb17763da02edf6f6b3675e0cc6b3877",
+      "bytes": 4303
+    },
+    {
+      "old": "resources/shaders/pulse/MyTest1.bmp",
+      "new": "legacy/old-assets/resources/shaders/pulse/MyTest1.bmp",
+      "sha256": "700c6761f3e6fc200c7f6906b9be28b1e00230c42f2e21c9f34c263d9397601b",
+      "bytes": 1440054
+    },
+    {
+      "old": "resources/shaders/pulse/pulse.lua",
+      "new": "legacy/old-assets/resources/shaders/pulse/pulse.lua",
+      "sha256": "fd47d45e277d1f2cba8b93c7cd06138da0f8c7c678668fe3ceadbd9abd0e54f0",
+      "bytes": 479
+    },
+    {
+      "old": "resources/shaders/inkblot/ink.lua",
+      "new": "legacy/old-assets/resources/shaders/inkblot/ink.lua",
+      "sha256": "8e6b141c6a37e650a240522e9da8864736ab057c1b426d93499af95844fce652",
+      "bytes": 19883
+    },
+    {
+      "old": "resources/shaders/inkblot/main.lua",
+      "new": "legacy/old-assets/resources/shaders/inkblot/main.lua",
+      "sha256": "ad204fb9204d4c57c473c7d7237f1b83b1b6418d6b7ae632c847d60c69873d02",
+      "bytes": 956
+    },
+    {
+      "old": "resources/shaders/simple-reflection-tech-demo/background.png",
+      "new": "legacy/old-assets/resources/shaders/simple-reflection-tech-demo/background.png",
+      "sha256": "029385f3571138e2d1b2cf4081c428b0b76c449f80e6820c591b17f5587d968a",
+      "bytes": 21244
+    },
+    {
+      "old": "resources/shaders/simple-reflection-tech-demo/conf.lua",
+      "new": "legacy/old-assets/resources/shaders/simple-reflection-tech-demo/conf.lua",
+      "sha256": "e5901a45a86f6bf37f67455295b0480f03bbc912903bd7968430495b1284c6c4",
+      "bytes": 77
+    },
+    {
+      "old": "resources/shaders/simple-reflection-tech-demo/form.png",
+      "new": "legacy/old-assets/resources/shaders/simple-reflection-tech-demo/form.png",
+      "sha256": "f9356db0079b0cdb4483da8d94b31ebc733e054bf78a7970c51de96b110ba93a",
+      "bytes": 1709
+    },
+    {
+      "old": "resources/shaders/simple-reflection-tech-demo/main.lua",
+      "new": "legacy/old-assets/resources/shaders/simple-reflection-tech-demo/main.lua",
+      "sha256": "0dc406c6b3a71509400f51cebff05a33a79ac0a89dd438984cb37c451c755c68",
+      "bytes": 2478
+    },
+    {
+      "old": "scripts/run_risk.py",
+      "new": "legacy/old-scripts/scripts/run_risk.py",
+      "sha256": "658d7701ab453533f08eadab472b3431c1244d5ca71fa1e1e12dda891d18b8f5",
+      "bytes": 382
+    },
+    {
+      "old": "scripts/run_folio.py",
+      "new": "legacy/old-scripts/scripts/run_folio.py",
+      "sha256": "658d7701ab453533f08eadab472b3431c1244d5ca71fa1e1e12dda891d18b8f5",
+      "bytes": 382
+    },
+    {
+      "old": "scripts/run_desk_smoke.py",
+      "new": "legacy/old-scripts/scripts/run_desk_smoke.py",
+      "sha256": "658d7701ab453533f08eadab472b3431c1244d5ca71fa1e1e12dda891d18b8f5",
+      "bytes": 382
+    },
+    {
+      "old": "scripts/desk_smoke/conf.lua",
+      "new": "legacy/old-scripts/scripts/desk_smoke/conf.lua",
+      "sha256": "d8b95adcb44514fc4917055b91fe4ab0d7e61016d8989cd3ef62d216f8a1a90c",
+      "bytes": 248
+    },
+    {
+      "old": "scripts/desk_smoke/main.lua",
+      "new": "legacy/old-scripts/scripts/desk_smoke/main.lua",
+      "sha256": "d9fa674893a688ad7bc2b7a720b01768907d1afe36a16363fcb7f831a43cc1f6",
+      "bytes": 10247
+    },
+    {
+      "old": "src/core/module_manager.lua",
+      "new": "legacy/cromatic-system/src/core/module_manager.lua",
+      "sha256": "772d6ee0be290efecad6c92e85162e65a2385919f62c53abb7ccd1b32c0c94a6",
+      "bytes": 2132
+    }
+  ],
+  "application_imports": {
+    "src/app/dice_runtime.lua": [
+      "core",
+      "src.engine3d.render",
+      "src.engine3d.physics",
+      "src.engine3d.geometry",
+      "src.engine3d.view",
+      "src.engine3d.light",
+      "src.features.scriptorium.page_layout",
+      "src.core.settings_state",
+      "src.core.audio_manager",
+      "src.core.logger",
+      "src.core.dice_config",
+      "src.data.tray_layout",
+      "src.core.runtime_ui",
+      "src.core.runtime_state",
+      "src.core.resolution_manager",
+      "src.core.game_manager",
+      "src.core.navigation",
+      "src.core.engine_bridge",
+      "src.core.execution_order",
+      "src.engine3d.roll_resolution",
+      "src.engine3d.containment",
+      "src.features.",
+      "src.engine3d.spawn_clearance"
+    ],
+    "src/core/audio_manager.lua": [
+      "src.core.settings_state"
+    ],
+    "src/core/dice_config.lua": [
+      "src.core.schema",
+      "src.data.dice_roll_schema",
+      "src.data.dice_visual_schema",
+      "src.data.dice_scene_schema"
+    ],
+    "src/core/engine_bridge.lua": [],
+    "src/core/event_bus.lua": [],
+    "src/core/execution_order.lua": [
+      "src.data.execution_order_plan"
+    ],
+    "src/core/game_manager.lua": [
+      "src.core.event_bus"
+    ],
+    "src/core/i18n.lua": [
+      "src.core.settings_state",
+      "src.data.localization."
+    ],
+    "src/core/logger.lua": [],
+    "src/core/lua_table_store.lua": [],
+    "src/core/menu_particles.lua": [],
+    "src/core/navigation.lua": [],
+    "src/core/resolution_manager.lua": [],
+    "src/core/runtime_state.lua": [],
+    "src/core/runtime_ui.lua": [
+      "src.core.runtime_state"
+    ],
+    "src/core/schema.lua": [],
+    "src/core/settings_state.lua": [
+      "src.core.logger",
+      "src.core.runtime_state",
+      "src.core.lua_table_store",
+      "src.core.schema",
+      "src.data.settings_schema",
+      "src.data.settings_persistence_schema"
+    ],
+    "src/data/campaign_select_schema.lua": [],
+    "src/data/colors.lua": [],
+    "src/data/commission_menu.lua": [],
+    "src/data/dice_roll_schema.lua": [],
+    "src/data/dice_scene_schema.lua": [],
+    "src/data/dice_visual_schema.lua": [],
+    "src/data/execution_order_plan.lua": [],
+    "src/data/main_menu_schema.lua": [],
+    "src/data/scriptorium_module_config.lua": [],
+    "src/data/settings_persistence_schema.lua": [],
+    "src/data/settings_schema.lua": [],
+    "src/data/settings_ui_schema.lua": [],
+    "src/data/startup_splash_schema.lua": [],
+    "src/data/tray_layout.lua": [],
+    "src/engine3d/containment.lua": [],
+    "src/engine3d/face_state.lua": [
+      "core"
+    ],
+    "src/engine3d/face_texture.lua": [],
+    "src/engine3d/geometry.lua": [
+      "core",
+      "src.engine3d.physics",
+      "src.engine3d.face_texture"
+    ],
+    "src/engine3d/light.lua": [
+      "core",
+      "src.engine3d.view"
+    ],
+    "src/engine3d/physics.lua": [
+      "core",
+      "src.core.logger"
+    ],
+    "src/engine3d/render.lua": [
+      "core",
+      "src.engine3d.view",
+      "src.engine3d.light"
+    ],
+    "src/engine3d/roll_resolution.lua": [
+      "src.engine3d.face_state"
+    ],
+    "src/engine3d/spawn_clearance.lua": [
+      "core"
+    ],
+    "src/engine3d/view.lua": [],
+    "src/features/campaign_select/module.lua": [
+      "src.core.audio_manager",
+      "src.core.i18n",
+      "src.core.menu_particles",
+      "src.core.navigation",
+      "src.core.runtime_ui",
+      "src.core.schema",
+      "src.data.commission_menu",
+      "src.data.campaign_select_schema"
+    ],
+    "src/features/main_menu/module.lua": [
+      "src.core.audio_manager",
+      "src.core.i18n",
+      "src.core.menu_particles",
+      "src.core.navigation",
+      "src.core.runtime_ui",
+      "src.core.schema",
+      "src.core.settings_state",
+      "src.data.main_menu_schema"
+    ],
+    "src/features/scriptorium/desk_view.lua": [
+      "src.features.scriptorium.page_layout",
+      "src.data.colors",
+      "src.core.runtime_ui",
+      "src.data.scriptorium_module_config",
+      "src.core.resolution_manager",
+      "src.core.engine_bridge"
+    ],
+    "src/features/scriptorium/page_layout.lua": [],
+    "src/features/settings/module.lua": [
+      "src.core.settings_state",
+      "src.core.audio_manager",
+      "src.core.i18n",
+      "src.core.menu_particles",
+      "src.core.navigation",
+      "src.core.runtime_ui",
+      "src.core.schema",
+      "src.data.settings_schema",
+      "src.data.settings_ui_schema"
+    ],
+    "src/features/startup_splash/module.lua": [
+      "src.core.audio_manager",
+      "src.core.i18n",
+      "src.core.navigation",
+      "src.core.runtime_ui",
+      "src.core.schema",
+      "src.data.startup_splash_schema"
+    ],
+    "src/data/localization/en.lua": [],
+    "experiments/farkle_roguelite/analyse.lua": [
+      "experiments.farkle_roguelite.rules",
+      "experiments.farkle_roguelite.dice"
+    ],
+    "experiments/farkle_roguelite/dice.lua": [
+      "src.engine3d.face_texture"
+    ],
+    "experiments/farkle_roguelite/hud.lua": [
+      "experiments.farkle_roguelite.rules",
+      "experiments.farkle_roguelite.dice",
+      "experiments.farkle_roguelite.hud_model",
+      "src.core.resolution_manager",
+      "src.features.scriptorium.desk_view"
+    ],
+    "experiments/farkle_roguelite/hud_model.lua": [
+      "experiments.farkle_roguelite.rules"
+    ],
+    "experiments/farkle_roguelite/hud_smoke.lua": [
+      "experiments.farkle_roguelite.rules",
+      "experiments.farkle_roguelite.hud_model",
+      "src.core.resolution_manager",
+      "src.core.engine_bridge"
+    ],
+    "experiments/farkle_roguelite/rules.lua": [],
+    "experiments/farkle_roguelite/smoke.lua": [
+      "experiments.farkle_roguelite.rules",
+      "experiments.farkle_roguelite.dice",
+      "src.core.resolution_manager",
+      "src.core.engine_bridge"
+    ],
+    "experiments/farkle_roguelite/test.lua": [
+      "experiments.farkle_roguelite.rules",
+      "experiments.farkle_roguelite.dice"
+    ],
+    "experiments/farkle_roguelite/test_hud.lua": [
+      "experiments.farkle_roguelite.rules",
+      "experiments.farkle_roguelite.hud_model"
+    ],
+    "experiments/farkle_roguelite/tray_smoke.lua": [
+      "src.data.dice_scene_schema",
+      "src.data.dice_scene_schema"
+    ],
+    "experiments/farkle_roguelite/tray_view.lua": [
+      "src.core.resolution_manager"
+    ],
+    "experiments/farkle_roguelite/ui.lua": [
+      "experiments.farkle_roguelite.rules",
+      "experiments.farkle_roguelite.dice",
+      "experiments.farkle_roguelite.hud",
+      "experiments.farkle_roguelite.hud_model",
+      "src.core.resolution_manager",
+      "src.core.engine_bridge",
+      "experiments.farkle_roguelite.tray_view"
+    ],
+    "experiments/farkle_roguelite/app/conf.lua": [],
+    "experiments/farkle_roguelite/app/main.lua": []
+  },
+  "runtime_loaded": [
+    "experiments.farkle_roguelite.dice",
+    "experiments.farkle_roguelite.hud",
+    "experiments.farkle_roguelite.hud_model",
+    "experiments.farkle_roguelite.rules",
+    "experiments.farkle_roguelite.tray_view",
+    "experiments.farkle_roguelite.ui",
+    "src.core.audio_manager",
+    "src.core.dice_config",
+    "src.core.engine_bridge",
+    "src.core.event_bus",
+    "src.core.execution_order",
+    "src.core.game_manager",
+    "src.core.i18n",
+    "src.core.logger",
+    "src.core.lua_table_store",
+    "src.core.menu_particles",
+    "src.core.navigation",
+    "src.core.resolution_manager",
+    "src.core.runtime_state",
+    "src.core.runtime_ui",
+    "src.core.schema",
+    "src.core.settings_state",
+    "src.data.campaign_select_schema",
+    "src.data.colors",
+    "src.data.commission_menu",
+    "src.data.dice_roll_schema",
+    "src.data.dice_scene_schema",
+    "src.data.dice_visual_schema",
+    "src.data.execution_order_plan",
+    "src.data.localization.en",
+    "src.data.main_menu_schema",
+    "src.data.scriptorium_module_config",
+    "src.data.settings_persistence_schema",
+    "src.data.settings_schema",
+    "src.data.settings_ui_schema",
+    "src.data.startup_splash_schema",
+    "src.data.tray_layout",
+    "src.engine3d.containment",
+    "src.engine3d.face_state",
+    "src.engine3d.face_texture",
+    "src.engine3d.geometry",
+    "src.engine3d.light",
+    "src.engine3d.physics",
+    "src.engine3d.render",
+    "src.engine3d.roll_resolution",
+    "src.engine3d.view",
+    "src.features.campaign_select.module",
+    "src.features.main_menu.module",
+    "src.features.scriptorium.desk_view",
+    "src.features.scriptorium.page_layout",
+    "src.features.settings.module",
+    "src.features.startup_splash.module"
+  ]
+}

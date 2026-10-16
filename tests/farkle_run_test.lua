@@ -1,0 +1,32 @@
+local R=require('src.gameplay.farkle.rules')
+local D=require('src.features.farkle.dice')
+local function roll(s,h) assert(R.start(s));assert(R.settle(s,h)) end
+local function select(s,ids) for _,i in ipairs(ids) do assert(R.toggle(s,i)) end end
+local all={1,2,3,4,5,6}
+local s=R.new();roll(s,{1,5,2,3,4,6});select(s,{1,3});assert(not R.take(s));assert(not R.start(s));assert(not R.bank_turn(s))
+assert(R.toggle(s,3));assert(R.take(s));assert(s.pot==10 and s.used[1]);assert(not R.toggle(s,1))
+assert(R.start(s));assert(not R.settle(s,{[2]=9}));assert(s.phase=='rolling')
+assert(R.settle(s,{[2]=2,[3]=2,[4]=3,[5]=4,[6]=6}));assert(s.phase=='ended' and s.pot==0 and s.bank==0)
+assert(R.next_turn(s));roll(s,all);select(s,all);assert(R.take(s));assert(s.hot and s.turnHot and not s.hotBank)
+assert(R.start(s));assert(#s.active==6);assert(R.settle(s,{1,2,2,3,4,6}))
+assert(not R.bank_turn(s),'must account for this valid roll');select(s,{1});assert(R.bank_turn(s));assert(s.phase=='upgrade' and s.hotBank)
+assert(R.choose_build(s,'engraved'));assert(s.stage==2 and s.build=='engraved' and s.bank==0 and not s.entered)
+roll(s,all);select(s,all);assert(R.bank_turn(s));assert(s.phase=='ended' and not s.group)
+assert(R.next_turn(s));roll(s,{2,2,2,3,4,6});select(s,{1,2,3});assert(R.bank_turn(s));assert(s.phase=='medal' and s.group)
+assert(R.choose_medal(s,'retry'));assert(s.stage==3 and s.build=='engraved' and not s.entered)
+roll(s,{2,2,3,3,4,6});assert(s.phase=='rescue');assert(R.rescue(s));assert(s.medalUsed)
+assert(R.settle(s,{2,2,3,3,4,6}));assert(s.phase=='ended')
+assert(R.next_turn(s));roll(s,{1,1,1,5,5,5});select(s,all);assert(R.bank_turn(s));assert(s.phase=='won' and s.hotBank)
+assert(D.values('engraved',1)[6]==1 and D.values('engraved',2)[6]==2)
+assert(D.accept(1,.999) and D.accept(2,.49) and not D.accept(2,.5))
+s=R.new('control');for i=1,4 do roll(s,{2,2,3,3,4,6});if i<4 then assert(R.next_turn(s)) end end
+assert(s.phase=='lost' and not R.next_turn(s))
+s=R.new();s.stage=3;s.medal='retry'
+roll(s,{1,1,1,2,3,4});select(s,{1,2,3});assert(R.take(s));roll(s,{[4]=2,[5]=3,[6]=4})
+assert(s.phase=='rescue' and s.pot==75);assert(R.rescue(s));assert(R.settle(s,{[4]=1,[5]=3,[6]=4}));select(s,{4})
+assert(R.bank_turn(s));assert(s.bank==85 and s.entered and not s.hotBank)
+assert(R.next_turn(s));roll(s,{2,2,3,3,4,6});assert(s.phase=='ended','medal cannot repeat')
+s=R.new();s.stage=2;roll(s,{2,2,2,3,4,6});select(s,{1,2,3});assert(R.take(s))
+roll(s,{[4]=2,[5]=3,[6]=4});assert(not s.group and not s.turnGroup)
+s=R.new('control');roll(s,all);select(s,all);assert(R.bank_turn(s));assert(s.phase=='advance');assert(R.advance(s));assert(s.stage==2)
+print('PASS official progression, partial rolls, banking, hot earned/banked, entry reset, builds, medal, limits and control run')

@@ -1,0 +1,143 @@
+{
+  "functions/common_events.lua": [
+    {
+      "line": 41,
+      "symbol": "ease_chips"
+    },
+    {
+      "line": 258,
+      "symbol": "delay"
+    },
+    {
+      "line": 303,
+      "symbol": "delay"
+    },
+    {
+      "line": 362,
+      "symbol": "delay"
+    },
+    {
+      "line": 386,
+      "symbol": "delay"
+    },
+    {
+      "line": 445,
+      "symbol": "delay"
+    },
+    {
+      "line": 470,
+      "symbol": "delay"
+    },
+    {
+      "line": 476,
+      "symbol": "delay"
+    },
+    {
+      "line": 481,
+      "symbol": "delay"
+    },
+    {
+      "line": 572,
+      "symbol": "delay"
+    },
+    {
+      "line": 779,
+      "symbol": "card_eval_status_text"
+    },
+    {
+      "line": 1156,
+      "symbol": "delay"
+    }
+  ],
+  "engine/moveable.lua": [
+    {
+      "line": 250,
+      "symbol": "juice_up"
+    }
+  ],
+  "engine/event.lua": [
+    {
+      "line": 5,
+      "symbol": "Event:init"
+    },
+    {
+      "line": 48,
+      "symbol": "Event:handle"
+    }
+  ],
+  "resources/shaders/foil.fs": {
+    "bytes": 5935,
+    "glsl_effect_lines": [
+      98
+    ],
+    "uniform_names": [
+      "foil",
+      "dissolve",
+      "time",
+      "texture_details",
+      "image_details",
+      "shadow",
+      "burn_colour_1",
+      "burn_colour_2",
+      "mouse_screen_pos",
+      "hovering",
+      "screen_scale"
+    ]
+  },
+  "resources/shaders/holo.fs": {
+    "bytes": 6007,
+    "glsl_effect_lines": [
+      97
+    ],
+    "uniform_names": [
+      "holo",
+      "dissolve",
+      "time",
+      "texture_details",
+      "image_details",
+      "shadow",
+      "burn_colour_1",
+      "burn_colour_2",
+      "mouse_screen_pos",
+      "hovering",
+      "screen_scale"
+    ]
+  },
+  "resources/shaders/polychrome.fs": {
+    "bytes": 5826,
+    "glsl_effect_lines": [
+      97
+    ],
+    "uniform_names": [
+      "polychrome",
+      "dissolve",
+      "time",
+      "texture_details",
+      "image_details",
+      "shadow",
+      "burn_colour_1",
+      "burn_colour_2",
+      "mouse_screen_pos",
+      "hovering",
+      "screen_scale"
+    ]
+  },
+  "resources/shaders/dissolve.fs": {
+    "bytes": 4269,
+    "glsl_effect_lines": [
+      53
+    ],
+    "uniform_names": [
+      "dissolve",
+      "time",
+      "texture_details",
+      "image_details",
+      "shadow",
+      "burn_colour_1",
+      "burn_colour_2",
+      "mouse_screen_pos",
+      "hovering",
+      "screen_scale"
+    ]
+  }
+}

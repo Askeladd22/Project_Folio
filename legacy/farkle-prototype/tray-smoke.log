@@ -1,0 +1,5 @@
+START physical throw of all six D6; unchanged tray dimensions
+PASS six physical results match their visible upper faces
+PASS all six centers beyond old divider remain unclamped across its full length
+PASS all six centers on opposite side remain unclamped; external constraints retained
+PASS all six dice physically cross old divider in both directions

@@ -1,0 +1,19 @@
+LOVE=11.5.0 Mysterious Mysteries
+Renderer=OpenGL
+Renderer_version=3.3.0 NVIDIA 617.14
+Vendor=NVIDIA Corporation
+Device=NVIDIA GeForce RTX 5080/PCIe/SSE2
+GPU_time=not_measured
+Canvas calls during load=3
+Canvas calls total=3
+Canvas calls after load=0
+Canvas refreshes=5
+1280x720: ink: opaque_samples=393,channel_range=0.09020; gold: opaque_samples=1226,channel_range=0.89020; light: opaque_samples=12555,channel_range=0.70980
+1920x1080: ink: opaque_samples=393,channel_range=0.09020; gold: opaque_samples=1226,channel_range=0.89020; light: opaque_samples=12555,channel_range=0.70980
+1280x720: ink: opaque_samples=393,channel_range=0.09020; gold: opaque_samples=1226,channel_range=0.89020; light: opaque_samples=12555,channel_range=0.70980
+1920x1080: ink: opaque_samples=393,channel_range=0.09020; gold: opaque_samples=1226,channel_range=0.89020; light: opaque_samples=12555,channel_range=0.70980
+1280x720: synthetic keyboard/mouse callbacks PASS
+1920x1080: synthetic keyboard/mouse callbacks PASS
+ink=compiled
+gold=compiled
+light=compiled

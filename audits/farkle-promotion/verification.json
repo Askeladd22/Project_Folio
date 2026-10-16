@@ -1,0 +1,16 @@
+{
+  "protected_files_unchanged": 6434,
+  "production_equivalent_except_imports": [
+    "src/gameplay/farkle/rules.lua",
+    "src/gameplay/farkle/scoring.lua",
+    "src/features/farkle/dice.lua",
+    "src/features/farkle/controller.lua",
+    "src/features/farkle/hud.lua",
+    "src/features/farkle/hud_model.lua",
+    "src/features/farkle/tray_view.lua"
+  ],
+  "active_old_references": 0,
+  "markdown_total": 43,
+  "markdown_outside_audits": 20,
+  "missing_markdown_links": []
+}

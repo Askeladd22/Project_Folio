@@ -1,0 +1,47 @@
+{
+  "changed": [
+    "README.md",
+    "docs/TECHNICAL.md",
+    "tests/smoke/driver.lua",
+    "tests/smoke/farkle_hud.lua",
+    "src/app/dice_runtime.lua",
+    "src/engine3d/render.lua",
+    "src/engine3d/view.lua",
+    "src/features/farkle/controller.lua",
+    "src/features/farkle/hud.lua",
+    "src/features/farkle/tray_view.lua"
+  ],
+  "added": [
+    "src/features/farkle/presentation.lua",
+    "src/features/farkle/presentation_view.lua",
+    "tests/farkle_presentation_test.lua",
+    "tests/farkle_camera_test.lua",
+    "tests/smoke/turn_feel.lua",
+    "scripts/capture_turn_feel.py"
+  ],
+  "sha256": {
+    "README.md": "7cca97178191d6afc6e721dbba26fde611be9bf7043b10bdd6971274d720a3f7",
+    "docs/TECHNICAL.md": "a3ef0f6247ff95d1d02de48e7c569668d50529ba9de08dca8312f1a3f7fff108",
+    "tests/smoke/driver.lua": "f69d880edc027646bad5ac60e5b7e3d883dbb6aaabd9ec24db2146a66a47db00",
+    "tests/smoke/farkle_hud.lua": "ce1e863ec986f4f1d644eb1884164698f07ce82ad8c45fbf179d1ce1fcb33de0",
+    "src/app/dice_runtime.lua": "436ac3758a600874fd9e20b6a66f75233447906a1b1487cc56824ae239bb098d",
+    "src/engine3d/render.lua": "de4ca0dc290a5ec9e1d6ebc573c95b0e22225964c41fa64d8f97c9c6cfdc788b",
+    "src/engine3d/view.lua": "cc0b7eddc87a01ea333e6704b622b45c6e0edf10192f2103f4d178f9f696c1b5",
+    "src/features/farkle/controller.lua": "6d92ba7f1eea97ea427e2e671c7072ff7556eb087f82308463cfe162918a0a10",
+    "src/features/farkle/hud.lua": "40224a9e19081047748dd155c9f1c62df9e93da15267c0008bde41e978ff03af",
+    "src/features/farkle/tray_view.lua": "602385f4c123f0765882e9c0b730622f6e3bb83336065144a278c8f5317bce6c",
+    "src/features/farkle/presentation.lua": "17e9240fff50ce5c1548e1ce732e5c5eb3802b905f6c21ee248c71664918e9b5",
+    "src/features/farkle/presentation_view.lua": "89052b53d4a9bd37078a7225e4744d67e9b01e90411334746a77a3b704f7b3a9",
+    "tests/farkle_presentation_test.lua": "496877e30f70fbed20a42dc913414914cd344d202412f229668a3ebf77b89efe",
+    "tests/farkle_camera_test.lua": "2b5370431cd3bf49c52a545e53e75a5f796355de99ab47381729110688567fbf",
+    "tests/smoke/turn_feel.lua": "b415fe3cbb61460241e1b98ef76b1954a4dd60b285beba22f2a2400f88304c78",
+    "scripts/capture_turn_feel.py": "4902fd33eab4939e236dd554f4080af89f96eab4ca953032e39867a814594a5d"
+  },
+  "tests": {
+    "lua": "26/26 passed",
+    "python": "4/4 passed",
+    "smoke": "partial, face-gate, integration, hud, frontend passed at after-verified",
+    "frozen_files": "83 byte-identical"
+  },
+  "checkpoint": "CRC and SHA256 verified"
+}

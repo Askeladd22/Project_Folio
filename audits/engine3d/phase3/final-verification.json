@@ -1,0 +1,11 @@
+{
+  "active_AB_hashes_match": true,
+  "active_package_matches_sources": true,
+  "SAT_sources_unchanged": 154,
+  "SAT_not_in_active": true,
+  "active_package_sha256": "4927e1bd52b69bc2e2a8da1455d1dbb6c88dbbb195035333e6cb44e57d4eaa30",
+  "backup_sha256": "11c906ee2fc649555a664c641680bf23cb4b1a375b97e50ffaa817a314ded3ac",
+  "physical_trials_passed": 462,
+  "unrequested_source_changes": [],
+  "promoted_checkpoint_sha256": "3b850e984978523ee7dfffaf2be24bc967a2d8fd3078c91e076f44646b978b53"
+}

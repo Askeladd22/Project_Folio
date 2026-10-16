@@ -1,0 +1,25 @@
+local P=require('src.features.farkle.presentation')
+local R=require('src.gameplay.farkle.rules')
+local s=R.new();local p=P.new(s)
+local function observe(reduced) P.observe(p,s,{},reduced or false) end
+local function values() return P.folio_values(p,s) end
+s.selected[1]=true;observe();local bank,pot=values();assert(bank==0 and pot==0,'selection cannot advance folio')
+s.pot=25;observe();P.finish(p);bank,pot=values();assert(bank==0 and pot==25)
+s.hot=true;observe();bank,pot=values();assert(pot==25,'hot dice retains work')
+s.phase='rescue';observe();P.finish(p);bank,pot=values();assert(pot==25,'unresolved rescue retains work')
+s.phase='rolling';observe();assert(select(2,values())==25,'recovery retains work')
+s.bank=10;observe(true);s.phase='ended';s.pot=0;observe();bank,pot=values();assert(bank==10 and pot==25,'definitive loss starts from previous work')
+P.update(p,.2,false);bank,pot=values();assert(bank==10 and pot>0 and pot<25,'loss fades only provisional work')
+P.finish(p);bank,pot=values();assert(bank==10 and pot==0)
+s.turn=s.turn+1;s.phase='ready';s.pot=40;observe(true)
+s.bank=90;s.pot=0;s.phase='ended';observe();P.finish(p)
+bank,pot=values();assert(bank==90 and pot==0,'resolved bonus must use authoritative bank')
+s.bank=240;observe(true);bank=values();assert(bank==240 and s.bank==240,'visual clipping must not alter score')
+s.stage=2;s.bank=0;s.pot=0;observe();bank,pot=values();assert(bank==0 and pot==0,'new commission clears visual state')
+local RENDER=require('src.features.farkle.folio_view')
+local function noop() end
+love={graphics=setmetatable({newFont=function() return {getWidth=function(_,text) return #text*7 end} end},{__index=function() return noop end})}
+s.bank=240;s.pot=50;s.phase='ready';observe(true)
+local bounds=RENDER.draw(s,p,0,0,340,518,noop,100)
+assert(bounds.fixed==1 and bounds.wet==1 and s.bank==240 and s.pot==50 and s.phase=='ready','visual target cannot mutate score or commission')
+print('PASS folio confirmed work, rescue, hot dice, definitive loss, bank bonus, skip, reduced motion and stage reset')

@@ -83,11 +83,31 @@ function box:set(x,y,z,gravity,bounce,friction,dt)
   return self
 end
 
+-- Named configuration for production; positional set remains for legacy callers.
+function box:configure(c)
+  assert(c.fixed_dt and c.fixed_dt > 0 and c.fixed_dt < math.huge, 'fixed_dt must be positive and finite')
+  assert(c.half_x > 0 and c.half_y > 0 and c.height > 0, 'positive world dimensions required')
+  self:set(c.half_x,c.half_y,c.height,c.gravity,c.restitution,c.friction,c.fixed_dt)
+  self.linear_damping=c.linear_damping or self.linear_damping
+  self.angular_damping=c.angular_damping or self.angular_damping
+  self.border_height=c.border_height or self.border_height
+  return self
+end
+
 function box:update(dt)
+  assert(type(dt)=='number' and dt==dt and dt>=0 and dt<math.huge, 'finite nonnegative dt required')
+  if dt==0 then return end
   self.timeleft = self.timeleft + dt
+  -- Retain fractional time and bounded catch-up debt. Excess wall time is
+  -- explicitly discarded after a long stall, never hidden in a frame correction.
+  local limit=self.max_backlog or .25
+  if self.timeleft>limit then
+    self.dropped_time=(self.dropped_time or 0)+(self.timeleft-limit)
+    self.timeleft=limit
+  end
   local maxSteps = self.max_steps or 5
   local steps = 0
-  while (self.timeleft > self.dt) and (steps < maxSteps) do
+  while (self.timeleft + 1e-12 >= self.dt) and (steps < maxSteps) do
     local gravity_vec = vector{0,0,-(self.gravity or 0) * self.dt}
     for i=1,#self do
       local s=self[i]
@@ -319,13 +339,7 @@ function box:update(dt)
         end
       end
     end
-    self.timeleft = self.timeleft - self.dt
-    steps = steps + 1
-  end
-  if steps == maxSteps then
-    self.timeleft = 0
-  end
-  
+    -- Position corrections belong to the same fixed step as integration.
   for i=1,#self do
     local a = self[i]
     for j=i+1,#self do
@@ -346,6 +360,11 @@ function box:update(dt)
         end
       end
     end
+  end
+    if self.after_step then self:after_step(self.dt) end
+    self.timeleft = math.max(0,self.timeleft - self.dt)
+    self.simulated_time=(self.simulated_time or 0)+self.dt
+    steps = steps + 1
   end
   
   if self.log_buffer and #self.log_buffer > 0 then

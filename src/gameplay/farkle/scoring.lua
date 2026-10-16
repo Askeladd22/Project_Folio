@@ -1,248 +1,88 @@
-local Scoring = {}
-
-local TRIPLE_SCORES = {
-    [1] = 1000,
-    [2] = 200,
-    [3] = 300,
-    [4] = 400,
-    [5] = 500,
-    [6] = 600,
-}
-
-local function normalize_roll(values)
-    local entries = {}
-    for roll_pos, item in ipairs(values or {}) do
-        local value = item
-        local source_index = roll_pos
-
-        if type(item) == "table" then
-            value = item.value
-            if item.source_index ~= nil then
-                source_index = item.source_index
-            elseif item.index ~= nil then
-                source_index = item.index
-            end
-        end
-
-        value = tonumber(value)
-        if value and value >= 1 and value <= 6 and value == math.floor(value) then
-            entries[#entries + 1] = {
-                roll_pos = roll_pos,
-                source_index = source_index,
-                value = value,
-            }
-        end
-    end
-    return entries
+-- Pure Lua. Physical IDs are preserved; no renderer, randomness or physics access.
+local S={points={single={[1]=10,[5]=5},kind={
+ [3]={75,20,30,40,50,60},[4]={110,120,130,140,150,160},
+ [5]={320,340,360,380,400,420},[6]={625,650,675,700,725,750}},
+ small=100,straight=200,pairs=150,full=200,triples=250}}
+local function bit(mask,i) return math.floor(mask/2^(i-1))%2==1 end
+local function valid(values,ids)
+ if #values<1 or #values>6 or #values~=#ids then return false end
+ local seen={}
+ for i,v in ipairs(values) do
+  local id=ids[i]
+  if type(v)~='number' or v%1~=0 or v<1 or v>6 or type(id)~='number' or id%1~=0 or id<1 or id>6 or seen[id] then return false end
+  seen[id]=true
+ end
+ return true
 end
-
-local function copy_dice(dice)
-    local out = {}
-    for i, die in ipairs(dice or {}) do
-        out[i] = {
-            roll_pos = die.roll_pos,
-            source_index = die.source_index,
-            value = die.value,
-        }
-    end
-    return out
+local names={[3]='Three of a kind',[4]='Four of a kind',[5]='Five of a kind',[6]='Six of a kind'}
+local function atom(values,ids,mask)
+ local c={0,0,0,0,0,0};local chosen={};local n=0
+ for i,v in ipairs(values) do if bit(mask,i) then c[v]=c[v]+1;n=n+1;chosen[#chosen+1]=ids[i] end end
+ local points,label,group
+ if n==1 then for v=1,6 do if c[v]==1 and S.points.single[v] then points=S.points.single[v];label='Single '..v end end end
+ for v=1,6 do if n>=3 and c[v]==n then points=S.points.kind[n][v];label=names[n]..' of '..v;group=true end end
+ local pairs,triples,quad,distinct=0,0,0,0
+ for v=1,6 do if c[v]>0 then distinct=distinct+1 end;if c[v]==2 then pairs=pairs+1 end;if c[v]==3 then triples=triples+1 end;if c[v]==4 then quad=quad+1 end end
+ if n==5 and distinct==5 and (c[1]==0 or c[6]==0) then points=S.points.small;label='Small straight' end
+ if n==6 then
+  if distinct==6 then points=S.points.straight;label='Large straight'
+  elseif pairs==3 then points=S.points.pairs;label='Three pairs'
+  elseif quad==1 and pairs==1 then points=S.points.full;label='Full house (4+2)';group=true
+  elseif triples==2 then points=S.points.triples;label='Two triplets';group=true end
+ end
+ if points then return {points=points,label=label,group=group or false,ids=chosen} end
 end
-
-local function build_counts(entries)
-    local counts = {}
-    local dice_by_value = {}
-
-    for _, die in ipairs(entries) do
-        local value = die.value
-        counts[value] = (counts[value] or 0) + 1
-        dice_by_value[value] = dice_by_value[value] or {}
-        dice_by_value[value][#dice_by_value[value] + 1] = die
+local cache,cacheSize={},0
+function S.options(values,ids)
+ ids=ids or {};if #ids==0 then for i=1,#values do ids[i]=i end end
+ if not valid(values,ids) then return {} end
+ local key=table.concat(ids,',')..':'..table.concat(values,',')
+ if cache[key] then return cache[key] end
+ local atoms,memo={}, {[0]={points=0,group=false,groups={}}}
+ for mask=1,2^#values-1 do atoms[mask]=atom(values,ids,mask) end
+ local function solve(mask)
+  if memo[mask]~=nil then return memo[mask] end
+  local first;for i=1,#values do if bit(mask,i) then first=i;break end end
+  local best=false
+  for sub,a in pairs(atoms) do
+   if bit(sub,first) then
+    local contained=true;for i=1,#values do if bit(sub,i) and not bit(mask,i) then contained=false;break end end
+    if contained then
+     local rest=solve(mask-sub)
+     if rest then
+      local points=a.points+rest.points;local group=a.group or rest.group
+      if not best or points>best.points or points==best.points and group and not best.group then
+       local groups={a};for _,g in ipairs(rest.groups) do groups[#groups+1]=g end
+       best={points=points,group=group,groups=groups}
+      end
+     end
     end
-
-    return counts, dice_by_value
+   end
+  end
+  memo[mask]=best;return best
+ end
+ local result={}
+ for mask=1,2^#values-1 do
+  local solved=solve(mask)
+  if solved then
+   local chosen,physicalMask={},0
+   for i,id in ipairs(ids) do if bit(mask,i) then chosen[#chosen+1]=id;physicalMask=physicalMask+2^(id-1) end end
+   result[#result+1]={ids=chosen,mask=physicalMask,points=solved.points,group=solved.group,groups=solved.groups,remaining=#ids-#chosen}
+  end
+ end
+ -- Stable ordering by number of dice, then identity; never auto-select the maximum.
+ table.sort(result,function(a,b) if #a.ids~=#b.ids then return #a.ids<#b.ids end;return a.mask<b.mask end)
+ if cacheSize>=256 then cache={};cacheSize=0 end
+ cache[key]=result;cacheSize=cacheSize+1;return result
 end
-
-local function make_group(kind, label, score, dice)
-    local copied = copy_dice(dice)
-    return {
-        id = kind,
-        kind = kind,
-        label = label,
-        score = score,
-        dice = copied,
-        dice_count = #copied,
-    }
+local scores={}
+function S.score(values)
+ if #values<1 or #values>6 then return nil end
+ local copy={};for i,v in ipairs(values) do if type(v)~='number' or v%1~=0 or v<1 or v>6 then return nil end;copy[i]=v end
+ table.sort(copy);local key=table.concat(copy,',')
+ if scores[key]~=nil then if scores[key] then return scores[key].points,scores[key].group end;return nil end
+ local options=S.options(copy);local full=2^#copy-1
+ for _,o in ipairs(options) do if o.mask==full then scores[key]=o;return o.points,o.group end end
+ scores[key]=false;return nil
 end
-
-local function has_straight(counts)
-    for value = 1, 6 do
-        if (counts[value] or 0) ~= 1 then
-            return false
-        end
-    end
-    return true
-end
-
-local function collect_all_dice(dice_by_value)
-    local dice = {}
-    for value = 1, 6 do
-        for _, die in ipairs(dice_by_value[value] or {}) do
-            dice[#dice + 1] = die
-        end
-    end
-    return dice
-end
-
-local function count_pairs(counts)
-    local pairs = 0
-    for value = 1, 6 do
-        if (counts[value] or 0) == 2 then
-            pairs = pairs + 1
-        end
-    end
-    return pairs
-end
-
-local function kind_score(count, value)
-    if count >= 6 then
-        return 3000
-    end
-    if count == 5 then
-        return 2000
-    end
-    if count == 4 then
-        return 1000
-    end
-    return TRIPLE_SCORES[value]
-end
-
-local function kind_name(count)
-    if count >= 6 then
-        return "six"
-    end
-    if count == 5 then
-        return "five"
-    end
-    if count == 4 then
-        return "four"
-    end
-    return "three"
-end
-
-local function kind_label(count, value)
-    if count >= 6 then
-        return "Six " .. tostring(value) .. "s"
-    end
-    if count == 5 then
-        return "Five " .. tostring(value) .. "s"
-    end
-    if count == 4 then
-        return "Four " .. tostring(value) .. "s"
-    end
-    return "Three " .. tostring(value) .. "s"
-end
-
-local function add_kind_group(groups, value, count, dice_by_value)
-    local used_count = math.min(count, 6)
-    local dice = {}
-    for i = 1, used_count do
-        dice[i] = dice_by_value[value][i]
-    end
-
-    local prefix = kind_name(used_count)
-    groups[#groups + 1] = make_group(
-        prefix .. "_kind_" .. tostring(value),
-        kind_label(used_count, value),
-        kind_score(used_count, value),
-        dice
-    )
-end
-
-local function add_single_groups(groups, value, dice_by_value)
-    local score = value == 1 and 100 or 50
-    local kind = value == 1 and "single_one" or "single_five"
-    local label = value == 1 and "Single 1" or "Single 5"
-
-    for _, die in ipairs(dice_by_value[value] or {}) do
-        groups[#groups + 1] = make_group(kind, label, score, {die})
-    end
-end
-
-local function first_die_number(group, field)
-    local die = group.dice and group.dice[1] or nil
-    local value = die and tonumber(die[field]) or nil
-    return value or math.huge
-end
-
-function Scoring.normalize_roll(values)
-    return normalize_roll(values)
-end
-
-function Scoring.get_scoring_groups(values)
-    local entries = normalize_roll(values)
-    local counts, dice_by_value = build_counts(entries)
-    local groups = {}
-
-    if #entries == 6 and has_straight(counts) then
-        groups[#groups + 1] = make_group("straight", "Straight 1-6", 2500, collect_all_dice(dice_by_value))
-    end
-
-    if #entries == 6 and count_pairs(counts) == 3 then
-        groups[#groups + 1] = make_group("three_pairs", "Three pairs", 1500, collect_all_dice(dice_by_value))
-    end
-
-    for value = 1, 6 do
-        local count = counts[value] or 0
-        if count >= 3 then
-            add_kind_group(groups, value, count, dice_by_value)
-        elseif value == 1 or value == 5 then
-            add_single_groups(groups, value, dice_by_value)
-        end
-    end
-
-    table.sort(groups, function(a, b)
-        if a.score == b.score then
-            if a.dice_count == b.dice_count then
-                if a.kind == b.kind then
-                    local a_roll_pos = first_die_number(a, "roll_pos")
-                    local b_roll_pos = first_die_number(b, "roll_pos")
-                    if a_roll_pos == b_roll_pos then
-                        local a_source_index = first_die_number(a, "source_index")
-                        local b_source_index = first_die_number(b, "source_index")
-                        return a_source_index < b_source_index
-                    end
-                    return a_roll_pos < b_roll_pos
-                end
-                return a.kind < b.kind
-            end
-            return a.dice_count > b.dice_count
-        end
-        return a.score > b.score
-    end)
-
-    for i, group in ipairs(groups) do
-        group.id = group.kind .. ":" .. tostring(i)
-    end
-
-    return groups
-end
-
-function Scoring.is_bust(values)
-    return #Scoring.get_scoring_groups(values) == 0
-end
-
-function Scoring.best_group(values)
-    local groups = Scoring.get_scoring_groups(values)
-    return groups[1]
-end
-
-function Scoring.find_group(groups, group_id)
-    for _, group in ipairs(groups or {}) do
-        if group.id == group_id or group.kind == group_id then
-            return group
-        end
-    end
-    return nil
-end
-
-return Scoring
+return S

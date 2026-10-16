@@ -29,7 +29,7 @@ end
 local function test_when_loading_default_schemas_then_expected_values_are_exposed()
     local config = DiceConfig.load()
 
-    assert_eq(config.sizes.base, 0.92, "sizes.base should come from schema")
+    assert_eq(config.sizes.base, 0.80, "sizes.base should come from schema")
     assert_eq(config.pool[1].kind, "d6", "pool first kind should be d6")
     assert_eq(config.visual.glow.shader_path, "lib/dice_glow.glsl", "glow shader path should come from schema")
     assert_true(config.scene.camera.locked, "tray camera lock flag should come from schema")

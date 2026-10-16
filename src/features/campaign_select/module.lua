@@ -4,7 +4,7 @@ local MenuParticles = require("src.core.menu_particles")
 local Navigation = require("src.core.navigation")
 local RuntimeUI = require("src.core.runtime_ui")
 local Schema = require("src.core.schema")
-local Commissions = require("src.content.commissions")
+local CommissionMenu = require("src.data.commission_menu")
 local CampaignSelectSchema = require("src.data.campaign_select_schema")
 
 local CampaignSelect = {}
@@ -207,21 +207,7 @@ local function build_layout()
         if campaign.subtitle and campaign.subtitle ~= "" then
             label = label .. " - " .. campaign.subtitle
         end
-        local folios_count = #(campaign.folios or {})
-        local folios_detail = tr_entry(FOLIOS_DETAIL_ENTRY, {
-            count = folios_count,
-        })
-        local detail
-        if campaign.dirty_stains_threshold then
-            detail = tr_entry(DIRTY_THRESHOLD_ENTRY, {
-                folios = folios_detail,
-                threshold = campaign.dirty_stains_threshold,
-            })
-        else
-            detail = tr_entry(STANDARD_SCORING_ENTRY, {
-                folios = folios_detail,
-            })
-        end
+        local detail = campaign.detail
         layout.items[#layout.items + 1] = {
             id = "campaign:" .. tostring(i),
             kind = "campaign",
@@ -366,15 +352,17 @@ local function draw_items(layout)
 end
 
 local function start_campaign(campaign_id)
-    Navigation.go(CAMPAIGN_MODULE, {
-        campaign_id = campaign_id,
-        seed = os.time(),
-    })
+    for _, item in ipairs(CommissionMenu) do
+        if item.id == campaign_id and item.implemented then
+            Navigation.go(CAMPAIGN_MODULE, {new_run = true})
+            return
+        end
+    end
 end
 
 function CampaignSelect:enter()
     ensure_assets()
-    campaigns = Commissions.getAll()
+    campaigns = CommissionMenu
     selected_index = nil
     hovered_id = nil
     layout_cache = nil

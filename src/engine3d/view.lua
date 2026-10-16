@@ -31,7 +31,7 @@ function view.project(x,y,z)
   x,y= v.cos_yaw*x-v.sin_yaw*y, v.sin_yaw*x+v.cos_yaw*y
   y,z = v.cos_pitch*y-v.sin_pitch*z, v.sin_pitch*y+v.cos_pitch*z
   z = view.distance-z
-  local p=view.focus/z
+  local p=view.focus/(view.projection=='orthographic' and view.distance or z)
   if p<0 then p=1000 end
   return x*p, y*p, -z, p
 end
@@ -41,6 +41,13 @@ function view.get()
   y,z = v.cos_pitch*y+v.sin_pitch*z, -v.sin_pitch*y+v.cos_pitch*z
   x,y= v.cos_yaw*x+v.sin_yaw*y, -v.sin_yaw*x+v.cos_yaw*y
   return x,y,z
+end
+
+-- Direction toward the viewer: constant for orthographic projection.
+function view.to_camera(x,y,z)
+  local cx,cy,cz=view.get()
+  if view.projection=='orthographic' then return cx,cy,cz end
+  return cx-x,cy-y,cz-z
 end
 
 return view

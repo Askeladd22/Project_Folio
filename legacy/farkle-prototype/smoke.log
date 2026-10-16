@@ -1,0 +1,20 @@
+PASS isolated six numbered D6, initial normal set
+SAVE DIRECTORY C:/Users/Davide/AppData/Roaming/LOVE/manuscript-farkle-roguelite
+SCREENSHOT preview-physical.png
+PASS actual selection, kept pose, physical reroll, geometric values and input lock
+SCREENSHOT preview-upgrade.png
+PASS 36 rendered face texture paths match independent per-die logical mappings
+PASS actual engraved throw: visible top and scoring value agree
+SCREENSHOT preview-engraved.png
+SCREENSHOT preview-medal.png
+PASS medal triggered from controlled Farkle then genuine physical rescue
+PASS three commissions, banked group/hot conditions and persistent build
+SCREENSHOT preview-720.png
+PASS resized UI and base-game control mode
+Physical samples normal: 4/12
+Physical samples normal: 8/12
+Physical samples normal: 12/12
+Physical samples weighted: 4/12
+Physical samples weighted: 8/12
+Physical samples weighted: 12/12
+PASS 12 normal + 12 weighted accepted physical samples, every value verified against top face
