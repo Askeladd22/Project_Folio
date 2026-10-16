@@ -258,10 +258,9 @@ local function draw_top_bar(u, s)
     txt('TURNI', 1210, 22, 130, 14, muted_cream)
     txt(turns_left, 1210, 39, 130, 27, turns_left <= 1 and red or cream)
 
-    -- Header actions: Rules [?], Menu [Esc], HUD toggle [F9]
+    -- Header actions: Rules [?] and Menu [Esc]; alternate HUD removed.
     mini_button(u, 'help', 'Regole [?]', 1420, 24, 120, 42, s.phase ~= 'rolling', function() u.modal = 'help' end)
     mini_button(u, 'runmenu', 'Menu [Esc]', 1555, 24, 125, 42, s.phase ~= 'rolling', function() u.modal = 'run' end)
-    mini_button(u, 'hudtoggle', 'Vista [F9]', 1695, 24, 160, 42, true, function() u:toggle_hud_variant() end)
 end
 
 -- Capture draw commands from a graphical die body for physical isometric rendering in the niches
