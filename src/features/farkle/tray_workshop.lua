@@ -30,48 +30,59 @@ function W.floor(view,x1,x2,y1,y2)
  if W.current=='current' then return false end
  local id=W.current
  if id=='book' then
-  -- Visual scenery only: physical floor, dice, walls, picking and projection
-  -- retain their established dimensions and behaviour.
+  -- Open parchment leaves on the original z=0 physical landing surface.
+  -- No displacement, altered collision geometry, or different die projection.
   local g=love.graphics
   local w,h=x2-x1,y2-y1
-  local inset=math.min(w,h)*.026
-  local mid=(x1+x2)/2
+  local mid=(x1+x2)*.5
+  local margin=math.min(w,h)*.028
 
-  -- The leather cover and visible paper block frame two open parchment leaves.
-  -- All drawing stays on the existing z=0 plane: no raised imaginary ridge.
-  plane(view,x1-2*inset,x2+2*inset,y1-2*inset,y2+2*inset,0,{.18,.09,.057,1})
-  plane(view,x1-inset,x2+inset,y1-inset,y2+inset,0,{.69,.57,.40,1})
-  plane(view,x1,x2,y1,y2,0,{.31,.235,.16,1})
-  plane(view,x1+.16,mid-.06,y1+.16,y2-.16,0,{.53,.425,.294,1})
-  plane(view,mid+.06,x2-.16,y1+.16,y2-.16,0,{.49,.397,.276,1})
+  -- The entire playable floor remains parchment, including the page gutter.
+  plane(view,x1,x2,y1,y2,0,{.77,.665,.505,1})
+  plane(view,x1+.10,mid-.12,y1+.10,y2-.10,0,{.85,.775,.635,1})
+  plane(view,mid+.12,x2-.10,y1+.10,y2-.10,0,{.82,.747,.61,1})
+  -- Three closely spaced gutter shadows suggest curved leaves without
+  -- drawing a huge dark rectangle through the middle of the game.
+  plane(view,mid-.14,mid-.045,y1+.10,y2-.10,0,{.55,.44,.315,.28})
+  plane(view,mid-.045,mid+.06,y1+.10,y2-.10,0,{.64,.55,.425,.25})
+  plane(view,mid+.06,mid+.14,y1+.10,y2-.10,0,{.94,.86,.70,.34})
 
   local function stroke(ax,ay,bx,by,color,width)
    local px,py=view.project(ax,ay,0)
    local qx,qy=view.project(bx,by,0)
    g.setColor(unpack(color));g.setLineWidth(width or 1);g.line(px,py,qx,qy)
   end
-  local previousWidth=g.getLineWidth()
-  -- A quiet gutter marks the binding, but cannot obstruct a rolling die.
-  stroke(mid-.08,y1+.18,mid-.08,y2-.18,{.12,.07,.045,.52},1.4)
-  stroke(mid+.08,y1+.18,mid+.08,y2-.18,{.82,.68,.46,.24},1)
-  -- Gilded page-cut strokes beyond the unchanged landing field.
-  for j=1,3 do
-   local d=inset*(.35+j*.21)
-   stroke(x1-d,y2+d,x2+d,y2+d,{.91,.79,.56,.26},1)
-   stroke(x2+d,y1-d,x2+d,y2+d,{.91,.79,.56,.25},1)
-  end
-  -- Faint ruling and rubrication hug the distant margins, avoiding the dice.
-  local margin=y1+h*.105
+  local oldWidth=g.getLineWidth()
+  -- Restrained binding lines and manuscript ruling along the page margins,
+  -- not through the dice landing area.
+  stroke(mid-.18,y1+.18,mid-.18,y2-.18,{.38,.25,.135,.22},1)
+  stroke(mid+.17,y1+.18,mid+.17,y2-.18,{1,.94,.78,.44},1)
   for side=1,2 do
-   local xa=side==1 and x1+w*.075 or mid+w*.075
-   local xb=side==1 and mid-w*.075 or x2-w*.075
-   for row=0,3 do
-    local y=margin+row*h*.033
-    stroke(xa,y,xb,y,{.17,.09,.055,.21},1)
+   local xa=side==1 and x1+w*.065 or mid+w*.06
+   local xb=side==1 and mid-w*.06 or x2-w*.065
+   local ya=y1+h*.115
+   local yb=y2-h*.115
+   -- Double ruling in faded brown ink echoes a prepared manuscript page.
+   for _,x in ipairs({xa,xb}) do
+    stroke(x,ya,x,yb,{.34,.23,.13,.23},1)
    end
-   stroke(xa,margin-h*.022,xa+w*.055,margin-h*.022,{.60,.17,.12,.50},2)
+   for _,y in ipairs({ya,yb}) do
+    stroke(xa,y,xb,y,{.34,.23,.13,.22},1)
+   end
+   -- A small rubricated corner, deliberately away from the central dice.
+   local x=xa+w*.015
+   stroke(x,ya+h*.02,x+w*.045,ya+h*.02,{.56,.19,.11,.42},2)
+   stroke(x,ya+h*.02,x,ya+h*.07,{.56,.19,.11,.42},2)
   end
-  g.setLineWidth(previousWidth)
+  -- Deterministic scattered paper fibres; no calls to game RNG.
+  for i=1,108 do
+   local px=x1+.45+(((i*43)%109)/109)*(w-.90)
+   local py=y1+.45+(((i*71)%113)/113)*(h-.90)
+   local sx,sy=view.project(px,py,0)
+   g.setColor(.33,.22,.105,.025+(i%4)*.011)
+   g.points(sx,sy)
+  end
+  g.setLineWidth(oldWidth)
   return true
  end
  local colors={A={.26,.13,.065,1},B={.115,.135,.115,1},C={.34,.29,.20,1}}
@@ -104,9 +115,51 @@ function W.border(render,view,height)
  end
  local id=W.current;if id=='current' then return false end
  if id=='book' then
-  -- Preserve the existing z-buffered retaining rim; only its leather colour
-  -- changes to match the open codex. The physics engine is never touched.
-  render.tray_border(render.zbuffer,.85,height,{96,62,39})
+  -- A graphical page block with a darker binding at its left side.
+  -- The four original walls still have the SAME physical dimensions.
+  local x1,x2,y1,y2=unpack(render.board_extents)
+  local width=.85
+  local inner={{x1,y1},{x2,y1},{x2,y2},{x1,y2}}
+  local outer={{x1-width,y1-width},{x2+width,y1-width},
+   {x2+width,y2+width},{x1-width,y2+width}}
+  local function at(p,z) return {p[1],p[2],z} end
+  local function queue(points,color,pageLines)
+   local depth=math.huge
+   for _,p in ipairs(points) do
+    local _,_,z=view.project(p[1],p[2],p[3])
+    depth=math.min(depth,z)
+   end
+   render.zbuffer(depth,function()
+    quad(view,points,color)
+    if pageLines then
+     local g=love.graphics
+     local oldWidth=g.getLineWidth()
+     g.setLineWidth(1)
+     for layer=1,7 do
+      local z=height*layer/9
+      local a,b=points[1],points[2]
+      local ax,ay=view.project(a[1],a[2],z)
+      local bx,by=view.project(b[1],b[2],z)
+      g.setColor(.32,.245,.155,.13)
+      g.line(ax,ay,bx,by)
+     end
+     g.setLineWidth(oldWidth)
+    end
+   end)
+  end
+  for i=1,4 do
+   local j=i%4+1
+   local a,b=inner[i],inner[j]
+   local c,d=outer[i],outer[j]
+   -- Leather on the spine, pale visible page edges around other sides.
+   local binding=(i==4)
+   queue({at(c,0),at(d,0),at(d,height),at(c,height)},
+    binding and {.26,.12,.075,1} or {.76,.67,.51,1},not binding)
+   queue({at(b,0),at(a,0),at(a,height),at(b,height)},
+    binding and {.37,.225,.14,1} or {.60,.50,.355,1})
+   queue({at(c,height),at(d,height),at(b,height),at(a,height)},
+    binding and {.31,.17,.105,1} or {.86,.775,.61,1})
+  end
   return true
  end
  if id=='A' then render.tray_border(render.zbuffer,.85,height,{66,38,21});return true end
