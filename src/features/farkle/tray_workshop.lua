@@ -109,8 +109,7 @@ function W.floor(view,x1,x2,y1,y2)
  g.setLineWidth(1);return true
 end
 function W.border(render,view,height)
- local Scriptorium=require('src.features.farkle.controller')
- if Scriptorium and Scriptorium.hud_variant=='minimal' and W.current=='current' then
+ if W.current=='current' then
   return require('src.features.farkle.hud_minimal').border(render,view,height)
  end
  local id=W.current;if id=='current' then return false end
