@@ -171,11 +171,7 @@ function V.overlay(u,hits)
   end
  end
  g.setLineWidth(1)
- if u.hud_variant~='minimal' then
-  PresentationView.held(u,txt)
-  require('src.features.farkle.tray_workshop').caption(txt)
- end
- if H.reward_active(s) then reward(u);return end
+if H.reward_active(s) then reward(u);return end
  if not u.modal then return end
  Res.begin_ui();g.setColor(.05,.025,.01,.82);g.rectangle('fill',0,0,1920,1080)
  panel(390,145,1140,800);u.modalButtons={}
