@@ -3,10 +3,7 @@ local T={}
 -- Scenery only: all points stay on the existing physical floor.
 function T.floor(view,x1,x2,y1,y2)
  if require('src.features.farkle.tray_workshop').floor(view,x1,x2,y1,y2) then return end
- local Scriptorium=require('src.features.farkle.controller')
- if Scriptorium and Scriptorium.hud_variant=='minimal' then
-  if require('src.features.farkle.hud_minimal').floor(view,x1,x2,y1,y2) then return end
- end
+ if require('src.features.farkle.hud_minimal').floor(view,x1,x2,y1,y2) then return end
  local g=love.graphics
  local function quad(inset,color)
   local points={}

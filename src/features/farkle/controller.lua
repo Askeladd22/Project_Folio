@@ -1,21 +1,16 @@
 local R=require('src.gameplay.farkle.rules')
 local Medals=require('src.gameplay.farkle.medals')
 local D=require('src.features.farkle.dice')
-local Hud=require('src.features.farkle.hud')
 local H=require('src.features.farkle.hud_model')
 local Res=require('src.core.resolution_manager')
 local Bridge=require('src.core.engine_bridge')
 local Presentation=require('src.features.farkle.presentation')
 local RuntimeUI=require('src.core.runtime_ui')
 local Audio=require('src.core.audio_manager')
-local U={state='waiting',buttons={},dice_results={},hud_variant=os.getenv('MANUSCRIPT_HUD_VARIANT') or 'minimal'}
-function U:toggle_hud_variant()
- self.hud_variant = (self.hud_variant=='minimal' and 'standard' or 'minimal')
- self:sync()
- self:log('hud_variant_toggle', self.hud_variant)
-end
+-- Single in-game HUD: the manuscript view.
+local U={state='waiting',buttons={},dice_results={}}
 function U:getTrayRect()
- local t = (self.hud_variant=='minimal' and require('src.features.farkle.hud_minimal').tray or H.tray)
+ local t = require('src.features.farkle.hud_minimal').tray
  local x,y=Res.to_screen(t.x,t.y);return {x=x,y=y,w=t.w*Res.get_scale(),h=t.h*Res.get_scale()}
 end
 function U:getTrayProjection(tray,view,extents)
@@ -155,12 +150,10 @@ function U:select_option(mask)
  return false
 end
 function U:draw()
- if self.hud_variant=='minimal' then require('src.features.farkle.hud_minimal').draw(self)
- else Hud.draw(self) end
+ require('src.features.farkle.hud_minimal').draw(self)
 end
 function U:drawDeskOverlays(hits)
- if self.hud_variant=='minimal' then require('src.features.farkle.hud_minimal').overlay(self,hits)
- else Hud.overlay(self,hits) end
+ require('src.features.farkle.hud_minimal').overlay(self,hits)
 end
 function U:mousepressed(x,y,b)
  if b~=1 or self.state=='rolling' then return end
@@ -178,7 +171,6 @@ function U:mousepressed(x,y,b)
  local i=Bridge.pickTrayDie(x,y);if i then self:toggle(i) end
 end
 function U:keypressed(k)
- if k=='f9' then self:toggle_hud_variant();return end
  if k=='f8' then require('src.features.farkle.tray_workshop').cycle();return end
  if k=='tab' and self.presentation then Presentation.finish(self.presentation);return end
  if H.reward_active(self.game) then return end
@@ -191,17 +183,15 @@ function U:keypressed(k)
  if k=='?' or k=='/' or k=='slash' then self.modal='help';return end
  if k=='f' then self.modal='folio';return end
  local i=tonumber(k);if i and i>=1 and i<=6 then self:toggle(i);return end
- if self.hud_variant=='minimal' then
-  if k=='space' then
+ if k=='space' then
    if self.buttons['take'] and self.buttons['take'].enabled then self.buttons['take'].fn();return end
    if self.buttons['roll'] and self.buttons['roll'].enabled then self.buttons['roll'].fn();return end
    if self.buttons['next'] and self.buttons['next'].enabled then self.buttons['next'].fn();return end
    if self.buttons['rescue'] and self.buttons['rescue'].enabled then self.buttons['rescue'].fn();return end
   end
-  if k=='return' or k=='kpenter' then
-   if self.buttons['bank'] and self.buttons['bank'].enabled then self.buttons['bank'].fn();return end
-   if self.buttons['next'] and self.buttons['next'].enabled then self.buttons['next'].fn();return end
-  end
+ if k=='return' or k=='kpenter' then
+  if self.buttons['bank'] and self.buttons['bank'].enabled then self.buttons['bank'].fn();return end
+  if self.buttons['next'] and self.buttons['next'].enabled then self.buttons['next'].fn();return end
  end
  local id=({space='roll',a='take',['return']='bank',n='next',r='restart',b='control',m='rescue'})[k]
  local bt=id and self.buttons[id];if bt and bt.enabled then bt.fn() end

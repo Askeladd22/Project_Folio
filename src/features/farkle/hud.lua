@@ -4,8 +4,6 @@ local MedalPanel=require('src.features.farkle.medal_panel')
 local D=require('src.features.farkle.dice')
 local H=require('src.features.farkle.hud_model')
 local Res=require('src.core.resolution_manager')
-local Desk=require('src.features.scriptorium.desk_view')
-local PresentationView=require('src.features.farkle.presentation_view')
 local Presentation=require('src.features.farkle.presentation')
 local V={};local fonts={}
 local ink={.12,.075,.035,1};local cream={.96,.90,.76,1};local green={.18,.30,.23,1};local red={.56,.13,.10,1}
@@ -34,30 +32,6 @@ local function button(u,id,label,x,y,w,h,on,fn,primary)
  if not on and not dieIndicator then g.setColor(.32,.29,.23,1);g.line(x+8,y+8,x+8,y+h-8) end
  u.buttons[id]={x=x,y=y,w=w,h=h,enabled=on,fn=fn,label=label}
 end
-local boardWood
-local function workboard()
- local g=love.graphics
- -- One continuous wooden object beneath tray, folio and edge controls.
- boardWood=boardWood or g.newImage('resources/textures/wood.png')
- g.setColor(.035,.02,.01,.65);g.rectangle('fill',24,30,1880,1050,24)
- g.setColor(.23,.13,.065);g.rectangle('fill',16,12,1888,1054,18)
- g.setColor(.56,.40,.25);g.draw(boardWood,28,24,0,1864/boardWood:getWidth(),1026/boardWood:getHeight())
- g.setColor(.10,.055,.025,.42);g.rectangle('fill',28,24,1864,1026)
- g.setColor(.54,.37,.20);g.setLineWidth(2);g.rectangle('line',27,23,1866,1028,10)
- -- Light rubbed wood on the two working edges, joined by the outer frame.
- g.setColor(.72,.57,.36);g.rectangle('fill',36,28,1848,110,6)
- g.setColor(.10,.055,.025,.65);g.line(36,141,1884,141)
- g.setColor(.72,.57,.36);g.rectangle('fill',40,870,1320,180,6)
- g.setColor(.10,.055,.025,.65);g.line(40,867,1360,867)
- -- The folio rests on the same board, with a narrow retaining lip.
- g.setColor(.08,.045,.02,.35);g.rectangle('fill',1422,187,470,590,5)
- g.setColor(.32,.19,.095);g.rectangle('fill',1420,803,450,12,3)
- g.setColor(.57,.39,.21);g.line(1424,803,1866,803)
- g.setLineWidth(1)
-end
-local function manuscript(s,x,y,w,h,presentation)
- require('src.features.farkle.folio_view').draw(s,presentation,x,y,w,h,txt,R.contracts[s.stage].target)
-end
 local function reward(u)
  local s=u.game;local g=love.graphics
  Res.begin_ui();g.setColor(.06,.035,.015,.78);g.rectangle('fill',0,0,1920,1080)
@@ -83,82 +57,6 @@ local function reward(u)
  end
  Res.end_ui()
 end
-function V.draw(u)
- local s=u.game;if not s then return end
- local c=R.contracts[s.stage];local g=love.graphics;local rewardActive=H.reward_active(s)
- u.buttons={};Res.begin_ui()
- g.clear(.19,.12,.07,1)
- Desk.draw_layer('background',{x=0,y=0,w=1920,h=1080},function() end)
- Desk.draw_layer('desk',{x=0,y=0,w=1920,h=1080},function() end)
- g.setColor(.07,.035,.015,.28);g.rectangle('fill',0,0,1920,1080)
- workboard()
- txt('COMMISSION '..s.stage..' / 3',54,36,620,20)
- txt(c.name,54,64,620,30)
- txt(c.condition,54,104,680,19)
- txt('BANKED / TARGET',780,38,330,21)
- txt(s.bank..' / '..c.target,780,72,330,36,green)
- txt('TURNS LEFT',1145,38,220,21)
- txt(math.max(0,c.limit-s.turn+((s.phase=='ended' or H.commission_closed(s)) and 0 or 1)),1145,72,220,36)
- txt('AT RISK',1400,38,180,21)
- txt(s.pot,1400,72,180,36,red)
- button(u,'help','Rules [?]',1645,48,205,57,s.phase~='rolling',function() u.modal='help' end)
- -- The open folio is the second visual anchor, with no enclosing HUD column.
- manuscript(s,1410,175,470,590,u.presentation)
- txt('Dark ink: banked · faint: at risk',1435,778,420,21,cream)
- button(u,'folio','Inspect folio [F]',1435,820,420,60,s.phase~='rolling',function() u.modal='folio' end)
- local d=Medals.get(s.medal)
- if s.medal~='none' then
-  local label=(d and d.label or 'Corrector')..' · '..Medals.remaining(s)..' uses left'
-  button(u,'medaluse',label,1435,902,420,60,d~=nil and s.phase~='rolling' and not H.commission_closed(s),function() u.medalDice={};u.modal='medaluse' end)
- end
- if s.build~='normal' then txt(s.build=='engraved' and 'D1: 2 replaced by 1' or 'D1: weighted towards 1',1435,148,420,21,cream) end
- button(u,'runmenu','Run menu',1645,1024,205,46,s.phase~='rolling',function() u.modal='run' end)
- if rewardActive then u.buttons={};Res.end_ui();return end
- local eligible=H.eligible(s);local slots=H.slots
- PresentationView.rail()
- for i=1,6 do
-  local x=slots.x+(i-1)*slots.step
-  local value=s.phase=='rolling' and not s.used[i] and '...' or s.hand[i] or '-'
-  local state=s.used[i] and 'held' or s.selected[i] and 'selected' or eligible[i] and 'scoring' or 'free'
-  button(u,'die'..i,'',x,slots.y,slots.w,slots.h,s.phase=='ready' and not s.used[i],function() u:toggle(i) end,s.selected[i])
-  local color=cream
-  txt('['..i..'] '..value,x+8,slots.y+14,80,22,color)
-  txt(state,x+94,slots.y+16,104,20,color)
- end
- local counting=PresentationView.contributions(u,txt)
- if not counting then
-  local message=H.state_text(u)
-  if s.phase=='ended' and u.presentation and u.presentation.conclusion and not u.physicalFailure then message=u.lastLoss~=nil and 'FARKLE · Turn over' or 'BANKED · Turn over' end
-  txt(message,64,882,1272,24,(s.phase=='lost' or u.lastLoss~=nil and s.phase=='ended') and red or ink)
-  if not u.physicalFailure then PresentationView.feedback(u,txt) end
- end
- if u.physicalFailure then
-  button(u,'retryphysical','Retry physical roll',64,975,620,59,true,function() u:retry_physical() end,true)
- elseif s.phase=='rescue' then
-  button(u,'rescue','Use medal [M]',64,975,620,59,true,function() u:request(true) end,true)
-  button(u,'fail','Accept Farkle',714,975,620,59,true,function() u:act('accept_bust',function() return R.fail(s) end) end)
- elseif H.commission_closed(s) then
-  if s.phase=='advance' then button(u,'next','Next commission [N]',64,975,1270,59,true,function() u:act('next',function() return R.advance(s) end) end,true) end
- elseif s.phase=='ended' then
-  button(u,'next','Next turn [N]',64,975,1270,59,true,function() u:act('next',function() return R.next_turn(s) end) end,true)
- else
-  local pts=R.selection(s);local canBank,total=R.bank_status(s)
-  if s.phase=='ready' and next(s.selected) then
-   local n=H.selected_count(s)
-   button(u,'take',pts and ('Set aside '..n..(n==1 and ' die' or ' dice')..' · +'..pts..' [A]') or 'Set aside [A]',64,975,620,59,pts~=nil,function() u:act('take',function() return R.take(s) end) end,true)
-  else
-   button(u,'roll',s.hot and 'Hot dice [Space]' or s.phase=='fresh' and 'Roll [Space]' or 'Reroll [Space]',64,975,620,59,R.can_roll(s),function() u:request() end,true)
-  end
-  button(u,'bank','Bank '..total..' [Enter]',714,975,620,59,canBank,function() u:act('bank',function() return R.bank_turn(s) end) end)
- end
- if s.phase=='ready' then
-  local choices=R.options(s)
-  button(u,'choices','Scoring options ('..#choices..')',1435,s.medal~='none' and 967 or 902,420,50,#choices>0,function() u.choicePage=1;u.modal='choices' end)
- end
- local hint=s.phase=='ready' and R.can_roll(s) and string.format('Farkle risk %.1f%% · theoretical, excludes medals',100*D.risk(s.build,H.reroll_indices(s))) or '1–6: select · Tab: finish count · ?: rules'
- txt(hint,64,1054,1290,20,cream)
- Res.end_ui()
-end
 function V.overlay(u,hits)
  u.hits=hits
  local g=love.graphics;local s=u.game
@@ -171,11 +69,7 @@ function V.overlay(u,hits)
   end
  end
  g.setLineWidth(1)
- if u.hud_variant~='minimal' then
-  PresentationView.held(u,txt)
-  require('src.features.farkle.tray_workshop').caption(txt)
- end
- if H.reward_active(s) then reward(u);return end
+if H.reward_active(s) then reward(u);return end
  if not u.modal then return end
  Res.begin_ui();g.setColor(.05,.025,.01,.82);g.rectangle('fill',0,0,1920,1080)
  panel(390,145,1140,800);u.modalButtons={}

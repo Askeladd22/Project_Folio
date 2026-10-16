@@ -258,10 +258,9 @@ local function draw_top_bar(u, s)
     txt('TURNI', 1210, 22, 130, 14, muted_cream)
     txt(turns_left, 1210, 39, 130, 27, turns_left <= 1 and red or cream)
 
-    -- Header actions: Rules [?], Menu [Esc], HUD toggle [F9]
+    -- Header actions: Rules [?] and Menu [Esc]; alternate HUD removed.
     mini_button(u, 'help', 'Regole [?]', 1420, 24, 120, 42, s.phase ~= 'rolling', function() u.modal = 'help' end)
     mini_button(u, 'runmenu', 'Menu [Esc]', 1555, 24, 125, 42, s.phase ~= 'rolling', function() u.modal = 'run' end)
-    mini_button(u, 'hudtoggle', 'Vista [F9]', 1695, 24, 160, 42, true, function() u:toggle_hud_variant() end)
 end
 
 -- Capture draw commands from a graphical die body for physical isometric rendering in the niches
@@ -306,33 +305,55 @@ local function draw_upper_shelf(u, s)
     local depth = 92
     u.upperShelf = {x = ax, y = ay - depth, w = bx - ax, h = depth + 18}
 
-    -- Chamfered wooden front apron of the tray
-    g.setColor(0.06, 0.035, 0.018, 0.55)
-    g.polygon('fill', ax - 12, ay + 10, bx + 12, by + 10, bx + 6, by + 26, ax - 6, ay + 26)
-    g.setColor(0.20, 0.11, 0.06, 1)
-    g.polygon('fill', ax - 12, ay - 4, bx + 12, by - 4, bx + 5, by + 18, ax - 5, ay + 18)
-    g.setColor(0.36, 0.23, 0.13, 1)
-    g.polygon('fill', ax - 12, ay - depth + 8, ax, ay - depth, bx, by - depth, bx + 12, by - depth + 8, bx + 12, by - 4, bx, by + 2, ax, ay + 2, ax - 12, ay - 4)
-
-    -- Textured wood surface on the front canalina
-    shelfWood = shelfWood or get_texture('tray/walnut') or get_texture('wood')
-    if shelfWood then
-        shelfWood:setFilter('linear', 'linear')
-        local width = bx - ax
-        if shelfWidth ~= width then
-            shelfWidth = width
-            shelfQuad = g.newQuad(0, 1200, math.min(4096, width * 3), depth * 3, 4096, 4096)
+    local isBook = require('src.features.farkle.tray_workshop').current == 'book'
+    if isBook then
+        -- The six confirmed-dice positions become an inset parchment register
+        -- along the codex's upper edge, not a separate walnut collecting tray.
+        g.setColor(0.035, 0.020, 0.010, 0.46)
+        g.polygon('fill', ax - 12, ay - depth + 10, bx + 12, by - depth + 10,
+            bx + 15, by + 17, ax - 15, ay + 17)
+        g.setColor(0.24, 0.115, 0.070, 1)
+        g.polygon('fill', ax - 13, ay - depth + 5, bx + 13, by - depth + 5,
+            bx + 12, by + 8, ax - 12, ay + 8)
+        g.setColor(0.81, 0.725, 0.56, 1)
+        g.polygon('fill', ax - 5, ay - depth, bx + 5, by - depth,
+            bx + 5, by - 1, ax - 5, ay - 1)
+        g.setColor(0.91, 0.83, 0.66, 0.74)
+        g.rectangle('fill', ax + 3, ay - depth + 5, bx - ax - 6, 12)
+        g.setColor(0.44, 0.31, 0.17, 0.34)
+        g.setLineWidth(1)
+        g.line(ax + 8, ay - depth + 22, bx - 8, by - depth + 22)
+        g.line(ax + 8, ay - 10, bx - 8, by - 10)
+        for j = 1, 4 do
+            g.setColor(0.36, 0.25, 0.14, 0.15)
+            g.line(ax + 8, ay + j * 2, bx - 8, by + j * 2)
         end
-        g.setColor(1, 0.94, 0.86, 0.95)
-        g.draw(shelfWood, shelfQuad, ax, ay - depth, 0, 1 / 3, 1 / 3)
-    end
+    else
+        -- Original tray shelf retained only for the F8 visual comparisons.
+        g.setColor(0.06, 0.035, 0.018, 0.55)
+        g.polygon('fill', ax - 12, ay + 10, bx + 12, by + 10, bx + 6, by + 26, ax - 6, ay + 26)
+        g.setColor(0.20, 0.11, 0.06, 1)
+        g.polygon('fill', ax - 12, ay - 4, bx + 12, by - 4, bx + 5, by + 18, ax - 5, ay + 18)
+        g.setColor(0.36, 0.23, 0.13, 1)
+        g.polygon('fill', ax - 12, ay - depth + 8, ax, ay - depth, bx, by - depth, bx + 12, by - depth + 8, bx + 12, by - 4, bx, by + 2, ax, ay + 2, ax - 12, ay - 4)
 
-    -- Chamfer lines and canalina highlight
-    g.setColor(0.58, 0.40, 0.22, 1)
-    g.line(ax, ay - depth, bx, by - depth)
-    g.setColor(0.14, 0.07, 0.035, 0.35)
-    for j = 1, 4 do
-        g.line(ax + 8, ay + 2 + j * 2, bx - 8, by + 2 + j * 2)
+        shelfWood = shelfWood or get_texture('tray/walnut') or get_texture('wood')
+        if shelfWood then
+            shelfWood:setFilter('linear', 'linear')
+            local width = bx - ax
+            if shelfWidth ~= width then
+                shelfWidth = width
+                shelfQuad = g.newQuad(0, 1200, math.min(4096, width * 3), depth * 3, 4096, 4096)
+            end
+            g.setColor(1, 0.94, 0.86, 0.95)
+            g.draw(shelfWood, shelfQuad, ax, ay - depth, 0, 1 / 3, 1 / 3)
+        end
+        g.setColor(0.58, 0.40, 0.22, 1)
+        g.line(ax, ay - depth, bx, by - depth)
+        g.setColor(0.14, 0.07, 0.035, 0.35)
+        for j = 1, 4 do
+            g.line(ax + 8, ay + 2 + j * 2, bx - 8, by + 2 + j * 2)
+        end
     end
 
     -- 6 Physical niches (nicchie) carved into the canalina
@@ -346,17 +367,26 @@ local function draw_upper_shelf(u, s)
         local ny = ay + (by - ay) * t - depth / 2
         local niche_w = math.min(50, (bx - ax) / 13)
 
-        -- Carved indentation shadow & recessed felt seat
-        g.setColor(0.05, 0.03, 0.015, 0.60)
-        g.ellipse('fill', nx, ny + 3, niche_w, 13)
-        g.setColor(0.14, 0.20, 0.15, 0.85)
-        g.ellipse('fill', nx, ny + 1, niche_w - 4, 10)
-        g.setColor(0.68, 0.52, 0.30, 0.35)
-        g.ellipse('line', nx, ny + 2, niche_w, 13)
+        if isBook then
+            -- A legible warm-ink seal under each accepted die.
+            g.setColor(0.22, 0.125, 0.075, 0.14)
+            g.ellipse('fill', nx, ny + 2, niche_w, 17)
+            g.setColor(0.96, 0.88, 0.73, 0.68)
+            g.ellipse('fill', nx, ny - 1, niche_w - 3, 13)
+            g.setColor(0.43, 0.26, 0.12, 0.57)
+            g.ellipse('line', nx, ny - 1, niche_w - 3, 13)
+        else
+            g.setColor(0.05, 0.03, 0.015, 0.60)
+            g.ellipse('fill', nx, ny + 3, niche_w, 13)
+            g.setColor(0.14, 0.20, 0.15, 0.85)
+            g.ellipse('fill', nx, ny + 1, niche_w - 4, 10)
+            g.setColor(0.68, 0.52, 0.30, 0.35)
+            g.ellipse('line', nx, ny + 2, niche_w, 13)
+        end
 
         -- If die is NOT held: faint carved socket number
         if not s.used[i] then
-            txt(i, nx - 16, ny - 8, 32, 16, {0.52, 0.38, 0.24, 0.50}, 'center')
+            txt(i, nx - 16, ny - 8, 32, 16, isBook and {0.38, 0.22, 0.12, 0.74} or {0.52, 0.38, 0.24, 0.50}, 'center')
         end
     end
 
@@ -407,9 +437,9 @@ local function draw_upper_shelf(u, s)
             if s.hand[i] then
                 local val = s.hand[i]
                 local slot_x = ax + (bx - ax) * slot
-                txt(i .. ' : ' .. val, slot_x - 42, ay - 19, 84, 16, cream, 'center')
+                txt(i .. ' : ' .. val, slot_x - 42, ay - 19, 84, 16, isBook and ink or cream, 'center')
                 if e then
-                    txt('Tiro ' .. e.roll, slot_x - 42, ay + 6, 84, 13, muted_cream, 'center')
+                    txt('Tiro ' .. e.roll, slot_x - 42, ay + 6, 84, 13, isBook and {0.36,0.23,0.14,1} or muted_cream, 'center')
                 end
             end
         end
@@ -429,7 +459,7 @@ end
 -- Contextual status message above action buttons
 local function get_contextual_message(u, s)
     if u.physicalFailure then return u.physicalFailure end
-    if s.phase == 'rolling' then return 'I dadi rotolano sul panno verde…' end
+    if s.phase == 'rolling' then return 'I dadi rotolano sulla pagina…' end
     if s.phase == 'fresh' then return 'Lancia tutti i 6 dadi per iniziare il tuo turno.' end
     if s.phase == 'lost' then return 'Commissione fallita: turni esauriti.' end
     if s.phase == 'won' then return 'Tutte le 3 commissioni sono state consegnate!' end
