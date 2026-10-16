@@ -1,7 +1,8 @@
 -- Temporary visual workshop. No physics, gameplay, camera or RNG ownership.
-local W={current='current'}
-local order={'current','A','B','C'}
-local labels={current='Attuale',A='A / Vassoio artigianale',B='B / Plancia integrata',C='C / Tavolo da gioco'}
+-- First visual book silhouette. F8 preserves access to the original variants.
+local W={current='book'}
+local order={'book','current','A','B','C'}
+local labels={book='Libro aperto / prototipo',current='Attuale',A='A / Vassoio artigianale',B='B / Plancia integrata',C='C / Tavolo da gioco'}
 local images,meshes={},{}
 function W.cycle()
  for i,id in ipairs(order) do if id==W.current then W.current=order[i%#order+1];return end end
@@ -28,6 +29,51 @@ end
 function W.floor(view,x1,x2,y1,y2)
  if W.current=='current' then return false end
  local id=W.current
+ if id=='book' then
+  -- Visual scenery only: physical floor, dice, walls, picking and projection
+  -- retain their established dimensions and behaviour.
+  local g=love.graphics
+  local w,h=x2-x1,y2-y1
+  local inset=math.min(w,h)*.026
+  local mid=(x1+x2)/2
+
+  -- The leather cover and visible paper block frame two open parchment leaves.
+  -- All drawing stays on the existing z=0 plane: no raised imaginary ridge.
+  plane(view,x1-2*inset,x2+2*inset,y1-2*inset,y2+2*inset,0,{.18,.09,.057,1})
+  plane(view,x1-inset,x2+inset,y1-inset,y2+inset,0,{.69,.57,.40,1})
+  plane(view,x1,x2,y1,y2,0,{.31,.235,.16,1})
+  plane(view,x1+.16,mid-.06,y1+.16,y2-.16,0,{.53,.425,.294,1})
+  plane(view,mid+.06,x2-.16,y1+.16,y2-.16,0,{.49,.397,.276,1})
+
+  local function stroke(ax,ay,bx,by,color,width)
+   local px,py=view.project(ax,ay,0)
+   local qx,qy=view.project(bx,by,0)
+   g.setColor(unpack(color));g.setLineWidth(width or 1);g.line(px,py,qx,qy)
+  end
+  local previousWidth=g.getLineWidth()
+  -- A quiet gutter marks the binding, but cannot obstruct a rolling die.
+  stroke(mid-.08,y1+.18,mid-.08,y2-.18,{.12,.07,.045,.52},1.4)
+  stroke(mid+.08,y1+.18,mid+.08,y2-.18,{.82,.68,.46,.24},1)
+  -- Gilded page-cut strokes beyond the unchanged landing field.
+  for j=1,3 do
+   local d=inset*(.35+j*.21)
+   stroke(x1-d,y2+d,x2+d,y2+d,{.91,.79,.56,.26},1)
+   stroke(x2+d,y1-d,x2+d,y2+d,{.91,.79,.56,.25},1)
+  end
+  -- Faint ruling and rubrication hug the distant margins, avoiding the dice.
+  local margin=y1+h*.105
+  for side=1,2 do
+   local xa=side==1 and x1+w*.075 or mid+w*.075
+   local xb=side==1 and mid-w*.075 or x2-w*.075
+   for row=0,3 do
+    local y=margin+row*h*.033
+    stroke(xa,y,xb,y,{.17,.09,.055,.21},1)
+   end
+   stroke(xa,margin-h*.022,xa+w*.055,margin-h*.022,{.60,.17,.12,.50},2)
+  end
+  g.setLineWidth(previousWidth)
+  return true
+ end
  local colors={A={.26,.13,.065,1},B={.115,.135,.115,1},C={.34,.29,.20,1}}
  plane(view,x1,x2,y1,y2,0,colors[id],id~='A' and 'felt' or nil,'floor-'..id)
  if id=='A' then
@@ -57,6 +103,12 @@ function W.border(render,view,height)
   return require('src.features.farkle.hud_minimal').border(render,view,height)
  end
  local id=W.current;if id=='current' then return false end
+ if id=='book' then
+  -- Preserve the existing z-buffered retaining rim; only its leather colour
+  -- changes to match the open codex. The physics engine is never touched.
+  render.tray_border(render.zbuffer,.85,height,{96,62,39})
+  return true
+ end
  if id=='A' then render.tray_border(render.zbuffer,.85,height,{66,38,21});return true end
  if id=='C' then
   -- Thin full-height retaining lip: an open look without invisible walls.
