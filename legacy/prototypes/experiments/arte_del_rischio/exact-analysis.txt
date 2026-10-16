@@ -1,9 +1,0 @@
-project=1 initial_success=0.131944444 success_with_2_optimal_rerolls=0.561243166 initial_gross_EV=0.429783951 complete_states_stop=42 risk=0 tie=0 max_risk_minus_stop=-0.027777778
-project=2 initial_success=0.044753086 success_with_2_optimal_rerolls=0.357328298 initial_gross_EV=0.283950617 complete_states_stop=12 risk=0 tie=0 max_risk_minus_stop=-2.000000000
-project=3 initial_success=0.018518519 success_with_2_optimal_rerolls=0.205366562 initial_gross_EV=0.185185185 complete_states_stop=2 risk=0 tie=0 max_risk_minus_stop=-8.000000000
-PASS ordered 1296-outcome enumeration agrees with recipe counts and reward totals
-Capolettera base 3: best last reroll EV=57/36=1.583333; bank=3; failure=25/36
-Capolettera finished 5: best last reroll EV=7/6; bank=5
-Fregio base 6: best last reroll EV=8/3; bank=6; failure=2/3
-Counterexample to global stop dominance: turn8 score21, all categories present, RRBY. Bank3 loses at24; reroll BY wins with11/36. Threshold-aware policy rolls.
-Same hand at score22: bank3 wins certainly; threshold-aware policy stops.
