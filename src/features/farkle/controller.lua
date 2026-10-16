@@ -183,17 +183,15 @@ function U:keypressed(k)
  if k=='?' or k=='/' or k=='slash' then self.modal='help';return end
  if k=='f' then self.modal='folio';return end
  local i=tonumber(k);if i and i>=1 and i<=6 then self:toggle(i);return end
- do
-  if k=='space' then
+ if k=='space' then
    if self.buttons['take'] and self.buttons['take'].enabled then self.buttons['take'].fn();return end
    if self.buttons['roll'] and self.buttons['roll'].enabled then self.buttons['roll'].fn();return end
    if self.buttons['next'] and self.buttons['next'].enabled then self.buttons['next'].fn();return end
    if self.buttons['rescue'] and self.buttons['rescue'].enabled then self.buttons['rescue'].fn();return end
   end
-  if k=='return' or k=='kpenter' then
-   if self.buttons['bank'] and self.buttons['bank'].enabled then self.buttons['bank'].fn();return end
-   if self.buttons['next'] and self.buttons['next'].enabled then self.buttons['next'].fn();return end
-  end
+ if k=='return' or k=='kpenter' then
+  if self.buttons['bank'] and self.buttons['bank'].enabled then self.buttons['bank'].fn();return end
+  if self.buttons['next'] and self.buttons['next'].enabled then self.buttons['next'].fn();return end
  end
  local id=({space='roll',a='take',['return']='bank',n='next',r='restart',b='control',m='rescue'})[k]
  local bt=id and self.buttons[id];if bt and bt.enabled then bt.fn() end
