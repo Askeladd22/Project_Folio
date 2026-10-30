@@ -7,7 +7,7 @@ local UV3={{0,0},{1,0},{.5,1}}
 local TRIANGLES={1,2,3,1,3,4}
 local LIGHT={0.25,-0.4,0.88}
 
-function M.face_vertices(body,face)
+function M.face_vertices(body,face,raw_lighting)
  assert(type(body)=='table' and type(body.position)=='table' and
         type(face)=='table' and (#face==4 or #face==3),'three or four physical vertex indices required')
  local points={}
@@ -33,7 +33,9 @@ function M.face_vertices(body,face)
                nz*(center[3]-body.position[3])
  if outward<0 then nx,ny,nz=-nx,-ny,-nz end
  local dot=math.max(0,nx*LIGHT[1]+ny*LIGHT[2]+nz*LIGHT[3])
- local shade=0.57+0.43*dot
+ -- Only the historical g3d preset uses baked vertex illumination.
+ -- Custom shaders light the same outward physical face normals per pixel.
+ local shade=raw_lighting and 1 or (0.57+0.43*dot)
  local vertices={}
  local triangulation=#face==3 and {1,2,3} or TRIANGLES
  for i,k in ipairs(triangulation) do
