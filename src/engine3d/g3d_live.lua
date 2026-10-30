@@ -22,7 +22,7 @@ end
 function M.new()
  return setmetatable({
   enabled=true,failed=nil,models={},images={},canvas=nil,
-  width=0,height=0,walls=nil,lines=nil,divider_model=nil,wall_signature=nil,
+  width=0,height=0,floor_model=nil,walls=nil,lines=nil,divider_model=nil,wall_signature=nil,
  },M)
 end
 
@@ -161,13 +161,18 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   string.format('%.5f',extents[3]),string.format('%.5f',extents[4])
  },':')
  if self.wall_signature~=rimkey then
+  if self.floor_model and self.floor_model.mesh then self.floor_model.mesh:release() end
   if self.walls and self.walls.mesh then self.walls.mesh:release() end
   if self.lines and self.lines.mesh then self.lines.mesh:release() end
   if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
+  -- The single opaque GPU floor replaces the historical overlaid 2D book
+  -- ornaments. It participates in the SAME depth buffer as walls and dice.
+  self.floor_model=self.g3d.newModel(
+   Scenery.floor_vertices(self.mesh,extents,style),self.white)
   self.walls=self.g3d.newModel(
    Scenery.style_vertices(self.mesh,extents,border,style),self.white)
-  self.lines=(style=='book') and self.g3d.newModel(
-   page_rule_vertices(extents,.85,border),self.white) or nil
+  -- Do not overlay ruling lines across the play surface in the clean mode.
+  self.lines=nil
   local divider_vertices=Scenery.divider_vertices(divider)
   self.divider_model=divider_vertices and self.g3d.newModel(divider_vertices,self.white) or nil
   self.wall_signature=rimkey
@@ -250,11 +255,14 @@ function M:_draw_scene(args)
    g.setStencilTest()
    g.setCanvas({self.canvas,depth=true})
    g.clear(0,0,0,0,true,1)
-   g.setDepthMode('lequal',false)
    g.setShader()
    g.setBlendMode('alpha','alphamultiply')
    g.setColor(1,1,1,1)
-   -- Transparent shadows do not write depth; walls and dice do.
+   -- Opaque floor writes depth first. Transparent shadows then test it
+   -- without writing depth; the actual 3D walls and dice always occlude.
+   g.setDepthMode('lequal',true)
+   self.floor_model:draw()
+   g.setDepthMode('lequal',false)
    for _,item in ipairs(args.entries) do
     self.models[item.index].shadow:draw()
    end
@@ -265,9 +273,6 @@ function M:_draw_scene(args)
     local models=self.models[item.index]
     for _,m in ipairs(models.faces) do m:draw() end
    end
-   -- Folio ruling depth-tests against the actual 3D dice silhouettes.
-   g.setDepthMode('lequal',false)
-   if self.lines then self.lines:draw() end
    g.setDepthMode()
    g.setCanvas()
    -- Restore the tray's original clip when compositing the transparent layer.
