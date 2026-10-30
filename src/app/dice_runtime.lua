@@ -31,6 +31,7 @@ local ExecutionOrder = require("src.core.execution_order")
 -- g3d is the default book renderer. The library itself remains lazy-loaded.
 -- F9 and the startup environment switch retain the unchanged legacy painter.
 local live_g3d = require('src.engine3d.g3d_live').new()
+local last_tray_renderer = 'legacy'
 if os.getenv('MANUSCRIPT_G3D_INGAME') == '0' or os.getenv('MANUSCRIPT_RENDERER') == 'legacy' then
     live_g3d.enabled = false
 end
@@ -758,6 +759,7 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
                 mask=not fitted_scale and true or false,
             })
         end
+        last_tray_renderer=gpu_drawn and 'g3d' or 'legacy'
         if not gpu_drawn then
             if not require('src.features.farkle.tray_workshop').border(render, view, box.border_height or 1.1) then
                 render.tray_border(render.zbuffer, 0.85, box.border_height or 1.1, {83, 51, 31})
@@ -969,7 +971,7 @@ local function initialize_runtime()
 
     EngineBridge.configure({
         get_dice_tray_rect = get_dice_tray_rect,
-        get_renderer_mode = function() return live_g3d.enabled and 'g3d' or 'legacy' end,
+        get_renderer_mode = function() return last_tray_renderer end,
         pick_scriptorium_tray_die = pick_tray_die_at_screen,
         to_virtual_ui = function(x, y)
             return ResolutionManager.to_virtual(x, y)
