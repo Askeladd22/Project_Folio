@@ -8,6 +8,7 @@ void fpslab_free(fpslab *);
 int fpslab_step(fpslab *,float dt);
 int fpslab_state(const fpslab *,int index,float *out22);
 int fpslab_sleeping(const fpslab *,int index);
+int fpslab_floor_guard(fpslab *,float *max_depth);
 int fpslab_version(void);
 ]]
 local so=ffi.os=='Windows' and './experiments/physics_lab/build/fpslab.dll'
@@ -36,6 +37,19 @@ function N.new(rows)
 end
 function N.step(world,dt)
  assert(lib.fpslab_step(world,dt)==1,'FPS step failed')
+end
+-- Explicit diagnostic intervention. Never enabled during ordinary FPS stepping.
+-- The guard raises penetrated dice and clamps only downward linear velocity.
+-- This is NOT a physical fix to the upstream collision solver.
+function N.guard(world)
+ local depth=ffi.new('float[1]')
+ local corrected=lib.fpslab_floor_guard(world,depth)
+ assert(corrected>=0,'FPS floor diagnostic guard failed')
+ return corrected,tonumber(depth[0])
+end
+function N.guarded_step(world,dt)
+ N.step(world,dt)
+ return N.guard(world)
 end
 function N.snapshot(world,count)
  local result={}
