@@ -25,14 +25,6 @@ function M.new()
  },M)
 end
 
-local function tint(vertex,rgba)
- if not rgba then return end
- local intensity=rgba[1] and rgba[1]>1 and 1/255 or 1
- vertex[9]=vertex[9]*((rgba[1] or 1)*intensity)
- vertex[10]=vertex[10]*((rgba[2] or 1)*intensity)
- vertex[11]=vertex[11]*((rgba[3] or 1)*intensity)
-end
-
 -- Geometry follows the physical bodies, including draw offsets for old
 -- logical tray regions. No mutation of body.position or face values.
 local function vertices(mesh,entry,face,offset)
@@ -127,10 +119,12 @@ function M:_update_faces(entries,draw_offset)
    local value=entry.die.faceValueMap[i]
    local img=self.images[value]
    local verts=vertices(self.mesh,entry,face,draw_offset)
-   local colors=entry.die.faceColors
-   for _,v in ipairs(verts) do tint(v,colors and colors[i]) end
+   -- Real Farkle dice.image intentionally draws the white pip texture
+   -- with setColor(1,1,1,1), overriding faceColors. Preserve that
+   -- appearance; applying faceColors here would turn every die brown.
    if record.faces[i] then
     record.faces[i].mesh:setVertices(verts)
+    record.faces[i].mesh:setTexture(img)
    else
     record.faces[i]=g3d.newModel(verts,img)
    end
@@ -160,33 +154,36 @@ function M:_draw_scene(args)
  cam.projectionMatrix[4]=cam.projectionMatrix[4]+2*dx/self.width
  cam.projectionMatrix[8]=cam.projectionMatrix[8]-2*dy/self.height
  g.push('all')
- -- Rendering happens in a tray-local Canvas, in pixel coordinates.
- -- Remove any parent's 2D transform, clipping or stencil during 3D draws.
- g.origin()
- g.setScissor()
- g.setStencilTest()
- g.setCanvas({self.canvas,depth=true})
- g.clear(0,0,0,0,true,1)
- g.setDepthMode('lequal',true)
- g.setShader()
- g.setBlendMode('alpha','alphamultiply')
- g.setColor(1,1,1,1)
- self.walls:draw()
- for _,item in ipairs(args.entries) do
-  local models=self.models[item.index]
-  for _,m in ipairs(models.faces) do m:draw() end
- end
- g.setDepthMode()
- g.setCanvas()
- -- Restore the tray's original clip when compositing the transparent layer.
- g.setScissor(
-  math.floor(vp.x),math.floor(vp.y),
-  math.ceil(vp.w),math.ceil(vp.h))
- if args.mask then g.setStencilTest('greater',0) end
- g.setBlendMode('alpha','premultiplied')
- g.setColor(1,1,1,1)
- g.draw(self.canvas,vp.x,vp.y)
- g.pop()
+ local ok,err=xpcall(function()
+   -- Rendering happens in a tray-local Canvas, in pixel coordinates.
+   -- Remove any parent's 2D transform, clipping or stencil during 3D draws.
+   g.origin()
+   g.setScissor()
+   g.setStencilTest()
+   g.setCanvas({self.canvas,depth=true})
+   g.clear(0,0,0,0,true,1)
+   g.setDepthMode('lequal',true)
+   g.setShader()
+   g.setBlendMode('alpha','alphamultiply')
+   g.setColor(1,1,1,1)
+   self.walls:draw()
+   for _,item in ipairs(args.entries) do
+    local models=self.models[item.index]
+    for _,m in ipairs(models.faces) do m:draw() end
+   end
+   g.setDepthMode()
+   g.setCanvas()
+   -- Restore the tray's original clip when compositing the transparent layer.
+   g.setScissor(
+    math.floor(vp.x),math.floor(vp.y),
+    math.ceil(vp.w),math.ceil(vp.h))
+   if args.mask then g.setStencilTest('greater',0) end
+   g.setBlendMode('alpha','premultiplied')
+   g.setColor(1,1,1,1)
+   g.draw(self.canvas,vp.x,vp.y)
+ end,debug.traceback)
+ g.pop() -- always restore 2D transforms/clip/shaders even after an error
+ if not ok then error(err) end
 end
 
 function M:draw(args)
