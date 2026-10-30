@@ -75,6 +75,16 @@ local function record(seed,name,s,steps)
 end
 local sources={{name='legacy',solver=Old},{name='FPS',solver=Native}}
 if mode=='lab2' then
+ -- Substep variants integrate exactly the same elapsed physical time.
+ -- Unlike the floor guard, these do not alter upstream FPS contacts or poses.
+ local function substep_solver(n)
+  return {new=Native.new,snapshot=Native.snapshot,
+   step=function(world,dt)
+    for _=1,n do Native.step(world,dt/n) end
+   end}
+ end
+ sources[#sources+1]={name='FPS2x',solver=substep_solver(2)}
+ sources[#sources+1]={name='FPS4x',solver=substep_solver(4)}
  sources[#sources+1]={name='FPS+guard',solver={new=Native.new,
   step=Native.guarded_step,snapshot=Native.snapshot}}
 end
@@ -103,4 +113,5 @@ print('CSV: '..output)
 print('NOTE: native FPS uses convex static rim/floor, legacy has its existing wall rules. These results are preliminary, not a controlled fairness/equity test.')
 if mode=='lab2' then
  print('WARNING: FPS+guard is an intervention AFTER stepping: vertical positional correction and downward velocity clamp. It is NOT upstream FPS nor evidence of a solver fix.')
+ print('NOTE: FPS2x/FPS4x run 2 or 4 native 0.005/0.0025 s steps for every baseline 0.01 s step; equal simulated time, higher computation.')
 end
