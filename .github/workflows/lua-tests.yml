@@ -22,7 +22,8 @@ jobs:
           set -eu
           for test in tests/*_test.lua; do
             echo "::group::$test"
-            lua5.4 "$test"
+            # The shipping LOVE runtime uses LuaJIT/5.1's global unpack.
+            lua5.4 -e 'unpack=table.unpack' "$test"
             echo "::endgroup::"
           done
       - name: LuaJIT headless tests
