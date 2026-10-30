@@ -969,6 +969,7 @@ local function initialize_runtime()
 
     EngineBridge.configure({
         get_dice_tray_rect = get_dice_tray_rect,
+        get_renderer_mode = function() return live_g3d.enabled and 'g3d' or 'legacy' end,
         pick_scriptorium_tray_die = pick_tray_die_at_screen,
         to_virtual_ui = function(x, y)
             return ResolutionManager.to_virtual(x, y)
