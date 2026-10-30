@@ -5,6 +5,20 @@ local PALETTE={
  book={.76,.67,.51},current={.35,.215,.12},
  A={.31,.18,.095},B={.48,.33,.20},C={.52,.43,.255},
 }
+-- Plain, non-textured floors keep the physical dice visually prominent.
+-- Unlike the old painter's manuscript rubrics these meshes share g3d depth.
+local FLOORS={
+ book={.88,.79,.64},current={.36,.29,.22},
+ A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
+}
+function S.floor_vertices(mesh,extents,style)
+ local color=FLOORS[style] or FLOORS.book
+ local out=mesh.floor_vertices(extents[1],extents[2],extents[3],extents[4])
+ for _,v in ipairs(out) do
+  v[9],v[10],v[11],v[12]=color[1],color[2],color[3],1
+ end
+ return out
+end
 local function vertex(pos,color,alpha)
  return {pos[1],pos[2],pos[3],0,0,0,0,1,color[1],color[2],color[3],alpha or 1}
 end
@@ -14,7 +28,9 @@ end
 function S.style_vertices(mesh,extents,height,style)
  style=PALETTE[style] and style or 'book'
  local x1,x2,y1,y2=unpack(extents)
- local width=style=='current' and .40 or style=='C' and .13 or .85
+ -- Thin decorative housing; the underlying collision walls do not change.
+ local width=style=='book' and .32 or style=='current' and .28
+  or style=='C' and .13 or .40
  local v=mesh.tray_border_vertices(x1,x2,y1,y2,width,height,8)
  local colors=PALETTE[style]
  -- All wall sections retain the same physical heights; only the skin changes.
