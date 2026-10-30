@@ -47,6 +47,7 @@ function M:toggle_bevel()
 end
 function M:uses_bevel(entry)
  return self.bevel_enabled and Materials.uses_shader(self.material_mode)
+  and self.material_mode~='unlit'
   and entry and entry.die and #entry.die.faces==6
 end
 
