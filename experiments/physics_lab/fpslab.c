@@ -238,4 +238,19 @@ FPSLAB_API int fpslab_step_support(fpslab *w,float dt) {
     return wakes;
 }
 
+/* Set an initial Euler orientation only for the single-die lab fixture.
+ * fps_body_rotation_set overwrites translation, so preserve and restore it.
+ */
+FPSLAB_API int fpslab_set_euler(fpslab *w,int index,float rx,float ry,float rz) {
+    if(!w || index<0 || index>=w->n ||
+       !valid_float(rx) || !valid_float(ry) || !valid_float(rz))return 0;
+    fps_body *body=w->dice[index];
+    float position[3],angles[3]={rx,ry,rz};
+    fps_body_position_get(body,position);
+    fps_body_rotation_set(body,angles);
+    fps_body_position_set(body,position);
+    fps_body_sleeping_set(body,FPS_FALSE);
+    return 1;
+}
+
 FPSLAB_API int fpslab_version(void) { return 125; }
