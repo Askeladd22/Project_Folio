@@ -12,7 +12,7 @@ local steps=tonumber(arg and arg[2]) or 450
 assert(runs>=1 and runs<=200 and runs%1==0,'runs must be 1..200')
 assert(steps>=20 and steps<=3000 and steps%1==0,'steps must be 20..3000')
 local columns={'seed','solver','dt','dice','seconds','invalid_faces','invalid_floor',
- 'invalid_tilt','invalid_moving','unsettled','overlap_events','max_overlap',
+ 'invalid_tilt','invalid_moving','invalid_airborne','unsettled','overlap_events','max_overlap',
  'airborne_body_steps','penetrating_body_steps','max_probe_floor_depth','wakeups','cpu_seconds'}
 local filename='experiments/physics_lab/build/results-support.csv'
 local out=assert(io.open(filename,'w'))
@@ -22,7 +22,7 @@ local modes={{name='current',legacy=true,substeps=1},
  {name='FPS4x',substeps=4},{name='FPS4x+wake',substeps=4,wake=true}}
 local totals={}
 for _,mode in ipairs(modes) do
- totals[mode.name]={invalid=0,floor=0,tilt=0,moving=0,airborne=0,
+ totals[mode.name]={invalid=0,floor=0,tilt=0,moving=0,airborne=0,airborne_final=0,
   penetrated=0,wakeups=0,max_depth=0,overlap=0,cpu=0,unsettled=0}
 end
 for index=1,runs do
@@ -55,7 +55,7 @@ for index=1,runs do
   local cpu=os.clock()-t0
   local row={seed,mode.name,string.format('%.6f',F.dt/mode.substeps),#rows,
    string.format('%.2f',steps*F.dt),stats.invalid_faces,stats.invalid_floor,
-   stats.invalid_tilt,stats.invalid_moving,stats.unsettled,stats.overlap_events,
+   stats.invalid_tilt,stats.invalid_moving,stats.invalid_airborne,stats.unsettled,stats.overlap_events,
    string.format('%.6f',stats.max_overlap),airborne,penetrated,
    string.format('%.6f',max_depth),wakeups,string.format('%.6f',cpu)}
   out:write(table.concat(row,',')..'\n')
@@ -64,6 +64,7 @@ for index=1,runs do
   a.floor=a.floor+stats.invalid_floor
   a.tilt=a.tilt+stats.invalid_tilt
   a.moving=a.moving+stats.invalid_moving
+  a.airborne_final=a.airborne_final+stats.invalid_airborne
   a.unsettled=a.unsettled+stats.unsettled
   a.overlap=a.overlap+stats.overlap_events
   a.airborne=a.airborne+airborne
@@ -80,9 +81,9 @@ for _,mode in ipairs(modes) do
  local a=totals[mode.name]
  local n=steps*mode.substeps*runs*F.count
  print(string.format(
-  'SUPPORT %-12s invalid=%d/%d [floor=%d tilt=%d moving=%d] unsettled=%d overlaps=%d airborne_body_steps=%d/%d penetrating_body_steps=%d/%d max_depth=%.5f wakeups=%d avg_cpu=%.4fs',
+  'SUPPORT %-12s invalid=%d/%d [floor=%d tilt=%d moving=%d airborne_final=%d] unsettled=%d overlaps=%d airborne_body_steps=%d/%d penetrating_body_steps=%d/%d max_depth=%.5f wakeups=%d avg_cpu=%.4fs',
   mode.name,a.invalid,runs*F.count,a.floor,a.tilt,a.moving,
-  a.unsettled,a.overlap,a.airborne,n,a.penetrated,n,a.max_depth,
+  a.airborne_final,a.unsettled,a.overlap,a.airborne,n,a.penetrated,n,a.max_depth,
   a.wakeups,a.cpu/runs))
 end
 print('CSV: '..filename)
