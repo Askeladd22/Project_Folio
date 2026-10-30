@@ -966,13 +966,21 @@ local function register_execution_order_hooks()
             ResolutionManager.refresh()
         end,
         physics_step = function(dt)
-            box:update(dt)
+            -- Freeze the physics integration and settle timer outside the
+            -- manuscript. Do not accumulate an off-screen catch-up backlog.
+            if is_scriptorium_active() then
+                box:update(dt)
+            else
+                box.timeleft=0
+            end
         end,
         dice_constrain_regions = function()
             -- Physical constraints now run in box.after_step, never per frame.
         end,
         dice_settle_check = function(dt)
-            if not physicalResolution then checkDiceSettled(dt) end
+            if is_scriptorium_active() and not physicalResolution then
+                checkDiceSettled(dt)
+            end
         end,
         tray_camera_control = function()
             if TRAY_CAMERA_LOCKED then

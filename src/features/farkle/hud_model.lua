@@ -76,16 +76,13 @@ end
 function H.eligible(s)
  local ids,count={},0
  if s.phase~='ready' then return ids,count end
- -- A hint, never an automatic selection: any die in at least one legal subset.
- for mask=1,63 do
-  local hand,indices={},{};local valid=true
-  for i=1,6 do if math.floor(mask/2^(i-1))%2==1 then
-   if s.used[i] or not s.hand[i] then valid=false;break end
-   hand[#hand+1]=s.hand[i];indices[#indices+1]=i
-  end end
-  if valid and R.score(hand) then for _,i in ipairs(indices) do ids[i]=true end end
+ -- R.options uses the shared scoring cache and preserves physical IDs.
+ -- A visual hint is still only a hint; it never alters selected dice.
+ for _,option in ipairs(R.options(s)) do
+  for _,id in ipairs(option.ids) do
+   if not ids[id] then ids[id]=true;count=count+1 end
+  end
  end
- for _ in pairs(ids) do count=count+1 end
  return ids,count
 end
 function H.selected_count(s)
