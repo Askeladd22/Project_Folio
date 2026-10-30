@@ -899,7 +899,14 @@ local function spawn_initial_dice()
 end
 
 local function seed_rng()
+    -- Optional reproducible *logical input* seed for diagnostics. The
+    -- physical solver is not guaranteed bitwise deterministic across GPUs.
+    local requested = os.getenv and tonumber(os.getenv("MANUSCRIPT_SEED"))
     local seed = os.time()
+    if requested and requested == requested and requested % 1 == 0
+        and requested >= 1 and requested <= 2147483647 then
+        seed = requested
+    end
     math.randomseed(seed)
     if love.math then
         love.math.setRandomSeed(seed)
