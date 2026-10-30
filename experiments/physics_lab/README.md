@@ -74,3 +74,45 @@ edge and corner impacts, acceptable fixed-step costs, and distribution
 checks across a statistically meaningful number of physical rolls.
 Only then compare any new solver with the live g3d renderer, **without**
 substituting scores or overriding accepted rolls.
+
+## Lab 2 — diagnostic floor intervention (experimental)
+
+The original FPS 1.2.5 source and the Lab 1 baseline are **unchanged**.
+Lab 2 provides a controlled third variant, `FPS+guard`, on the same seeded
+six-D6 input. It corrects only dice which penetrate the nominal z=0 floor
+AFTER the regular FPS physics step: raise the body's centre by the measured
+lowest-corner penetration depth, reset negative vertical velocity to zero,
+and allow the existing FPS body to update its transforms. This is **not a
+replacement solver**. It can mask an underlying contact-normal or clipping
+bug, change bounce and sleep statistics, and create visible snapping.
+
+Build as in Lab 1 and run from the project root:
+
+```powershell
+luajit .\experiments\physics_lab\test_floor_guard.lua
+luajit .\experiments\physics_lab\run.lua 8 450 lab2
+```
+
+Lab 2 writes `build/results-lab2.csv`, leaving the Lab 1 `results.csv`
+independent. Rows compare `legacy`, **unmodified** `FPS`, and
+`FPS+guard` per identical fixture. Additional CSV fields count post-step
+guard corrections and the maximum upward correction, even if they occurred
+between normal observation samples.
+
+The guard is only a **diagnostic upper bound**: preventing final floor
+penetration alone does not demonstrate physical correctness. Compare
+overlaps, sleep, tilt, final face validity, corrections, and geometry before
+considering a real FPS contact-solver patch. Neither the Farkle physics nor
+g3d rendering imports these experimental functions.
+
+### Promotion gate
+
+- No uncorrected floor penetration (threshold 0.002 world units), no
+  airborne sleeping, and valid final faces at least as reliable as legacy.
+- No persistent high correction counts or visible popping. The ultimately
+  adopted solver should resolve real contacts, not rely on a per-frame
+  position clamp.
+- Test both seeded single-die impacts and multi-die runs at the original
+  `dt=0.01`; then visual Windows QA on real dice, and separate statistical
+  fairness analysis. CI passing does not imply these gates were met.
+

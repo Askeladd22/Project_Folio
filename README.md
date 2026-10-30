@@ -69,3 +69,11 @@ Non lasciare variabili `MANUSCRIPT_*_SMOKE` o `MANUSCRIPT_SOURCE_CASE` impostate
 - [Promozione strutturale](PROMOZIONE_FARKLE.md): mappa dei trasferimenti, verifiche e rollback.
 
 La fisica non è una simulazione perfetta: persistono limiti di contatto e contenimento. Non riaprire autonomamente solver SAT, geometria, proporzioni, spawn o validazione A/B. Il prossimo lavoro riguarda il gameplay.
+
+## Renderer legacy e FPS Lab 2
+
+Il renderer GPU g3d e predefinito per il libro; `src/engine3d/render.lua`
+resta per ora indispensabile alle varianti F8, ai componenti 2D, al fallback
+in caso di errore e ai test di confronto. Vedi `docs/RENDERER_RETIREMENT.md`
+prima di rimuoverlo. La fisica in produzione rimane quella originale; per
+un confronto FPS dedicato, vedi `experiments/physics_lab/README.md`.
