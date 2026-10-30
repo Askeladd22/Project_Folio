@@ -28,11 +28,11 @@ local Navigation = require("src.core.navigation")
 local EngineBridge = require("src.core.engine_bridge")
 local ExecutionOrder = require("src.core.execution_order")
 
--- The real Scriptorium GPU renderer is opt-in while under evaluation.
--- Ordinary Manuscript never loads g3d or changes graphics/physics state.
-local live_g3d = nil
-if os.getenv('MANUSCRIPT_G3D_INGAME') == '1' then
-    live_g3d = require('src.engine3d.g3d_live').new()
+-- g3d is the default book renderer. The library itself remains lazy-loaded.
+-- F9 and the startup environment switch retain the unchanged legacy painter.
+local live_g3d = require('src.engine3d.g3d_live').new()
+if os.getenv('MANUSCRIPT_G3D_INGAME') == '0' or os.getenv('MANUSCRIPT_RENDERER') == 'legacy' then
+    live_g3d.enabled = false
 end
 
 local game_manager = nil
@@ -740,6 +740,7 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
                 extents=world_extents, height=box.border_height or 1.1,
                 offset=draw_offset_x,
                 viewport=tray,cx=cx,cy=cy,scale=scale,
+                usable=glow_enabled and usable_map or nil,
                 mask=not fitted_scale and true or false,
             })
         end
@@ -1082,7 +1083,7 @@ function love.draw()
         game_manager:draw()
     end
 
-    if live_g3d and is_scriptorium_active() then
+    if os.getenv('MANUSCRIPT_G3D_DEBUG') == '1' and is_scriptorium_active() then
         local g=love.graphics
         g.push('all')
         g.origin()
@@ -1090,8 +1091,8 @@ function love.draw()
         g.setDepthMode()
         g.setShader()
         g.setColor(.96,.82,.50,.92)
-        local label=live_g3d.enabled and 'g3d EXPERIMENT: GPU [F9]' or
-            'g3d EXPERIMENT: painter [F9]'
+        local label=live_g3d.enabled and 'Renderer: g3d [F9]' or
+            'Renderer: legacy [F9]'
         if live_g3d.failed then label=label..' (fallback after graphics error)' end
         g.print(label,15,g.getHeight()-24)
         g.pop()
@@ -1138,7 +1139,7 @@ end
 function love.keypressed(key, scancode, isrepeat)
     if key=='f9' and live_g3d and is_scriptorium_active() then
         local active=live_g3d:toggle()
-        print('[Manuscript g3d gameplay experiment] '..(active and 'GPU ON' or 'painter ON'))
+        print('[Manuscript renderer] '..(active and 'g3d ON' or 'legacy ON'))
         return
     end
     if game_manager then
