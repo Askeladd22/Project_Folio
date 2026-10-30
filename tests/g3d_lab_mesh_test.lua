@@ -1,4 +1,4 @@
-local Lab=require('experiments.g3d_lab.mesh')
+local Lab=require('src.engine3d.g3d_mesh')
 local cube={
  {1,1,1},{1,-1,1},{-1,-1,1},{-1,1,1},
  {1,1,-1},{1,-1,-1},{-1,-1,-1},{-1,1,-1},

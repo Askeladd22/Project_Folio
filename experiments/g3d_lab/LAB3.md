@@ -1,7 +1,8 @@
 # Lab 3 — g3d nello Scriptorium giocabile
 
-**Modalità sperimentale, reversibile.** Il gioco normale parte sempre con
-il renderer originale. Per usare g3d nel gameplay, lancia:
+**Storico del Lab 3.** Il vassoio `book` usa ora g3d automaticamente.
+Il laboratorio resta disponibile per il confronto con F9. Per mostrare
+anche l'etichetta diagnostica, lancia:
 
 ```cmd
 experiments\g3d_lab\Avvia-Nel-Gioco.cmd
@@ -10,7 +11,7 @@ experiments\g3d_lab\Avvia-Nel-Gioco.cmd
 Oppure dalla radice, in CMD:
 
 ```cmd
-set MANUSCRIPT_G3D_INGAME=1
+set MANUSCRIPT_G3D_DEBUG=1
 Avvia.cmd
 ```
 
@@ -32,8 +33,8 @@ renderer originale senza modificare dadi o punteggi.
 - La selezione dei dadi resta basata sui punti proiettati originari.
 - Nessuna modifica a fisica, RNG, scelta del valore superiore, regole Farkle,
   rilanci, accantonamento, salvataggi o medaglie.
-- Per evitare effetti collaterali, g3d viene caricato soltanto quando si
-  abilita esplicitamente la variabile `MANUSCRIPT_G3D_INGAME=1`.
+- La libreria g3d viene caricata solo al primo rendering compatibile;
+  `MANUSCRIPT_G3D_INGAME=0` forza l'avvio con il vecchio painter.
   Se il disegno GPU genera un errore, il renderer si disabilita e lascia
   al painter la prosecuzione del gioco.
 
@@ -42,10 +43,10 @@ renderer originale senza modificare dadi o punteggi.
 Questa è una **prima integrazione sperimentale**, non ancora il renderer
 di produzione. In particolare:
 
-- L'effetto glow dei dadi selezionabili è ancora specifico del vecchio
-  percorso 2D: nella variante GPU i dadi si disegnano normalmente.
-- Le sette righe illustrative lungo i bordi delle pagine nella variante
-  `book` non sono ancora riprodotte identicamente.
+- Lo shader glow 2D del painter e sostituito da una tinta calda sulle facce
+  dei dadi utilizzabili; il cerchio di selezione del mouse resta invariato.
+- Le sette righe sui tre tagli delle pagine sono ora realizzate in geometria
+  g3d; verificare profondita e spessore a diverse risoluzioni.
 - Le altre varianti F8 non usano ancora g3d.
 - La fisica cubo-cubo rimane quella precedente, senza alcuna correzione.
 - La CI controlla sintassi e moduli puri, **non** la grafica GPU.
@@ -72,4 +73,4 @@ di produzione. In particolare:
 Questa prova usa le sorgenti MIT di `groverburger/g3d` già importate e
 conservate nel laboratorio A/B (commit upstream
 `639120acd754dc5c34402e41eb1687b1a5a3ffa8`, licenza in
-`experiments/g3d_lab/g3d/LICENSE`). Non viene aggiunta una seconda copia.
+`lib/g3d/LICENSE`). Il gioco e il laboratorio condividono una sola copia.

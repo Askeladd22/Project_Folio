@@ -1,4 +1,4 @@
-local C=require('experiments.g3d_lab.camera')
+local C=require('src.engine3d.g3d_camera')
 local V=require('src.engine3d.view')
 local function nearly(a,b,label)
  assert(math.abs(a-b)<1e-7,string.format('%s: %.12f != %.12f',label,a,b))

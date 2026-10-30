@@ -1,5 +1,5 @@
 local Live=require('src.engine3d.g3d_live')
-local M=require('experiments.g3d_lab.mesh')
+local M=require('src.engine3d.g3d_mesh')
 local d6={
  faces={{1,2,3,4},{5,6,7,8},{1,2,6,5},{2,3,7,6},{3,4,8,7},{4,1,5,8}},
  faceValueMap={1,6,3,5,4,2}
@@ -22,6 +22,19 @@ assert(math.abs(first[9]-.76)<1e-9 and math.abs(first[10]-.67)<1e-9,
        'book page block default palette')
 assert(math.abs(spine[9]-.26)<1e-9 and math.abs(spine[10]-.12)<1e-9,
        'left binding must retain original dark spine')
-assert(not package.loaded['experiments.g3d_lab.g3d'],
+assert(not package.loaded['lib.g3d'],
        'g3d must not initialize graphics until an opted-in scene is drawn')
-print('PASS opt-in live g3d: D6-only gate, reversible toggle, book rim and lazy renderer')
+local shadow=Live.shadow_vertices({position={2,3,1},radius=.5},0)
+assert(#shadow==72 and shadow[1][3]>.0,'contact shadows have a floor offset')
+assert(shadow[1][12]>0 and shadow[2][12]==0,'soft shadow alpha fades to zero')
+local moved=Live.shadow_vertices({position={2,3,1},radius=.5},2)
+assert(math.abs(moved[1][1]-(shadow[1][1]-2))<1e-9,'shadow follows draw offset')
+local rules=Live.page_rule_vertices({-9.2,9.2,-3.8,3.8},.85,.74)
+assert(#rules==3*7*6,'seven lines on three paper edges, not the spine')
+local verts=M.face_vertices({{1,1,1},{1,-1,1},{-1,-1,1},{-1,1,1},
+ position={0,0,0}}, {1,2,3,4})
+local original=verts[1][9]
+Live.highlight_vertices(verts,true)
+assert(verts[1][9]>original,'usable die gains a GPU tint')
+assert(not package.loaded['lib.g3d'],'headless geometry must not load GPU')
+print('PASS production g3d: default-ready, reversible, shadows, folio rules and highlights')

@@ -1,6 +1,6 @@
 # Manuscript — Farkle Roguelite
 
-Gioco solitario di sei dadi fisici e tre commissioni librarie, in Lua/LuaJIT e **LÖVE2D 11.x**, con motore 3D personalizzato.
+Gioco solitario di sei dadi fisici e tre commissioni librarie, in Lua/LuaJIT e **LÖVE2D 11.x**. g3d e il renderer GPU predefinito del vassoio a libro; il motore fisico personalizzato rimane invariato.
 
 ## Avvio
 
@@ -10,7 +10,14 @@ Aprire questa directory in VS Code/Codex ed eseguire:
 love .
 ```
 
-Su Windows: **Avvia.cmd**. Usa `LOVE_EXE`, un'installazione Windows nota oppure `love.exe` nel PATH. Nessun Python necessario per giocare, nessun pacchetto `.love`, nessuna build intermedia. Modificare un sorgente e riavviare LÖVE.
+Su Windows: **Avvia.cmd**. Il libro utilizza g3d automaticamente; **F9**
+attiva il renderer storico. `MANUSCRIPT_G3D_INGAME=0` oppure
+`MANUSCRIPT_RENDERER=legacy` forzano il painter all'avvio.
+`MANUSCRIPT_G3D_DEBUG=1` mostra l'etichetta diagnostica.
+g3d viene caricato solo al primo rendering compatibile; in caso di errore
+GPU si torna al painter. Le altre varianti F8 e i dadi non D6 usano
+ancora il percorso precedente.
+Usa `LOVE_EXE`, un'installazione Windows nota oppure `love.exe` nel PATH. Nessun Python necessario per giocare, nessun pacchetto `.love`, nessuna build intermedia. Modificare un sorgente e riavviare LÖVE.
 
 Splash → Main Menu → New Game → Choose Commission → **Farkle Roguelite**. Il selettore contiene solo il gioco e Back. Settings e grafica originali sono conservati. Continue resta disabilitato: non è implementata la ripresa di una run.
 
@@ -27,13 +34,14 @@ Il vassoio usa un'inquadratura ortografica stabile. Dopo **Accantona**, i dadi r
 - `main.lua`, `conf.lua`: entry point e identità dell'applicazione.
 - `src/gameplay/farkle/`: regole e punteggio, indipendenti da LÖVE.
 - `src/features/farkle/`: controller, selezione, HUD, mappe dei dadi e adattatore visivo.
-- `src/app/`: runtime; `src/engine3d/`: motore congelato.
+- `src/app/`: runtime; `src/engine3d/`: fisica congelata e adattatori GPU.
+- `lib/g3d/`: libreria MIT condivisa con il laboratorio A/B.
 - `src/core/`, `src/data/`, altre `src/features/`: frontend e servizi condivisi.
 - `resources/`, `lib/`: asset e librerie attivi.
 - `tests/`, `tests/smoke/`, `scripts/`: test e strumenti correnti.
 - `legacy/`: materiali storici; `audits/` e `backups/`: evidenze e checkpoint protetti.
 
-`experiments/` è riservata a futuri prototipi. Il gioco non carica moduli da lì e non esistono alias dei vecchi percorsi. I componenti condivisi `src/features/scriptorium/desk_view.lua` e `page_layout.lua` restano necessari alla grafica; il vecchio gameplay cromatico è separato.
+`experiments/` contiene laboratori A/B e il laboratorio nativo FPS, isolati dal runtime normale. Il gioco non importa moduli da queste directory. I componenti condivisi `src/features/scriptorium/desk_view.lua` e `page_layout.lua` restano necessari alla grafica; il vecchio gameplay cromatico è separato.
 
 Identità salvataggi invariata: `manuscript-farkle-roguelite`, normalmente `%APPDATA%/LOVE/manuscript-farkle-roguelite`. Impostazioni `settings_data.lua`, registro `runs.csv`; nessuna scrittura nei salvataggi del vecchio Scriptorium.
 

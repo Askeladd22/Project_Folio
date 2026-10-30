@@ -7,10 +7,10 @@ local Geometry=require('src.engine3d.geometry')
 local Legacy=require('src.engine3d.render')
 local View=require('src.engine3d.view')
 local FaceTexture=require('src.engine3d.face_texture')
-local Mesh=require('experiments.g3d_lab.mesh')
-local Camera=require('experiments.g3d_lab.camera')
+local Mesh=require('src.engine3d.g3d_mesh')
+local Camera=require('src.engine3d.g3d_camera')
 local Perf=require('experiments.g3d_lab.perf')
-local G3D=require('experiments.g3d_lab.g3d')
+local G3D=require('lib.g3d')
 
 local g=love.graphics
 local state={

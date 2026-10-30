@@ -1,7 +1,7 @@
--- Opt-in g3d GPU dice + book rim for the real Scriptorium.
+-- Production g3d GPU dice + book rim; legacy is the F9 fallback.
 -- Owns graphics only. Reads existing physical positions, faces and textures,
 -- never RNG, dice scores, physics steps, input picking or HUD state.
--- Vendored g3d is deliberately loaded ONLY after explicit opt-in.
+-- The GPU library loads lazily on first supported draw; physics and gameplay are untouched.
 local M={}
 M.__index=M
 
@@ -21,7 +21,7 @@ end
 function M.new()
  return setmetatable({
   enabled=true,failed=nil,models={},images={},canvas=nil,
-  width=0,height=0,walls=nil,wall_signature=nil,
+  width=0,height=0,walls=nil,lines=nil,wall_signature=nil,
  },M)
 end
 
@@ -60,12 +60,75 @@ local function rim_vertices(mesh,extents,thickness,height)
  return v
 end
 
+
+-- Soft radial contact shadow on the unchanged z=0 manuscript floor.
+local function shadow_vertices(body,offset)
+ local p=assert(body.position,'physical body position required')
+ local h=math.max(0,p[3] or 0)
+ local radius=math.max(.32,(body.radius or .65)*.90)*(1+math.min(h,8)*.025)
+ local alpha=.26/(1+h*.22)
+ local cx=p[1]-(offset or 0)+h*.11
+ local cy=p[2]-h*.07
+ local vertices={}
+ local function vertex(x,y,a)
+  return {x,y,.012,0,0,0,0,1,.16,.105,.06,a}
+ end
+ for i=0,23 do
+  local a=i*math.pi/12
+  local b=(i+1)*math.pi/12
+  vertices[#vertices+1]=vertex(cx,cy,alpha)
+  vertices[#vertices+1]=vertex(cx+radius*math.cos(a),cy+radius*math.sin(a),0)
+  vertices[#vertices+1]=vertex(cx+radius*math.cos(b),cy+radius*math.sin(b),0)
+ end
+ return vertices
+end
+
+-- Seven folio lines on the three visible paper edges, excluding leather spine.
+local function page_rule_vertices(extents,width,height)
+ local x1,x2,y1,y2=unpack(extents)
+ local outer={{x1-width,y1-width},{x2+width,y1-width},
+              {x2+width,y2+width},{x1-width,y2+width}}
+ local vertices={}
+ local function vertex(x,y,z)
+  return {x,y,z,0,0,0,0,1,.32,.245,.155,.29}
+ end
+ for side=1,3 do
+  local a,b=outer[side],outer[side+1]
+  local dx,dy=b[1]-a[1],b[2]-a[2]
+  local len=math.sqrt(dx*dx+dy*dy)
+  local nx,ny=dy/len*.018,-dx/len*.018
+  for layer=1,7 do
+   local z=height*layer/9
+   local ax,ay=a[1]+nx,a[2]+ny
+   local bx,by=b[1]+nx,b[2]+ny
+   local p=vertex(ax,ay,z-.014)
+   local q=vertex(bx,by,z-.014)
+   local r=vertex(bx,by,z+.014)
+   local s=vertex(ax,ay,z+.014)
+   vertices[#vertices+1]=p;vertices[#vertices+1]=q;vertices[#vertices+1]=r
+   vertices[#vertices+1]=p;vertices[#vertices+1]=r;vertices[#vertices+1]=s
+  end
+ end
+ return vertices
+end
+
+local function highlight_vertices(vertices,active)
+ if active then
+  for _,v in ipairs(vertices) do
+   v[9]=math.min(1,v[9]*.87+.13)
+   v[10]=math.min(1,v[10]*.81+.14)
+   v[11]=math.min(1,v[11]*.65+.09)
+  end
+ end
+ return vertices
+end
+
 function M:_ensure(entries,extents,border,viewport)
  local g=love.graphics
  if not self.g3d then
-  self.g3d=require('experiments.g3d_lab.g3d')
-  self.mesh=require('experiments.g3d_lab.mesh')
-  self.camera=require('experiments.g3d_lab.camera')
+  self.g3d=require('lib.g3d')
+  self.mesh=require('src.engine3d.g3d_mesh')
+  self.camera=require('src.engine3d.g3d_camera')
   -- g3d sets global depth on import; 2D UI must retain its initial state.
   g.setDepthMode()
  end
@@ -94,13 +157,15 @@ function M:_ensure(entries,extents,border,viewport)
  },':')
  if self.wall_signature~=rimkey then
   if self.walls and self.walls.mesh then self.walls.mesh:release() end
+  if self.lines and self.lines.mesh then self.lines.mesh:release() end
   self.walls=self.g3d.newModel(
    rim_vertices(self.mesh,extents,.85,border),self.white)
+  self.lines=self.g3d.newModel(page_rule_vertices(extents,.85,border),self.white)
   self.wall_signature=rimkey
  end
 end
 
-function M:_update_faces(entries,draw_offset)
+function M:_update_faces(entries,draw_offset,usable_map)
  local g3d=self.g3d
  local active={}
  for _,item in ipairs(entries) do
@@ -110,6 +175,7 @@ function M:_update_faces(entries,draw_offset)
   if not record or record.body~=entry.body or record.die~=entry.die then
    if record then
     for _,model in ipairs(record.faces) do model.mesh:release() end
+    if record.shadow then record.shadow.mesh:release() end
    end
    record={body=entry.body,die=entry.die,faces={}}
    self.models[key]=record
@@ -118,7 +184,8 @@ function M:_update_faces(entries,draw_offset)
   for i,face in ipairs(entry.die.faces) do
    local value=entry.die.faceValueMap[i]
    local img=self.images[value]
-   local verts=vertices(self.mesh,entry,face,draw_offset)
+   local verts=highlight_vertices(vertices(self.mesh,entry,face,draw_offset),
+    usable_map and usable_map[key])
    -- Real Farkle dice.image intentionally draws the white pip texture
    -- with setColor(1,1,1,1), overriding faceColors. Preserve that
    -- appearance; applying faceColors here would turn every die brown.
@@ -129,11 +196,15 @@ function M:_update_faces(entries,draw_offset)
     record.faces[i]=g3d.newModel(verts,img)
    end
   end
+  local shadow=shadow_vertices(entry.body,draw_offset)
+  if record.shadow then record.shadow.mesh:setVertices(shadow)
+  else record.shadow=g3d.newModel(shadow,self.white) end
  end
  -- Avoid retaining stale references to dice replaced by the controller.
  for index,record in pairs(self.models) do
   if not active[index] then
    for _,model in ipairs(record.faces) do model.mesh:release() end
+   if record.shadow then record.shadow.mesh:release() end
    self.models[index]=nil
   end
  end
@@ -143,7 +214,7 @@ function M:_draw_scene(args)
  local g=love.graphics
  local vp=args.viewport
  self:_ensure(args.entries,args.extents,args.height,vp)
- self:_update_faces(args.entries,args.offset)
+ self:_update_faces(args.entries,args.offset,args.usable)
  local cam=self.g3d.camera
  self.camera.apply(args.view,cam,self.width,self.height,args.scale)
  -- Shift orthographic clip space to the exact projected tray position.
@@ -162,15 +233,23 @@ function M:_draw_scene(args)
    g.setStencilTest()
    g.setCanvas({self.canvas,depth=true})
    g.clear(0,0,0,0,true,1)
-   g.setDepthMode('lequal',true)
+   g.setDepthMode('lequal',false)
    g.setShader()
    g.setBlendMode('alpha','alphamultiply')
    g.setColor(1,1,1,1)
+   -- Transparent shadows do not write depth; walls and dice do.
+   for _,item in ipairs(args.entries) do
+    self.models[item.index].shadow:draw()
+   end
+   g.setDepthMode('lequal',true)
    self.walls:draw()
    for _,item in ipairs(args.entries) do
     local models=self.models[item.index]
     for _,m in ipairs(models.faces) do m:draw() end
    end
+   -- Folio ruling depth-tests against the actual 3D dice silhouettes.
+   g.setDepthMode('lequal',false)
+   self.lines:draw()
    g.setDepthMode()
    g.setCanvas()
    -- Restore the tray's original clip when compositing the transparent layer.
@@ -219,4 +298,7 @@ end
 function M.rim_vertices(mesh,extents,thickness,height)
  return rim_vertices(mesh,extents,thickness,height)
 end
+M.shadow_vertices=shadow_vertices
+M.page_rule_vertices=page_rule_vertices
+M.highlight_vertices=highlight_vertices
 return M
