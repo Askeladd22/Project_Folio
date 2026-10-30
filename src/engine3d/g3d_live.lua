@@ -5,6 +5,7 @@
 local M={}
 M.__index=M
 local Scenery=require('src.engine3d.g3d_scenery')
+local Materials=require('src.engine3d.g3d_materials')
 
 local function supported(entries)
  for _,entry in ipairs(entries) do
@@ -20,16 +21,27 @@ local function supported(entries)
 end
 
 function M.new()
+ local override=os.getenv('MANUSCRIPT_DICE_MATERIAL')
+ local mode=Materials.valid(override) and override or Materials.default
  return setmetatable({
   enabled=true,failed=nil,models={},images={},canvas=nil,
+  material_mode=mode,dice_shader=nil,shader_error=nil,
   width=0,height=0,floor_model=nil,walls=nil,lines=nil,divider_model=nil,wall_signature=nil,
  },M)
 end
 
+-- F10 visual A/B: legacy baked-lighting, unlit textures, face-normal
+-- diagnostics, diffuse, and warm ivory. Does not affect game physics.
+function M:cycle_material()
+ self.material_mode=Materials.next(self.material_mode)
+ return self.material_mode
+end
+
+
 -- Geometry follows the physical bodies, including draw offsets for old
 -- logical tray regions. No mutation of body.position or face values.
-local function vertices(mesh,entry,face,offset,preview)
- local out=mesh.face_vertices(entry.body,face)
+local function vertices(mesh,entry,face,offset,preview,raw_lighting)
+ local out=mesh.face_vertices(entry.body,face,raw_lighting)
  for _,v in ipairs(out) do
   v[1]=v[1]-(offset or 0)+(preview and preview.x or 0)
   v[2]=v[2]+(preview and preview.y or 0)
@@ -135,6 +147,19 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   -- g3d sets global depth on import; 2D UI must retain its initial state.
   g.setDepthMode()
  end
+ if Materials.uses_shader(self.material_mode) and not self.dice_shader then
+  local ok,shader=pcall(g.newShader,Materials.shader_path,Materials.vertex_path)
+  if ok then
+   self.dice_shader=shader
+   self.shader_error=nil
+  else
+   -- Some GPUs cannot compile the optional material shader. Use the
+   -- known working g3d material rather than disabling 3D altogether.
+   self.shader_error=tostring(shader)
+   self.material_mode='original'
+   print('[Manuscript g3d] dice shader unavailable, original material restored: '..self.shader_error)
+  end
+ end
  local w=math.max(1,math.ceil(viewport.w))
  local h=math.max(1,math.ceil(viewport.h))
  if self.width~=w or self.height~=h then
@@ -201,7 +226,8 @@ function M:_update_faces(entries,draw_offset,usable_map,drag_preview)
    local value=entry.die.faceValueMap[i]
    local img=#face==4 and self.images[value] or self.white
    local preview=drag_preview and drag_preview.index==key and drag_preview or nil
-   local verts=vertices(self.mesh,entry,face,draw_offset,preview)
+   local verts=vertices(self.mesh,entry,face,draw_offset,preview,
+     Materials.uses_shader(self.material_mode))
    if #face==3 then
     -- Historical D8 has no face texture; retain its per-face flat colours.
     local tint=Scenery.face_color(entry.die,i)
@@ -274,7 +300,11 @@ function M:_draw_scene(args)
    if self.divider_model then self.divider_model:draw() end
    for _,item in ipairs(args.entries) do
     local models=self.models[item.index]
-    for _,m in ipairs(models.faces) do m:draw() end
+    local shader=Materials.uses_shader(self.material_mode) and self.dice_shader or nil
+    if shader then
+     Materials.configure(shader,self.material_mode,args.view,#item.entry.die.faces==8)
+    end
+    for _,m in ipairs(models.faces) do m:draw(shader) end
    end
    g.setDepthMode()
    g.setCanvas()
