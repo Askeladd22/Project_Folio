@@ -6,6 +6,7 @@ local M={}
 M.__index=M
 local Scenery=require('src.engine3d.g3d_scenery')
 local Materials=require('src.engine3d.g3d_materials')
+local Bevel=require('src.engine3d.g3d_bevel')
 
 local function supported(entries)
  for _,entry in ipairs(entries) do
@@ -26,6 +27,7 @@ function M.new()
  return setmetatable({
   enabled=true,failed=nil,models={},images={},canvas=nil,
   material_mode=mode,dice_shader=nil,shader_error=nil,
+  bevel_enabled=true,bevel_fraction=Bevel.default_fraction,
   width=0,height=0,floor_model=nil,walls=nil,lines=nil,divider_model=nil,wall_signature=nil,
  },M)
 end
@@ -37,11 +39,24 @@ function M:cycle_material()
  return self.material_mode
 end
 
+-- F11: visually compare exact physical box edges against chamfered art.
+-- 'original' and 'unlit' retain the pristine original D6 reference faces.
+function M:toggle_bevel()
+ self.bevel_enabled=not self.bevel_enabled
+ return self.bevel_enabled
+end
+function M:uses_bevel(entry)
+ return self.bevel_enabled and Materials.uses_shader(self.material_mode)
+  and entry and entry.die and #entry.die.faces==6
+end
+
 
 -- Geometry follows the physical bodies, including draw offsets for old
 -- logical tray regions. No mutation of body.position or face values.
-local function vertices(mesh,entry,face,offset,preview,raw_lighting)
- local out=mesh.face_vertices(entry.body,face,raw_lighting)
+local function vertices(mesh,entry,face,offset,preview,raw_lighting,bevel_fraction)
+ local out=bevel_fraction and Bevel.face_vertices(
+  mesh,entry.body,face,raw_lighting,bevel_fraction)
+   or mesh.face_vertices(entry.body,face,raw_lighting)
  for _,v in ipairs(out) do
   v[1]=v[1]-(offset or 0)+(preview and preview.x or 0)
   v[2]=v[2]+(preview and preview.y or 0)
@@ -217,17 +232,19 @@ function M:_update_faces(entries,draw_offset,usable_map,drag_preview)
    if record then
     for _,model in ipairs(record.faces) do model.mesh:release() end
     if record.shadow then record.shadow.mesh:release() end
+    if record.bevel then record.bevel.mesh:release() end
    end
    record={body=entry.body,die=entry.die,faces={}}
    self.models[key]=record
   end
   active[key]=true
+  local bevel_on=self:uses_bevel(entry)
   for i,face in ipairs(entry.die.faces) do
    local value=entry.die.faceValueMap[i]
    local img=#face==4 and self.images[value] or self.white
    local preview=drag_preview and drag_preview.index==key and drag_preview or nil
    local verts=vertices(self.mesh,entry,face,draw_offset,preview,
-     Materials.uses_shader(self.material_mode))
+     Materials.uses_shader(self.material_mode),bevel_on and self.bevel_fraction or nil)
    if #face==3 then
     -- Historical D8 has no face texture; retain its per-face flat colours.
     local tint=Scenery.face_color(entry.die,i)
@@ -247,6 +264,20 @@ function M:_update_faces(entries,draw_offset,usable_map,drag_preview)
     record.faces[i]=g3d.newModel(verts,img)
    end
   end
+  if bevel_on then
+   local cut=Bevel.rim_vertices(entry.body,entry.die.faces,self.bevel_fraction)
+   local preview=drag_preview and drag_preview.index==key and drag_preview or nil
+   for _,v in ipairs(cut) do
+    v[1]=v[1]-(draw_offset or 0)+(preview and preview.x or 0)
+    v[2]=v[2]+(preview and preview.y or 0)
+    v[3]=v[3]+(preview and preview.z or 0)
+   end
+   if record.bevel then record.bevel.mesh:setVertices(cut)
+   else record.bevel=g3d.newModel(cut,self.white) end
+  elseif record.bevel then
+   record.bevel.mesh:release()
+   record.bevel=nil
+  end
   local shadow=shadow_vertices(entry.body,draw_offset)
   if record.shadow then record.shadow.mesh:setVertices(shadow)
   else record.shadow=g3d.newModel(shadow,self.white) end
@@ -256,6 +287,7 @@ function M:_update_faces(entries,draw_offset,usable_map,drag_preview)
   if not active[index] then
    for _,model in ipairs(record.faces) do model.mesh:release() end
    if record.shadow then record.shadow.mesh:release() end
+   if record.bevel then record.bevel.mesh:release() end
    self.models[index]=nil
   end
  end
@@ -304,7 +336,14 @@ function M:_draw_scene(args)
     if shader then
      Materials.configure(shader,self.material_mode,args.view,#item.entry.die.faces==8)
     end
-    for _,m in ipairs(models.faces) do m:draw(shader) end
+    for _,m in ipairs(models.faces) do
+     if shader then Materials.configure_pips(shader,self.material_mode,m.texture) end
+     m:draw(shader)
+    end
+    if models.bevel then
+     if shader then Materials.configure_pips(shader,self.material_mode,nil) end
+     models.bevel:draw(shader)
+    end
    end
    g.setDepthMode()
    g.setCanvas()
