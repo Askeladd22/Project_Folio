@@ -112,3 +112,8 @@ Registrare per ciascuna decisione: dadi rimasti, punti provvisori, stato della m
 ## Non obiettivi di questa fase
 
 Non implementare Tarocchi/Trionfi, puzzle cromatico, tavole di piazzamento stile roll-and-write, combattimento tattico a molte risorse, taverna giocabile, animazioni lunghe, nuovi sistemi di scripting o un generatore di miniature. Il lessico medievale e i manoscritti devono differenziare **un gioco di dadi emozionante**, non mascherare un gioco tattico ordinario.
+
+### Vincolo tecnico per il prototipo di incontro
+
+Il sacchetto dei Segni e la risoluzione delle mani potranno reagire solo all'evento ludico `dice.roll_accepted` (o, meglio, all'esito esplicito dell'incasso della mano), **non** a `dice.physical_settled` e non a ogni simulazione di lancio. Un risultato respinto dal dado pesato o un retry meccanico non deve consumare Segni, cambiare il numero di mani o alterare la posta. Il codice degli avversari non fa ancora parte della run.
+

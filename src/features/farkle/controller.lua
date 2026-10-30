@@ -40,7 +40,9 @@ function U:reset(mode)
  self.game=R.new(mode);self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
  self.modal=nil;self.lastLoss=nil;self.lastBank=nil;self.physicalFailure=nil;self.physicalNotice=nil
  self.id=os.date('%Y%m%d-%H%M%S')..'-'..math.floor(love.timer.getTime()*1000)
+ self.logicalRollId=0;self.physicalAttemptId=0
  D.install(self.game.build);self:sync();self:log('new')
+ self:log('session_seed',self.sessionSeed or 'unknown')
 end
 function U:act(name,fn)
  local pot=self.game.pot;local bank=self.game.bank
@@ -54,19 +56,22 @@ function U:act(name,fn)
   self:sync();self:log(name)
  end
 end
-function U:begin_physical(indices)
+function U:begin_physical(indices,technical)
+ self.physicalAttemptId=(self.physicalAttemptId or 0)+1
+ self:log('physical_attempt',tostring(self.logicalRollId or 0)..'/'..tostring(self.physicalAttemptId))
  self:sync_presentation()
  if self.presentation then Presentation.finish(self.presentation) end
  self.activePhysical={};for _,i in ipairs(indices) do self.activePhysical[i]=true end
  for i,d in ipairs(dice) do d.kept=not self.activePhysical[i] end
- self.state='rolling';self.onRollRequest(nil,indices)
+ self.state='rolling';self.onRollRequest(nil,indices,technical == true)
 end
 function U:request(rescue)
  local s=self.game
  if not (rescue and R.rescue(s) or not rescue and R.start(s)) then return false end
  if rescue then Audio.play_farkle('medal') end
  self.medalHeld=nil
- self.pending={};self.observed={};self.retry=nil;self:log(rescue and 'medal_retry' or 'roll')
+ self.logicalRollId=(self.logicalRollId or 0)+1
+ self.pending={};self.observed={};self.retry=nil;self:log(rescue and 'medal_retry' or 'roll',self.logicalRollId)
  self.lastLoss=nil;self.lastBank=nil
  self:begin_physical(s.active);return true
 end
@@ -92,6 +97,7 @@ function U:activate_reference(indices)
   -- ordinary throw. Otherwise the idle solver could move an accepted result.
   self.medalHeld={};for i=1,6 do self.medalHeld[i]=true end
   for _,i in ipairs(self.game.active) do self.medalHeld[i]=nil end
+  self.logicalRollId=(self.logicalRollId or 0)+1
   self.pending={};self.observed={};self.retry=nil;self.lastLoss=nil;self.lastBank=nil
   self:begin_physical(self.game.active)
  else self.lastBank=self.game.bank-bank;self.lastLoss=nil;self:sync() end
@@ -105,18 +111,20 @@ function U:retry_physical()
  local indices={}
  for i=1,#dice do if self.activePhysical and self.activePhysical[i] then indices[#indices+1]=i end end
  if #indices==0 then return false end
- self:begin_physical(indices)
+ self:begin_physical(indices,true)
 end
 function U:update(dt)
  self:sync_presentation()
  if self.presentation then Presentation.update(self.presentation,dt,RuntimeUI.reduced_animations()) end
  if self.retry then
   self.retry=self.retry-dt
-  if self.retry<=0 then self.retry=nil;self:begin_physical({1}) end
+  if self.retry<=0 then self.retry=nil;self:begin_physical({1},true) end
  end
 end
 function U:onDiceSettled(values)
- local s=self.game;local rejected=false
+ local s=self.game
+ if not s or s.phase~='rolling' then return false end
+ local rejected=false
  for _,v in ipairs(values) do
   self.pending[v.index]=v.value;self.observed[v.index]=v.value
   if s.build=='weighted' and v.index==1 then
@@ -129,7 +137,7 @@ function U:onDiceSettled(values)
   -- Defer: main.lua clears last_roll_indices after this callback returns.
   self.retry=.65;s.last='Weighted die: automatically rerolling die 1 physically.'
   self.activePhysical={};for _,d in ipairs(dice) do d.kept=true end
-  return
+  return false
  end
  local pot=s.pot
  -- Only accepted gameplay throws get an origin ID. Technical retries and
@@ -140,6 +148,7 @@ function U:onDiceSettled(values)
  Presentation.accepted(self.presentation,accepted)
  if s.phase=='ended' or s.phase=='lost' then self.lastLoss=pot end
  self.activePhysical=nil;self.dice_results={};self:sync();self:log('settled',table.concat(s.hand,'/'))
+ return true
 end
 function U:toggle(i) if R.toggle(self.game,i) then self:log('select',i) end end
 function U:select_option(mask)

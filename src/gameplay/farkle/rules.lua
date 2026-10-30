@@ -1,7 +1,5 @@
-local R={contracts={
- {name='Parish Psalter',target=100,limit=4,entry_min=0,bank_min=0,provisional=true,condition='Banked points only'},
- {name='Merchant\'s Book of Hours',target=150,limit=5,entry_min=40,bank_min=20,provisional=true,condition='Bank at least one group of 3 or more matching dice'},
- {name='Presentation Codex',target=200,limit=5,entry_min=50,bank_min=25,provisional=true,condition='Bank after at least one hot dice cycle'}}}
+local Progress=require('src.gameplay.farkle.commission_progress')
+local R={contracts=Progress.contracts}
 local Scoring=require('src.gameplay.farkle.scoring')
 local Medals=require('src.gameplay.farkle.medals')
 R.points=Scoring.points
@@ -31,8 +29,7 @@ function R.selection(s)
  local o=R.selection_option(s);if o then return o.points,o.group end
 end
 function R.bank_status(s)
- local c=R.contracts[s.stage]
- local minimum=s.entered and (c.bank_min or 0) or (c.entry_min or 0)
+ local minimum=Progress.minimum(s)
  local selected=next(s.selected)~=nil;local pts=R.selection(s)
  local total=s.pot+(pts or 0)
  if s.phase~='ready' then return false,total,minimum,'Turn not ready' end
@@ -104,12 +101,9 @@ function R.bank_turn(s)
  if next(s.selected) then assert(R.take(s)) end
  s.entered=true
  s.bank=s.bank+s.pot;s.pot=0;s.group=s.group or s.turnGroup;s.hotBank=s.hotBank or s.turnHot
- local c=R.contracts[s.stage]
- if s.bank>=c.target and (s.stage~=2 or s.group) and (s.stage~=3 or s.hotBank) then
-  if s.stage==3 then s.phase='won'
-  elseif s.mode=='control' then s.phase='advance'
-  else s.phase=s.stage==1 and 'upgrade' or 'medal' end
- else s.phase=s.turn>=c.limit and 'lost' or 'ended' end
+ if Progress.completed(s) then
+  s.phase=Progress.completion_phase(s)
+ else s.phase=s.turn>=Progress.contracts[s.stage].limit and 'lost' or 'ended' end
  s.last='Points banked and manuscript progress secured.';return true
 end
 function R.next_turn(s)

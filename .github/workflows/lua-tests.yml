@@ -1,0 +1,49 @@
+name: Lua regression tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  lua-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua runtimes
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit lua-check
+      - name: Static lint of new pure gameplay, event and persistence modules
+        run: |
+          luacheck --no-config --std lua51 --no-max-line-length \
+            src/core/settings_data_codec.lua \
+            src/core/lua_table_store.lua \
+            src/core/roll_events.lua \
+            src/gameplay/farkle/commission_progress.lua --globals love
+      - name: Lua 5.4 syntax check (headless source and tests)
+        run: |
+          set -eu
+          find src tests -name '*.lua' -type f -print0 | xargs -0 -n 1 luac5.4 -p
+          luac5.4 -p main.lua core.lua conf.lua
+      - name: Lua 5.4 headless tests
+        run: |
+          set -eu
+          for test in tests/*_test.lua; do
+            echo "::group::$test"
+            # The shipping LOVE runtime uses LuaJIT/5.1's global unpack.
+            lua5.4 -e 'unpack=table.unpack' "$test"
+            echo "::endgroup::"
+          done
+      - name: LuaJIT headless tests
+        run: |
+          set -eu
+          for test in tests/*_test.lua; do
+            echo "::group::$test"
+            luajit "$test"
+            echo "::endgroup::"
+          done
+      - name: Python source tests
+        run: |
+          set -eu
+          PYTHONPATH=. python3 scripts/test_checkpoint.py
+          PYTHONPATH=. python3 scripts/test_capture_retention.py
+          PYTHONPATH=. python3 scripts/test_love_runtime.py

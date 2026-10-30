@@ -122,3 +122,8 @@ Con soglie azzerate, politica valore: 167/400, 203/400, 202/400 rispettivamente.
 La suite copre tutte le combinazioni, ID disgiunti, selezione parziale, tiri separati, soglie e ingresso, hot ottenuti/incassati, Farkle, commissioni, medaglia e mapping. Smoke reali coprono avvio, selezione e rilancio fisico, inciso/pesato, A/B e HUD 1280×720/1920×1080; gli stati rari dell'HUD usano anche fixture numeriche, le cui pose 3D possono provenire dal tiro precedente. Non sono prove di uniformità fisica. Comandi riproducibili nel [README](../README.md).
 
 Restano da valutare con giocatori: taratura degli incarichi, utilità di mostrare fino a 63 selezioni, influenza delle soglie sulle scelte forzate, convenienza relativa delle build. Incassare quando la consegna è soddisfatta domina il rischio senza premio aggiuntivo; equipaggiare gratuitamente una medaglia opzionale amplia le possibilità senza costo. Con sei dadi normali e Correttore disponibile, due Farkle IID consecutivi hanno probabilità circa 0,0536%: quel singolo tentativo può essere quasi privo di rischio, ma consuma il salvataggio. Non si certificano divertimento, equilibrio o assenza di strategie dominanti.
+
+### Note architetturali (ottobre 2026)
+
+La progressione delle tre commissioni è isolata in `src/gameplay/farkle/commission_progress.lua`. Il codice pubblico continua a esporre `R.contracts`, e l'estrazione **non cambia** obiettivi, limiti di turni, combinazioni, medaglie o ricompense. Soltanto i risultati fisici **accettati** dal controller vengono pubblicati come `dice.roll_accepted`: i ritentativi tecnici non sono tiri di Farkle aggiuntivi.
+

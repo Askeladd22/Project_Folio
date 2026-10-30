@@ -139,3 +139,8 @@ Fonti consultate o allegate, non garanzia di lettura integrale né di adozione:
 - **Giochi e riferimenti visivi:** Farkle/KCD2 e Squire's Dice per lancio fisico e immediatezza; Dice Forge per facce identificabili; Balatro per build e feedback causale; Biblios e Biblios: Quill and Parchment per obiettivi librari; Trismegistus per relazioni fra selezione e azioni. Il concept della mod cooperativa *Star Realms Boss Fight* (2020) e il codice Lua Tabletop Simulator di P4ND0RA, condivisi in discussione, sono riferimenti per IA asimmetrica e sacchetto a esaurimento: non regole già adottate né codice del progetto. La plancia lignea, la pagina ornata e le fotografie del libro/cofanetto apribile fornite dall'utente sono riferimenti di struttura, materiali, apertura e lessico figurativo, non autorizzazioni a copiarne gli asset. I riferimenti non autorizzano aste, moltiplicatori o nuovi sottosistemi per analogia.
 
 Le ricerche tecniche originali sono nell'[indice storico](../legacy/README.md); i materiali allegati non sono necessariamente distribuiti nel repository.
+
+### Consolidamento tecnico senza nuove regole (ottobre 2026)
+
+La stabilizzazione ha separato i limiti e le condizioni delle commissioni dalle regole dei dadi e ha chiarito il confine fra lanci fisici e lanci **accettati**. Non sono state introdotte nuove combinazioni, modifiche di probabilità né avversari. Il Duello delle Poste rimane una proposta di prototipo documentata, non la regola della run attuale.
+

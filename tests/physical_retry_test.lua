@@ -1,4 +1,6 @@
 local U=require('src.features.farkle.controller')
+-- Headless unit test: the runner has no LÖVE filesystem or CSV output.
+U.log=function() end
 dice={};for i=1,6 do dice[i]={kept=true} end
 local captured
 U.onRollRequest=function(_,indices) captured=indices end
