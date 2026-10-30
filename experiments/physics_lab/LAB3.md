@@ -45,3 +45,23 @@ This is not a performance ranking or evidence of unbiased dice outcomes.
 FPS uses different static floor/rim bodies and collision rules. Renderer g3d,
 Farkle, RNG and shipping physics remain untouched; GPU and Windows visual QA
 are still required before any replacement.
+## Lab 3b — controlled single-die contact poses
+
+To isolate contact handling from die–die interactions, Lab 3 also
+contains a **one-body** drop matrix: upright **face-first**, 45° **edge**,
+and an oblique **corner** orientation, each from z=3 with zero initial
+linear/angular velocity and with dt 0.01, 0.005 and 0.0025 seconds. Every
+case simulates 4.5 seconds in an independently constructed FPS world.
+Euler rotations are applied by the diagnostic C bridge after saving and
+restoring the world translation (upstream FPS rotation setter otherwise
+reinitializes the transform).
+
+```powershell
+luajit .\experiments\physics_lab\run_contact_poses.lua
+```
+
+This writes `results-contact-poses.csv` with final validity, reason,
+airborne-body observations, penetration-body observations and maximum
+depth for each of the nine cases. **No production or upstream physics
+files are modified.** The corner configuration is an oblique drop, not
+a mathematically certified exact vertex-first orientation.
