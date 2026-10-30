@@ -549,7 +549,7 @@ local function draw_action_controls(u, s)
             -- No dice currently selected
             local can_roll = R.can_roll(s)
             local roll_label = s.hot and 'Dadi Caldi! Rilancia tutti [Spazio]' or (s.phase == 'fresh' and 'Lancia i Dadi [Spazio]' or ('Rilancia ' .. R.count_free(s) .. ' Dadi [Spazio]'))
-            local roll_sub = s.phase == 'fresh' and 'Inizia il turno lanciando 6 dadi' or (s.hot and 'Tutti i 6 dadi tornano in gioco!' or (can_roll and 'Rischia i punti per farne altri' or 'Seleziona prima i dadi con punteggio'))
+            local roll_sub = can_roll and 'Oppure afferra un dado con tasto destro e lancialo' or 'Seleziona prima i dadi con punteggio'
             action_button(u, 'roll', roll_label, roll_sub, b1_x, b1_y, b1_w, b1_h, can_roll, function() u:request() end, can_roll and 'primary' or nil)
         end
 
@@ -619,6 +619,21 @@ function M.overlay(u, hits)
     if not s then return end
 
     local eligible = H.eligible(s)
+
+    -- Draw the hand trajectory only while the right mouse button holds a
+    -- playable die; the die itself is previewed by g3d without moving physics.
+    if u.mouseThrow then
+        local gesture=u.mouseThrow
+        local ax,ay=Res.to_virtual(gesture.x0,gesture.y0)
+        local bx,by=Res.to_virtual(gesture.x,gesture.y)
+        Res.begin_ui()
+        g.setColor(1,.82,.42,.8)
+        g.setLineWidth(2)
+        g.line(ax,ay,bx,by)
+        g.circle('line',bx,by,13)
+        g.setLineWidth(1)
+        Res.end_ui()
+    end
 
     -- Highlight circles on 3D dice in the tray
     for _, h in ipairs(hits or {}) do
