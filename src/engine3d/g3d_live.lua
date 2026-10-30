@@ -28,10 +28,12 @@ end
 
 -- Geometry follows the physical bodies, including draw offsets for old
 -- logical tray regions. No mutation of body.position or face values.
-local function vertices(mesh,entry,face,offset)
+local function vertices(mesh,entry,face,offset,preview)
  local out=mesh.face_vertices(entry.body,face)
  for _,v in ipairs(out) do
-  v[1]=v[1]-(offset or 0)
+  v[1]=v[1]-(offset or 0)+(preview and preview.x or 0)
+  v[2]=v[2]+(preview and preview.y or 0)
+  v[3]=v[3]+(preview and preview.z or 0)
  end
  return out
 end
@@ -179,7 +181,7 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
  end
 end
 
-function M:_update_faces(entries,draw_offset,usable_map)
+function M:_update_faces(entries,draw_offset,usable_map,drag_preview)
  local g3d=self.g3d
  local active={}
  for _,item in ipairs(entries) do
@@ -198,7 +200,8 @@ function M:_update_faces(entries,draw_offset,usable_map)
   for i,face in ipairs(entry.die.faces) do
    local value=entry.die.faceValueMap[i]
    local img=#face==4 and self.images[value] or self.white
-   local verts=vertices(self.mesh,entry,face,draw_offset)
+   local preview=drag_preview and drag_preview.index==key and drag_preview or nil
+   local verts=vertices(self.mesh,entry,face,draw_offset,preview)
    if #face==3 then
     -- Historical D8 has no face texture; retain its per-face flat colours.
     local tint=Scenery.face_color(entry.die,i)
@@ -236,7 +239,7 @@ function M:_draw_scene(args)
  local g=love.graphics
  local vp=args.viewport
  self:_ensure(args.entries,args.extents,args.height,vp,args.style,args.divider)
- self:_update_faces(args.entries,args.offset,args.usable)
+ self:_update_faces(args.entries,args.offset,args.usable,args.drag_preview)
  local cam=self.g3d.camera
  self.camera.apply(args.view,cam,self.width,self.height,args.scale)
  -- Shift orthographic clip space to the exact projected tray position.
