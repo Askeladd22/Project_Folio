@@ -126,9 +126,9 @@ end
 function M:_ensure(entries,extents,border,viewport)
  local g=love.graphics
  if not self.g3d then
-  self.g3d=require('experiments.g3d_lab.g3d')
-  self.mesh=require('experiments.g3d_lab.mesh')
-  self.camera=require('experiments.g3d_lab.camera')
+  self.g3d=require('lib.g3d')
+  self.mesh=require('src.engine3d.g3d_mesh')
+  self.camera=require('src.engine3d.g3d_camera')
   -- g3d sets global depth on import; 2D UI must retain its initial state.
   g.setDepthMode()
  end
