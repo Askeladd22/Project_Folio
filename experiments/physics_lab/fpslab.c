@@ -25,9 +25,6 @@ typedef struct fpslab {
 } fpslab;
 
 static int valid_float(float f) { return isfinite(f); }
-static void set3(float a[3],float x,float y,float z) {
-    a[0]=x;a[1]=y;a[2]=z;
-}
 static int make_part(fps_body **out_body,fps_part **out_part,
                      float sx,float sy,float sz,float mass,
                      float x,float y,float z,int dynamic,
@@ -79,7 +76,6 @@ FPSLAB_API fpslab *fpslab_new(int n,const float *states,float edge,
     /* A zero-height floor surface is represented by a thick static cuboid. */
     const float floor_t=.6f;
     const float wall_t=.30f;
-    const float eps=.001f;
     const float blocks[LAB_STATIC][6]={
         {2*half_x,2*half_y,floor_t,0,0,-floor_t/2},
         {wall_t,2*half_y+2*wall_t,rim,half_x+wall_t/2,0,rim/2},
@@ -103,7 +99,6 @@ FPSLAB_API fpslab *fpslab_new(int n,const float *states,float edge,
         fps_body_velocity_set(w->dice[i],vel);
         fps_body_angular_velocity_set(w->dice[i],spin);
     }
-    (void)eps;
     return w;
 fail:
     fpslab_free(w);

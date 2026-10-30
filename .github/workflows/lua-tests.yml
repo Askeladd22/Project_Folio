@@ -45,7 +45,7 @@ jobs:
         run: |
           set -eu
           bash experiments/physics_lab/build-linux.sh
-          luajit experiments/physics_lab/run.lua 2 200
+          luajit experiments/physics_lab/run.lua 8 450
           test -s experiments/physics_lab/build/results.csv
       - name: Python source tests
         run: |
