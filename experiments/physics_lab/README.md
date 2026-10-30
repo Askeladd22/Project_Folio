@@ -94,8 +94,10 @@ luajit .\experiments\physics_lab\run.lua 8 450 lab2
 ```
 
 Lab 2 writes `build/results-lab2.csv`, leaving the Lab 1 `results.csv`
-independent. Rows compare `legacy`, **unmodified** `FPS`, and
-`FPS+guard` per identical fixture. Additional CSV fields count post-step
+independent. Rows compare `legacy`, **unmodified** `FPS`, two unmodified FPS substep
+variants (`FPS2x`, `FPS4x`, respectively 0.005 and 0.0025 second integration
+steps, same 4.5-second simulated time) and `FPS+guard` per identical fixture.
+This isolates step-size sensitivity without changing the source engine. Additional CSV fields count post-step
 guard corrections and the maximum upward correction, even if they occurred
 between normal observation samples.
 
