@@ -37,6 +37,6 @@ jobs:
       - name: Python source tests
         run: |
           set -eu
-          python3 scripts/test_checkpoint.py
-          python3 scripts/test_capture_retention.py
-          python3 scripts/test_love_runtime.py
+          PYTHONPATH=. python3 scripts/test_checkpoint.py
+          PYTHONPATH=. python3 scripts/test_capture_retention.py
+          PYTHONPATH=. python3 scripts/test_love_runtime.py
