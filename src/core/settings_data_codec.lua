@@ -157,6 +157,10 @@ local function reader(text,legacy)
   if c=='"' or legacy and c=="'" then return str() end
   skip()
   local number=text:match('^(-?%d+%.?%d*[eE]?[+%-]?%d*)',i)
+  -- The old Lua table syntax also allows a leading decimal point.
+  if not number and legacy then
+   number=text:match('^(-?%.%d+[eE]?[+%-]?%d*)',i)
+  end
   if number and #number>0 then
    local val=tonumber(number)
    if not val or val~=val or val==math.huge or val==-math.huge then error('invalid number') end
