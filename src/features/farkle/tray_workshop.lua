@@ -30,59 +30,14 @@ function W.floor(view,x1,x2,y1,y2)
  if W.current=='current' then return false end
  local id=W.current
  if id=='book' then
-  -- Open parchment leaves on the original z=0 physical landing surface.
-  -- No displacement, altered collision geometry, or different die projection.
-  local g=love.graphics
-  local w,h=x2-x1,y2-y1
+  -- F9 fallback: restrained parchment only. All coordinates remain at z=0.
+  -- The former heavy rubric strokes were drawn with 1–2 *world-unit*
+  -- line widths under the scaled tray transform and became giant crosses.
   local mid=(x1+x2)*.5
-  local margin=math.min(w,h)*.028
-
-  -- The entire playable floor remains parchment, including the page gutter.
-  plane(view,x1,x2,y1,y2,0,{.77,.665,.505,1})
-  plane(view,x1+.10,mid-.12,y1+.10,y2-.10,0,{.85,.775,.635,1})
-  plane(view,mid+.12,x2-.10,y1+.10,y2-.10,0,{.82,.747,.61,1})
-  -- Three closely spaced gutter shadows suggest curved leaves without
-  -- drawing a huge dark rectangle through the middle of the game.
-  plane(view,mid-.14,mid-.045,y1+.10,y2-.10,0,{.55,.44,.315,.28})
-  plane(view,mid-.045,mid+.06,y1+.10,y2-.10,0,{.64,.55,.425,.25})
-  plane(view,mid+.06,mid+.14,y1+.10,y2-.10,0,{.94,.86,.70,.34})
-
-  local function stroke(ax,ay,bx,by,color,width)
-   local px,py=view.project(ax,ay,0)
-   local qx,qy=view.project(bx,by,0)
-   g.setColor(unpack(color));g.setLineWidth(width or 1);g.line(px,py,qx,qy)
-  end
-  local oldWidth=g.getLineWidth()
-  -- Restrained binding lines and manuscript ruling along the page margins,
-  -- not through the dice landing area.
-  stroke(mid-.18,y1+.18,mid-.18,y2-.18,{.38,.25,.135,.22},1)
-  stroke(mid+.17,y1+.18,mid+.17,y2-.18,{1,.94,.78,.44},1)
-  for side=1,2 do
-   local xa=side==1 and x1+w*.065 or mid+w*.06
-   local xb=side==1 and mid-w*.06 or x2-w*.065
-   local ya=y1+h*.115
-   local yb=y2-h*.115
-   -- Double ruling in faded brown ink echoes a prepared manuscript page.
-   for _,x in ipairs({xa,xb}) do
-    stroke(x,ya,x,yb,{.34,.23,.13,.23},1)
-   end
-   for _,y in ipairs({ya,yb}) do
-    stroke(xa,y,xb,y,{.34,.23,.13,.22},1)
-   end
-   -- A small rubricated corner, deliberately away from the central dice.
-   local x=xa+w*.015
-   stroke(x,ya+h*.02,x+w*.045,ya+h*.02,{.56,.19,.11,.42},2)
-   stroke(x,ya+h*.02,x,ya+h*.07,{.56,.19,.11,.42},2)
-  end
-  -- Deterministic scattered paper fibres; no calls to game RNG.
-  for i=1,108 do
-   local px=x1+.45+(((i*43)%109)/109)*(w-.90)
-   local py=y1+.45+(((i*71)%113)/113)*(h-.90)
-   local sx,sy=view.project(px,py,0)
-   g.setColor(.33,.22,.105,.025+(i%4)*.011)
-   g.points(sx,sy)
-  end
-  g.setLineWidth(oldWidth)
+  plane(view,x1,x2,y1,y2,0,{.81,.73,.59,1})
+  plane(view,x1+.11,mid-.10,y1+.12,y2-.12,0,{.86,.79,.66,1})
+  plane(view,mid+.10,x2-.11,y1+.12,y2-.12,0,{.83,.76,.63,1})
+  plane(view,mid-.07,mid+.08,y1+.12,y2-.12,0,{.69,.60,.46,.22})
   return true
  end
  local colors={A={.26,.13,.065,1},B={.115,.135,.115,1},C={.34,.29,.20,1}}
