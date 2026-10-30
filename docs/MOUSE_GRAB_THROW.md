@@ -1,48 +1,60 @@
-# Mouse grab and throw — Manuscript
+# Tabletop-style individual dice interaction
 
-The [Free Physics Solver (FPS)](https://github.com/0x1ED1CE/FPS)
-screenshots illustrate hands-on rigid-body interaction. The mouse
-controller is **not** provided by the upstream FPS library or its public
-`fps.h` API. Manuscript implements the gesture using its own
-LÖVE mouse events, existing g3d renderer and current production physics.
+The original PR #15 mapped a mouse drag to an automatic launch of **all
+six dice**. It did not implement the requested behavior.
 
-## Interaction
+This version uses **real physical bodies** and aims for the manipulation
+model of Tabletop Simulator without importing FPS or replacing g3d.
 
-When **Lancia/Rilancia** is enabled, hold **right mouse button on an
-available die**, drag across the tray, and release. The grabbed die
-follows the hand visually in g3d; the other dice remain in place until
-release. Mouse direction and speed provide an additional **bounded**
-horizontal velocity and slight angular impulse to the *normal official
-Farkle throw*. All active dice are rolled, never an illegally isolated
-die. Releasing after a small accidental movement does nothing.
+## Controls
 
-This is an alternative to pressing **Space** or the **Lancia** button:
-Farkle selection, accepted faces, score calculation, kept dice and physical
-retry machinery remain unchanged. The right button is deliberately
-separate from the **left click** used for scoring dice. A medal retry,
-technical retry, modal, disabled roll or already rolling die cannot be
-manually thrown. **Esc** cancels a held grab without exiting the game.
+1. While **Lancia / Rilancia** is available, **right-click a physical die**.
+   This starts one official Farkle roll containing all active dice, but
+   leaves them queued rather than launching them automatically.
+2. **Keep the button pressed** and move the mouse. The selected die's actual
+   physics position follows the cursor above the book, and its real mesh
+   vertices rotate continuously while held. The physics engine temporarily
+   treats it as kinematic, so gravity does not pull it from your hand.
+3. **Release right mouse**: only the grabbed die is given the bounded
+   velocity and spin of the final mouse gesture. Gravity, contacts and
+   rotation take over on the real board immediately.
+4. Grab and release the remaining dice **one at a time**, in any order.
+   Already thrown dice are in the normal physics simulation while you
+   manipulate the remaining ones.
+5. The game **waits until every active die was released** AND until all
+   dice have genuinely settled. Only then does it classify the faces and
+   resolve the *one original* Farkle roll, with the same scoring, hot dice,
+   weighted modifier and technical retry policies as before.
 
-The held-die preview shifts only GPU vertices. It does not move the
-underlying physics body before the actual roll, avoiding desynchronization
-between collider, picking hitbox and game state. F9 legacy fallback still
-allows the right-drag roll; the previewed cube follows the cursor only
-in g3d. The input path uses no FPS libraries.
+Short/no-motion releases drop the selected die naturally. **Esc while
+holding** cancels just that grab and restores the original die position
+and orientation (the die remains in the queue). The left button still
+selects scoring combinations *after the completed group roll*. Space
+remains the normal automatic group throw **before** starting manual mode.
 
-## Verify in Windows LÖVE
+This feature deliberately does not:
+- assign a face value before the physical bodies settle;
+- add free rerolls or individually scored dice;
+- move a kept/previously thrown die;
+- require FPS or affect the upstream solver comparison lab.
 
-1. Start a fresh Farkle commission and hover a visible unkept die.
-2. Right-click, drag at least 28 screen pixels, release; verify the
-   *same official six-die launch* and the directional influence.
-3. Repeat with gentle/fast and up/down/sideways gestures. Try a tiny
-   right-click without dragging: it must not start a roll.
-4. Select a scoring die using left mouse, then bank/take as before.
-5. Confirm a non-scoring / not-yet-ready phase refuses the drag.
-6. Re-roll after keeping dice: no kept dice should be relaunched.
-7. Use F9 and F8, resize to 1280×720, and check right-button release
-   beyond the tray, and Esc cancel during a held drag.
-8. Let a physical retry occur: it must use the standard spawn/solver and
-   must not replay the initial gesture as a second logical Farkle roll.
+## Manual QA
 
-This feature is **subject to live GPU/physical input QA** before release.
-Unit tests only cover gesture mapping, bounds and source integration.
+Test on Windows LÖVE with g3d (and F9 legacy):
+
+- Pick die 2; move left and right while held; verify the **actual 3D
+  orientation changes**, not merely a cosmetic copy of the die.
+- Let go: only die 2 moves under physics; the others remain at rest.
+- Pick die 5 and throw it toward die 2, check visual impacts.
+- Verify that no points appear until **all eligible dice** have been
+  individually thrown and settled.
+- Make a very short stationary release, a vigorous swipe and Esc cancel.
+- Verify Farkle point scoring, left-click selection, **A**, **Enter**,
+  hot dice, technical retries, and the automatic Space throw.
+- Repeat after selecting/keeping scoring dice, and in 1280×720 / 1920×1080
+  layouts and F8 variants.
+- Check that the GUI never permits picking an already thrown or kept die
+  during the current Farkle roll.
+
+**Draft until real input and physics QA**. Headless tests cannot prove the
+feel, collision visuals or that actual player gestures are intuitive.

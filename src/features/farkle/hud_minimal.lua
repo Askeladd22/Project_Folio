@@ -479,6 +479,11 @@ end
 
 -- Contextual status message above action buttons
 local function get_contextual_message(u, s)
+    if u.manualRoll then
+        local remaining=u.manualRoll.count
+        return u.mouseThrow and 'Dado in mano: muovilo per ruotarlo, rilascia per lanciarlo (Esc annulla la presa).'
+          or ('Lancia i dadi uno alla volta con il tasto destro: '..remaining..' ancora da lanciare.')
+    end
     if u.physicalFailure then return u.physicalFailure end
     if s.phase == 'rolling' then return 'I dadi rotolano sulla pagina…' end
     if s.phase == 'fresh' then return 'Lancia tutti i 6 dadi per iniziare il tuo turno.' end
@@ -549,7 +554,7 @@ local function draw_action_controls(u, s)
             -- No dice currently selected
             local can_roll = R.can_roll(s)
             local roll_label = s.hot and 'Dadi Caldi! Rilancia tutti [Spazio]' or (s.phase == 'fresh' and 'Lancia i Dadi [Spazio]' or ('Rilancia ' .. R.count_free(s) .. ' Dadi [Spazio]'))
-            local roll_sub = can_roll and 'Oppure afferra un dado con tasto destro e lancialo' or 'Seleziona prima i dadi con punteggio'
+            local roll_sub = can_roll and 'Tasto destro: afferra, ruota e lancia ciascun dado' or 'Seleziona prima i dadi con punteggio'
             action_button(u, 'roll', roll_label, roll_sub, b1_x, b1_y, b1_w, b1_h, can_roll, function() u:request() end, can_roll and 'primary' or nil)
         end
 
@@ -620,8 +625,8 @@ function M.overlay(u, hits)
 
     local eligible = H.eligible(s)
 
-    -- Draw the hand trajectory only while the right mouse button holds a
-    -- playable die; the die itself is previewed by g3d without moving physics.
+    -- Draw the hand trajectory while the actual rigid body is being held.
+    -- Its physical vertices follow and rotate with the cursor, in g3d and F9.
     if u.mouseThrow then
         local gesture=u.mouseThrow
         local ax,ay=Res.to_virtual(gesture.x0,gesture.y0)
