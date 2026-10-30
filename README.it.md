@@ -38,6 +38,7 @@ Percorso: Splash → Main Menu → New Game → Choose Commission → Farkle Rog
 | Indietro | Esc |
 | Varianti grafiche sperimentali | F8 |
 | g3d ↔ renderer precedente | F9 |
+| Materiali dadi e diagnostica normali (g3d) | F10 |
 
 I comandi dipendono dalla fase del turno. Per forzare la grafica precedente: `MANUSCRIPT_RENDERER=legacy`. Per mostrare la diagnostica: `MANUSCRIPT_G3D_DEBUG=1`.
 
