@@ -45,7 +45,7 @@ local function record(seed,name,s,steps)
   s.invalid_floor,s.invalid_moving}
  for i=1,6 do columns[#columns+1]=s.faces[i] end
  csv:write(table.concat(columns,',')..'\n')
- local acc=totals[name] or {runs=0,cpu=0,overlaps=0,airborne=0,invalid=0,unsettled=0,penetration=0,tilt=0,gap=0,floor=0,moving=0}
+ local acc=totals[name] or {runs=0,cpu=0,overlaps=0,airborne=0,invalid=0,unsettled=0,penetration=0,floor_penetration=0,tilt=0,gap=0,floor=0,moving=0}
  acc.runs=acc.runs+1
  acc.cpu=acc.cpu+s.cpu
  acc.overlaps=acc.overlaps+s.overlap_events
@@ -57,10 +57,11 @@ local function record(seed,name,s,steps)
  acc.moving=acc.moving+s.invalid_moving
  acc.unsettled=acc.unsettled+s.unsettled
  acc.penetration=math.max(acc.penetration,s.max_overlap)
+ acc.floor_penetration=math.max(acc.floor_penetration,s.max_floor_penetration)
  totals[name]=acc
- print(string.format('seed %d | %-6s | overlap samples %d | max depth %.4f | airborne sleep %d | unsettled %d | invalid faces %d | CPU %.3fs',
+ print(string.format('seed %d | %-6s | overlap samples %d | max depth %.4f | airborne sleep %d | unsettled %d | invalid faces %d | worst floor %.5f | CPU %.3fs',
   seed,name,s.overlap_events,s.max_overlap,s.airborne_sleep_events,
-  s.unsettled,s.invalid_faces,s.cpu))
+  s.unsettled,s.invalid_faces,s.max_floor_penetration,s.cpu))
 end
 for i=1,runs do
  local seed=1337+(i-1)*7919
@@ -75,8 +76,8 @@ for _,name in ipairs({'legacy','FPS'}) do
  local t=assert(totals[name])
  print(string.format('SUMMARY %s: %.3fs average CPU/run; %d overlapping pair-samples; max depth %.4f; %d airborne-sleep samples; %d invalid face finishes; %d still moving',
   name,t.cpu/t.runs,t.overlaps,t.penetration,t.airborne,t.invalid,t.unsettled))
- print(string.format('CAUSES %s: tilt=%d, face-gap=%d, floor=%d, moving=%d',
-  name,t.tilt,t.gap,t.floor,t.moving))
+ print(string.format('CAUSES %s: tilt=%d, face-gap=%d, floor=%d, moving=%d, worst floor penetration=%.6f',
+  name,t.tilt,t.gap,t.floor,t.moving,t.floor_penetration))
 end
 print('CSV: '..output)
 print('NOTE: native FPS uses convex static rim/floor, legacy has its existing wall rules. These results are preliminary, not a controlled fairness/equity test.')
