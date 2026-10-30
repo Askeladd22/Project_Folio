@@ -182,4 +182,60 @@ FPSLAB_API int fpslab_floor_guard(fpslab *w,float *max_depth) {
     return corrected;
 }
 
+
+/* Lab 3: read-only lowest transformed D6 corner in the floor's z=0 frame.
+ * No mutation of the pinned upstream FPS 1.2.5 header or production physics.
+ */
+static float fpslab_lowest_z(const fpslab *w,int index) {
+    float t[16];
+    fps_body_transform_get(w->dice[index],t);
+    const float h=w->edge*.5f;
+    float lowest=INFINITY;
+    for(int sx=-1;sx<=1;sx+=2)
+    for(int sy=-1;sy<=1;sy+=2)
+    for(int sz=-1;sz<=1;sz+=2) {
+        float z=t[8]*(sx*h)+t[9]*(sy*h)+t[10]*(sz*h)+t[11];
+        if(z<lowest)lowest=z;
+    }
+    return lowest;
+}
+
+/* Return 4 read-only per-step counters: number sleeping above support,
+ * number penetrating below the floor, maximum penetration, and nearest
+ * floor distance. No body pose or velocity is changed by this probe.
+ */
+FPSLAB_API int fpslab_probe(const fpslab *w,float *out4) {
+    if(!w || !out4)return 0;
+    out4[0]=0;out4[1]=0;out4[2]=0;out4[3]=INFINITY;
+    for(int i=0;i<w->n;i++) {
+        float bottom=fpslab_lowest_z(w,i);
+        if(!isfinite(bottom))return 0;
+        if(fps_body_sleeping_get(w->dice[i]) && bottom>.08f)out4[0]+=1;
+        if(bottom<-.002f) {
+            out4[1]+=1;
+            if(-bottom>out4[2])out4[2]=-bottom;
+        }
+        if(bottom<out4[3])out4[3]=bottom;
+    }
+    return 1;
+}
+
+/* A diagnostic alternative only: before the UNCHANGED FPS step, wake any
+ * sleeping body whose lowest corner is above the z=0 support surface.
+ * Repeated wakeups expose FPS's unconditional low-speed sleeping, and do
+ * NOT fix the contact solver. Non-penetrating grounded sleeping is untouched.
+ */
+FPSLAB_API int fpslab_step_support(fpslab *w,float dt) {
+    if(!w || !valid_float(dt) || dt<=0 || dt>.05f)return -1;
+    int wakes=0;
+    for(int i=0;i<w->n;i++) {
+        if(fps_body_sleeping_get(w->dice[i]) && fpslab_lowest_z(w,i)>.08f) {
+            fps_body_sleeping_set(w->dice[i],FPS_FALSE);
+            wakes++;
+        }
+    }
+    if(!fpslab_step(w,dt))return -1;
+    return wakes;
+}
+
 FPSLAB_API int fpslab_version(void) { return 125; }
