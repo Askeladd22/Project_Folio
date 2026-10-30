@@ -29,4 +29,19 @@ for i,face in ipairs(faces) do
 end
 local flat=Lab.floor_vertices(-4,4,-2,2)
 assert(#flat==6 and flat[1][3]==0 and flat[1][8]==1)
+local walls=Lab.tray_border_vertices(-4,4,-2,2,.85,.74,8)
+assert(#walls==4*3*8*6,'four complete walls: outer, inner and upper rim')
+local minz,maxz=math.huge,-math.huge
+local seen={}
+for _,v in ipairs(walls) do
+ assert(#v==12,'tray wall vertex must match the g3d vertex format')
+ assert(v[9]>0 and v[9]<=1,'tray wall shade must be normalized')
+ minz=math.min(minz,v[3]);maxz=math.max(maxz,v[3])
+ seen[string.format('%.2f:%.2f:%.2f',v[1],v[2],v[3])]=true
+end
+assert(minz==0 and maxz==.74,'physical rim height differs from legacy')
+assert(seen['-4.85:-2.85:0.00'] and seen['4.85:2.85:0.74'],
+       'rim dimensions differ from legacy')
+local small=Lab.tray_border_vertices(-4,4,-2,2,.85,.74,1)
+assert(#small==72,'side-count and tessellation broken')
 print('PASS renderer A/B pure geometry: correct D6 UVs, 3D vertex mapping, outward normals')
