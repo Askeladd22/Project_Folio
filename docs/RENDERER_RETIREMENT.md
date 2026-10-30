@@ -37,3 +37,26 @@ Verified active dependencies:
 
 This decision is separate from FPS evaluation: **do not replace
 `src/engine3d/physics.lua` while testing alternate contact solvers.**
+
+## Migration checkpoint — g3d F8, D8 and held-die portraits
+
+The `feature/g3d-all-tray-variants-20261030` branch moves the active
+three-dimensional rendering of all five F8 tray skins, the split divider,
+triangular D8 bodies and accepted-die HUD portraits to g3d. The latter
+captures the real physical die pose once per kept-die entry.
+
+**Why the painter remains for now:**
+- GPU rendering in these newly supported modes has not yet undergone
+  Windows/LÖVE visual QA; static geometry and headless Lua tests cannot
+  prove correct 3D appearance or pixel-aligned mouse interaction.
+- A graphics error must still leave an existing run playable.
+- Explicit F9 comparison and historical g3d A/B experiments require the
+  independent painter implementation.
+- The 2D parchment, overlays and HUD primitives remain 2D intentionally;
+  they are not incomplete GPU migrations. The held-die painter snapshot is
+  still an opt-in/error fallback, not the default when g3d draws successfully.
+
+Retirement of `src/engine3d/render.lua` should occur only after all F8
+variants, D6/D8, HUD held dice, GPU failure recovery and multiple
+resolutions have passed screenshot and interaction parity. Removing the
+module immediately would trade source-code tidiness for a fragile build.
