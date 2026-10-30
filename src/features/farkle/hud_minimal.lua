@@ -416,21 +416,42 @@ local function draw_upper_shelf(u, s)
                 g.setLineWidth(1)
             end
 
-            -- Render the 3D isometric die body snapshot
-            local drawCalls = e and e.drawCalls
-            if not drawCalls and dice and dice[i] then
-                drawCalls = snapshot(dice[i], projection)
-                if e then e.drawCalls = drawCalls end
-            end
-
-            if drawCalls then
-                g.push()
-                g.translate(x, y)
-                g.scale(scale)
-                for _, call in ipairs(drawCalls) do
-                    call.fn()
+            -- GPU portrait captures the accepted physical orientation once.
+            -- Never modify the body; fallback to historical shelf commands
+            -- if the current renderer is legacy or GPU capture fails.
+            local gpuDrawn=false
+            if e and dice and dice[i] and
+               require('src.core.engine_bridge').rendererMode()=='g3d' then
+                if e.g3dPortrait==nil then
+                    local ok,image=pcall(function()
+                        return require('src.engine3d.g3d_portrait').capture(dice[i],projection)
+                    end)
+                    e.g3dPortrait=ok and image or false
                 end
-                g.pop()
+                if e.g3dPortrait then
+                    g.push('all')
+                    g.setBlendMode('alpha','premultiplied')
+                    g.setColor(1,1,1,1)
+                    local scalePortrait=.68
+                    g.draw(e.g3dPortrait,x-56*scalePortrait,
+                        y-56*scalePortrait,0,scalePortrait,scalePortrait)
+                    g.pop()
+                    gpuDrawn=true
+                end
+            end
+            if not gpuDrawn then
+                local drawCalls = e and e.drawCalls
+                if not drawCalls and dice and dice[i] then
+                    drawCalls = snapshot(dice[i], projection)
+                    if e then e.drawCalls = drawCalls end
+                end
+                if drawCalls then
+                    g.push()
+                    g.translate(x, y)
+                    g.scale(scale)
+                    for _, call in ipairs(drawCalls) do call.fn() end
+                    g.pop()
+                end
             end
 
             -- Value pill badge above the niche
