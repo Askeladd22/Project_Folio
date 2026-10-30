@@ -8,6 +8,8 @@ local Presentation=require('src.features.farkle.presentation')
 local RuntimeUI=require('src.core.runtime_ui')
 local Audio=require('src.core.audio_manager')
 local MouseThrow=require('src.features.farkle.mouse_throw')
+local Marquee=require('src.features.farkle.marquee_selection')
+local GroupThrow=require('src.features.farkle.group_throw')
 -- Single in-game HUD: the manuscript view.
 local U={state='waiting',buttons={},dice_results={}}
 function U:getTrayRect()
@@ -40,6 +42,8 @@ function U:reset(mode)
  if self.state=='rolling' then return end
  self.mouseThrow=nil
  self.manualRoll=nil
+ self.marquee=nil
+ self.dragSelected=nil
  self.game=R.new(mode);self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
  self.modal=nil;self.lastLoss=nil;self.lastBank=nil;self.physicalFailure=nil;self.physicalNotice=nil
  self.id=os.date('%Y%m%d-%H%M%S')..'-'..math.floor(love.timer.getTime()*1000)
@@ -67,6 +71,7 @@ function U:begin_physical(indices,technical,gesture,manual)
  self.activePhysical={};for _,i in ipairs(indices) do self.activePhysical[i]=true end
  for i,d in ipairs(dice) do d.kept=not self.activePhysical[i] end
  self.state='rolling'
+ if not manual then self.dragSelected=nil;self.marquee=nil end
  if manual then
   local pending={}
   for _,i in ipairs(indices) do pending[i]=true end
@@ -86,7 +91,9 @@ function U:request(rescue,gesture,manual)
  self.logicalRollId=(self.logicalRollId or 0)+1
  self.pending={};self.observed={};self.retry=nil;self:log(rescue and 'medal_retry' or 'roll',self.logicalRollId)
  self.lastLoss=nil;self.lastBank=nil
- self.mouseThrow=nil;self:begin_physical(s.active,nil,gesture,manual);return true
+ self.mouseThrow=nil
+ if not manual then self.dragSelected=nil end
+ self:begin_physical(s.active,nil,gesture,manual);return true
 end
 function U:equip_reference(id)
  if self.state=='rolling' or self.state=='physics_error' then return false end
@@ -119,6 +126,8 @@ end
 function U:onPhysicalFailure(event)
  self.manualRoll=nil
  self.mouseThrow=nil
+ self.marquee=nil
+ self.dragSelected=nil
  self.state='physics_error';self:log('physical_failure',event.reason)
 end
 function U:retry_physical()
@@ -131,10 +140,12 @@ end
 function U:update(dt)
  if self.mouseThrow then
   if not self.game or self.modal then
-   MouseThrow.cancel(self.mouseThrow)
+   if self.mouseThrow.group then GroupThrow.cancel(self.mouseThrow)
+   else MouseThrow.cancel(self.mouseThrow) end
    self.mouseThrow=nil
   else
-   MouseThrow.tick(self.mouseThrow,dt)
+   if self.mouseThrow.group then GroupThrow.tick(self.mouseThrow,dt)
+   else MouseThrow.tick(self.mouseThrow,dt) end
   end
  end
  self:sync_presentation()
@@ -170,7 +181,7 @@ function U:onDiceSettled(values)
  self.presentation=self.presentation or Presentation.new(s)
  Presentation.accepted(self.presentation,accepted)
  if s.phase=='ended' or s.phase=='lost' then self.lastLoss=pot end
- self.activePhysical=nil;self.manualRoll=nil;self.dice_results={};self:sync();self:log('settled',table.concat(s.hand,'/'))
+ self.activePhysical=nil;self.manualRoll=nil;self.marquee=nil;self.dragSelected=nil;self.dice_results={};self:sync();self:log('settled',table.concat(s.hand,'/'))
  return true
 end
 function U:toggle(i) if R.toggle(self.game,i) then self:log('select',i) end end
@@ -187,25 +198,57 @@ end
 function U:drawDeskOverlays(hits)
  require('src.features.farkle.hud_minimal').overlay(self,hits)
 end
--- Tabletop handling: physically hold and release EACH die separately.
--- This remains ONE official logical Farkle throw, resolved after the last die.
+-- Left-drag creates a *physical-grab selection*, never a Farkle score
+-- selection. Right-drag a selected die throws all selected physical bodies.
+-- Unselected dice can still be thrown individually, in the same logical roll.
+local function can_grab(u)
+ if not u.game or u.modal or H.reward_active(u.game) or
+  u.state=='physics_error' then return false end
+ if u.manualRoll then return u.manualRoll.count>0 end
+ return u.state~='rolling' and R.can_roll(u.game)
+  and u.buttons.roll and u.buttons.roll.enabled
+end
+
+local function in_tray(x,y)
+ local r=Bridge.getDiceTrayRect()
+ return r and x>=r.x and x<=r.x+r.w and
+   y>=r.y and y<=r.y+r.h
+end
+
 function U:mousepressed(x,y,b)
  if b==2 then
-  if self.mouseThrow or not self.game or self.modal or H.reward_active(self.game)
-     or self.state=='physics_error' then return end
+  if self.mouseThrow or self.marquee or not can_grab(self) then return end
   local i=Bridge.pickTrayDie(x,y)
   if not i or not dice or not dice[i] or dice[i].kept then return end
-  if not self.manualRoll then
-   if self.state=='rolling' or not R.can_roll(self.game)
-     or not (self.buttons.roll and self.buttons.roll.enabled) then return end
-   if not self:request(false,nil,true) then return end
+  if not self.manualRoll and not self:request(false,nil,true) then return end
+  if not (self.manualRoll and self.manualRoll.pending[i]) then return end
+
+  local indices={i}
+  if self.dragSelected and self.dragSelected[i] then
+   indices={}
+   for k in pairs(self.dragSelected) do
+    if self.manualRoll.pending[k] and dice[k] and not dice[k].kept then
+     indices[#indices+1]=k
+    end
+   end
+   table.sort(indices)
   end
-  if self.manualRoll and self.manualRoll.pending[i] then
+  if #indices>1 then
+   self.mouseThrow=GroupThrow.begin(indices,dice,x,y,love.timer.getTime())
+  else
    self.mouseThrow=MouseThrow.begin(i,dice[i].body,x,y,love.timer.getTime())
   end
   return
  end
- if b~=1 or self.state=='rolling' then return end
+
+ if b~=1 or self.mouseThrow then return end
+ -- A click on the tray is handled on release so that clicking still selects
+ -- Farkle scoring dice, whereas an actual drag creates a group marquee.
+ if can_grab(self) and in_tray(x,y) then
+  self.marquee=Marquee.begin(x,y)
+  return
+ end
+ if self.state=='rolling' then return end
  local vx,vy=Res.to_virtual(x,y)
  if H.reward_active(self.game) then
   local allowed=self.game.phase=='upgrade' and {weighted=true,engraved=true} or {medal=true,none=true}
@@ -220,34 +263,73 @@ function U:mousepressed(x,y,b)
  local i=Bridge.pickTrayDie(x,y);if i then self:toggle(i) end
 end
 function U:mousemoved(x,y)
+ if self.marquee then Marquee.move(self.marquee,x,y) end
  if self.mouseThrow then
-  MouseThrow.move(self.mouseThrow,x,y,love.timer.getTime(),
+  local move=self.mouseThrow.group and GroupThrow.move or MouseThrow.move
+  move(self.mouseThrow,x,y,love.timer.getTime(),
     require('src.engine3d.view'),self.trayScale or 1,
     require('src.data.dice_scene_schema').box)
  end
 end
 function U:mousereleased(x,y,b)
+ if b==1 and self.marquee then
+  local selection=self.marquee
+  self.marquee=nil
+  Marquee.move(selection,x,y)
+  if Marquee.dragged(selection) then
+   self.dragSelected=Marquee.choose(selection,Bridge.getTrayDieHits(),function(i)
+    if not dice or not dice[i] or dice[i].kept then return false end
+    if self.manualRoll then return self.manualRoll.pending[i]==true end
+    return R.can_roll(self.game)
+   end)
+   return
+  end
+  -- Preserve the existing ordinary left click for Farkle scoring.
+  if self.state~='rolling' then
+   local i=Bridge.pickTrayDie(selection.x0,selection.y0)
+   if i then self:toggle(i) end
+  end
+  return
+ end
  if b~=2 or not self.mouseThrow then return end
  local held=self.mouseThrow
  self.mouseThrow=nil
- if not self.manualRoll or not self.manualRoll.pending[held.index] then
-  MouseThrow.cancel(held)
+ if not self.manualRoll then
+  if held.group then GroupThrow.cancel(held) else MouseThrow.cancel(held) end
   return
  end
- local released=MouseThrow.release(held,x,y,love.timer.getTime(),
-   require('src.engine3d.view'),self.trayScale or 1,
-   require('src.data.dice_scene_schema').box)
- if not released then return end
- self.manualRoll.pending[held.index]=nil
- self.manualRoll.count=self.manualRoll.count-1
- assert(self.onManualRollRelease and self.onManualRollRelease(held.index),
-   'manual physical release did not reach the runtime')
- self:log('die_released',held.index)
- if self.manualRoll.count==0 then self.manualRoll=nil end
+ local view=require('src.engine3d.view')
+ local scale=self.trayScale or 1
+ local bounds=require('src.data.dice_scene_schema').box
+ local releases={}
+ if held.group then
+  releases=GroupThrow.release(held,x,y,love.timer.getTime(),view,scale,bounds) or {}
+ else
+  local one=MouseThrow.release(held,x,y,love.timer.getTime(),view,scale,bounds)
+  if one then releases={one} end
+ end
+ for _,released in ipairs(releases) do
+  local i=released.index
+  if self.manualRoll and self.manualRoll.pending[i] then
+   self.manualRoll.pending[i]=nil
+   self.manualRoll.count=self.manualRoll.count-1
+   assert(self.onManualRollRelease and self.onManualRollRelease(i),
+    'manual physical release did not reach the runtime')
+   if self.dragSelected then self.dragSelected[i]=nil end
+   self:log('die_released',i)
+   if self.manualRoll.count==0 then self.manualRoll=nil;self.dragSelected=nil end
+  end
+ end
 end
 function U:keypressed(k)
  if k=='escape' and self.mouseThrow then
-  MouseThrow.cancel(self.mouseThrow);self.mouseThrow=nil;return
+  if self.mouseThrow.group then GroupThrow.cancel(self.mouseThrow)
+  else MouseThrow.cancel(self.mouseThrow) end
+  self.mouseThrow=nil;return
+ end
+ if k=='escape' and self.marquee then self.marquee=nil;return end
+ if k=='escape' and self.dragSelected and next(self.dragSelected) then
+  self.dragSelected=nil;return
  end
  if k=='f8' then require('src.features.farkle.tray_workshop').cycle();return end
  if k=='tab' and self.presentation then Presentation.finish(self.presentation);return end

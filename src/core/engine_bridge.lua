@@ -1,5 +1,6 @@
 local EngineBridge = {
     get_dice_tray_rect = nil,
+    get_tray_die_hits = nil,
     get_renderer_mode = nil,
     pick_scriptorium_tray_die = nil,
     to_virtual_ui = nil,
@@ -9,6 +10,7 @@ local EngineBridge = {
 
 local HANDLER_KEYS = {
     get_dice_tray_rect = true,
+    get_tray_die_hits = true,
     get_renderer_mode = true,
     pick_scriptorium_tray_die = true,
     to_virtual_ui = true,
@@ -117,6 +119,23 @@ function EngineBridge.rendererMode()
   if ok and (value=='g3d' or value=='legacy') then return value end
  end
  return 'legacy'
+end
+
+-- Visible projected centers from the last 3D tray draw, for marquee
+-- selection. Return a copy: caller must not mutate the live pick cache.
+function EngineBridge.getTrayDieHits()
+ local fn=EngineBridge.get_tray_die_hits
+ if type(fn)~='function' then return {} end
+ local ok,source=pcall(fn)
+ if not ok or type(source)~='table' then return {} end
+ local out={}
+ for _,h in ipairs(source) do
+  if type(h)=='table' and type(h.index)=='number' and
+    type(h.x)=='number' and type(h.y)=='number' then
+   out[#out+1]={index=h.index,x=h.x,y=h.y,r=h.r,depth=h.depth}
+  end
+ end
+ return out
 end
 
 function EngineBridge.getDiceTrayRect()

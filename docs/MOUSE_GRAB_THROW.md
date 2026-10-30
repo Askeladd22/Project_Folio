@@ -58,3 +58,41 @@ Test on Windows LÖVE with g3d (and F9 legacy):
 
 **Draft until real input and physics QA**. Headless tests cannot prove the
 feel, collision visuals or that actual player gestures are intuitive.
+
+## Select and throw several dice in one gesture
+
+A **marquee selection** is now available, separately from Farkle's score
+selection. Left-click and **drag a rectangle across the dice on the tray**.
+The pale-blue outline marks each physical die whose projected center is
+inside the rectangle. Drag the rectangle across **all six** to select all.
+
+Then **right-click one of the outlined dice**, hold, drag and release:
+every selected and not-yet-thrown die is lifted, physically spun, moved
+with the mouse and released together with the same hand velocity.
+Each real die retains its own orientation and relative position.
+Unselected dice remain where they were, waiting for a separate throw.
+
+The same gesture works in multiple batches (e.g. three + three) or with a
+single die. Right-clicking an **unselected** die handles only that die.
+After any release, the selected group automatically loses its released
+members so they cannot be picked up and thrown again.
+
+**No Farkle scoring occurs until all active dice have been released and
+physically settled.** Drag selection does not itself score dice, begin a
+logical roll or count as a reroll. Ordinary *left-click without dragging*
+retains its scoring-selection function. Esc while selecting cancels the
+rectangle; Esc with an existing group clears the group selection; Esc
+while holding returns all gripped dice to their queued positions.
+
+### Real-screen checks
+
+- Draw a rectangle starting at an empty area around all six dice and check
+  exactly six outlines appear at different screen resolutions.
+- Right-grab one outlined die, shake the group and throw it; all six should
+  follow the real solver and settle; only one Farkle logical roll is counted.
+- Select only two, throw them, then select the other four and throw them.
+  Previously released dice must not be selectable.
+- Left-click without dragging after the roll: the original scoring click
+  must still work; Esc should clear an unthrown selection without quitting.
+- At least one group throw should strike other moving dice; inspect overlap,
+  stuck-in-air, floor penetration and valid final upper faces.
