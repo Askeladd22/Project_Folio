@@ -88,3 +88,13 @@ I vecchi harness degli audit sono fotografie storiche, con percorsi originali: p
 Non modificare autonomamente fisica, collisioni, spawn, contenimento, dimensioni, gravità/attrito/restituzione/inerzia, calendario o A/B. Servono un bug riproducibile che comprometta la giocabilità, autorizzazione specifica e confronto prima/dopo. Nessuna migrazione di framework, solver SAT completo o uso di `love.physics` (2D) per sostituire il motore 3D.
 
 Evidenze storiche e checkpoint sono indicizzati in [legacy/README.md](../legacy/README.md); verifica della sola migrazione in [PROMOZIONE_FARKLE.md](../PROMOZIONE_FARKLE.md). Le statistiche teoriche del regolamento sono separate dai test fisici.
+
+## Stabilizzazione del runtime (ottobre 2026)
+
+- I tentativi meccanici e i lanci ludici sono distinti. `dice.physical_attempt` e `dice.physical_settled` descrivono la simulazione, mentre `dice.roll_accepted` viene emesso **soltanto** dopo la conferma del controller Farkle. L'evento storico `dice.roll_settled` continua a esistere, ma segnala un lancio accettato: i listener che vogliono contare le mani devono usare `dice.roll_accepted`. I ritentativi fisici e i risultati respinti dal dado pesato non vengono conteggiati come nuovi lanci.
+- Il modulo `src/gameplay/farkle/commission_progress.lua` possiede gli obiettivi e le transizioni delle commissioni, senza cambiare il motore del punteggio. L'eventuale sistema di avversari deve consumare eventi ludici accettati, senza introdurre logica di combattimento nella fisica o nel valutatore Farkle.
+- `settings_data.json` è ora il file delle preferenze: la lettura usa un decoder **solo dati** con limiti di dimensione/profondità, senza eseguire codice. Se manca, `settings_data.lua` è interpretato tramite un parser ristretto di tabelle letterali e migrato, senza eseguirlo né cancellarlo. `settings_data.json.bak` serve al recupero da una scrittura primaria corrotta. LÖVE non garantisce una rinomina atomica cross-platform; la verifica del file temporaneo più backup riduce il rischio ma non garantisce atomicità.
+- Il motore fisico resta a passo fisso ma non accumula lavoro durante menu/splash inattivi. Il filtro di utilizzabilità dell'HUD riusa le opzioni Farkle già cache-izzate. Nessuna costante fisica, faccia del dado o punteggio è stata ribilanciata.
+- All'avvio si registra il seed RNG nella diagnostica della run. Gli ID di lancio ludico e tentativo fisico consentono di distinguere rilanci ordinari e tentativi tecnici. Questo aiuta il debug, **non garantisce** la riproduzione bit per bit della simulazione grafica o fisica.
+- I test puramente Lua vengono eseguiti in CI con Lua 5.4 e LuaJIT. I test che necessitano di una finestra LÖVE2D o dell'hardware reale restano da eseguire su Windows con il gioco.
+
