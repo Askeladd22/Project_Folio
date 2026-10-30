@@ -102,3 +102,30 @@ impact bodies to approach the floor within 0.08 world units. The results
 are exported to `results-contact-poses.csv` as 18 cases (plus header).
 The exact outcomes are reported by CI and should not be confused with
 the 64-run, multi-die evaluation.
+
+### Final outcomes: 18 single-die cases
+
+[CI: run 41114443019](https://github.com/Askeladd22/manuscript/actions/runs/41114443019)
+passed all tests with the actual-contact fixture. All **nine zero-velocity**
+drops remained unsupported and asleep in air for 4.5 s.
+
+For the nine downward-velocity **impact** cases:
+
+| Initial orientation | dt 0.010 | dt 0.005 | dt 0.0025 |
+|---|---|---|---|
+| Face | Invalid: floor | Valid | Valid |
+| Edge | Invalid: tilt | Invalid: tilt | Invalid: tilt |
+| Oblique corner | Invalid: floor | Valid | Valid |
+
+The face impact was recorded penetrating the floor on **422 body-steps**
+at dt 0.010, versus 2 and 1 body-steps with reduced dt. The oblique
+corner impact recorded 356, 25 and 6 penetrating body-steps respectively.
+These per-step observations reflect collision history, not just end-state
+validation. All three edge-impact cases were still tilted after 4.5 s,
+despite reduced floor penetration. This isolates a remaining **angular
+settling/contact response** weakness that cannot be corrected by
+increasing integration frequency alone.
+
+These are only **one** physically initialized trajectory per pose and dt;
+they establish a reproducible regression fixture, not a statistical
+probability or reliable solver certification.
