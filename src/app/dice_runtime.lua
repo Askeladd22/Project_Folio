@@ -28,6 +28,13 @@ local Navigation = require("src.core.navigation")
 local EngineBridge = require("src.core.engine_bridge")
 local ExecutionOrder = require("src.core.execution_order")
 
+-- The real Scriptorium GPU renderer is opt-in while under evaluation.
+-- Ordinary Manuscript never loads g3d or changes graphics/physics state.
+local live_g3d = nil
+if os.getenv('MANUSCRIPT_G3D_INGAME') == '1' then
+    live_g3d = require('src.engine3d.g3d_live').new()
+end
+
 local game_manager = nil
 local app_events = nil
 
@@ -688,10 +695,12 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
         end
 
         render.clear()
-        if not require('src.features.farkle.tray_workshop').border(render, view, box.border_height or 1.1) then
-            render.tray_border(render.zbuffer, 0.85, box.border_height or 1.1, {83, 51, 31})
-        end
-        queue_divider_border()
+        local gpu_candidates = {}
+        -- Only the 'book' workshop is supported by the experimental GPU
+        -- rim today. Other styles, split trays and D8 stay on the painter.
+        local gpu_requested = live_g3d and live_g3d.enabled and
+            require('src.features.farkle.tray_workshop').current == 'book' and
+            not draw_divider
         for i = 1, #dice do
             local die_entry = dice[i]
             if die_predicate(die_entry, i) then
@@ -717,15 +726,39 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
                         end
                     end
 
-                    local action = render.zbuffer
-                    if glow_enabled then
-                        action = build_die_action_with_optional_glow(i, usable_map)
-                    end
-                    render.die(action, die_entry.die, die_entry.body)
                 end)
+                gpu_candidates[#gpu_candidates + 1] = {index=i, entry=die_entry}
             end
         end
-        render.paint()
+
+        -- Both paths read the same bodies. GPU never touches input picking,
+        -- acceptance, physical positions, scoring or the source HUD.
+        local gpu_drawn = false
+        if gpu_requested and #gpu_candidates > 0 then
+            gpu_drawn = live_g3d:draw({
+                entries=gpu_candidates, view=view,
+                extents=world_extents, height=box.border_height or 1.1,
+                offset=draw_offset_x,
+                viewport=tray,cx=cx,cy=cy,scale=scale,
+                mask=not fitted_scale and true or false,
+            })
+        end
+        if not gpu_drawn then
+            if not require('src.features.farkle.tray_workshop').border(render, view, box.border_height or 1.1) then
+                render.tray_border(render.zbuffer, 0.85, box.border_height or 1.1, {83, 51, 31})
+            end
+            queue_divider_border()
+            for _,item in ipairs(gpu_candidates) do
+                with_draw_offset(item.entry.body, function()
+                    local action = render.zbuffer
+                    if glow_enabled then
+                        action = build_die_action_with_optional_glow(item.index, usable_map)
+                    end
+                    render.die(action, item.entry.die, item.entry.body)
+                end)
+            end
+            render.paint()
+        end
     end)
     love.graphics.pop()
 
@@ -1049,6 +1082,21 @@ function love.draw()
         game_manager:draw()
     end
 
+    if live_g3d and is_scriptorium_active() then
+        local g=love.graphics
+        g.push('all')
+        g.origin()
+        g.setCanvas()
+        g.setDepthMode()
+        g.setShader()
+        g.setColor(.96,.82,.50,.92)
+        local label=live_g3d.enabled and 'g3d EXPERIMENT: GPU [F9]' or
+            'g3d EXPERIMENT: painter [F9]'
+        if live_g3d.failed then label=label..' (fallback after graphics error)' end
+        g.print(label,15,g.getHeight()-24)
+        g.pop()
+    end
+
     if RuntimeState.should_show_fps() then
         local desired_fps_size = RuntimeUI.sized(14)
         if love.graphics and desired_fps_size ~= fps_font_size then
@@ -1088,6 +1136,11 @@ function love.draw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
+    if key=='f9' and live_g3d and is_scriptorium_active() then
+        local active=live_g3d:toggle()
+        print('[Manuscript g3d gameplay experiment] '..(active and 'GPU ON' or 'painter ON'))
+        return
+    end
     if game_manager then
         game_manager:keypressed(key, scancode, isrepeat)
     end
