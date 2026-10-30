@@ -37,6 +37,7 @@ for _,pose in ipairs(poses) do
   local result=FPS.snapshot(world,count)[1]
   M.finish(stats,{result})
   local reason=stats.invalid_moving>0 and 'moving'
+   or stats.invalid_airborne>0 and 'airborne'
    or stats.invalid_floor>0 and 'floor'
    or stats.invalid_tilt>0 and 'tilt'
    or stats.invalid_gap>0 and 'gap' or 'valid'
