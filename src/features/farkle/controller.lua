@@ -7,6 +7,7 @@ local Bridge=require('src.core.engine_bridge')
 local Presentation=require('src.features.farkle.presentation')
 local RuntimeUI=require('src.core.runtime_ui')
 local Audio=require('src.core.audio_manager')
+local MouseThrow=require('src.features.farkle.mouse_throw')
 -- Single in-game HUD: the manuscript view.
 local U={state='waiting',buttons={},dice_results={}}
 function U:getTrayRect()
@@ -37,6 +38,7 @@ end
 function U:shouldDrawTrayDie(index) return not (self.game and self.game.used[index]) end
 function U:reset(mode)
  if self.state=='rolling' then return end
+ self.mouseThrow=nil
  self.game=R.new(mode);self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
  self.modal=nil;self.lastLoss=nil;self.lastBank=nil;self.physicalFailure=nil;self.physicalNotice=nil
  self.id=os.date('%Y%m%d-%H%M%S')..'-'..math.floor(love.timer.getTime()*1000)
@@ -56,16 +58,16 @@ function U:act(name,fn)
   self:sync();self:log(name)
  end
 end
-function U:begin_physical(indices,technical)
+function U:begin_physical(indices,technical,gesture)
  self.physicalAttemptId=(self.physicalAttemptId or 0)+1
  self:log('physical_attempt',tostring(self.logicalRollId or 0)..'/'..tostring(self.physicalAttemptId))
  self:sync_presentation()
  if self.presentation then Presentation.finish(self.presentation) end
  self.activePhysical={};for _,i in ipairs(indices) do self.activePhysical[i]=true end
  for i,d in ipairs(dice) do d.kept=not self.activePhysical[i] end
- self.state='rolling';self.onRollRequest(nil,indices,technical == true)
+ self.state='rolling';self.onRollRequest(nil,indices,technical == true,gesture)
 end
-function U:request(rescue)
+function U:request(rescue,gesture)
  local s=self.game
  if not (rescue and R.rescue(s) or not rescue and R.start(s)) then return false end
  if rescue then Audio.play_farkle('medal') end
@@ -73,7 +75,7 @@ function U:request(rescue)
  self.logicalRollId=(self.logicalRollId or 0)+1
  self.pending={};self.observed={};self.retry=nil;self:log(rescue and 'medal_retry' or 'roll',self.logicalRollId)
  self.lastLoss=nil;self.lastBank=nil
- self:begin_physical(s.active);return true
+ self.mouseThrow=nil;self:begin_physical(s.active,nil,gesture);return true
 end
 function U:equip_reference(id)
  if self.state=='rolling' or self.state=='physics_error' then return false end
@@ -114,6 +116,7 @@ function U:retry_physical()
  self:begin_physical(indices,true)
 end
 function U:update(dt)
+ if self.mouseThrow and (not self.game or not R.can_roll(self.game) or self.modal) then self.mouseThrow=nil end
  self:sync_presentation()
  if self.presentation then Presentation.update(self.presentation,dt,RuntimeUI.reduced_animations()) end
  if self.retry then
@@ -164,7 +167,20 @@ end
 function U:drawDeskOverlays(hits)
  require('src.features.farkle.hud_minimal').overlay(self,hits)
 end
+-- Right button: hold an existing selectable physical die and throw the
+-- official ACTIVE group with a bounded release vector. Never reroll an
+-- isolated die or modify Farkle results outside R.start / R.settle.
 function U:mousepressed(x,y,b)
+ if b==2 then
+  if not self.game or self.modal or H.reward_active(self.game)
+     or not R.can_roll(self.game) or self.state=='rolling'
+     or not (self.buttons.roll and self.buttons.roll.enabled) then return end
+  local i=Bridge.pickTrayDie(x,y)
+  if i and dice and dice[i] and not dice[i].kept then
+   self.mouseThrow=MouseThrow.begin(i,x,y,love.timer.getTime())
+  end
+  return
+ end
  if b~=1 or self.state=='rolling' then return end
  local vx,vy=Res.to_virtual(x,y)
  if H.reward_active(self.game) then
@@ -179,7 +195,24 @@ function U:mousepressed(x,y,b)
  for _,r in pairs(self.buttons) do if r.enabled and vx>=r.x and vx<=r.x+r.w and vy>=r.y and vy<=r.y+r.h then r.fn();return end end
  local i=Bridge.pickTrayDie(x,y);if i then self:toggle(i) end
 end
+function U:mousemoved(x,y)
+ if self.mouseThrow then
+  MouseThrow.move(self.mouseThrow,x,y,love.timer.getTime())
+ end
+end
+function U:mousereleased(x,y,b)
+ if b~=2 or not self.mouseThrow then return end
+ local held=self.mouseThrow
+ self.mouseThrow=nil
+ if not self.game or self.modal or H.reward_active(self.game)
+   or not R.can_roll(self.game) then return end
+ local view=require('src.engine3d.view')
+ local scale=self.trayScale or 1
+ local launch=MouseThrow.finish(held,x,y,love.timer.getTime(),view,scale)
+ if launch then self:request(false,launch) end
+end
 function U:keypressed(k)
+ if k=='escape' and self.mouseThrow then self.mouseThrow=nil;return end
  if k=='f8' then require('src.features.farkle.tray_workshop').cycle();return end
  if k=='tab' and self.presentation then Presentation.finish(self.presentation);return end
  if H.reward_active(self.game) then return end
