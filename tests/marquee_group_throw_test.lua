@@ -89,6 +89,12 @@ assert(dice[1].body.position[1]~=originalX,'group bodies must physically move')
 assert(dice[2].body._grabbed and dice[6].body._grabbed,'entire group must be in hand')
 local gap=dice[2].body.position[1]-dice[1].body.position[1]
 assert(math.abs(gap-1)<1e-6,'group motion should maintain relative spacing')
+-- Even if a drag reaches the board border, all six dice must retain their
+-- original physical spacing instead of independently clamping together.
+now=now+.02;U:mousemoved(centers[1].x+5000,centers[1].y+30)
+assert(math.abs((dice[6].body.position[1]-dice[1].body.position[1])-5)<1e-6,
+ 'clamped group drag must not squeeze dice near the rim')
+now=now+.02;U:mousemoved(centers[1].x+45,centers[1].y+30)
 now=now+.06;U:mousereleased(centers[1].x+90,centers[1].y+35,2)
 assert(#ends==6 and starts==1 and U.logicalRollId==1,
  'six released dice must be exactly one official Farkle roll')
