@@ -90,3 +90,15 @@ also **38/384**. It leaves the other final-face counts unchanged.
 [Corrected CI: 41113882338](https://github.com/Askeladd22/manuscript/actions/runs/41113882338).
 **The original two-step notes are historically valid only under the
 older, less strict face-validity classifier.**
+
+## Confirmatory impact tests
+
+The initial nine zero-velocity contact-pose experiments never reached the
+floor: they were valid demonstrations of sleep failure, **not** floor
+collision tests. The final Lab 3 matrix therefore retains those nine
+`rest` fixtures and adds nine `impact` fixtures initialized at z=3
+with a downward velocity of −5 units/s. An assertion requires the
+impact bodies to approach the floor within 0.08 world units. The results
+are exported to `results-contact-poses.csv` as 18 cases (plus header).
+The exact outcomes are reported by CI and should not be confused with
+the 64-run, multi-die evaluation.
