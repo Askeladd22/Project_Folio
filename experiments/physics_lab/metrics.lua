@@ -74,6 +74,7 @@ function M.new()
          airborne_sleep_events=0,floor_penetration_events=0,
          max_floor_penetration=0,unsettled=0,invalid_faces=0,
          invalid_tilt=0,invalid_gap=0,invalid_floor=0,invalid_moving=0,
+         invalid_airborne=0,
          faces={0,0,0,0,0,0},settle_s=nil}
 end
 function M.observe(result,bodies,time,half_x,half_y)
@@ -103,6 +104,7 @@ function M.finish(result,bodies)
   local v,cos,gap=M.top_value(b)
   local reason
   if not b.asleep then reason='invalid_moving'
+  elseif M.floor_height(b)>.08 then reason='invalid_airborne'
   elseif M.floor_height(b)<-.002 then reason='invalid_floor'
   elseif cos<math.cos(math.rad(5)) then reason='invalid_tilt'
   elseif gap<.8 then reason='invalid_gap'

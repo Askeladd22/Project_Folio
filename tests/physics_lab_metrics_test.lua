@@ -42,4 +42,7 @@ assert(st.invalid_floor==0 and st.invalid_tilt==0 and st.invalid_gap==0
 local flying=cube(0,0,5);flying.asleep=true
 M.observe(st,{flying},.3,9.2,3.8)
 assert(st.airborne_sleep_events==1,'airborne sleep metric must detect bad solver state')
+local invalid=M.finish(M.new(),{flying})
+assert(invalid.invalid_faces==1 and invalid.invalid_airborne==1,
+ 'an airborne sleeping die must NEVER be counted as a valid final upper face')
 print('PASS Physics Lab 1: seeded fixtures, independent SAT, face-up and airborne-sleep diagnostics')
