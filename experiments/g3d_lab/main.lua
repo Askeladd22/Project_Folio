@@ -8,12 +8,15 @@ local Legacy=require('src.engine3d.render')
 local View=require('src.engine3d.view')
 local FaceTexture=require('src.engine3d.face_texture')
 local Mesh=require('experiments.g3d_lab.mesh')
+local Camera=require('experiments.g3d_lab.camera')
+local Perf=require('experiments.g3d_lab.perf')
 local G3D=require('experiments.g3d_lab.g3d')
 
 local g=love.graphics
 local state={
- mode=3,paused=false,mirror=true,elapsed=0,draw_old_ms=0,draw_g3d_ms=0,
- world=nil,bodies={},models={},images={},floor=nil,wood=nil,
+ mode=3,paused=false,show_walls=true,elapsed=0,
+ old_stats=Perf.new(120),g3d_stats=Perf.new(120),
+ world=nil,bodies={},models={},images={},floor=nil,walls=nil,wood=nil,
  old_canvas=nil,new_canvas=nil,pane_w=0,pane_h=0,scale=1,
 }
 
@@ -75,13 +78,10 @@ local function rebuild_buffers()
  state.new_canvas=g.newCanvas(w,h)
  local zoom=View.focus/View.distance
  state.scale=math.min(
-  (w-36)/(2*(Scene.box.half_x+.75)*zoom),
+  (w-36)/(2*(Scene.box.half_x+1.6)*zoom),
   (h-36)/(2*(Scene.box.half_y+3)*zoom))
- G3D.camera.fov=math.pi/2
- G3D.camera.aspectRatio=w/h
- -- Both viewports now express the same physical world-units-per-pixel.
- local half_height=h/(2*state.scale*zoom)
- G3D.camera.updateOrthographicMatrix(half_height)
+ -- Both renderers share the same world-to-screen scale and viewport dimensions.
+ Camera.apply(View,G3D.camera,w,h,state.scale)
 end
 
 local function set_cameras()
@@ -90,8 +90,11 @@ local function set_cameras()
  View.focus=5
  View.pitch=.48
  View.cos_pitch,View.sin_pitch=math.cos(View.pitch),math.sin(View.pitch)
- local cx,cy,cz=View.get()
- G3D.camera.lookAt(cx,cy,cz,0,0,0)
+ -- No post-processing mirror: match the historical screen basis in the
+ -- g3d VIEW matrix itself, including the GPU depth-axis convention.
+ if state.pane_w>0 and state.pane_h>0 then
+  Camera.apply(View,G3D.camera,state.pane_w,state.pane_h,state.scale)
+ end
 end
 
 local function load_models()
@@ -113,6 +116,11 @@ local function load_models()
  state.floor=G3D.newModel(
   Mesh.floor_vertices(-Scene.box.half_x,Scene.box.half_x,
                       -Scene.box.half_y,Scene.box.half_y),state.wood)
+ state.wood:setWrap('repeat','repeat')
+ state.walls=G3D.newModel(Mesh.tray_border_vertices(
+  -Scene.box.half_x,Scene.box.half_x,
+  -Scene.box.half_y,Scene.box.half_y,
+  .85,Scene.box.border_height or 1.1,8),state.wood)
  -- init.lua enables depth globally; the 2D UI must never inherit it.
  g.setDepthMode()
 end
@@ -145,15 +153,21 @@ local function render_legacy()
  g.setColor(.80,.80,.80,1)
  FaceTexture.draw(state.wood,unpack(coords))
  Legacy.clear()
+ if state.show_walls then
+  Legacy.board_extents={x1,x2,y1,y2}
+  Legacy.tray_border(Legacy.zbuffer,.85,Scene.box.border_height or 1.1,{83,51,31})
+ end
  for _,b in ipairs(state.bodies) do Legacy.die(Legacy.zbuffer,legacy_die,b) end
  Legacy.paint()
  Legacy.clear()
  g.pop()
- state.draw_old_ms=(love.timer.getTime()-t)*1000
+ state.old_stats:push((love.timer.getTime()-t)*1000)
 end
 
 local function render_g3d()
  local t=love.timer.getTime()
+ -- Include streaming 36 physical face meshes in g3d timing, not merely draw().
+ refresh_meshes()
  g.push('all')
  -- A fresh depth attachment prevents old geometry from affecting later frames.
  g.setCanvas({state.new_canvas,depth=true})
@@ -161,12 +175,13 @@ local function render_g3d()
  g.setDepthMode('lequal',true)
  g.setColor(1,1,1,1)
  state.floor:draw()
+ if state.show_walls then state.walls:draw() end
  for _,models in ipairs(state.models) do
   for _,model in ipairs(models) do model:draw() end
  end
  g.setDepthMode()
  g.pop()
- state.draw_g3d_ms=(love.timer.getTime()-t)*1000
+ state.g3d_stats:push((love.timer.getTime()-t)*1000)
 end
 
 function love.load()
@@ -188,13 +203,7 @@ end
 
 local function panel(image,x,y,title)
  g.setColor(1,1,1,1)
- if image==state.new_canvas and state.mirror then
-  -- The legacy camera's horizontal basis is reversed relative to g3d's
-  -- right-handed camera. Mirror at composition, not in the physical geometry.
-  g.draw(image,x+state.pane_w,y,0,-1,1)
- else
-  g.draw(image,x,y)
- end
+ g.draw(image,x,y) -- identical composition; no image-space mirroring
  g.setColor(.66,.52,.34,1)
  g.rectangle('line',x-1,y-1,state.pane_w+2,state.pane_h+2)
  g.setColor(.92,.87,.73,1)
@@ -204,7 +213,6 @@ end
 function love.draw()
  rebuild_buffers()
  set_cameras()
- refresh_meshes()
  if state.mode~=2 then render_legacy() end
  if state.mode~=1 then render_g3d() end
  g.push('all')
@@ -215,7 +223,7 @@ function love.draw()
  g.setColor(.96,.90,.75,1)
  g.print('MANUSCRIPT  /  3D RENDERER A-B  /  WORKSHOP ONLY',margin,18,0,1.4,1.4)
  g.setColor(.76,.71,.60,1)
- g.print('Space: pause   R: reset   1/2/3: old/g3d/split   A/D: camera   M: mirror   Esc: exit',margin,56)
+ g.print('Space: pause   R: reset   1/2/3: old/g3d/split   A/D: camera   W: walls   Esc: exit',margin,56)
  local phase=state.paused and 'PAUSED' or 'RUNNING'
  g.print(string.format('Shared physics: %s  |  %.1f s  |  %d dice  |  frame %.0f FPS',
   phase,state.elapsed,#state.bodies,love.timer.getFPS()),margin,78)
@@ -229,8 +237,12 @@ function love.draw()
  end
  local footer_y=top+state.pane_h-25
  g.setColor(.94,.83,.63,1)
- g.print(string.format('CPU render submission (NOT GPU benchmark): old %.2f ms  |  g3d %.2f ms',
-  state.draw_old_ms,state.draw_g3d_ms),margin,footer_y)
+ local function ms_text(stats)
+  local n=stats:average()
+  return n and string.format('%.2f ms',n) or 'n/a'
+ end
+ g.print(string.format('CPU render submission / last 120 samples (NOT GPU): old %s  |  g3d %s',
+  ms_text(state.old_stats),ms_text(state.g3d_stats)),margin,footer_y)
  g.pop()
 end
 
@@ -245,10 +257,12 @@ function love.keypressed(key)
  elseif key=='r' then make_world();state.paused=false
  elseif key=='1' or key=='2' or key=='3' then
   state.mode=tonumber(key)
+  state.old_stats:reset()
+  state.g3d_stats:reset()
   state.pane_w=0
   rebuild_buffers()
  elseif key=='a' then View.turn(.18)
  elseif key=='d' then View.turn(-.18)
- elseif key=='m' then state.mirror=not state.mirror
+ elseif key=='w' then state.show_walls=not state.show_walls
  end
 end
