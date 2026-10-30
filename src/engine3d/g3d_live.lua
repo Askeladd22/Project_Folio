@@ -295,14 +295,10 @@ function M:draw(args)
  if not ok then
   self.failed=err
   self.enabled=false
-  -- Keep the legacy renderer playable after a graphics failure.
-  pcall(function()
-   love.graphics.setCanvas()
-   love.graphics.setDepthMode()
-   love.graphics.setStencilTest()
-   love.graphics.setScissor()
-   love.graphics.origin()
-  end)
+  -- Preserve the painter's active translated/scaled tray transform.
+  -- _draw_scene wraps graphics in push('all') / pop(); an additional
+  -- graphics.origin() here previously broke the F9/error fallback.
+  pcall(function() love.graphics.setDepthMode() end)
   print('[Manuscript g3d] reverting to legacy painter: '..tostring(err))
   return false
  end
