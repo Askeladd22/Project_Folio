@@ -9,6 +9,8 @@ int fpslab_step(fpslab *,float dt);
 int fpslab_state(const fpslab *,int index,float *out22);
 int fpslab_sleeping(const fpslab *,int index);
 int fpslab_floor_guard(fpslab *,float *max_depth);
+int fpslab_probe(const fpslab *,float *out4);
+int fpslab_step_support(fpslab *,float dt);
 int fpslab_version(void);
 ]]
 local so=ffi.os=='Windows' and './experiments/physics_lab/build/fpslab.dll'
@@ -50,6 +52,22 @@ end
 function N.guarded_step(world,dt)
  N.step(world,dt)
  return N.guard(world)
+end
+-- Per-substep, read-only FPS Lab 3 support/penetration measurements.
+local probe_buffer=ffi.new('float[4]')
+function N.probe(world)
+ assert(lib.fpslab_probe(world,probe_buffer)==1,'FPS diagnostic probe failed')
+ return {airborne=tonumber(probe_buffer[0]),
+  penetrating=tonumber(probe_buffer[1]),
+  max_depth=tonumber(probe_buffer[2]),
+  min_height=tonumber(probe_buffer[3])}
+end
+-- Experimental alternative: wake unsupported sleeping dice before the
+-- unchanged upstream FPS step. Never used by the live Scriptorium.
+function N.support_step(world,dt)
+ local wakes=lib.fpslab_step_support(world,dt)
+ assert(wakes>=0,'FPS support test failed')
+ return wakes
 end
 function N.snapshot(world,count)
  local result={}
