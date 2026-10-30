@@ -69,6 +69,32 @@ Non fissare soglie o condizioni di vittoria sulla base di esempi inventati. Evit
 
 Il libro definisce il tema della run e il cast; la sequenza fra folii, incontri, ricompense e figura conclusiva è aperta. Le modifiche di dadi/facce/probabilità e medaglie restano la direzione roguelite da approfondire **dopo** la validazione del primo incontro. Nessuna richiesta di generare cataloghi di nemici prima di validare il ciclo.
 
+## Candidato per il prossimo prototipo: il Duello delle Poste
+
+**Proposta di prova, non approvazione definitiva né funzione implementata (30 ottobre 2026).** Per risolvere l'alternativa fra HP lineari e una combinazione obbligatoria troppo semplice, confrontare un **duello di azzardo a più mani**. È una *ipotesi di lavoro* da verificare rispetto alla baseline HP, non un cambiamento già deciso nelle regole ufficiali Farkle.
+
+### Ciclo minimo da modellare
+
+1. La miniatura rivela la **categoria** del Segno estratto da un sacchetto senza reinserimento; l'esatta *forza* può rimanere nascosta finché il giocatore non incassa. La distribuzione delle forze dev'essere nota o deducibile e mai falsata dall'interfaccia.
+2. Il copista esegue un **normale turno Farkle**: sei D6, selezioni valide, accantonamento, hot dice, opzione di continuare o incassare. Nessun dado o punteggio fittizio per il combattimento.
+3. Incassando, si confrontano i **punti effettivamente assicurati** con la forza del Segno. In questa variante iniziale, se raggiungono la forza il giocatore vince la mano; altrimenti la vince la miniatura. Il Farkle fa perdere il punteggio provvisorio e la mano.
+4. Il Segno risolto va negli scarti. Si definisce cosa accade al sacchetto esaurito prima dei test: riciclo semplice, con o senza modifiche, senza introdurre automaticamente una nuova economia.
+5. La miniatura rientra nel folio quando l'incontro è vinto. Non è necessario disegnare una barra HP, né inventare condizioni basate su un unico tiro raro.
+
+### Prima fixture illustrativa: il Leone della Bordura
+
+Un primo sacchetto di **sei Segni**, due per categoria: **Assalto** con forze 20/40, **Guardia** con forze 30/50, **Occasione** con forze 35/55. La proposta iniziale è una **gara a tre mani vinte**, con possibilità condizionata di ottenere **due successi** da un'Occasione vinta con almeno 25 punti di margine; un Farkle sotto Assalto attribuirebbe due successi all'avversario. Queste sono *tutte* cifre esplorative. Non chiamarle bilanciate né compatibili a priori con ogni soglia di ingresso del regolamento vigente. Stabilire anche la gestione di esaurimento Segni e parità di successi in modo esplicito prima di simulare.
+
+**Esempio di decisione:** 40 punti provvisori, tre dadi liberi; un Segno Guardia è noto come categoria ma potrebbe valere 30 oppure 50. Incassare ora può vincere o perdere la mano; rilanciare può migliorare l'incasso e, insieme, far perdere tutto. Non etichettare come probabilità di vittoria un calcolo che non modelli scelte, hot dice, distribuzione del sacchetto e condizioni di incasso. La varianza nascosta dev'essere presentata al giocatore in modo comprensibile; i numeri dell'esempio non sostituiscono una simulazione.
+
+### Cosa dobbiamo falsificare
+
+**Obiezione principale:** rischiamo di sostituire gli HP con una semplice *soglia casuale*, oppure creare incontri troppo brevi, due successi troppo facili o una strategia fissa che domina ogni Segno. Il modello è utile **solo se** mostra decisioni significativamente differenti per categorie e stati, mantenendo la suspense del rilancio.
+
+**Confronto A/B/C:** A = Farkle corrente senza nemico; B = incontro con HP/progresso semplice; C = Duello delle Poste e sacchetto. Solo se C supera B nell'interesse delle scelte, aggiungere una variante D con **una** manipolazione (Sigillatura o Rasura) e costi-opportunità dimostrabili. Misurare almeno mani per incontro, tasso di Farkle, probabilità condizionate di incasso e rilancio, ruolo dei colpi eccezionali, distribuzione esiti e percentuale di stati in cui strategie diverse sono migliori. Non calibrare gli incontri soltanto per rendere le vittorie più rare.
+
+**Vincoli invariati:** non toccare combinazioni, punteggi, dadi fisici o sistema hot dice per facilitare l'esperimento; evitare Tarocchi/Trionfi e penalizzazioni monotone per ogni rilancio. **Nessuna integrazione nel gameplay principale** finché non esistono una specifica completa e test riproducibili.
+
 ## Primo esperimento e criteri di verifica
 
 **Prima di implementare:** specificare un **solo incontro completo** con stato iniziale, regole di fine turno, condizioni di vittoria e sconfitta, conseguenze esatte di incasso/Farkle, segnali visibili, sacchetto/scarti e durata massima. Preferire pochi Segni e una sola abilità distintiva. Il primo scenario possibile è una creatura marginale di un salterio: scelta illustrativa, non un requisito.

@@ -72,6 +72,8 @@ Mini-run attuale: Salterio, Libro di ore, Codice. Gli ultimi due chiedono rispet
 
 **Rinviato:** Tarocchi/Trionfi. Non costituiscono la prima famiglia di avversari da produrre.
 
+**Primo candidato sperimentale (30 ottobre 2026):** il *Duello delle Poste*, gara a mani Farkle contro Segni di forza variabile, è documentato in [Incontri e Segni](INCONTRI_E_SEGNI.md). Non è approvato come loop definitivo; va confrontato in simulazione con il controllo a HP prima di toccare scoring, HUD o fisica.
+
 ## Personalizzazione
 
 **Attuale:** dopo il primo incarico si sceglie un dado inciso (la faccia 2 del dado 1 diventa 1) oppure un dado pesato tramite filtro e rilanci fisici visibili; dopo il secondo il Correttore oppure nessuna medaglia. Sono esempi minimi, non un catalogo bilanciato. Il pesato non simula una massa eccentrica; le probabilità ideali non certificano quelle fisiche.
