@@ -22,6 +22,7 @@ typedef struct fpslab {
     fps_body *boundaries[LAB_STATIC];
     fps_part *boundary_parts[LAB_STATIC];
     float gravity;
+    float edge;
 } fpslab;
 
 static int valid_float(float f) { return isfinite(f); }
@@ -72,7 +73,7 @@ FPSLAB_API fpslab *fpslab_new(int n,const float *states,float edge,
        !valid_float(gravity) || gravity<0) return NULL;
     fpslab *w=(fpslab*)calloc(1,sizeof(fpslab));
     if(!w)return NULL;
-    w->n=n;w->gravity=gravity;
+    w->n=n;w->gravity=gravity;w->edge=edge;
     /* A zero-height floor surface is represented by a thick static cuboid. */
     const float floor_t=.6f;
     const float wall_t=.30f;
@@ -139,4 +140,46 @@ FPSLAB_API int fpslab_sleeping(const fpslab *w,int index) {
     if(!w || index<0 || index>=w->n)return -1;
     return fps_body_sleeping_get(w->dice[index])?1:0;
 }
+
+/* Lab 2 diagnostic only: positional floor guard, NOT an upstream FPS solver
+ * fix. This runs AFTER an FPS step, and must never be used by production.
+ * Return number of corrected dice and the largest vertical correction.
+ * The original fpslab_step() and FPS 1.2.5 header remain unmodified.
+ */
+FPSLAB_API int fpslab_floor_guard(fpslab *w,float *max_depth) {
+    if(max_depth)*max_depth=0;
+    if(!w)return -1;
+    int corrected=0;
+    const float half=w->edge*.5f;
+    for(int i=0;i<w->n;i++) {
+        fps_body *body=w->dice[i];
+        float t[16];
+        fps_body_transform_get(body,t);
+        float lowest=INFINITY;
+        for(int sx=-1;sx<=1;sx+=2)
+        for(int sy=-1;sy<=1;sy+=2)
+        for(int sz=-1;sz<=1;sz+=2) {
+            const float x=half*sx,y=half*sy,z=half*sz;
+            const float wz=t[8]*x+t[9]*y+t[10]*z+t[11];
+            if(!isfinite(wz))return -1;
+            if(wz<lowest)lowest=wz;
+        }
+        if(lowest<-.002f) {
+            const float depth=-lowest;
+            float pos[3],vel[3];
+            fps_body_position_get(body,pos);
+            pos[2]+=depth;
+            fps_body_position_set(body,pos);
+            fps_body_velocity_get(body,vel);
+            if(vel[2]<0.0f) {
+                vel[2]=0.0f;
+                fps_body_velocity_set(body,vel);
+            }
+            corrected++;
+            if(max_depth && depth>*max_depth)*max_depth=depth;
+        }
+    }
+    return corrected;
+}
+
 FPSLAB_API int fpslab_version(void) { return 125; }
