@@ -1,0 +1,19 @@
+# Generated Python bytecode and caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+# Local debugging and temporary files
+*.log
+physics_log.txt
+*.tmp
+*.pending
+*.bak
+# Per-user settings, runtime logs and captures
+settings_data.json
+settings_data.json.*
+settings_data.lua
+runs.csv
+# Local development artifacts
+.venv/
+.vscode/
+.idea/

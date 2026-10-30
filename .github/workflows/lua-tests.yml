@@ -1,0 +1,41 @@
+name: Lua regression tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  lua-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua runtimes
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit
+      - name: Lua 5.4 syntax check (headless source and tests)
+        run: |
+          set -eu
+          find src tests -name '*.lua' -type f -print0 | xargs -0 -n 1 luac5.4 -p
+          luac5.4 -p main.lua core.lua conf.lua
+      - name: Lua 5.4 headless tests
+        run: |
+          set -eu
+          for test in tests/*_test.lua; do
+            echo "::group::$test"
+            lua5.4 "$test"
+            echo "::endgroup::"
+          done
+      - name: LuaJIT headless tests
+        run: |
+          set -eu
+          for test in tests/*_test.lua; do
+            echo "::group::$test"
+            luajit "$test"
+            echo "::endgroup::"
+          done
+      - name: Python source tests
+        run: |
+          set -eu
+          python3 scripts/test_checkpoint.py
+          python3 scripts/test_capture_retention.py
+          python3 scripts/test_love_runtime.py
