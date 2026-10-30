@@ -7,7 +7,7 @@ M.__index=M
 
 local function supported(entries)
  for _,entry in ipairs(entries) do
-  local die=entry.die
+  local die=(entry.entry or entry).die
   if not die or not die.faces or #die.faces~=6 or not die.faceValueMap then
    return false
   end
