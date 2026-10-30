@@ -11,6 +11,7 @@ int fpslab_sleeping(const fpslab *,int index);
 int fpslab_floor_guard(fpslab *,float *max_depth);
 int fpslab_probe(const fpslab *,float *out4);
 int fpslab_step_support(fpslab *,float dt);
+int fpslab_set_euler(fpslab *,int index,float rx,float ry,float rz);
 int fpslab_version(void);
 ]]
 local so=ffi.os=='Windows' and './experiments/physics_lab/build/fpslab.dll'
@@ -68,6 +69,10 @@ function N.support_step(world,dt)
  local wakes=lib.fpslab_step_support(world,dt)
  assert(wakes>=0,'FPS support test failed')
  return wakes
+end
+function N.set_euler(world,index,rx,ry,rz)
+ assert(lib.fpslab_set_euler(world,index-1,rx,ry,rz)==1,
+  'invalid FPS single-die orientation')
 end
 function N.snapshot(world,count)
  local result={}
