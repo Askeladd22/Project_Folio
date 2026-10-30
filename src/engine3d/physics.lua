@@ -111,7 +111,12 @@ function box:update(dt)
     local gravity_vec = vector{0,0,-(self.gravity or 0) * self.dt}
     for i=1,#self do
       local s=self[i]
-      
+      -- Keep held and waiting dice kinematic until released individually.
+      if s._manual_pending then
+        s.asleep=true
+        s.sleep_timer=0
+        s.velocity=vector{0,0,0}
+      else
       if not s.asleep then
         local vertices_on_ground = 0
         local ground_z = 0.05
@@ -212,6 +217,7 @@ function box:update(dt)
         s.sleep_timer = 0
         s.asleep = false
       end
+      end -- skip integration on waiting/held body
     end
     
     local n = #self
@@ -233,10 +239,12 @@ function box:update(dt)
       for ii=1,n do
         local A = intervals[ii]
         local a = self[A.idx]
+        if not a._manual_pending then
         for jj = ii+1, n do
           local B = intervals[jj]
           if B.minx > A.maxx then break end
           local b = self[B.idx]
+          if b._manual_pending then goto continue_pair end
           local aymin, aymax = a.position[2] - a.radius, a.position[2] + a.radius
           local bymin, bymax = b.position[2] - b.radius, b.position[2] + b.radius
           if aymax < bymin or bymax < aymin then goto continue_pair end
@@ -337,13 +345,16 @@ function box:update(dt)
           end
           ::continue_pair::
         end
+        end
       end
     end
     -- Position corrections belong to the same fixed step as integration.
   for i=1,#self do
     local a = self[i]
+    if not a._manual_pending then
     for j=i+1,#self do
       local b = self[j]
+      if not b._manual_pending then
       local diff = b.position - a.position
       local dist = diff:abs()
       local minDist = a.radius + b.radius
@@ -359,6 +370,8 @@ function box:update(dt)
           b.position = b.position + pushback * (invMassB / total)
         end
       end
+      end
+    end
     end
   end
     if self.after_step then self:after_step(self.dt) end
