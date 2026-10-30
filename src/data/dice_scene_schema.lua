@@ -4,7 +4,9 @@ return {
     },
     tray_camera = {
         locked = true,
-        yaw = 0.00,
+        -- A slight three-quarter angle makes two dice sides legible,
+        -- without touching die poses, physical contacts or face results.
+        yaw = 0.18,
         pitch = 0.62,
         distance = 14.1,
     },
