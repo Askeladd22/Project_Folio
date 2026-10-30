@@ -640,6 +640,32 @@ function M.overlay(u, hits)
         Res.end_ui()
     end
 
+    -- Minimal on-screen marquee in native screen coordinates, independent
+    -- of HUD scaling and of the game's scoring-die selection.
+    local Marquee=require('src.features.farkle.marquee_selection')
+    if u.marquee and Marquee.dragged(u.marquee) then
+        local rect=Marquee.rectangle(u.marquee)
+        g.push('all')
+        g.setColor(.56,.85,.90,.10)
+        g.rectangle('fill',rect.x,rect.y,rect.w,rect.h)
+        g.setColor(.56,.85,.90,.88)
+        g.setLineWidth(1.5)
+        g.rectangle('line',rect.x,rect.y,rect.w,rect.h)
+        g.pop()
+    end
+    local groupCount=Marquee.count(u.dragSelected)
+    if groupCount>0 then
+        g.push('all')
+        g.setColor(.56,.85,.90,.9)
+        g.setLineWidth(2.3)
+        for _,hit in ipairs(hits or {}) do
+            if u.dragSelected[hit.index or hit.roll_index] then
+                g.circle('line',hit.x,hit.y,(hit.r or 24)+9)
+            end
+        end
+        g.pop()
+    end
+
     -- Highlight circles on 3D dice in the tray
     for _, h in ipairs(hits or {}) do
         local i = h.index or h.roll_index
