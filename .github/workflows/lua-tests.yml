@@ -50,7 +50,7 @@ jobs:
           luajit experiments/physics_lab/test_floor_guard.lua
           luajit experiments/physics_lab/run.lua 8 450 lab2
           test -s experiments/physics_lab/build/results-lab2.csv
-          test "$(wc -l < experiments/physics_lab/build/results-lab2.csv)" -eq 25
+          test "$(wc -l < experiments/physics_lab/build/results-lab2.csv)" -eq 41
       - name: Python source tests
         run: |
           set -eu
