@@ -52,7 +52,7 @@ On Windows, use **`Avvia.cmd`** instead of `love .`; it searches for a LÖVE exe
 | Action | Input |
 |:--|:--|
 | Select a die | Click the die or press **1–6** |
-| Roll / reroll | **Space**, or right-click and drag a die to throw the active dice |
+| Roll / reroll | **Space** (automatic), or right-click, move and release **each die individually** |
 | Set aside scoring dice | **A** when available |
 | Bank turn points | **Enter** |
 | Advance after the turn | **N** |
