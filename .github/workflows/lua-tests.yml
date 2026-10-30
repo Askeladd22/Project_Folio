@@ -59,7 +59,7 @@ jobs:
           test -s experiments/physics_lab/build/results-support.csv
           test "$(wc -l < experiments/physics_lab/build/results-support.csv)" -eq 321
           luajit experiments/physics_lab/run_contact_poses.lua
-          test "$(wc -l < experiments/physics_lab/build/results-contact-poses.csv)" -eq 10
+          test "$(wc -l < experiments/physics_lab/build/results-contact-poses.csv)" -eq 19
       - name: Python source tests
         run: |
           set -eu
