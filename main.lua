@@ -1,3 +1,8 @@
+-- Experimental graphics comparison only. No production modules are loaded.
+if os.getenv('MANUSCRIPT_G3D_LAB')=='1' then
+ require('experiments.g3d_lab.main')
+ return
+end
 -- Canonical source entry: run LOVE from this repository directory.
 local U=require('src.features.farkle.controller')
 local D=require('src.features.farkle.dice')
