@@ -904,6 +904,7 @@ local function seed_rng()
     if love.math then
         love.math.setRandomSeed(seed)
     end
+    return seed
 end
 
 local function initialize_runtime()
@@ -1014,7 +1015,7 @@ end
 function love.load()
     configure_dice_box()
     spawn_initial_dice()
-    seed_rng()
+    Scriptorium.sessionSeed=seed_rng()
     initialize_runtime()
     setup_game_manager()
     register_execution_order_hooks()
@@ -1225,6 +1226,8 @@ function rollAllDice(max_dice, roll_indices, recovery, technical)
         indices = last_roll_indices,
         requested_max = max_dice,
         technical = recovery == true or technical == true,
+        logical_roll_id = Scriptorium.logicalRollId,
+        physical_attempt_id = Scriptorium.physicalAttemptId,
     })
     
     diceSettled = false
@@ -1380,6 +1383,8 @@ function onDiceSettled()
     EngineBridge.emit("dice.physical_settled", {
         values = values,
         indices = indices,
+        logical_roll_id = Scriptorium.logicalRollId,
+        physical_attempt_id = Scriptorium.physicalAttemptId,
     })
     local accepted = true
     if Scriptorium.onDiceSettled then
@@ -1387,7 +1392,10 @@ function onDiceSettled()
     end
     if accepted then
         AudioManager.play_ui(DICE_SETTLED_SFX)
-        local event = {values = values, indices = indices}
+        local event = {values = values, indices = indices,
+            logical_roll_id = Scriptorium.logicalRollId,
+            physical_attempt_id = Scriptorium.physicalAttemptId,
+            session_seed = Scriptorium.sessionSeed}
         -- Legacy event retained, but now only for accepted logical rolls.
         EngineBridge.emit("dice.roll_settled", event)
         EngineBridge.emit("dice.roll_accepted", event)

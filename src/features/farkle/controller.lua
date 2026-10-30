@@ -40,7 +40,9 @@ function U:reset(mode)
  self.game=R.new(mode);self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
  self.modal=nil;self.lastLoss=nil;self.lastBank=nil;self.physicalFailure=nil;self.physicalNotice=nil
  self.id=os.date('%Y%m%d-%H%M%S')..'-'..math.floor(love.timer.getTime()*1000)
+ self.logicalRollId=0;self.physicalAttemptId=0
  D.install(self.game.build);self:sync();self:log('new')
+ self:log('session_seed',self.sessionSeed or 'unknown')
 end
 function U:act(name,fn)
  local pot=self.game.pot;local bank=self.game.bank
@@ -55,6 +57,8 @@ function U:act(name,fn)
  end
 end
 function U:begin_physical(indices,technical)
+ self.physicalAttemptId=(self.physicalAttemptId or 0)+1
+ self:log('physical_attempt',tostring(self.logicalRollId or 0)..'/'..tostring(self.physicalAttemptId))
  self:sync_presentation()
  if self.presentation then Presentation.finish(self.presentation) end
  self.activePhysical={};for _,i in ipairs(indices) do self.activePhysical[i]=true end
@@ -66,7 +70,8 @@ function U:request(rescue)
  if not (rescue and R.rescue(s) or not rescue and R.start(s)) then return false end
  if rescue then Audio.play_farkle('medal') end
  self.medalHeld=nil
- self.pending={};self.observed={};self.retry=nil;self:log(rescue and 'medal_retry' or 'roll')
+ self.logicalRollId=(self.logicalRollId or 0)+1
+ self.pending={};self.observed={};self.retry=nil;self:log(rescue and 'medal_retry' or 'roll',self.logicalRollId)
  self.lastLoss=nil;self.lastBank=nil
  self:begin_physical(s.active);return true
 end
@@ -92,6 +97,7 @@ function U:activate_reference(indices)
   -- ordinary throw. Otherwise the idle solver could move an accepted result.
   self.medalHeld={};for i=1,6 do self.medalHeld[i]=true end
   for _,i in ipairs(self.game.active) do self.medalHeld[i]=nil end
+  self.logicalRollId=(self.logicalRollId or 0)+1
   self.pending={};self.observed={};self.retry=nil;self.lastLoss=nil;self.lastBank=nil
   self:begin_physical(self.game.active)
  else self.lastBank=self.game.bank-bank;self.lastLoss=nil;self:sync() end
