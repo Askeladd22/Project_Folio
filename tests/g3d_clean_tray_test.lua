@@ -22,8 +22,8 @@ assert(math.abs(minx-(extents[1]-.32))<1e-8 and
 for _,style in ipairs({'current','A','B','C'}) do
  assert(#Scene.floor_vertices(Mesh,extents,style)==6,'missing simple GPU floor for '..style)
 end
-assert(schema.tray_camera.yaw>0 and schema.tray_camera.yaw<.3,
- 'camera should have a small visual yaw for readable cube sides')
+assert(schema.tray_camera.yaw==0,
+ 'preserve the established tray camera and fixed dice scale/picking parity')
 local function read(path)
  local f=assert(io.open(path,'rb'),'missing '..path)
  local s=f:read('*a');f:close();return s
