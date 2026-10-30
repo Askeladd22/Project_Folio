@@ -103,7 +103,7 @@ function R.bank_turn(s)
  s.bank=s.bank+s.pot;s.pot=0;s.group=s.group or s.turnGroup;s.hotBank=s.hotBank or s.turnHot
  if Progress.completed(s) then
   s.phase=Progress.completion_phase(s)
- else s.phase=s.turn>=c.limit and 'lost' or 'ended' end
+ else s.phase=s.turn>=Progress.contracts[s.stage].limit and 'lost' or 'ended' end
  s.last='Points banked and manuscript progress secured.';return true
 end
 function R.next_turn(s)
