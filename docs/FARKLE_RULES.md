@@ -1,6 +1,6 @@
 # Regolamento ufficiale Farkle di Manuscript
 
-Versione 0.4, 15 ottobre 2026. Questo documento consolida la consegna «Nuovo regolamento Farkle». Le regole sono approvate; la taratura delle commissioni è provvisoria. La successiva promozione nelle directory principali non cambia questi comportamenti.
+Versione 0.4, 15 ottobre 2026; **nota di contesto aggiornata al 30 ottobre 2026**. Questo documento consolida la consegna «Nuovo regolamento Farkle». Le regole implementate sono approvate; la taratura delle commissioni è provvisoria. La direzione futura degli incontri con miniature, descritta in [INCONTRI_E_SEGNI.md](INCONTRI_E_SEGNI.md), **non modifica questa tabella né costituisce implementazione di un nuovo sistema di combattimento**.
 
 ## Punteggio nello stesso lancio
 
@@ -60,7 +60,7 @@ Il primo incasso riuscito registra l'ingresso. Un Farkle o un incasso rifiutato 
 
 ## Commissioni e progressione solitaria
 
-Adattamento originale di Manuscript: nessun avversario artificiale, sfida data da commissioni e turni limitati.
+**Stato implementato (baseline corrente):** nessun avversario artificiale; la sfida deriva da commissioni e turni limitati. La nuova direzione con figure animate è progettuale e va confrontata con questa baseline, non confusa con il regolamento già operativo.
 
 | Commissione | Obiettivo assicurato | Turni | Ingresso | Incassi successivi | Condizione da incassare |
 |---|---:|---:|---:|---:|---|
@@ -73,6 +73,12 @@ Adattamento originale di Manuscript: nessun avversario artificiale, sfida data d
 Punti e requisito possono essere incassati in turni differenti. Tris, poker, cinquina, sestina, full 4+2 e due tris soddisfano il requisito di gruppo; scale e tre coppie no. Il Codice richiede l'ottenimento e l'incasso degli hot dice, non un rilancio supplementare obbligatorio. Incasso e Farkle consumano un turno; se i requisiti mancano alla scadenza la run termina. Punti, ingresso e requisiti si azzerano per la commissione seguente; la build rimane.
 
 Dopo il Salterio si sceglie la modifica del dado 1; dopo il Libro di ore il Correttore oppure nessuna medaglia. In «Senza mod» si prosegue senza queste ricompense.
+
+## Integrazione futura con gli incontri — nessuna modifica alle regole presenti
+
+**Direzione approvata:** le figure di un libro potranno diventare avversari che utilizzano intenzioni e Segni, mentre il giocatore manterrà il Farkle con i suoi dadi e l'incasso. Le regole di punteggio, la disgiunzione delle combinazioni, il significato del Farkle, gli hot dice, le mappe fisiche delle facce e i modificatori esistenti **restano la fonte canonica**. Nessuna conversione punti→danno, costo di sigillatura/rasura, salute, limitazione di rilanci o condizione speciale di vittoria è approvata da questo documento.
+
+Le attuali commissioni (Salterio/Libro di ore/Codice) con target, limiti e soglie rappresentano lo **stato del software**, non la forma finale del libro popolato da miniature. Non trasferire automaticamente i 4/5 turni a ciascun nuovo incontro. Se una futura regola di nemico cambia la convenienza di incassare, deve essere descritta e testata separatamente, evitando premi che annullino il rischio del Farkle o un obbligo universale di rilanciare. Vedere [Incontri e Segni](INCONTRI_E_SEGNI.md).
 
 ## Dadi e medaglia esistenti
 
