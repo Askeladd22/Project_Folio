@@ -42,5 +42,20 @@ function M.configure(shader,mode,view,is_d8)
  shader:send('fillStrength',.15)
  shader:send('specularStrength',.14)
  shader:send('specularExponent',30)
+ shader:send('pipTexel',{0,0})
+ shader:send('pipReliefStrength',.11)
+end
+
+-- The pip texture is a white face with dark dots. Sampling adjacent
+-- texels yields a subtle engraved lip without changing pip positions,
+-- readability, physical face values or producing extra geometric surfaces.
+-- Material may switch per model; reset offset for untextured bevel quads.
+function M.configure_pips(shader,mode,texture)
+ local step={0,0}
+ if mode=='ivory' and texture and type(texture.getDimensions)=='function' then
+  local w,h=texture:getDimensions()
+  if w and h and w>0 and h>0 then step={1/w,1/h} end
+ end
+ shader:send('pipTexel',step)
 end
 return M
