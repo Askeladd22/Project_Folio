@@ -37,6 +37,8 @@ M.observe(st,{boxA,boxB},.2,9.2,3.8)
 assert(st.settle_s==.2)
 M.finish(st,{boxA,boxB})
 assert(st.faces[1]==2 and st.invalid_faces==0)
+assert(st.invalid_floor==0 and st.invalid_tilt==0 and st.invalid_gap==0
+       and st.invalid_moving==0)
 local flying=cube(0,0,5);flying.asleep=true
 M.observe(st,{flying},.3,9.2,3.8)
 assert(st.airborne_sleep_events==1,'airborne sleep metric must detect bad solver state')

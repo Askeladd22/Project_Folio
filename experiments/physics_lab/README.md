@@ -52,7 +52,9 @@ state is consumed.
 Metrics include: overlapping die-pair observations and worst overlap
 depth; floor penetration observations; cases in which a body went to
 sleep while airborne; unslept bodies at end; ambiguous/invalid upper
-faces. Face counts from a handful of rolls **cannot** establish fair
+faces. Invalid faces are classified as moving, penetrating the floor,
+insufficient upward alignment (tilt) or insufficient top-face gap,
+in that priority order. Face counts from a handful of rolls **cannot** establish fair
 dice distributions. For fairness, test many runs, orientations, stability
 at rest, and repeatability separately.
 

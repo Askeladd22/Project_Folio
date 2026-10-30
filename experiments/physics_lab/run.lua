@@ -13,7 +13,7 @@ assert(runs>=1 and runs<=200 and runs%1==0,'runs must be an integer 1..200')
 assert(steps>=20 and steps<=3000 and steps%1==0,'steps must be an integer 20..3000')
 local output='experiments/physics_lab/build/results.csv'
 local csv=assert(io.open(output,'w'))
-csv:write('seed,solver,steps,seconds_cpu,samples,overlap_events,max_overlap,airborne_sleep_events,floor_penetration_events,max_floor_penetration,settle_s,unsettled,invalid_faces,face1,face2,face3,face4,face5,face6\n')
+csv:write('seed,solver,steps,seconds_cpu,samples,overlap_events,max_overlap,airborne_sleep_events,floor_penetration_events,max_floor_penetration,settle_s,unsettled,invalid_faces,invalid_tilt,invalid_gap,invalid_floor,invalid_moving,face1,face2,face3,face4,face5,face6\n')
 local function measure(solver,rows,steps)
  local world,count=solver.new(rows)
  local stats=M.new()
@@ -41,15 +41,20 @@ local function record(seed,name,s,steps)
   s.airborne_sleep_events,s.floor_penetration_events,
   string.format('%.6f',s.max_floor_penetration),
   s.settle_s and string.format('%.2f',s.settle_s) or 'NA',
-  s.unsettled,s.invalid_faces}
+  s.unsettled,s.invalid_faces,s.invalid_tilt,s.invalid_gap,
+  s.invalid_floor,s.invalid_moving}
  for i=1,6 do columns[#columns+1]=s.faces[i] end
  csv:write(table.concat(columns,',')..'\n')
- local acc=totals[name] or {runs=0,cpu=0,overlaps=0,airborne=0,invalid=0,unsettled=0,penetration=0}
+ local acc=totals[name] or {runs=0,cpu=0,overlaps=0,airborne=0,invalid=0,unsettled=0,penetration=0,tilt=0,gap=0,floor=0,moving=0}
  acc.runs=acc.runs+1
  acc.cpu=acc.cpu+s.cpu
  acc.overlaps=acc.overlaps+s.overlap_events
  acc.airborne=acc.airborne+s.airborne_sleep_events
  acc.invalid=acc.invalid+s.invalid_faces
+ acc.tilt=acc.tilt+s.invalid_tilt
+ acc.gap=acc.gap+s.invalid_gap
+ acc.floor=acc.floor+s.invalid_floor
+ acc.moving=acc.moving+s.invalid_moving
  acc.unsettled=acc.unsettled+s.unsettled
  acc.penetration=math.max(acc.penetration,s.max_overlap)
  totals[name]=acc
@@ -70,6 +75,8 @@ for _,name in ipairs({'legacy','FPS'}) do
  local t=assert(totals[name])
  print(string.format('SUMMARY %s: %.3fs average CPU/run; %d overlapping pair-samples; max depth %.4f; %d airborne-sleep samples; %d invalid face finishes; %d still moving',
   name,t.cpu/t.runs,t.overlaps,t.penetration,t.airborne,t.invalid,t.unsettled))
+ print(string.format('CAUSES %s: tilt=%d, face-gap=%d, floor=%d, moving=%d',
+  name,t.tilt,t.gap,t.floor,t.moving))
 end
 print('CSV: '..output)
 print('NOTE: native FPS uses convex static rim/floor, legacy has its existing wall rules. These results are preliminary, not a controlled fairness/equity test.')

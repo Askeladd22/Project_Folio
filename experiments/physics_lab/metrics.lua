@@ -73,6 +73,7 @@ function M.new()
  return {samples=0,overlap_events=0,max_overlap=0,
          airborne_sleep_events=0,floor_penetration_events=0,
          max_floor_penetration=0,unsettled=0,invalid_faces=0,
+         invalid_tilt=0,invalid_gap=0,invalid_floor=0,invalid_moving=0,
          faces={0,0,0,0,0,0},settle_s=nil}
 end
 function M.observe(result,bodies,time,half_x,half_y)
@@ -100,11 +101,17 @@ function M.finish(result,bodies)
  for _,b in ipairs(bodies) do
   if not b.asleep then result.unsettled=result.unsettled+1 end
   local v,cos,gap=M.top_value(b)
-  if b.asleep and cos>=math.cos(math.rad(5)) and gap>=.8 and
-     M.floor_height(b)>=-.002 then
-    result.faces[v]=result.faces[v]+1
-  else
+  local reason
+  if not b.asleep then reason='invalid_moving'
+  elseif M.floor_height(b)<-.002 then reason='invalid_floor'
+  elseif cos<math.cos(math.rad(5)) then reason='invalid_tilt'
+  elseif gap<.8 then reason='invalid_gap'
+  end
+  if reason then
     result.invalid_faces=result.invalid_faces+1
+    result[reason]=result[reason]+1
+  else
+    result.faces[v]=result.faces[v]+1
   end
  end
  return result
