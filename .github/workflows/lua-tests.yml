@@ -53,6 +53,11 @@ jobs:
           grep -E '^(SUMMARY|CAUSES|GUARD|CSV:|NOTE:|WARNING:)' experiments/physics_lab/build/lab2-ci.log
           test -s experiments/physics_lab/build/results-lab2.csv
           test "$(wc -l < experiments/physics_lab/build/results-lab2.csv)" -eq 321
+          luajit experiments/physics_lab/test_support.lua
+          luajit experiments/physics_lab/run_support.lua 64 450 > experiments/physics_lab/build/lab3-ci.log
+          grep '^SUPPORT ' experiments/physics_lab/build/lab3-ci.log
+          test -s experiments/physics_lab/build/results-support.csv
+          test "$(wc -l < experiments/physics_lab/build/results-support.csv)" -eq 321
       - name: Python source tests
         run: |
           set -eu
