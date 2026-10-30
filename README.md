@@ -133,7 +133,3 @@ For detailed design decisions, consult [GAME_DESIGN.md](docs/GAME_DESIGN.md) and
 - Additional third-party fonts, effects and assets have their notices in `third_party/`, `resources/` and related source directories. Check individual terms before redistributing any asset.
 
 **The repository has no project-wide root `LICENSE` file at present.** MIT permissions for vendored libraries **do not** automatically license Manuscript's original source code, artwork or music. Contact the repository owner for redistribution or commercial-use authorization until a project license is published.
-
----
-
-*Manuscript is an independent project in active development. It is not affiliated with Kingdom Come: Deliverance or its publishers.*
