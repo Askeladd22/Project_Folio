@@ -3,14 +3,15 @@
 -- Does not integrate physics or assign a gameplay die value.
 local M={}
 local UV={{0,0},{1,0},{1,1},{0,1}}
+local UV3={{0,0},{1,0},{.5,1}}
 local TRIANGLES={1,2,3,1,3,4}
 local LIGHT={0.25,-0.4,0.88}
 
 function M.face_vertices(body,face)
  assert(type(body)=='table' and type(body.position)=='table' and
-        type(face)=='table' and #face==4,'four physical vertex indices required')
+        type(face)=='table' and (#face==4 or #face==3),'three or four physical vertex indices required')
  local points={}
- for i=1,4 do
+ for i=1,#face do
   local vertex=assert(body[face[i]],'missing physical vertex')
   points[i]={vertex[1]+body.position[1],
              vertex[2]+body.position[2],
@@ -25,7 +26,7 @@ function M.face_vertices(body,face)
  nx,ny,nz=nx/length,ny/length,nz/length
  local center={0,0,0}
  for _,v in ipairs(points) do
-  for j=1,3 do center[j]=center[j]+v[j]/4 end
+  for j=1,3 do center[j]=center[j]+v[j]/#face end
  end
  local outward=nx*(center[1]-body.position[1])+
                ny*(center[2]-body.position[2])+
@@ -34,8 +35,9 @@ function M.face_vertices(body,face)
  local dot=math.max(0,nx*LIGHT[1]+ny*LIGHT[2]+nz*LIGHT[3])
  local shade=0.57+0.43*dot
  local vertices={}
- for i,k in ipairs(TRIANGLES) do
-  local v,uv=points[k],UV[k]
+ local triangulation=#face==3 and {1,2,3} or TRIANGLES
+ for i,k in ipairs(triangulation) do
+  local v,uv=points[k],#face==3 and UV3[k] or UV[k]
   vertices[i]={v[1],v[2],v[3],uv[1],uv[2],
                nx,ny,nz,shade,shade,shade,1}
  end
