@@ -31,7 +31,7 @@ The world is a late-medieval workshop of scribes and illuminators. Manuscript pa
 - **Original production physics** retained while alternative solvers are evaluated independently.
 - **Menu, settings, resolution scaling, sound and keyboard/mouse controls** with regression and smoke-test tooling.
 
-Experimental workshop layouts and unsupported geometry currently use the historical renderer; this fallback is intentionally preserved until visual parity has been verified. The alternative [Free Physics Solver](https://github.com/0x1ED1CE/FPS) is **not** used by the playable game.
+Experimental workshop layouts and non-D6 geometry are being migrated to g3d. The historical renderer remains as an explicit compatibility and recovery fallback until GPU visual parity has been verified on all supported scenes. The alternative [Free Physics Solver](https://github.com/0x1ED1CE/FPS) is **not** used by the playable game.
 
 ## Getting started
 
@@ -74,7 +74,7 @@ The **book tray** uses g3d by default. **F9** toggles the historical painter for
 | `MANUSCRIPT_G3D_INGAME=0` | Alternative legacy startup switch |
 | `MANUSCRIPT_G3D_DEBUG=1` | Display the on-screen renderer diagnostic |
 
-A renderer failure should fall back to the historical painter without changing the physics or game state. Some experimental F8 modes still depend on that painter; removing it requires a separate parity review ([audit](docs/RENDERER_RETIREMENT.md)).
+A renderer failure should fall back to the historical painter without changing the physics or game state. The painter still serves emergency recovery and A/B comparison; removing it requires a separate parity review ([audit](docs/RENDERER_RETIREMENT.md)).
 
 ## Project architecture
 
