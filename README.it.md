@@ -29,7 +29,7 @@ Percorso: Splash → Main Menu → New Game → Choose Commission → Farkle Rog
 | Azione | Comando |
 |:--|:--|
 | Seleziona dado | Click o 1–6 |
-| Lancia/rilancia | Spazio, oppure tasto destro su un dado, trascina e rilascia |
+| Lancia/rilancia | Spazio (automatico) oppure tasto destro: prendi, ruota e lancia ogni dado separatamente |
 | Accantona | A |
 | Incassa | Invio |
 | Prossimo turno | N |
