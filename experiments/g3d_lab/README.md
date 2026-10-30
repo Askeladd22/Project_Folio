@@ -1,7 +1,8 @@
 # Manuscript — renderer A/B (g3d)
 
-**Laboratorio sperimentale e reversibile.** Il renderer Farkle originale rimane
-attivo e invariato nella normale esecuzione di Manuscript.
+**Laboratorio A/B storico e reversibile.** Nella partita reale g3d e ora il
+renderer predefinito del libro; qui i due percorsi continuano a confrontare gli
+stessi corpi fisici indipendentemente dalle preferenze del giocatore.
 
 ## Esecuzione (Windows)
 
@@ -77,10 +78,10 @@ comparati.
 
 ## Origine e licenza
 
-`g3d/` deriva da **groverburger/g3d**, v1.6.0, commit
+`lib/g3d/` deriva da **groverburger/g3d**, v1.6.0, commit
 `639120acd754dc5c34402e41eb1687b1a5a3ffa8` (MIT). La licenza originale
-è conservata in `g3d/LICENSE`. Il codice upstream è isolato in questa
-directory e non viene importato dal gioco normale.
+si trova in `lib/g3d/LICENSE`. Gioco e laboratorio condividono una sola
+copia della libreria e gli adattatori in `src/engine3d/`.
 
 - https://github.com/groverburger/g3d
 - https://github.com/Askeladd22/manuscript
