@@ -63,6 +63,12 @@ assert(live:toggle_bevel())
 live.material_mode='original'
 assert(not live:uses_bevel({die={faces=faces}}),
  'original F10 preset must remain the exact original mesh')
+live.material_mode='unlit'
+assert(not live:uses_bevel({die={faces=faces}}),
+ 'unlit comparison must preserve the original flat six-face geometry')
+live.material_mode='normals'
+assert(live:uses_bevel({die={faces=faces}}),
+ 'normal debug must include the visual bevel faces')
 live.material_mode='ivory'
 assert(live:uses_bevel({die={faces=faces}}))
 local sent={}
