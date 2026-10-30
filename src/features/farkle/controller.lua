@@ -54,12 +54,12 @@ function U:act(name,fn)
   self:sync();self:log(name)
  end
 end
-function U:begin_physical(indices)
+function U:begin_physical(indices,technical)
  self:sync_presentation()
  if self.presentation then Presentation.finish(self.presentation) end
  self.activePhysical={};for _,i in ipairs(indices) do self.activePhysical[i]=true end
  for i,d in ipairs(dice) do d.kept=not self.activePhysical[i] end
- self.state='rolling';self.onRollRequest(nil,indices)
+ self.state='rolling';self.onRollRequest(nil,indices,technical == true)
 end
 function U:request(rescue)
  local s=self.game
@@ -105,18 +105,20 @@ function U:retry_physical()
  local indices={}
  for i=1,#dice do if self.activePhysical and self.activePhysical[i] then indices[#indices+1]=i end end
  if #indices==0 then return false end
- self:begin_physical(indices)
+ self:begin_physical(indices,true)
 end
 function U:update(dt)
  self:sync_presentation()
  if self.presentation then Presentation.update(self.presentation,dt,RuntimeUI.reduced_animations()) end
  if self.retry then
   self.retry=self.retry-dt
-  if self.retry<=0 then self.retry=nil;self:begin_physical({1}) end
+  if self.retry<=0 then self.retry=nil;self:begin_physical({1},true) end
  end
 end
 function U:onDiceSettled(values)
- local s=self.game;local rejected=false
+ local s=self.game
+ if not s or s.phase~='rolling' then return false end
+ local rejected=false
  for _,v in ipairs(values) do
   self.pending[v.index]=v.value;self.observed[v.index]=v.value
   if s.build=='weighted' and v.index==1 then
@@ -129,7 +131,7 @@ function U:onDiceSettled(values)
   -- Defer: main.lua clears last_roll_indices after this callback returns.
   self.retry=.65;s.last='Weighted die: automatically rerolling die 1 physically.'
   self.activePhysical={};for _,d in ipairs(dice) do d.kept=true end
-  return
+  return false
  end
  local pot=s.pot
  -- Only accepted gameplay throws get an origin ID. Technical retries and
@@ -140,6 +142,7 @@ function U:onDiceSettled(values)
  Presentation.accepted(self.presentation,accepted)
  if s.phase=='ended' or s.phase=='lost' then self.lastLoss=pot end
  self.activePhysical=nil;self.dice_results={};self:sync();self:log('settled',table.concat(s.hand,'/'))
+ return true
 end
 function U:toggle(i) if R.toggle(self.game,i) then self:log('select',i) end end
 function U:select_option(mask)

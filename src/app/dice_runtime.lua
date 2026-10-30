@@ -1011,8 +1011,8 @@ function love.load()
     setup_game_manager()
     register_execution_order_hooks()
     configure_navigation()
-    Scriptorium.onRollRequest = function(max_dice, roll_indices)
-        rollAllDice(max_dice, roll_indices)
+    Scriptorium.onRollRequest = function(max_dice, roll_indices, technical)
+        rollAllDice(max_dice, roll_indices, false, technical)
     end
 end
 
@@ -1144,7 +1144,7 @@ local function pick_spawn_for_region(region, rnd, forced_side)
     return sx, sy, side
 end
 
-function rollAllDice(max_dice, roll_indices, recovery)
+function rollAllDice(max_dice, roll_indices, recovery, technical)
     local rnd = (love and love.math and love.math.random) or math.random
     
     local to_roll = {}
@@ -1212,10 +1212,11 @@ function rollAllDice(max_dice, roll_indices, recovery)
         Scriptorium.physicalResolution=physicalResolution
         Scriptorium.physicalNotice=nil;Scriptorium.physicalFailure=nil
     end
-    EngineBridge.emit("dice.roll_started", {
+    EngineBridge.emit((recovery or technical) and "dice.physical_attempt" or "dice.roll_started", {
         count = #to_roll,
         indices = last_roll_indices,
         requested_max = max_dice,
+        technical = recovery == true or technical == true,
     })
     
     diceSettled = false
@@ -1365,16 +1366,24 @@ function onDiceSettled()
         log_values[i] = tostring(values[i].value)
     end
     Logger.debug("[Dice] Settled: " .. table.concat(log_values, ", "))
-    AudioManager.play_ui(DICE_SETTLED_SFX)
-    EngineBridge.emit("dice.roll_settled", {
+    -- Mechanical settlement is not necessarily an accepted gameplay throw:
+    -- a weighted die may reject its face and request another physical attempt.
+    local indices = last_roll_indices
+    EngineBridge.emit("dice.physical_settled", {
         values = values,
-        indices = last_roll_indices,
+        indices = indices,
     })
-    
+    local accepted = true
     if Scriptorium.onDiceSettled then
-        Scriptorium:onDiceSettled(values)
+        accepted = Scriptorium:onDiceSettled(values) == true
     end
-
+    if accepted then
+        AudioManager.play_ui(DICE_SETTLED_SFX)
+        local event = {values = values, indices = indices}
+        -- Legacy event retained, but now only for accepted logical rolls.
+        EngineBridge.emit("dice.roll_settled", event)
+        EngineBridge.emit("dice.roll_accepted", event)
+    end
     last_roll_indices = nil
 end
 
