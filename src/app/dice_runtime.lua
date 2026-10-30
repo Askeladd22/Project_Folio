@@ -42,6 +42,7 @@ local app_events = nil
 local rollAllDice
 local checkDiceSettled
 local physicalResolution
+local manual_session=nil
 local RollResolution = require('src.engine3d.roll_resolution')
 local MouseThrow = require('src.features.farkle.mouse_throw')
 local onDiceSettled
@@ -408,7 +409,7 @@ local function constrain_dice_to_regions()
     for i = 1, #dice do
         local die_entry = dice[i]
         local body = die_entry and die_entry.body or nil
-        if body and body.position and body.velocity and not die_entry.kept then
+        if body and body.position and body.velocity and not die_entry.kept and not body._manual_pending then
             local region = get_region_for_die(die_entry)
             local base_region = get_base_region(region)
             local y_min = base_region.y_back
@@ -762,7 +763,6 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
                 offset=draw_offset_x,
                 viewport=tray,cx=cx,cy=cy,scale=scale,
                 usable=glow_enabled and usable_map or nil,
-                drag_preview=MouseThrow.preview(Scriptorium.mouseThrow,view,scale),
                 mask=not fitted_scale and true or false,
             })
         end
@@ -1077,6 +1077,51 @@ local function configure_navigation()
     Navigation.configure(route_to)
 end
 
+-- One logical Farkle roll can consist of several separate real die throws.
+-- Score resolution is held until EVERY active physical die has been released.
+local function begin_manual_roll(indices)
+    assert(not manual_session,'a second physical manual session was requested')
+    local pending={}
+    for _,i in ipairs(indices) do pending[i]=true end
+    manual_session={pending=pending,count=#indices}
+    last_roll_indices={}
+    for _,i in ipairs(indices) do last_roll_indices[#last_roll_indices+1]=i end
+    physicalResolution=RollResolution.new(last_roll_indices)
+    Scriptorium.physicalResolution=physicalResolution
+    Scriptorium.physicalNotice=nil
+    Scriptorium.physicalFailure=nil
+    diceSettled=false
+    diceSettledTimer=0
+    for _,i in ipairs(indices) do
+        local body=dice[i].body
+        body._manual_pending=true
+        body._grabbed=false
+        body.asleep=true
+        body.sleep_timer=0
+        body.velocity[1],body.velocity[2],body.velocity[3]=0,0,0
+        body.angular[1],body.angular[2],body.angular[3]=0,0,0
+    end
+    EngineBridge.emit('dice.roll_started',{
+        count=#indices,indices=last_roll_indices,
+        logical_roll_id=Scriptorium.logicalRollId,
+        physical_attempt_id=Scriptorium.physicalAttemptId,
+        manual=true
+    })
+end
+
+local function release_manual_die(index)
+    if not manual_session or not manual_session.pending[index] then return false end
+    assert(not dice[index].body._manual_pending,'release must activate physical die')
+    manual_session.pending[index]=nil
+    manual_session.count=manual_session.count-1
+    EngineBridge.emit('dice.manual_die_released',{
+        index=index,remaining=manual_session.count,
+        logical_roll_id=Scriptorium.logicalRollId
+    })
+    if manual_session.count==0 then manual_session=nil end
+    return true
+end
+
 ---@diagnostic disable: duplicate-set-field
 function love.load()
     configure_dice_box()
@@ -1089,6 +1134,8 @@ function love.load()
     Scriptorium.onRollRequest = function(max_dice, roll_indices, technical, gesture)
         rollAllDice(max_dice, roll_indices, false, technical, gesture)
     end
+    Scriptorium.onManualRollBegin=begin_manual_roll
+    Scriptorium.onManualRollRelease=release_manual_die
 end
 
 function love.resize(w, h)
@@ -1240,6 +1287,12 @@ local function pick_spawn_for_region(region, rnd, forced_side)
 end
 
 function rollAllDice(max_dice, roll_indices, recovery, technical, gesture)
+    -- Automatic Space/technical retries preserve the existing launch path.
+    manual_session=nil
+    for _,entry in ipairs(dice) do
+        entry.body._manual_pending=false
+        entry.body._grabbed=false
+    end
     local rnd = (love and love.math and love.math.random) or math.random
     
     local to_roll = {}
@@ -1435,7 +1488,7 @@ function rollAllDice(max_dice, roll_indices, recovery, technical, gesture)
 end
 
 function checkDiceSettled(dt)
-    if diceSettled then return end
+    if diceSettled or (manual_session and manual_session.count>0) then return end
     if physicalResolution then
         local action,event=RollResolution.advance(physicalResolution,dt,dice)
         if action=='accept' then diceSettled=true;Scriptorium.physicalNotice=nil;onDiceSettled()
