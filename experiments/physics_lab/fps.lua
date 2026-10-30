@@ -1,0 +1,60 @@
+-- LuaJIT FFI adapter, intentionally never imported by normal Manuscript.
+local ffi=require('ffi')
+local schema=require('src.data.dice_scene_schema').box
+ffi.cdef[[
+typedef struct fpslab fpslab;
+fpslab *fpslab_new(int n,const float *states,float edge,float hx,float hy,float rim,float gravity);
+void fpslab_free(fpslab *);
+int fpslab_step(fpslab *,float dt);
+int fpslab_state(const fpslab *,int index,float *out22);
+int fpslab_sleeping(const fpslab *,int index);
+int fpslab_version(void);
+]]
+local so=ffi.os=='Windows' and './experiments/physics_lab/build/fpslab.dll'
+  or './experiments/physics_lab/build/libfpslab.so'
+local ok,lib=pcall(ffi.load,so)
+if not ok then error('Build native FPS first: '..tostring(lib)) end
+assert(lib.fpslab_version()==125,'Pinned FPS bridge version mismatch')
+local N={}
+local local_vertices={
+ {1,1,1},{1,-1,1},{-1,-1,1},{-1,1,1},
+ {1,1,-1},{1,-1,-1},{-1,-1,-1},{-1,1,-1}
+}
+function N.new(rows)
+ local data=ffi.new('float[?]',#rows*9)
+ for i,row in ipairs(rows) do
+  local v={row.position,row.velocity,row.angular}
+  for j=1,3 do for k=1,3 do
+   data[(i-1)*9+(j-1)*3+(k-1)]=v[j][k]
+  end end
+ end
+ local edge=2*(1/1.6) -- geometry.newD6Body(1.0)
+ local world=lib.fpslab_new(#rows,data,edge,schema.half_x,schema.half_y,
+                            schema.border_height,schema.gravity)
+ assert(world~=nil,'FPS native world creation failed')
+ return ffi.gc(world,lib.fpslab_free),#rows
+end
+function N.step(world,dt)
+ assert(lib.fpslab_step(world,dt)==1,'FPS step failed')
+end
+function N.snapshot(world,count)
+ local result={}
+ local state=ffi.new('float[22]')
+ local half=1/1.6
+ for i=1,count do
+  assert(lib.fpslab_state(world,i-1,state)==1)
+  local vertices={}
+  for j,unit in ipairs(local_vertices) do
+   local x,y,z=half*unit[1],half*unit[2],half*unit[3]
+   vertices[j]={
+    state[0]*x+state[1]*y+state[2]*z+state[3],
+    state[4]*x+state[5]*y+state[6]*z+state[7],
+    state[8]*x+state[9]*y+state[10]*z+state[11]
+   }
+  end
+  result[i]={position={state[3],state[7],state[11]},
+             vertices=vertices,asleep=lib.fpslab_sleeping(world,i-1)==1}
+ end
+ return result
+end
+return N
