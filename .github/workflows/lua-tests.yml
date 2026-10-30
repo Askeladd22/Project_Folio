@@ -48,9 +48,11 @@ jobs:
           luajit experiments/physics_lab/run.lua 8 450
           test -s experiments/physics_lab/build/results.csv
           luajit experiments/physics_lab/test_floor_guard.lua
-          luajit experiments/physics_lab/run.lua 8 450 lab2
+          # Wider deterministic sample: 64 six-die rolls per solver.
+          luajit experiments/physics_lab/run.lua 64 450 lab2 > experiments/physics_lab/build/lab2-ci.log
+          grep -E '^(SUMMARY|CAUSES|GUARD|CSV:|NOTE:|WARNING:)' experiments/physics_lab/build/lab2-ci.log
           test -s experiments/physics_lab/build/results-lab2.csv
-          test "$(wc -l < experiments/physics_lab/build/results-lab2.csv)" -eq 41
+          test "$(wc -l < experiments/physics_lab/build/results-lab2.csv)" -eq 321
       - name: Python source tests
         run: |
           set -eu
