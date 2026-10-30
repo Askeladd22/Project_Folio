@@ -43,6 +43,7 @@ local rollAllDice
 local checkDiceSettled
 local physicalResolution
 local RollResolution = require('src.engine3d.roll_resolution')
+local MouseThrow = require('src.features.farkle.mouse_throw')
 local onDiceSettled
 local readDiceValues
 local readDieFace
@@ -761,6 +762,7 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
                 offset=draw_offset_x,
                 viewport=tray,cx=cx,cy=cy,scale=scale,
                 usable=glow_enabled and usable_map or nil,
+                drag_preview=MouseThrow.preview(Scriptorium.mouseThrow,view,scale),
                 mask=not fitted_scale and true or false,
             })
         end
@@ -1084,8 +1086,8 @@ function love.load()
     setup_game_manager()
     register_execution_order_hooks()
     configure_navigation()
-    Scriptorium.onRollRequest = function(max_dice, roll_indices, technical)
-        rollAllDice(max_dice, roll_indices, false, technical)
+    Scriptorium.onRollRequest = function(max_dice, roll_indices, technical, gesture)
+        rollAllDice(max_dice, roll_indices, false, technical, gesture)
     end
 end
 
@@ -1237,7 +1239,7 @@ local function pick_spawn_for_region(region, rnd, forced_side)
     return sx, sy, side
 end
 
-function rollAllDice(max_dice, roll_indices, recovery, technical)
+function rollAllDice(max_dice, roll_indices, recovery, technical, gesture)
     local rnd = (love and love.math and love.math.random) or math.random
     
     local to_roll = {}
@@ -1347,6 +1349,18 @@ function rollAllDice(max_dice, roll_indices, recovery, technical)
             to_center[2] * lateral_speed,
             vertical_speed
         }
+        -- Mouse throw changes launch momentum only, never dice identity,
+        -- rotation-to-face mapping, scoring or the physics solver.
+        -- Use inward spawn momentum plus a bounded camera-aligned gesture;
+        -- the existing side reflection still protects the playable walls.
+        if gesture and not recovery and not technical then
+            local power=clamp(tonumber(gesture.power) or 0,0,1.45)
+            local gx=clamp(tonumber(gesture.x) or 0,-1,1)
+            local gy=clamp(tonumber(gesture.y) or 0,-1,1)
+            local extra=8.0*power
+            base_velocity[1]=base_velocity[1]+gx*extra
+            base_velocity[2]=base_velocity[2]+gy*extra
+        end
 
         local jitter = DICE_THROW_JITTER * (i - (#dice + 1) / 2)
         die_entry.body.position = vector{sx + jitter, sy - jitter, rz}
@@ -1358,6 +1372,15 @@ function rollAllDice(max_dice, roll_indices, recovery, technical)
             (rnd() - 0.5) * DICE_THROW_ANGULAR_MAX,
             (rnd() - 0.5) * DICE_THROW_ANGULAR_MAX
         }
+        if gesture and not recovery and not technical then
+            local power=clamp(tonumber(gesture.power) or 0,0,1.45)
+            local gx=clamp(tonumber(gesture.x) or 0,-1,1)
+            local gy=clamp(tonumber(gesture.y) or 0,-1,1)
+            die_entry.body.angular[1]=clamp(die_entry.body.angular[1]-gy*2.5*power,
+                -DICE_THROW_ANGULAR_MAX,DICE_THROW_ANGULAR_MAX)
+            die_entry.body.angular[2]=clamp(die_entry.body.angular[2]+gx*2.5*power,
+                -DICE_THROW_ANGULAR_MAX,DICE_THROW_ANGULAR_MAX)
+        end
         die_entry.value = nil
         
         local noise = DICE_THROW_NOISE
