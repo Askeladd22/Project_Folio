@@ -10,8 +10,9 @@ local SettingsPersistenceSchema = require("src.data.settings_persistence_schema"
 local expect_string = Schema.expect_string
 local FILE_PATH = expect_string(SettingsPersistenceSchema.file_path, "settings_persistence_schema.file_path")
 local FILE_FORMAT = expect_string(SettingsPersistenceSchema.format, "settings_persistence_schema.format")
+local LEGACY_PATH = expect_string(SettingsPersistenceSchema.legacy_file_path, "settings_persistence_schema.legacy_file_path")
 
-if FILE_FORMAT ~= "lua_table" then
+if FILE_FORMAT ~= "json" then
     error("Unsupported settings persistence format: " .. tostring(FILE_FORMAT))
 end
 
@@ -332,10 +333,22 @@ end
 
 function SettingsState.load()
     local loaded, err, status = LuaTableStore.load(FILE_PATH)
-    if err and status ~= "missing" and status ~= "unavailable" then
-        Logger.debug("[SettingsState] load error: " .. tostring(err))
+    if status == "invalid_data" or status == "load_error" then
+        Logger.debug("[SettingsState] primary data damaged: "..tostring(err))
+        loaded = LuaTableStore.load(FILE_PATH..".bak")
+    elseif status == "missing" then
+        -- Restricted parser: reads only table literals, NEVER executes Lua.
+        local legacy,legacy_err = LuaTableStore.load(LEGACY_PATH,{legacy=true})
+        if legacy then
+            loaded = legacy
+            local ok,write_err = LuaTableStore.save(FILE_PATH,normalize(legacy))
+            if not ok then
+                Logger.debug("[SettingsState] migration pending: "..tostring(write_err))
+            end
+        elseif legacy_err then
+            Logger.debug("[SettingsState] legacy data rejected: "..tostring(legacy_err))
+        end
     end
-
     current = normalize(loaded)
     return deep_copy(current)
 end

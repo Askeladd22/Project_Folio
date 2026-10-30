@@ -1,119 +1,51 @@
-local LuaTableStore = {}
-
-local function is_identifier(str)
-    return type(str) == "string" and str:match("^[%a_][%w_]*$") ~= nil
+local Codec=require('src.core.settings_data_codec')
+local Store={}
+local MAX_BYTES=128*1024
+local function filesystem(options)
+ if options and options.filesystem then return options.filesystem end
+ return love and love.filesystem
 end
-
-local function sorted_keys(tbl)
-    local keys = {}
-    for key in pairs(tbl) do
-        keys[#keys + 1] = key
-    end
-    table.sort(keys, function(a, b)
-        if type(a) == type(b) then
-            return tostring(a) < tostring(b)
-        end
-        return type(a) < type(b)
-    end)
-    return keys
+local function read(fs,path)
+ if not fs or type(fs.getInfo)~='function' or type(fs.read)~='function' then
+  return nil,nil,'unavailable'
+ end
+ if not fs.getInfo(path) then return nil,nil,'missing' end
+ local raw,err=fs.read(path)
+ if type(raw)~='string' then return nil,tostring(err or 'read failed'),'load_error' end
+ if #raw>MAX_BYTES then return nil,'settings too large','invalid_data' end
+ return raw
 end
-
-local function serialize(value, indent)
-    indent = indent or 0
-    local pad = string.rep(" ", indent)
-    local value_type = type(value)
-
-    if value_type == "number" then
-        return tostring(value)
-    end
-    if value_type == "boolean" then
-        return value and "true" or "false"
-    end
-    if value_type == "string" then
-        return string.format("%q", value)
-    end
-    if value_type == "table" then
-        local parts = {"{\n"}
-        local keys = sorted_keys(value)
-        for _, key in ipairs(keys) do
-            local key_repr
-            if is_identifier(key) then
-                key_repr = key
-            else
-                key_repr = "[" .. serialize(key, indent + 2) .. "]"
-            end
-            parts[#parts + 1] = string.rep(" ", indent + 2)
-                .. key_repr
-                .. " = "
-                .. serialize(value[key], indent + 2)
-                .. ",\n"
-        end
-        parts[#parts + 1] = pad .. "}"
-        return table.concat(parts)
-    end
-
-    return "nil"
+function Store.load(path,options)
+ local fs=filesystem(options)
+ local raw,err,status=read(fs,path)
+ if not raw then return nil,err,status end
+ local value,problem=Codec.decode(raw,options and options.legacy)
+ if not value then return nil,problem,'invalid_data' end
+ return value,nil,nil
 end
-
-local function resolve_filesystem(options)
-    local opts = options or {}
-    if opts.filesystem then
-        return opts.filesystem
-    end
-    if love and love.filesystem then
-        return love.filesystem
-    end
-    return nil
+function Store.save(path,data,options)
+ if type(data)~='table' then return false,'settings must be a table' end
+ local fs=filesystem(options)
+ if not fs or type(fs.write)~='function' or type(fs.read)~='function' or
+    type(fs.getInfo)~='function' then return false,'filesystem unavailable' end
+ local raw,err=Codec.encode(data)
+ if not raw then return false,err end
+ -- The old valid contents remain in a sidecar; LÖVE has no guaranteed
+ -- atomic rename on all platforms. Recover from .bak if a write is torn.
+ local previous=read(fs,path)
+ if previous and Codec.decode(previous) then
+  local ok,why=fs.write(path..'.bak',previous)
+  if not ok then return false,'backup failed: '..tostring(why) end
+ end
+ local ok,why=fs.write(path..'.pending',raw)
+ if not ok then return false,'pending settings write failed: '..tostring(why) end
+ local verify=read(fs,path..'.pending')
+ if verify~=raw then return false,'pending settings verification failed' end
+ ok,why=fs.write(path,raw)
+ if not ok then return false,'settings write failed: '..tostring(why) end
+ local committed=read(fs,path)
+ if committed~=raw then return false,'settings write verification failed' end
+ if type(fs.remove)=='function' then fs.remove(path..'.pending') end
+ return true
 end
-
----@param path string
----@param options? { filesystem?: table }
----@return table|nil data
----@return string|nil error_message
----@return string|nil status
-function LuaTableStore.load(path, options)
-    local fs = resolve_filesystem(options)
-    if not fs or type(fs.getInfo) ~= "function" or type(fs.load) ~= "function" then
-        return nil, nil, "unavailable"
-    end
-
-    if not fs.getInfo(path) then
-        return nil, nil, "missing"
-    end
-
-    local chunk, load_err = fs.load(path)
-    if not chunk then
-        return nil, tostring(load_err), "load_error"
-    end
-
-    local ok, data = pcall(chunk)
-    if not ok then
-        return nil, tostring(data), "runtime_error"
-    end
-    if type(data) ~= "table" then
-        return nil, "stored chunk did not return a table", "invalid_data"
-    end
-    return data, nil, nil
-end
-
----@param path string
----@param data table
----@param options? { filesystem?: table }
----@return boolean ok
----@return string|nil error_message
-function LuaTableStore.save(path, data, options)
-    if type(data) ~= "table" then
-        return false, "LuaTableStore.save expects table data"
-    end
-
-    local fs = resolve_filesystem(options)
-    if not fs or type(fs.write) ~= "function" then
-        return false, "filesystem write unavailable"
-    end
-
-    local text = "return " .. serialize(data, 0) .. "\n"
-    local ok, err = fs.write(path, text)
-    return ok, err
-end
-
-return LuaTableStore
+return Store
