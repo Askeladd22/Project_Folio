@@ -10,8 +10,8 @@ scaled 2D transform, becoming very wide pixel bars.
 
 Keep the historical manuscript **context**, not a busy floor illustration.
 The default scene now uses an opaque, single-color g3d parchment plane at
-physical `z=0`, thinner decorative side panels, a slightly angled view
-and the existing physically transformed, textured dice. Page ornaments
+physical `z=0`, thinner decorative side panels and the existing physically transformed,
+textured dice. The established camera framing remains unchanged. Page ornaments
 are omitted inside the tray. **Physics, scoring, Farkle and input are unchanged.**
 
 g3d draws floor → soft contact shadows → walls/divider → dice against a
@@ -38,8 +38,7 @@ book layout, check:
 - The center is a **clear parchment field** without crosses, stacked
   translucent rectangles or page rules drawn over dice.
 - Six **single** physical D6 render with correct, legible pips and
-  consistent face values. The slight yaw should make lateral cube
-  faces clearer.
+  consistent face values. The original projected camera framing and die picking remain stable.
 - Dice remain inside the physical tray. Shadows lie on the paper, not
   above the dice; near/far rim segments correctly occlude dice.
 - The book frame is noticeably thinner than in the original screenshot.
