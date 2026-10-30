@@ -676,26 +676,31 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
             queue_projected_quad(front_l_b, front_l_t, front_r_t, front_r_b, {0.31, 0.22, 0.15, 0.95})
         end
 
-        if DICE_TRAY_FLAT_FLOOR then
-            require('src.features.farkle.tray_view').floor(view, x1, x2, y1, y2)
-        else
-            render.board(config.boardimage, config.boardlight, x1, x2, y1, y2)
-        end
-
-        if DICE_OVERLAY_SHADOWS then
-            for i = 1, #dice do
-                local die_entry = dice[i]
-                if die_predicate(die_entry, i) then
-                    with_draw_offset(die_entry.body, function()
-                        render.shadow(function(_, action)
-                            action()
-                        end, die_entry.die, die_entry.body)
-                    end)
+        -- The GPU and legacy floors are mutually exclusive. Previously the
+        -- painter's decorative book planes were ALWAYS drawn beneath g3d:
+        -- this produced the large blocky crosses seen in screenshots and
+        -- prevented the g3d floor from participating in the depth buffer.
+        -- In GPU mode g3d_live now owns the plain floor and contact shadows.
+        render.clear()
+        local function draw_legacy_floor()
+            if DICE_TRAY_FLAT_FLOOR then
+                require('src.features.farkle.tray_view').floor(view, x1, x2, y1, y2)
+            else
+                render.board(config.boardimage, config.boardlight, x1, x2, y1, y2)
+            end
+            if DICE_OVERLAY_SHADOWS then
+                for i = 1, #dice do
+                    local die_entry = dice[i]
+                    if die_predicate(die_entry, i) then
+                        with_draw_offset(die_entry.body, function()
+                            render.shadow(function(_, action)
+                                action()
+                            end, die_entry.die, die_entry.body)
+                        end)
+                    end
                 end
             end
         end
-
-        render.clear()
         local gpu_candidates = {}
         -- Every F8 tray style and triangular D8 can now use g3d.
         -- The historical painter remains an explicit F9/error fallback.
@@ -761,6 +766,7 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
         end
         last_tray_renderer=gpu_drawn and 'g3d' or 'legacy'
         if not gpu_drawn then
+            draw_legacy_floor()
             if not require('src.features.farkle.tray_workshop').border(render, view, box.border_height or 1.1) then
                 render.tray_border(render.zbuffer, 0.85, box.border_height or 1.1, {83, 51, 31})
             end
