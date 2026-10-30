@@ -10,8 +10,12 @@ assert(r:toggle()==false and r:toggle()==true)
 local entries={{index=1,entry={die=d6}},{index=2,entry={die=d6}}}
 assert(Live.supported(entries),'real runtime candidate format incorrectly rejected')
 assert(Live.supported({{die=d6}}),'direct lab die should be supported')
+local triangular={faces={},faceValueMap={}}
+for i=1,8 do triangular.faces[i]={1,2,3};triangular.faceValueMap[i]=i end
+assert(Live.supported({{index=1,entry={die=triangular}}}),
+       'physical D8 triangle faces must be supported by g3d')
 assert(not Live.supported({{index=1,entry={die={faces={{1,2,3}},faceValueMap={1}}}}}),
-       'D8 or triangle face must always use the old renderer')
+       'non-D6/D8 geometry must be rejected')
 assert(not Live.supported({{index=1,entry={die={faces={},faceValueMap={}}}}}),
        'empty dice entry must never enter GPU')
 local verts=Live.rim_vertices(M,{-9.2,9.2,-3.8,3.8},.85,.74)
@@ -38,3 +42,22 @@ Live.highlight_vertices(verts,true)
 assert(verts[1][9]>original,'usable die gains a GPU tint')
 assert(not package.loaded['lib.g3d'],'headless geometry must not load GPU')
 print('PASS production g3d: default-ready, reversible, shadows, folio rules and highlights')
+
+local Scene=require('src.engine3d.g3d_scenery')
+for _,style in ipairs({'book','current','A','B','C'}) do
+ local skin=Scene.style_vertices(M,{-9.2,9.2,-3.8,3.8},.74,style)
+ assert(#skin>=4*3*8*6,'g3d renderer missing F8 style '..style)
+ for _,vertex in ipairs(skin) do
+  assert(vertex[9]>=0 and vertex[9]<=1,'GPU red component out of range')
+  assert(vertex[10]>=0 and vertex[10]<=1,'GPU green component out of range')
+  assert(vertex[11]>=0 and vertex[11]<=1,'GPU blue component out of range')
+ end
+ if style=='B' then assert(#skin>4*3*8*6,'countertop surround geometry missing') end
+end
+local divider=Scene.divider_vertices({back_x=0,front_x=.2,
+ back_y=-3,front_y=3,width=.15,height=.8})
+assert(#divider==30,'three-dimensional split-tray barrier incomplete')
+assert(Scene.divider_vertices(nil)==nil)
+local tint=Scene.face_color({faceColors={{20,50,80,255}}},1)
+assert(math.abs(tint[1]-20/255)<1e-8 and math.abs(tint[3]-80/255)<1e-8)
+print('PASS g3d migration: all F8 skins, split divider and D8 face colors')
