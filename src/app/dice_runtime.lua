@@ -1387,26 +1387,14 @@ function onDiceSettled()
     -- Mechanical settlement is not necessarily an accepted gameplay throw:
     -- a weighted die may reject its face and request another physical attempt.
     local indices = last_roll_indices
-    EngineBridge.emit("dice.physical_settled", {
-        values = values,
-        indices = indices,
-        logical_roll_id = Scriptorium.logicalRollId,
-        physical_attempt_id = Scriptorium.physicalAttemptId,
-    })
-    local accepted = true
-    if Scriptorium.onDiceSettled then
-        accepted = Scriptorium:onDiceSettled(values) == true
-    end
-    if accepted then
-        AudioManager.play_ui(DICE_SETTLED_SFX)
-        local event = {values = values, indices = indices,
-            logical_roll_id = Scriptorium.logicalRollId,
-            physical_attempt_id = Scriptorium.physicalAttemptId,
-            session_seed = Scriptorium.sessionSeed}
-        -- Legacy event retained, but now only for accepted logical rolls.
-        EngineBridge.emit("dice.roll_settled", event)
-        EngineBridge.emit("dice.roll_accepted", event)
-    end
+    local RollEvents = require("src.core.roll_events")
+    local accepted = RollEvents.complete(EngineBridge.emit,
+        Scriptorium.onDiceSettled and function(v) return Scriptorium:onDiceSettled(v) end or nil,
+        {values = values, indices = indices,
+         logical_roll_id = Scriptorium.logicalRollId,
+         physical_attempt_id = Scriptorium.physicalAttemptId,
+         session_seed = Scriptorium.sessionSeed})
+    if accepted then AudioManager.play_ui(DICE_SETTLED_SFX) end
     last_roll_indices = nil
 end
 
