@@ -14,11 +14,11 @@ jobs:
           sudo apt-get install -y lua5.4 luajit lua-check
       - name: Static lint of new pure gameplay, event and persistence modules
         run: |
-          luacheck --no-config --std lua51 --no-max-line-length --globals love \
+          luacheck --no-config --std lua51 --no-max-line-length \
             src/core/settings_data_codec.lua \
             src/core/lua_table_store.lua \
             src/core/roll_events.lua \
-            src/gameplay/farkle/commission_progress.lua
+            src/gameplay/farkle/commission_progress.lua --globals love
       - name: Lua 5.4 syntax check (headless source and tests)
         run: |
           set -eu
