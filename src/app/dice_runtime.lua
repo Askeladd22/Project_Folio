@@ -31,6 +31,7 @@ local ExecutionOrder = require("src.core.execution_order")
 -- g3d is the default book renderer. The library itself remains lazy-loaded.
 -- F9 and the startup environment switch retain the unchanged legacy painter.
 local live_g3d = require('src.engine3d.g3d_live').new()
+local last_tray_renderer = 'legacy'
 if os.getenv('MANUSCRIPT_G3D_INGAME') == '0' or os.getenv('MANUSCRIPT_RENDERER') == 'legacy' then
     live_g3d.enabled = false
 end
@@ -696,11 +697,24 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
 
         render.clear()
         local gpu_candidates = {}
-        -- Only the 'book' workshop is supported by the experimental GPU
-        -- rim today. Other styles, split trays and D8 stay on the painter.
-        local gpu_requested = live_g3d and live_g3d.enabled and
-            require('src.features.farkle.tray_workshop').current == 'book' and
-            not draw_divider
+        -- Every F8 tray style and triangular D8 can now use g3d.
+        -- The historical painter remains an explicit F9/error fallback.
+        local gpu_style = require('src.features.farkle.tray_workshop').current
+        local gpu_requested = live_g3d and live_g3d.enabled
+        local gpu_divider = nil
+        if draw_divider then
+            local inset = math.max(0, tonumber(tray_layout.divider_y_inset) or 0)
+            local back_y,front_y = y1+inset,y2-inset
+            if front_y <= back_y then back_y,front_y=y1,y2 end
+            gpu_divider = {
+                back_x=get_region_divider_x_at_y(region,back_y),
+                front_x=get_region_divider_x_at_y(region,front_y),
+                back_y=back_y,front_y=front_y,
+                width=tray_layout.divider_half_width or 0.13,
+                height=math.max(tray_layout.divider_height_min or .24,
+                    (box.border_height or .74)*(tray_layout.divider_height_scale or .88))
+            }
+        end
         for i = 1, #dice do
             local die_entry = dice[i]
             if die_predicate(die_entry, i) then
@@ -738,12 +752,14 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
             gpu_drawn = live_g3d:draw({
                 entries=gpu_candidates, view=view,
                 extents=world_extents, height=box.border_height or 1.1,
+                style=gpu_style,divider=gpu_divider,
                 offset=draw_offset_x,
                 viewport=tray,cx=cx,cy=cy,scale=scale,
                 usable=glow_enabled and usable_map or nil,
                 mask=not fitted_scale and true or false,
             })
         end
+        last_tray_renderer=gpu_drawn and 'g3d' or 'legacy'
         if not gpu_drawn then
             if not require('src.features.farkle.tray_workshop').border(render, view, box.border_height or 1.1) then
                 render.tray_border(render.zbuffer, 0.85, box.border_height or 1.1, {83, 51, 31})
@@ -955,6 +971,7 @@ local function initialize_runtime()
 
     EngineBridge.configure({
         get_dice_tray_rect = get_dice_tray_rect,
+        get_renderer_mode = function() return last_tray_renderer end,
         pick_scriptorium_tray_die = pick_tray_die_at_screen,
         to_virtual_ui = function(x, y)
             return ResolutionManager.to_virtual(x, y)

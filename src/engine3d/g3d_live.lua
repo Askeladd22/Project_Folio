@@ -4,15 +4,16 @@
 -- The GPU library loads lazily on first supported draw; physics and gameplay are untouched.
 local M={}
 M.__index=M
+local Scenery=require('src.engine3d.g3d_scenery')
 
 local function supported(entries)
  for _,entry in ipairs(entries) do
   local die=(entry.entry or entry).die
-  if not die or not die.faces or #die.faces~=6 or not die.faceValueMap then
+  if not die or not die.faces or (#die.faces~=6 and #die.faces~=8) or not die.faceValueMap then
    return false
   end
   for i,face in ipairs(die.faces) do
-   if #face~=4 or not die.faceValueMap[i] then return false end
+   if (#face~=3 and #face~=4) or not die.faceValueMap[i] then return false end
   end
  end
  return true
@@ -21,7 +22,7 @@ end
 function M.new()
  return setmetatable({
   enabled=true,failed=nil,models={},images={},canvas=nil,
-  width=0,height=0,walls=nil,lines=nil,wall_signature=nil,
+  width=0,height=0,walls=nil,lines=nil,divider_model=nil,wall_signature=nil,
  },M)
 end
 
@@ -123,7 +124,7 @@ local function highlight_vertices(vertices,active)
  return vertices
 end
 
-function M:_ensure(entries,extents,border,viewport)
+function M:_ensure(entries,extents,border,viewport,style,divider)
  local g=love.graphics
  if not self.g3d then
   self.g3d=require('lib.g3d')
@@ -151,6 +152,10 @@ function M:_ensure(entries,extents,border,viewport)
   end
  end
  local rimkey=table.concat({
+  tostring(style),tostring(divider and divider.back_x),
+  tostring(divider and divider.front_x),tostring(divider and divider.back_y),
+  tostring(divider and divider.front_y),tostring(divider and divider.width),
+  tostring(divider and divider.height),
   string.format('%.5f',border),
   string.format('%.5f',extents[1]),string.format('%.5f',extents[2]),
   string.format('%.5f',extents[3]),string.format('%.5f',extents[4])
@@ -158,9 +163,13 @@ function M:_ensure(entries,extents,border,viewport)
  if self.wall_signature~=rimkey then
   if self.walls and self.walls.mesh then self.walls.mesh:release() end
   if self.lines and self.lines.mesh then self.lines.mesh:release() end
+  if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
   self.walls=self.g3d.newModel(
-   rim_vertices(self.mesh,extents,.85,border),self.white)
-  self.lines=self.g3d.newModel(page_rule_vertices(extents,.85,border),self.white)
+   Scenery.style_vertices(self.mesh,extents,border,style),self.white)
+  self.lines=(style=='book') and self.g3d.newModel(
+   page_rule_vertices(extents,.85,border),self.white) or nil
+  local divider_vertices=Scenery.divider_vertices(divider)
+  self.divider_model=divider_vertices and self.g3d.newModel(divider_vertices,self.white) or nil
   self.wall_signature=rimkey
  end
 end
@@ -183,8 +192,16 @@ function M:_update_faces(entries,draw_offset,usable_map)
   active[key]=true
   for i,face in ipairs(entry.die.faces) do
    local value=entry.die.faceValueMap[i]
-   local img=self.images[value]
-   local verts=highlight_vertices(vertices(self.mesh,entry,face,draw_offset),
+   local img=#face==4 and self.images[value] or self.white
+   local verts=vertices(self.mesh,entry,face,draw_offset)
+   if #face==3 then
+    -- Historical D8 has no face texture; retain its per-face flat colours.
+    local tint=Scenery.face_color(entry.die,i)
+    for _,v in ipairs(verts) do
+     v[9]=v[9]*tint[1];v[10]=v[10]*tint[2];v[11]=v[11]*tint[3]
+    end
+   end
+   verts=highlight_vertices(verts,
     usable_map and usable_map[key])
    -- Real Farkle dice.image intentionally draws the white pip texture
    -- with setColor(1,1,1,1), overriding faceColors. Preserve that
@@ -213,7 +230,7 @@ end
 function M:_draw_scene(args)
  local g=love.graphics
  local vp=args.viewport
- self:_ensure(args.entries,args.extents,args.height,vp)
+ self:_ensure(args.entries,args.extents,args.height,vp,args.style,args.divider)
  self:_update_faces(args.entries,args.offset,args.usable)
  local cam=self.g3d.camera
  self.camera.apply(args.view,cam,self.width,self.height,args.scale)
@@ -243,13 +260,14 @@ function M:_draw_scene(args)
    end
    g.setDepthMode('lequal',true)
    self.walls:draw()
+   if self.divider_model then self.divider_model:draw() end
    for _,item in ipairs(args.entries) do
     local models=self.models[item.index]
     for _,m in ipairs(models.faces) do m:draw() end
    end
    -- Folio ruling depth-tests against the actual 3D dice silhouettes.
    g.setDepthMode('lequal',false)
-   self.lines:draw()
+   if self.lines then self.lines:draw() end
    g.setDepthMode()
    g.setCanvas()
    -- Restore the tray's original clip when compositing the transparent layer.
@@ -280,7 +298,7 @@ function M:draw(args)
    love.graphics.setScissor()
    love.graphics.origin()
   end)
-  print('[Manuscript experimental g3d] falling back to painter: '..tostring(err))
+  print('[Manuscript g3d] reverting to legacy painter: '..tostring(err))
   return false
  end
  return true

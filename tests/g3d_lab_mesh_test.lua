@@ -45,3 +45,13 @@ assert(seen['-4.85:-2.85:0.00'] and seen['4.85:2.85:0.74'],
 local small=Lab.tray_border_vertices(-4,4,-2,2,.85,.74,1)
 assert(#small==72,'side-count and tessellation broken')
 print('PASS renderer A/B pure geometry: correct D6 UVs, 3D vertex mapping, outward normals')
+
+local triangle={
+ {0,0,1},{1,0,0},{0,1,0},position={1,2,3}
+}
+local tri=Lab.face_vertices(triangle,{1,2,3})
+assert(#tri==3,'physical triangular D8 face must have 3 GPU vertices')
+for _,v in ipairs(tri) do
+ assert(#v==12 and v[9]>=0 and v[9]<=1,'malformed D8 GPU vertex')
+end
+print('PASS g3d triangles: correctly triangulated D8')

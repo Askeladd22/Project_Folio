@@ -1,5 +1,6 @@
 local EngineBridge = {
     get_dice_tray_rect = nil,
+    get_renderer_mode = nil,
     pick_scriptorium_tray_die = nil,
     to_virtual_ui = nil,
     to_screen_ui = nil,
@@ -8,6 +9,7 @@ local EngineBridge = {
 
 local HANDLER_KEYS = {
     get_dice_tray_rect = true,
+    get_renderer_mode = true,
     pick_scriptorium_tray_die = true,
     to_virtual_ui = true,
     to_screen_ui = true,
@@ -107,6 +109,16 @@ function EngineBridge.off(event_or_slot, handler)
 end
 
 ---@return table|nil
+-- Read-only renderer status for the HUD; no 3D dependency in the bridge.
+function EngineBridge.rendererMode()
+ local fn=EngineBridge.get_renderer_mode
+ if type(fn)=='function' then
+  local ok,value=pcall(fn)
+  if ok and (value=='g3d' or value=='legacy') then return value end
+ end
+ return 'legacy'
+end
+
 function EngineBridge.getDiceTrayRect()
     local fn = EngineBridge.get_dice_tray_rect
     if type(fn) ~= "function" then
