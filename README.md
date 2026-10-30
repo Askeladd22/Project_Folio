@@ -62,6 +62,7 @@ On Windows, use **`Avvia.cmd`** instead of `love .`; it searches for a LÖVE exe
 | Cycle experimental tray artwork | **F8** |
 | Toggle g3d / historical renderer | **F9** |
 | Cycle dice render material / normal debug | **F10** |
+| Toggle visual D6 bevel (g3d normals/diffuse/ivory) | **F11** |
 
 Actions are context dependent; dice selection and scoring actions are blocked while a physical roll is in progress.
 
