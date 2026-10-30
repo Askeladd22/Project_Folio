@@ -1170,7 +1170,7 @@ function love.draw()
         local label=live_g3d.enabled and 'Renderer: g3d [F9]' or
             'Renderer: legacy [F9]'
         if live_g3d.failed then label=label..' (fallback after graphics error)' end
-        label=label..'  |  Dadi: '..live_g3d.material_mode..' [F10]'
+        label=label..'  |  Dadi: '..live_g3d.material_mode..' [F10]'..' | Smusso: '..(live_g3d.bevel_enabled and 'ON' or 'OFF')..' [F11]'
         if live_g3d.shader_error then label=label..' (shader non disponibile)' end
         g.print(label,15,g.getHeight()-24)
         g.pop()
@@ -1215,6 +1215,12 @@ function love.draw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
+    if key=='f11' and live_g3d and is_scriptorium_active() then
+        local enabled=live_g3d:toggle_bevel()
+        material_notice_until=(love.timer and love.timer.getTime() or 0)+2.8
+        print('[Manuscript visual bevel] '..(enabled and 'ON' or 'OFF')..' [F11]')
+        return
+    end
     if key=='f10' and live_g3d and is_scriptorium_active() then
         local mode=live_g3d:cycle_material()
         material_notice_until=(love.timer and love.timer.getTime() or 0)+2.8
