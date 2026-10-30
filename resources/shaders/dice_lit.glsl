@@ -11,6 +11,8 @@ extern float keyStrength;
 extern float fillStrength;
 extern float specularStrength;
 extern float specularExponent;
+extern vec2 pipTexel;
+extern float pipReliefStrength;
 
 varying vec3 vertexNormal;
 
@@ -38,6 +40,22 @@ vec4 effect(vec4 color, Image texture, vec2 uv, vec2 screenCoords) {
         float spec = pow(max(dot(reflected, normalize(viewDirection)), 0.0), specularExponent);
         // Warm and deliberately subdued: bone/ivory rather than glossy plastic.
         lit += vec3(1.0, 0.90, 0.70) * (specularStrength * spec * key);
+    }
+
+    if (debugMode == 4 && pipTexel.x > 0.0 && pipTexel.y > 0.0) {
+        // Approximate the tiny bevel of an engraved pip from the texture
+        // contrast. Never change the pip shape, UV coordinates or score.
+        // Four additional texture reads are intentionally ivory-mode only.
+        vec2 du = vec2(pipTexel.x, 0.0);
+        vec2 dv = vec2(0.0, pipTexel.y);
+        vec3 weights = vec3(0.299, 0.587, 0.114);
+        float leftLight  = dot(Texel(texture, uv-du).rgb, weights);
+        float rightLight = dot(Texel(texture, uv+du).rgb, weights);
+        float upLight    = dot(Texel(texture, uv-dv).rgb, weights);
+        float downLight  = dot(Texel(texture, uv+dv).rgb, weights);
+        float relief = clamp((leftLight-rightLight)*0.48 +
+                             (upLight-downLight)*0.70, -1.0, 1.0);
+        lit += vec3(1.0, 0.85, 0.66) * (pipReliefStrength * relief);
     }
     return vec4(clamp(lit, 0.0, 1.0), albedo.a);
 }
