@@ -10,7 +10,7 @@ Il nucleo di Manuscript è il **Farkle a sei dadi tridimensionali**: scegliere c
 
 ## Funzioni attuali
 
-Il prototipo comprende dadi 3D con fisica indipendente dalla grafica, punteggio Farkle, selezione, rilanci, accantonamento, HUD e schermate iniziali. **g3d è il renderer predefinito della variante libro**; F9 passa al vecchio renderer per confronto e sicurezza. Gli altri layout sperimentali F8 non hanno ancora parità GPU completa. FPS è un laboratorio di fisica separato e **non viene usato durante la partita**.
+Il prototipo comprende dadi 3D con fisica indipendente dalla grafica, punteggio Farkle, selezione, rilanci, accantonamento, HUD e schermate iniziali. **g3d è il renderer predefinito della variante libro**; F9 passa al vecchio renderer per confronto e sicurezza. La migrazione GPU dei layout F8 e dei dadi D8 è in sviluppo e richiede ancora controlli grafici prima di eliminare il fallback. FPS è un laboratorio di fisica separato e **non viene usato durante la partita**.
 
 ## Avvio
 
