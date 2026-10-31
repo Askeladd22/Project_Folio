@@ -77,6 +77,10 @@ package.loaded['lib.sysl_text']=realText
 
 -- Moonshine is intentionally opt-in, and its Canvas is never wrapped around
 -- the 3D tray during normal play.
+-- LuaJIT's standalone runner omits ?/init.lua from package.path, unlike
+-- LÖVE and Lua 5.4; resolve the same vendored folder module in both tests.
+local oldPackagePath=package.path
+package.path='./?/init.lua;'..package.path
 local realMoonshine=package.loaded['lib.moonshine']
 local originalRequire=require('lib.moonshine')
 assert(originalRequire.effects~=nil)
@@ -99,4 +103,5 @@ fx:draw(function() value=value+1 end)
 assert(value==2 and drawn==1)
 package.loaded['lib.moonshine']=realMoonshine or originalRequire
 love=oldLove
+package.path=oldPackagePath
 print('PASS Project Folio 2D libraries: Flux tweens, anim8 sprite frames, reduced motion, lazy SYSL ink, optional Moonshine; no 3D or physics dependencies')
