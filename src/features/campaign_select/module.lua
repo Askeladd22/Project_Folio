@@ -11,27 +11,17 @@ local CampaignSelectSchema = require("src.data.campaign_select_schema")
 local CampaignSelect = {}
 
 local ASSET_SCHEMA = CampaignSelectSchema.assets or {}
-local COLOR_SCHEMA = CampaignSelectSchema.colors or {}
 local TEXT_SCHEMA = CampaignSelectSchema.text or {}
 local FLOW_SCHEMA = CampaignSelectSchema.flow or {}
 
 local expect_string = Schema.expect_string
 local expect_number = Schema.expect_number
 local expect_entry = Schema.expect_entry
-local expect_color3 = Schema.expect_color3
 
 local MENU_BG_PATH = expect_string(ASSET_SCHEMA.background_path, "assets.background_path")
 local FONT_TEXT = expect_string(ASSET_SCHEMA.font_text, "assets.font_text")
 local FONT_UPPERCASE = expect_string(ASSET_SCHEMA.font_uppercase, "assets.font_uppercase")
 local FONT_FALLBACK = expect_string(ASSET_SCHEMA.font_fallback, "assets.font_fallback")
-
-local MENU_TITLE_GOLD = expect_color3(COLOR_SCHEMA.title_gold, "colors.title_gold")
-local MENU_SUBTITLE_IVORY = expect_color3(COLOR_SCHEMA.subtitle_ivory, "colors.subtitle_ivory")
-local MENU_TEXT_ACTIVE = expect_color3(COLOR_SCHEMA.text_active, "colors.text_active")
-local MENU_TEXT_PRIMARY = expect_color3(COLOR_SCHEMA.text_primary, "colors.text_primary")
-local MENU_TEXT_SECONDARY = expect_color3(COLOR_SCHEMA.text_secondary, "colors.text_secondary")
-local MENU_TEXT_SHADOW = expect_color3(COLOR_SCHEMA.text_shadow, "colors.text_shadow")
-local MENU_ACCENT_FILL = expect_color3(COLOR_SCHEMA.accent_fill, "colors.accent_fill")
 
 local BRANDING_TITLE_ENTRY = expect_entry(TEXT_SCHEMA.branding_title, "text.branding_title")
 local SUBTITLE_ENTRY = expect_entry(TEXT_SCHEMA.subtitle, "text.subtitle")
