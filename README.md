@@ -48,6 +48,14 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+Dalla `0.1.0-dev.12` il folio laterale e il pannello Strumenti
+formano una composizione coerente con cornice da legatura e
+separatore ornamentale. Il titolo del registro dei sei D6
+accantonati è nel margine sopra gli slot, che ora hanno toni
+pergamena/inchiostro; la zona di lancio e gli hitbox sono identici.
+QA grafica Windows LÖVE ancora necessaria.
+
+
 Dalla `0.1.0-dev.11` la barra Farkle mostra dati di
 commissione in celle di lettura distinte e il messaggio
 di stato appare su una fascia pergamena. Pulsanti e
