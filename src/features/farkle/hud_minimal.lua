@@ -507,7 +507,7 @@ function M.overlay(u, hits, options)
     local eligible = H.eligible(s)
 
     -- Draw the hand trajectory while the actual rigid body is being held.
-    -- Its physical vertices follow and rotate with the cursor, in g3d and F9.
+    -- Its physical vertices follow and rotate with the cursor, in the g3d scene.
     if u.mouseThrow then
         local gesture=u.mouseThrow
         local ax,ay=Res.to_virtual(gesture.x0,gesture.y0)
@@ -565,7 +565,7 @@ function M.overlay(u, hits, options)
         end
     end
     g.setLineWidth(1)
-    end -- only legacy HUD draws full dice selection rings
+    end -- only the classic 2D HUD draws full dice selection rings
 
     -- Physical front canalina with 6 carved niches for held dice
     Res.begin_ui()
