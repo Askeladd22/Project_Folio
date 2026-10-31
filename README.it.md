@@ -62,3 +62,12 @@ Per il laboratorio FPS servono LuaJIT standalone e compilatore C nativo (su Wind
 Il progetto è in sviluppo e contiene funzionalità sperimentali. Le librerie **g3d** e **FPS** utilizzano la licenza MIT, conservata rispettivamente in `lib/g3d/LICENSE` ed `experiments/physics_lab/vendor/LICENSE`. Le licenze delle librerie non rendono automaticamente open source l'intero gioco.
 
 **Al momento manca una licenza generale del progetto nella radice.** La redistribuzione del codice originale e degli asset richiede autorizzazione, in attesa di una licenza esplicita. Per dettagli e avvertenze consulta il [README inglese](README.md).
+
+
+## Librerie 2D opzionali per miniature e glosse
+
+Project Folio include ora Flux, anim8, SYSL-Text e un effetto Moonshine
+solo sperimentale per vignettatura 2D. **I dadi e il tray rimangono 3D
+con g3d**; il toolkit non introduce personaggi 3D né cambia Farkle.
+Consultare [l'elenco e le licenze](docs/2D_PRESENTATION_LIBRARIES.md)
+e il [laboratorio](experiments/miniature_2d_lab/README.md).
