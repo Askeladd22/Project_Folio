@@ -17,3 +17,6 @@ runs.csv
 .venv/
 .vscode/
 .idea/
+
+# Reproducible UI baseline capture output; local PNGs and manifests
+/audits/ui-v2-p0/

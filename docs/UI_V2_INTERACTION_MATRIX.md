@@ -114,7 +114,7 @@ Le medaglie non tutte disponibili richiedono testo di disabilitazione, conteggio
 
 ## 6. Rischi concreti emersi dal codice (da verificare, non occultare)
 
-1. **Possibile bug folio:** `hud.lua`, ramo `u.modal=='folio'`, chiama `manuscript(s,...)` senza una definizione locale nel modulo. La funzione presente è `hud_minimal.draw_manuscript`, **locale** e quindi non disponibile lì. Riprodurre su Windows e correggere con un comune servizio di presentazione in P4.
+1. **Bug folio confermato e corretto nella PR #29:** `hud.lua` chiamava `manuscript(s,...)` senza una funzione definita. La correzione usa direttamente `folio_view.draw`, già impiegato nella scena principale, ed è coperta da `tests/ui_v2_folio_modal_regression_test.lua`. Resta la verifica grafica con LÖVE Windows.
 2. **Input dipendenti dal disegno:** `can_grab` controlla anche `u.buttons.roll.enabled`, creato durante `hud_minimal.draw`. La UI 2.0 non deve cambiare le regole perché un pulsante non è ancora stato disegnato nel frame iniziale.
 3. **Conflitto fra gesture e overlay:** `hud_minimal.overlay` disegna cerchi azzurri per `dragSelected` persino mentre `mouseThrow` è attivo; dagli screenshot risultano invasivi.
 4. **Possibili differenze Farkle/hint in modale:** i comandi dei pannelli provengono da `hud.lua` e da `medal_panel.lua`; un refactor parziale della sola `hud_minimal` perderebbe alcune funzioni.
