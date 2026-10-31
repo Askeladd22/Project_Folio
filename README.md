@@ -73,6 +73,21 @@ di gioco rimangono le stesse. Le risoluzioni
 720p/1080p/1440p sono coperte dai test di geometria;
 la verifica fotografica LÖVE Windows resta da fare.
 
+## Impostazioni e splash LÖVE
+
+Da `0.1.0-dev.9` anche le **Settings** usano la
+superficie comune di pergamena della UI 2.0,
+con geometrie verificabili a 720p/1080p/1440p.
+I controlli, gli effetti audio in anteprima,
+le opzioni di accessibilità e la persistenza
+rimangono inalterati.
+
+La sequenza iniziale con **cuore, rosa e azzurro**
+è lo splash originale del motore **LÖVE**:
+non appartiene alla vecchia GUI di Project Folio
+e viene conservata con animazioni e pulsanti
+di salto originali.
+
 ## Overview
 
 The display name is temporary. The `manuscript` repository, internal `scriptorium` scene IDs and existing save identity stay unchanged for compatibility; they are not the public-facing game title.
