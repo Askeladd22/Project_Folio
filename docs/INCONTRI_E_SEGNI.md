@@ -11,6 +11,16 @@
 > in `main.lua` o nella campagna; nessuna regola è stata
 > approvata automaticamente. I gate di playtest restano aperti.
 >
+> **Aggiornamento sperimentale 0.1.0-dev.6:** il
+> laboratorio distingue ora **B (3 marche da incassi di almeno
+> 35 punti), C0 (Segni senza premi doppi), C (Segni con premi
+> doppi)**, tutte entro sei mani. La commissione Farkle A
+> resta a quattro mani. Sono state aggiunte prove con gli
+> stessi semi e i medesimi risultati virtuali per ID dado,
+> misure accoppiate e scelte per categoria. Nessun valore
+> è stato approvato: vedere
+> [protocollo e limiti](../experiments/signs_lab/README.md).
+>
 ## Sintesi della direzione
 
 **Direzione condivisa:** le figure raffigurate nei manoscritti (re, monaci, animali fantastici, allegorie, creature marginali) prendono vita, escono dal folio e diventano gli interlocutori/avversari del copista nel sogno. Superato un incontro, la figura rientra nella miniatura; completare le figure del libro porta alla conclusione della run. Tipologia e iconografia del libro orientano il cast: per esempio, un salterio può presentare figure bibliche, allegoriche e marginali coerenti con il suo repertorio, non un assortimento arbitrario di nemici.
