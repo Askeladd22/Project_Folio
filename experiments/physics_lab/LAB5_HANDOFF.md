@@ -44,13 +44,13 @@ From the project root after a native lab build:
 ```bash
 bash experiments/physics_lab/build-linux.sh
 lua5.4 tests/physics_handoff_test.lua
-luajit experiments/physics_lab/run_handoff.lua 8
+luajit experiments/physics_lab/run_handoff.lua 32
 ```
 
 Windows: build using `experiments/physics_lab/build-windows.ps1`
 and substitute `luajit`.
 
-The native experiment uses eight seeded starting arrangements, with both
+The native experiment uses 32 seeded starting arrangements, with both
 a stationary and a moving/shaken hand:
 
 1. Create six genuinely separate FPS D6, with distinct Euler orientations.
@@ -77,3 +77,13 @@ for a safe production hybrid.
 Next: test more seeds and hand paths, ensure transition velocities feel
 natural and track acceptable official faces before considering an
 explicitly opt-in Windows prototype.
+
+## Measured outcome
+
+[LAB5_RESULTS.md](LAB5_RESULTS.md) records the CI-backed 768-die
+comparison of baseline FPS contacts versus an experimental soft
+pairwise repulsion during the hold. Full transform/velocity conversion
+was exact in both; the original solver still moved some dice during
+its first collision step. Soft repulsion reduced that movement but
+left one persistent floor-penetration failure after eight seconds.
+**No FPS-to-production runtime integration is authorized.**
