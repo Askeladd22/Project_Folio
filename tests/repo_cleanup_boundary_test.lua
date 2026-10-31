@@ -14,6 +14,8 @@ local removed={
  'third_party/OFL_UnifrakturMaguntia.txt',
  'tests/desk_assets_test.lua',
  'tests/retired_desk_assets_test.lua',
+ 'src/engine3d/render.lua',
+ 'resources/ui/bulb.png',
 }
 local function read(path)
  local f=assert(io.open(path,'rb'),'missing production file: '..path)
@@ -57,10 +59,8 @@ end
 local ignore=read('.gitignore')
 assert(ignore:find('/experiments/fx_lab/audit/*.png',1,true),
  'reproducible FX screenshots must be ignored')
--- These are still live, intentionally: never retire the F9 fallback,
--- physical solver, or original D6 textures to satisfy cleanup metrics.
+-- Keep the current physics and authentic D6 textures, not the old painter.
 for _,path in ipairs{
- 'src/engine3d/render.lua',
  'src/engine3d/physics.lua',
  'src/engine3d/g3d_live.lua',
  'resources/textures/tray/walnut.png',
