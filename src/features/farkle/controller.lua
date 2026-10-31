@@ -11,9 +11,12 @@ local MouseThrow=require('src.features.farkle.mouse_throw')
 local Marquee=require('src.features.farkle.marquee_selection')
 local GroupThrow=require('src.features.farkle.group_throw')
 -- Single in-game HUD: the manuscript view.
-local U={state='waiting',buttons={},dice_results={}}
+local U={state='waiting',buttons={},dice_results={},
+ uiV2Experimental=os.getenv('MANUSCRIPT_UI_V2_EXPERIMENT')=='1'}
 function U:getTrayRect()
- local t = require('src.features.farkle.hud_minimal').tray
+ local t = self.uiV2Experimental and
+    require('src.features.farkle.ui_v2.layout_candidates').build('single_folio').tray or
+    require('src.features.farkle.hud_minimal').tray
  local x,y=Res.to_screen(t.x,t.y);return {x=x,y=y,w=t.w*Res.get_scale(),h=t.h*Res.get_scale()}
 end
 function U:getTrayProjection(tray,view,extents)
@@ -193,10 +196,18 @@ function U:select_option(mask)
  return false
 end
 function U:draw()
- require('src.features.farkle.hud_minimal').draw(self)
+ if self.uiV2Experimental then
+  require('src.features.farkle.ui_v2.hud').draw(self)
+ else
+  require('src.features.farkle.hud_minimal').draw(self)
+ end
 end
 function U:drawDeskOverlays(hits)
- require('src.features.farkle.hud_minimal').overlay(self,hits)
+ if self.uiV2Experimental then
+  require('src.features.farkle.ui_v2.hud').overlay(self,hits)
+ else
+  require('src.features.farkle.hud_minimal').overlay(self,hits)
+ end
 end
 -- Left-drag creates a *physical-grab selection*, never a Farkle score
 -- selection. Right-drag a selected die throws all selected physical bodies.
@@ -335,6 +346,18 @@ function U:mousereleased(x,y,b)
  end
 end
 function U:keypressed(k)
+ -- Only in an explicitly launched A/B session: no switch while physics,
+ -- grip, dialog or reward input is live. F8/F9 remain independent.
+ if k=='f6' and os.getenv('MANUSCRIPT_UI_V2_EXPERIMENT')=='1' then
+  if self.game and not self.mouseThrow and not self.marquee and
+     not self.manualRoll and self.state~='rolling' and
+     not self.modal and not H.reward_active(self.game) then
+   self.uiV2Experimental=not self.uiV2Experimental
+   self.dragSelected=nil
+   self.buttons={} -- never dispatch an obsolete hitbox on the next frame
+  end
+  return
+ end
  if k=='escape' and self.mouseThrow then
   if self.mouseThrow.group then GroupThrow.cancel(self.mouseThrow)
   else MouseThrow.cancel(self.mouseThrow) end
