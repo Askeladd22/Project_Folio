@@ -102,7 +102,7 @@ local function find_line(fragment,rect)
   if r.kind=='text' and r.label:find(fragment,1,true)
    and r.x>=rect.x and r.x+r.w<=rect.x+rect.w+1
    and r.y>=rect.y and r.y+r.height<=rect.y+rect.h+1 then
-   assert(r.width<=r.w+1,'wrapped text escaped '+fragment)
+   assert(r.width<=r.w+1,'wrapped text escaped '..fragment)
    return true
   end
  end
