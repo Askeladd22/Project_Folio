@@ -26,7 +26,7 @@ function M.new()
  local mode=Materials.valid(override) and override or Materials.default
  return setmetatable({
   models={},images={},canvas=nil,
-  material_mode=mode,dice_shader=nil,shader_error=nil,
+  material_mode=mode,dice_shader=nil,
   bevel_enabled=true,bevel_fraction=Bevel.default_fraction,
   width=0,height=0,floor_model=nil,walls=nil,lines=nil,divider_model=nil,wall_signature=nil,
  },M)
@@ -170,17 +170,9 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   g.setDepthMode()
  end
  if Materials.uses_shader(self.material_mode) and not self.dice_shader then
-  local ok,shader=pcall(g.newShader,Materials.shader_path,Materials.vertex_path)
-  if ok then
-   self.dice_shader=shader
-   self.shader_error=nil
-  else
-   -- Some GPUs cannot compile the optional material shader. Use the
-   -- known working g3d material rather than disabling 3D altogether.
-   self.shader_error=tostring(shader)
-   self.material_mode='original'
-   print('[Manuscript g3d] dice shader unavailable, original material restored: '..self.shader_error)
-  end
+  -- Required shader compilation errors are explicit, never silently
+  -- replaced by another material or a second renderer.
+  self.dice_shader=g.newShader(Materials.shader_path,Materials.vertex_path)
  end
  local w=math.max(1,math.ceil(viewport.w))
  local h=math.max(1,math.ceil(viewport.h))
