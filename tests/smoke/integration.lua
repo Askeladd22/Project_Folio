@@ -90,8 +90,16 @@ function love.run()
    assert(images[path],'texture not loaded '..path)
   end end
   U:draw()
-  local config=require('src.data.scriptorium_module_config')
-  for _,key in ipairs{'background','desk','parchment'} do assert(images[config.desk_assets[key]],'shared image fell back: '..key) end
+  -- The old chromatic desk image-loader is retired; normal Farkle never
+  -- loads its config, palette or obsolete PNG layers.
+  assert(not package.loaded['src.features.scriptorium.desk_view'],
+    'retired chromatic desk imported into the active Farkle session')
+  assert(not package.loaded['src.data.scriptorium_module_config'],
+    'obsolete desk configuration imported')
+  for path in pairs(images) do
+    assert(not path:find('resources/ui/desk/',1,true),
+      'retired desk layer loaded: '..path)
+  end
   assert(#shaders>0,'glow shader not loaded')
   say('PASS 36 face texture calls, shared background/desk/parchment, fonts and glow shader')
   assert(not love.filesystem.getInfo('scriptorium_save.lua'))
