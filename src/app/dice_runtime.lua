@@ -1,6 +1,5 @@
 
 require("core")
-local render = require("src.engine3d.render")
 local Physics = require("src.engine3d.physics")
 local Geometry = require("src.engine3d.geometry")
 local view = require("src.engine3d.view")
@@ -28,14 +27,10 @@ local Navigation = require("src.core.navigation")
 local EngineBridge = require("src.core.engine_bridge")
 local ExecutionOrder = require("src.core.execution_order")
 
--- g3d is the default book renderer. The library itself remains lazy-loaded.
--- F9 and the startup environment switch retain the unchanged legacy painter.
+-- g3d is the sole 3D renderer for the six D6, tray and all F8 variants.
+-- No F9 alternate painter and no silent fallback on graphics errors.
 local live_g3d = require('src.engine3d.g3d_live').new()
 local material_notice_until = 0
-local last_tray_renderer = 'legacy'
-if os.getenv('MANUSCRIPT_G3D_INGAME') == '0' or os.getenv('MANUSCRIPT_RENDERER') == 'legacy' then
-    live_g3d.enabled = false
-end
 
 local game_manager = nil
 local app_events = nil
@@ -52,14 +47,6 @@ local readDieFace
 local DICE_CONFIG = DiceConfig.load()
 local DICE_BOARD_IMAGE_PATH = DICE_CONFIG.board_image_path
 
-config = {
-    boardlight = light.metal
-}
----@diagnostic disable-next-line: duplicate-set-field
-function config.boardimage(x, y)
-    return DICE_BOARD_IMAGE_PATH
-end
-
 dice = {}
 local DICE_SIZE_SCHEMA = DICE_CONFIG.sizes
 local DICE_POOL_SCHEMA = DICE_CONFIG.pool
@@ -70,7 +57,6 @@ local DICE_THROW_SCHEMA = DICE_CONFIG.throw
 local DICE_AUDIO_SCHEMA = DICE_CONFIG.audio
 local DICE_VISUAL_PROTOTYPE_SCHEMA = DICE_CONFIG.visual.prototypes
 local DICE_VISUAL_FACE_SCHEMA = DICE_CONFIG.visual.face_colors
-local DICE_VISUAL_GLOW_SCHEMA = DICE_CONFIG.visual.glow
 
 local DICE_SIZE_BASE = DICE_SIZE_SCHEMA.base
 local DICE_SIZE_MIN = DICE_SIZE_SCHEMA.min
@@ -183,8 +169,6 @@ local TRAY_LAYOUT_SHARED = TrayLayout.shared
 
 local DICE_OVERLAY_SCALE_MULT = TrayLayout.overlay.scale_mult
 local DICE_OVERLAY_CENTER_Y = TrayLayout.overlay.center_y
-local DICE_OVERLAY_SHADOWS = TrayLayout.overlay.shadows
-local DICE_TRAY_FLAT_FLOOR = TrayLayout.overlay.flat_floor
 
 local DICE_SCENE_CAMERA_SCHEMA = DICE_CONFIG.scene.camera
 local DICE_SCENE_BOX_SCHEMA = DICE_CONFIG.scene.box
@@ -206,11 +190,6 @@ local DICE_BOX_BORDER_HEIGHT = DICE_SCENE_BOX_SCHEMA.border_height
 
 local D6_REGION_RATIO = DICE_SCENE_REGION_SCHEMA.d6_ratio
 local DICE_REGIONS = DICE_SCENE_REGION_SCHEMA
-
-local DICE_GLOW_SHADER_PATH = DICE_VISUAL_GLOW_SCHEMA.shader_path
-local DICE_GLOW_COLOR = DICE_VISUAL_GLOW_SCHEMA.color
-local DICE_GLOW_INTENSITY = DICE_VISUAL_GLOW_SCHEMA.intensity
-local dice_glow_shader = nil
 
 local function clamp(v, min_v, max_v)
     if v < min_v then return min_v end
@@ -549,25 +528,6 @@ local function pick_tray_die_at_screen(x, y)
     return best and best.index or nil
 end
 
-local function build_die_action_with_optional_glow(index, usable_map)
-    if not usable_map or not usable_map[index] or not dice_glow_shader then
-        return render.zbuffer
-    end
-    return function(z, draw_call)
-        render.zbuffer(z, function()
-            local now = (love.timer and love.timer.getTime and love.timer.getTime()) or 0
-            pcall(function()
-                dice_glow_shader:send("time", now)
-                dice_glow_shader:send("intensity", DICE_GLOW_INTENSITY)
-                dice_glow_shader:send("glowColor", DICE_GLOW_COLOR)
-            end)
-            love.graphics.setShader(dice_glow_shader)
-            draw_call()
-            love.graphics.setShader()
-        end)
-    end
-end
-
 local function draw_single_tray(tray, tray_layout, region, die_predicate, usable_map, glow_enabled, collect_hits, draw_divider)
     if not tray or not region then
         return
@@ -624,98 +584,11 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
 
     local rotation_rad = math.rad(tray_layout.overlay_rotation_deg or 0)
     with_view_yaw_offset(rotation_rad, function()
-        render.board_extents = world_extents
-
+        -- The 3D floor, walls, dividers, shadows and physical D6 belong
+        -- exclusively to g3d. The CPU painter has been retired.
         local x1, x2, y1, y2 = world_extents[1], world_extents[2], world_extents[3], world_extents[4]
-        local function projection_ok(p)
-            return p and p[1] and p[2] and p[3] and (p[1] == p[1]) and (p[2] == p[2]) and (p[3] == p[3])
-        end
-
-        local function queue_projected_quad(a, b, c, d, color)
-            local pa = {view.project(a[1], a[2], a[3])}
-            local pb = {view.project(b[1], b[2], b[3])}
-            local pc = {view.project(c[1], c[2], c[3])}
-            local pd = {view.project(d[1], d[2], d[3])}
-            if (not projection_ok(pa)) or (not projection_ok(pb)) or (not projection_ok(pc)) or (not projection_ok(pd)) then
-                return
-            end
-
-            local z = math.min(pa[3], pb[3], pc[3], pd[3])
-            render.zbuffer(z, function()
-                love.graphics.setColor(color[1], color[2], color[3], color[4] or 1.0)
-                love.graphics.polygon("fill", pa[1], pa[2], pb[1], pb[2], pc[1], pc[2])
-                love.graphics.polygon("fill", pa[1], pa[2], pc[1], pc[2], pd[1], pd[2])
-            end)
-        end
-
-        local function queue_divider_border()
-            if not draw_divider then
-                return
-            end
-
-            local half_width = tray_layout.divider_half_width or 0.13
-            local divider_y_inset = math.max(0, tonumber(tray_layout.divider_y_inset) or 0)
-            local divider_back_y = y1 + divider_y_inset
-            local divider_front_y = y2 - divider_y_inset
-            if divider_front_y <= divider_back_y then
-                divider_back_y = y1
-                divider_front_y = y2
-            end
-            local divider_back_x = get_region_divider_x_at_y(region, divider_back_y)
-            local divider_front_x = get_region_divider_x_at_y(region, divider_front_y)
-            local base_z = 0.01
-            local height_scale = tray_layout.divider_height_scale or 0.88
-            local min_height = tray_layout.divider_height_min or 0.24
-            local top_z = math.max(min_height, (box.border_height or 0.74) * height_scale)
-
-            local back_l_b = {divider_back_x - half_width, divider_back_y, base_z}
-            local back_r_b = {divider_back_x + half_width, divider_back_y, base_z}
-            local front_l_b = {divider_front_x - half_width, divider_front_y, base_z}
-            local front_r_b = {divider_front_x + half_width, divider_front_y, base_z}
-
-            local back_l_t = {divider_back_x - half_width, divider_back_y, top_z}
-            local back_r_t = {divider_back_x + half_width, divider_back_y, top_z}
-            local front_l_t = {divider_front_x - half_width, divider_front_y, top_z}
-            local front_r_t = {divider_front_x + half_width, divider_front_y, top_z}
-
-            -- Raised wooden divider between d6 and d8 lanes.
-            queue_projected_quad(back_l_b, front_l_b, front_l_t, back_l_t, {0.24, 0.17, 0.11, 0.97})
-            queue_projected_quad(back_r_b, front_r_b, front_r_t, back_r_t, {0.42, 0.30, 0.20, 0.97})
-            queue_projected_quad(back_l_t, back_r_t, front_r_t, front_l_t, {0.56, 0.40, 0.28, 0.98})
-            queue_projected_quad(back_l_b, back_l_t, back_r_t, back_r_b, {0.31, 0.22, 0.15, 0.95})
-            queue_projected_quad(front_l_b, front_l_t, front_r_t, front_r_b, {0.31, 0.22, 0.15, 0.95})
-        end
-
-        -- The GPU and legacy floors are mutually exclusive. Previously the
-        -- painter's decorative book planes were ALWAYS drawn beneath g3d:
-        -- this produced the large blocky crosses seen in screenshots and
-        -- prevented the g3d floor from participating in the depth buffer.
-        -- In GPU mode g3d_live now owns the plain floor and contact shadows.
-        render.clear()
-        local function draw_legacy_floor()
-            if DICE_TRAY_FLAT_FLOOR then
-                require('src.features.farkle.tray_view').floor(view, x1, x2, y1, y2)
-            else
-                render.board(config.boardimage, config.boardlight, x1, x2, y1, y2)
-            end
-            if DICE_OVERLAY_SHADOWS then
-                for i = 1, #dice do
-                    local die_entry = dice[i]
-                    if die_predicate(die_entry, i) then
-                        with_draw_offset(die_entry.body, function()
-                            render.shadow(function(_, action)
-                                action()
-                            end, die_entry.die, die_entry.body)
-                        end)
-                    end
-                end
-            end
-        end
         local gpu_candidates = {}
-        -- Every F8 tray style and triangular D8 can now use g3d.
-        -- The historical painter remains an explicit F9/error fallback.
         local gpu_style = require('src.features.farkle.tray_workshop').current
-        local gpu_requested = live_g3d and live_g3d.enabled
         local gpu_divider = nil
         if draw_divider then
             local inset = math.max(0, tonumber(tray_layout.divider_y_inset) or 0)
@@ -760,38 +633,15 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
             end
         end
 
-        -- Both paths read the same bodies. GPU never touches input picking,
-        -- acceptance, physical positions, scoring or the source HUD.
-        local gpu_drawn = false
-        if gpu_requested and #gpu_candidates > 0 then
-            gpu_drawn = live_g3d:draw({
-                entries=gpu_candidates, view=view,
-                extents=world_extents, height=box.border_height or 1.1,
-                style=gpu_style,divider=gpu_divider,
-                offset=draw_offset_x,
-                viewport=tray,cx=cx,cy=cy,scale=scale,
-                usable=glow_enabled and usable_map or nil,
-                mask=not fitted_scale and true or false,
-            })
-        end
-        last_tray_renderer=gpu_drawn and 'g3d' or 'legacy'
-        if not gpu_drawn then
-            draw_legacy_floor()
-            if not require('src.features.farkle.tray_workshop').border(render, view, box.border_height or 1.1) then
-                render.tray_border(render.zbuffer, 0.85, box.border_height or 1.1, {83, 51, 31})
-            end
-            queue_divider_border()
-            for _,item in ipairs(gpu_candidates) do
-                with_draw_offset(item.entry.body, function()
-                    local action = render.zbuffer
-                    if glow_enabled then
-                        action = build_die_action_with_optional_glow(item.index, usable_map)
-                    end
-                    render.die(action, item.entry.die, item.entry.body)
-                end)
-            end
-            render.paint()
-        end
+        assert(live_g3d:draw({
+            entries=gpu_candidates, view=view,
+            extents=world_extents, height=box.border_height or 1.1,
+            style=gpu_style,divider=gpu_divider,
+            offset=draw_offset_x,
+            viewport=tray,cx=cx,cy=cy,scale=scale,
+            usable=glow_enabled and usable_map or nil,
+            mask=not fitted_scale and true or false,
+        }), 'g3d tray failed to render')
     end)
     love.graphics.pop()
 
@@ -844,29 +694,6 @@ local function draw_dice_tray_overlay()
     love.graphics.setScissor()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.setBlendMode("alpha")
-end
-
-local function load_dice_glow_shader()
-    if not (love and love.graphics and love.graphics.newShader and love.filesystem and love.filesystem.getInfo) then
-        return
-    end
-    if not love.filesystem.getInfo(DICE_GLOW_SHADER_PATH) then
-        return
-    end
-    local ok_src, shader_src = pcall(function()
-        return love.filesystem.read(DICE_GLOW_SHADER_PATH)
-    end)
-    if not ok_src or type(shader_src) ~= "string" or shader_src == "" then
-        return
-    end
-    local ok_shader, shader = pcall(function()
-        return love.graphics.newShader(shader_src)
-    end)
-    if ok_shader and shader then
-        dice_glow_shader = shader
-    else
-        dice_glow_shader = nil
-    end
 end
 
 local function configure_dice_box()
@@ -987,7 +814,7 @@ local function initialize_runtime()
 
     EngineBridge.configure({
         get_dice_tray_rect = get_dice_tray_rect,
-        get_renderer_mode = function() return last_tray_renderer end,
+        get_renderer_mode = function() return 'g3d' end,
         get_tray_die_hits = function() return tray_die_hits end,
         pick_scriptorium_tray_die = pick_tray_die_at_screen,
         to_virtual_ui = function(x, y)
@@ -1010,7 +837,6 @@ local function initialize_runtime()
         last_frame_present = love.timer.getTime()
     end
 
-    load_dice_glow_shader()
     apply_tray_camera_lock()
 end
 
@@ -1174,9 +1000,7 @@ function love.draw()
         g.setDepthMode()
         g.setShader()
         g.setColor(.96,.82,.50,.92)
-        local label=live_g3d.enabled and 'Renderer: g3d [F9]' or
-            'Renderer: legacy [F9]'
-        if live_g3d.failed then label=label..' (fallback after graphics error)' end
+        local label='Renderer: g3d'
         label=label..'  |  Dadi: '..live_g3d.material_mode..' [F10]'..' | Smusso: '..(live_g3d.bevel_enabled and 'ON' or 'OFF')..' [F11]'
         if live_g3d.shader_error then label=label..' (shader non disponibile)' end
         g.print(label,15,g.getHeight()-24)
@@ -1232,11 +1056,6 @@ function love.keypressed(key, scancode, isrepeat)
         local mode=live_g3d:cycle_material()
         material_notice_until=(love.timer and love.timer.getTime() or 0)+2.8
         print('[Manuscript dice material] '..mode..' [F10]')
-        return
-    end
-    if key=='f9' and live_g3d and is_scriptorium_active() then
-        local active=live_g3d:toggle()
-        print('[Manuscript renderer] '..(active and 'g3d ON' or 'legacy ON'))
         return
     end
     if game_manager then
