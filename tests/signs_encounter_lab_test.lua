@@ -122,17 +122,77 @@ for _,entry in ipairs(a.sign_history) do
 end
 assert(totals==a.banked,'sign effects must not replace or mutate banked Farkle points')
 
+-- This is a MATCHED roll fixture: the face on a specific die ID/hand/roll
+-- must not depend on which other dice previous choices consumed.
+local r1=Turn.matched_rolls(20481,2)
+local r2=Turn.matched_rolls(20481,2)
+local expected_face=r1(1,6,3,5)
+assert(expected_face==r2(1,6,3,5))
+r2(1,6,1,1)
+r2(1,6,1,2)
+r2(1,6,4,3)
+assert(expected_face==r2(1,6,3,5),
+ 'matched die was changed by another policy RNG consumption')
+assert(expected_face==Turn.matched_rolls(20481,2)(1,6,3,5))
+assert(not pcall(function() r1(1,6,0,1) end))
+assert(not pcall(function() r1(1,6,1,7) end))
+assert(not pcall(function() Turn.matched_rolls(0,1) end))
+
 local rows=Sim.compare(3,30401)
-assert(#rows==9,'three control modes by three risk policies required')
+assert(#rows==12,'A/B/C0/C controls by three risk policies required')
 for _,row in ipairs(rows) do
  assert(row.samples==3 and row.hands>=3 and row.rolls>=row.hands)
  assert(row.bank_choices>=0 and row.roll_choices>=0)
  assert(row.success>=0 and row.success<=3)
+ assert(row.disagreements<=row.bank_choices+row.roll_choices)
+ local sum=0
+ for _,data in pairs(row.categories) do
+  sum=sum+data.bank+data.roll
+ end
+ assert(sum==row.bank_choices+row.roll_choices,
+  'public category counts must cover all actual Farkle decisions')
 end
+
+for _,mode in ipairs{'B','C0','C'} do
+ local sample=Sim.run(mode,'reattiva',20261031)
+ assert(sample.hands<=Fixture.max_hands)
+ if mode=='B' then
+  assert(sample.progress_marks<=sample.hands)
+  assert(sample.sign_history==nil)
+ else
+  assert(#sample.sign_history==sample.hands)
+  if mode=='C0' then
+   for _,report in ipairs(sample.sign_history) do
+    assert(report.marks==1,
+     'ablation must award exactly one mark irrespective of sign')
+   end
+  end
+ end
+end
+
+local study=Sim.analyze(6,31801)
+assert(#study.rows==12 and #study.pairs==6 and study.samples==6)
+for _,pair in ipairs(study.pairs) do
+ assert(pair.both+pair.control_only+pair.variant_only+
+   pair.neither==pair.samples,'paired outcomes are not partitioned')
+ assert(pair.control=='B' or pair.control=='C0')
+ assert(pair.variant=='C')
+ assert(math.abs(pair.delta-
+   (pair.variant_only-pair.control_only)/pair.samples)<1e-10)
+ assert(pair.low<=pair.delta and pair.delta<=pair.high)
+end
+-- Reproducibility for complete paired analysis, including differences.
+local identical=Sim.analyze(6,31801)
+for i=1,#study.pairs do
+ local x,y=study.pairs[i],identical.pairs[i]
+ assert(x.both==y.both and x.control_only==y.control_only and
+   x.variant_only==y.variant_only and x.neither==y.neither)
+end
+assert(not pcall(function() Sim.analyze(0,31801) end))
 local entry=assert(io.open('main.lua')):read('*a')
 assert(not entry:find('experiments.signs_lab',1,true),
  'experimental encounter must never load into production entry')
 local controller=assert(io.open('src/features/farkle/controller.lua')):read('*a')
 assert(not controller:find('experiments.signs_lab',1,true),
  'experimental signs must not modify live Farkle controller')
-print('PASS isolated signs lab: blind draw/resolve, no repeat, recycle, official Farkle, variants, paired-seed replay, no production hooks')
+print('PASS isolated signs lab: blind draw/resolve, no repeat, recycle, official Farkle, variants, matched per-die replay, equal progress controls, ablation and no production hooks')
