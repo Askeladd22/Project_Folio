@@ -11,9 +11,9 @@
 - **BASELINE DI DOCUMENTAZIONE:** `main@b8d5cb7a629e990e3d156950cbbc305dcc0b8842` (verificato dopo merge #29).
 - **BRANCH CORRENTE:** `test/ui-v2-p0-held-capture-20261031` (cattura P0 reale automatizzata).
 - **PR DI DOCUMENTAZIONE:** [#27](https://github.com/Askeladd22/manuscript/pull/27) **integrata in main**.
-- **PR DI P0:** [#28](https://github.com/Askeladd22/manuscript/pull/28) e [#29](https://github.com/Askeladd22/manuscript/pull/29) **integrate**; prossima PR per la cattura automatica gruppo/acessibilità in preparazione.
+- **PR DI P0:** [#28](https://github.com/Askeladd22/manuscript/pull/28) e [#29](https://github.com/Askeladd22/manuscript/pull/29) **integrate**; [#30](https://github.com/Askeladd22/manuscript/pull/30) **aperta** per cattura automatica del gruppo e accessibilità.
 - **UI 2.0 NEL GIOCO:** non esiste ancora; l'HUD attuale resta quello predefinito.
-- **CI per la baseline P0:** [main 41189792642](https://github.com/Askeladd22/manuscript/actions/runs/41189792642) **SUCCESS**; CI della nuova PR in attesa di verifica.
+- **CI per la baseline P0:** [main 41189792642](https://github.com/Askeladd22/manuscript/actions/runs/41189792642) **SUCCESS**; [PR #30 CI 41190597513](https://github.com/Askeladd22/manuscript/actions/runs/41190597513) **SUCCESS** su commit precedente `12cb212`. Le modifiche successive, inclusa verifica sintassi Python, **richiedono una nuova CI**; non chiamarle ancora verificate.
 - **QA WINDOWS / SCREENSHOT:** **non ancora effettuata** sulla build di questa PR. Lo script ora acquisisce in automatico anche il gruppo fisico dei sei D6 e i flag accessibilità in entrambe le risoluzioni, ma servono esecuzione Windows, confronto visivo e dati FPS.
 
 ## Fasi e gate
@@ -92,7 +92,7 @@
 | 2026-10-31 | P0 | Matrice e test integrazione degli input, PR #28 integrata | [PR #28](https://github.com/Askeladd22/manuscript/pull/28); [main CI 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **successo** | Baseline Windows |
 | 2026-10-31 | P0 | Fix folio, test modali e utility screenshot riproducibile; P0 non completata | [PR #29](https://github.com/Askeladd22/manuscript/pull/29); [CI 41189472532](https://github.com/Askeladd22/manuscript/actions/runs/41189472532) **SUCCESS** | Windows: screenshot 720p/1080p, folio, gruppo in mano, accessibilità/FPS |
 
-| 2026-10-31 | P0 | Aggiunto smoke opt-in con screenshot reali di presa multipla e accessibilità; mantenuto gameplay invariato | PR e CI in aggiornamento | Eseguire baseline su LÖVE Windows e controllare frame/FPS, poi avviare P1 |\n\n### Mini-template di aggiornamento (duplicare a fine sessione)
+| 2026-10-31 | P0 | Smoke opt-in di presa multipla e accessibilità, PNG richiesti alle due risoluzioni; gameplay invariato | [PR #30](https://github.com/Askeladd22/manuscript/pull/30); [CI prima versione 41190597513](https://github.com/Askeladd22/manuscript/actions/runs/41190597513) PASS, ultima testa in attesa | Eseguire baseline su LÖVE Windows, confrontare immagini e annotare FPS prima di P1 |\n\n### Mini-template di aggiornamento (duplicare a fine sessione)
 
 ```text
 DATA:
