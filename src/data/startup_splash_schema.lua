@@ -8,6 +8,9 @@ return {
         image_heart_path = "resources/ui/startup_splash/heart.png",
         image_love_path = "resources/ui/startup_splash/love.png",
         image_title_stroke_map_path = "resources/ui/startup_splash/scriptorium_stroke_map.png",
+        -- The original image contains the retired Scriptorium lettering.
+        -- Use live text until a final logo is approved.
+        image_title_logo_enabled = false,
         image_title_logo_candidates = {
             "resources/ui/startup_splash/scriptorium_logo.png",
             "resources/ui/startup_splash/scriptorium_logo.jpg",
@@ -45,7 +48,7 @@ return {
     text = {
         branding_title = {
             key = "branding.title",
-            default = "Scriptorium",
+            default = "Project Folio",
         },
     },
     flow = {
