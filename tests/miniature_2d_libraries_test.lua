@@ -39,6 +39,13 @@ knight:move_to(240,160,1.5,1,false)
 knight:update(.5,false)
 assert(knight.pose.x>140 and knight.pose.x<240,
  'transformation should interpolate without touching Farkle state')
+-- Reduced motion switched ON mid-tween must finish deterministically.
+knight:update(.01,true)
+assert(knight.pose.x==240 and knight.pose.y==160 and
+  knight.pose.scale==1.5,'reduced motion left a figure halfway')
+knight:move_to(300,260,1.4,1,false)
+knight:update(.2,false)
+assert(knight.pose.x>240 and knight.pose.x<300)
 knight.animation:gotoFrame(2)
 knight:draw()
 assert(graphicsCalls.draw==1)
