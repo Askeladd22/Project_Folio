@@ -119,8 +119,12 @@ assert(next(s.selected)==nil,'take must clear scoring selection')
 assert(H.selected_count(s)==0)
 assert(type(R.bank_status(s))=='boolean')
 assert(H.reward_active({phase='upgrade'}) and H.reward_active({phase='medal'}))
-for _,phase in ipairs({'ended','advance','won','lost','upgrade','medal'}) do
- assert(H.commission_closed({phase=phase}),phase..' must close current roll')
+-- 'ended' is intentionally NOT commission_closed: the player must be
+-- able to press 'next' and begin another turn in the same commission.
+assert(not H.commission_closed({phase='ended'}),
+ 'ended is a turn boundary, not a finished commission')
+for _,phase in ipairs({'advance','won','lost','upgrade','medal'}) do
+ assert(H.commission_closed({phase=phase}),phase..' must close the commission')
 end
 local bust=R.new();assert(R.start(bust))
 assert(R.settle(bust,{2,3,4,6,2,4}) and bust.phase=='ended')
