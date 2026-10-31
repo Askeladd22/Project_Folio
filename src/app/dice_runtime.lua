@@ -342,6 +342,13 @@ local function get_region_full_x_bounds_at_y(base_region, y)
     return cx - half_w, cx + half_w
 end
 
+-- A split D6/D8 board is a deliberate special mode, not the default.
+-- Previously nil ~= false implicitly enabled a 2/3 invisible D6 lane
+-- while the player saw a single full-width parchment tray.
+local function is_tray_divided()
+    return Scriptorium.tray_divided == true
+end
+
 local function get_region_x_bounds_at_y(region, y)
     local base_region = get_base_region(region)
     if not base_region then
@@ -350,7 +357,7 @@ local function get_region_x_bounds_at_y(region, y)
 
     local left_x, right_x = get_region_full_x_bounds_at_y(base_region, y)
     local slot = region and region.slot or nil
-    if Scriptorium.tray_divided ~= false and (slot == "main" or slot == "mini") then
+    if is_tray_divided() and (slot == "main" or slot == "mini") then
         local split_x = left_x + (right_x - left_x) * D6_REGION_RATIO
         if slot == "main" then
             right_x = split_x
@@ -831,7 +838,7 @@ local function draw_dice_tray_overlay()
         usable_map,
         true,
         true,
-        Scriptorium.tray_divided ~= false
+        is_tray_divided()
     )
 
     love.graphics.setScissor()
