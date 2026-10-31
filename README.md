@@ -46,6 +46,21 @@ riproducibili. Si avvia con
 **non è una modalità già integrata nella partita** e non
 sostituisce la sfida beta al Monaco.
 
+## Interfaccia di gioco — UI 2.0 unica
+
+Dalla versione `0.1.0-dev.7` il gioco usa **esclusivamente**
+`src/features/farkle/ui_v2/hud.lua` per la schermata
+Farkle. Il vecchio HUD, il fallback con F6 e la
+variabile `MANUSCRIPT_UI_V2_EXPERIMENT` sono stati
+rimossi dal codice operativo; nessuna doppia
+interfaccia è disponibile. La fisica dei D6, il
+libro/tray g3d e le regole Farkle restano invariati.
+
+Le finestre di regole, medaglie e ricompense ora
+vivono in `ui_v2/dialogs.lua`; il loro redesign
+visivo completo è ancora un'attività aperta.
+Vedere [stato e gate di QA](docs/UI_V2_STATUS.md).
+
 ## Overview
 
 The display name is temporary. The `manuscript` repository, internal `scriptorium` scene IDs and existing save identity stay unchanged for compatibility; they are not the public-facing game title.
