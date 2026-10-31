@@ -8,13 +8,13 @@
 
 - **FASE ATTIVA:** `P0 — baseline e audit completo`.
 - **CONDIZIONE:** `IN CORSO` (matrice completa e test automatico di inventario aggiunti; resta QA grafica e manuale della baseline).
-- **BASELINE DI DOCUMENTAZIONE:** `main@c3c0fc6e88bb3ed6c3e188f8457a04708d53af92` (verificato prima di PR #29).
-- **BRANCH DI DOCUMENTAZIONE:** `fix/ui-v2-p0-folio-baseline-20261031` (intervento P0 corrente).
+- **BASELINE DI DOCUMENTAZIONE:** `main@b8d5cb7a629e990e3d156950cbbc305dcc0b8842` (verificato dopo merge #29).
+- **BRANCH CORRENTE:** `test/ui-v2-p0-held-capture-20261031` (cattura P0 reale automatizzata).
 - **PR DI DOCUMENTAZIONE:** [#27](https://github.com/Askeladd22/manuscript/pull/27) **integrata in main**.
-- **PR DI P0:** [#28](https://github.com/Askeladd22/manuscript/pull/28) **integrata** (matrice/test) e [#29](https://github.com/Askeladd22/manuscript/pull/29) **aperta** (correzione folio + cattura baseline riproducibile).
+- **PR DI P0:** [#28](https://github.com/Askeladd22/manuscript/pull/28) e [#29](https://github.com/Askeladd22/manuscript/pull/29) **integrate**; prossima PR per la cattura automatica gruppo/acessibilità in preparazione.
 - **UI 2.0 NEL GIOCO:** non esiste ancora; l'HUD attuale resta quello predefinito.
-- **CI per la baseline P0:** [main 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **SUCCESS**; [PR #29 run 41189472532](https://github.com/Askeladd22/manuscript/actions/runs/41189472532) **SUCCESS** (nuovo test modali, Lua 5.4/LuaJIT, lab FPS e regressioni).
-- **QA WINDOWS / SCREENSHOT:** non ancora completata per una baseline identificata con commit; servono 1920×1080 e 1280×720 (fresh, held gruppo, ready con combinazione, modale, ricompensa).
+- **CI per la baseline P0:** [main 41189792642](https://github.com/Askeladd22/manuscript/actions/runs/41189792642) **SUCCESS**; CI della nuova PR in attesa di verifica.
+- **QA WINDOWS / SCREENSHOT:** **non ancora effettuata** sulla build di questa PR. Lo script ora acquisisce in automatico anche il gruppo fisico dei sei D6 e i flag accessibilità in entrambe le risoluzioni, ma servono esecuzione Windows, confronto visivo e dati FPS.
 
 ## Fasi e gate
 
@@ -45,10 +45,10 @@
 
 ## Prossima azione concreta (una sola)
 
-**Chiudere la baseline P0 con screenshot e test reali su Windows a commit noto, senza toccare fisica o gameplay.**
+**Eseguire su Windows lo script P0 aggiornato e verificare screenshot, input e tempi di rendering, prima di scegliere un layout P1.**
 
 1. Verificare `main` e PR aperte e far passare la CI della PR P0.
-2. Su Windows eseguire `python scripts/capture_ui_v2_baseline.py` dalla radice del repository (vedi [UI_V2_BASELINE_CAPTURE.md](UI_V2_BASELINE_CAPTURE.md)); genera screenshot reali a 1920×1080 e 1280×720, manifest SHA e log. Il gruppo in mano richiede ancora una cattura manuale.
+2. Su Windows eseguire `python scripts/capture_ui_v2_baseline.py` dalla radice del repository (vedi [UI_V2_BASELINE_CAPTURE.md](UI_V2_BASELINE_CAPTURE.md)). Lo script genera screenshot reali a 1920×1080 e 1280×720, inclusi `marquee-six`, `physical-group-held`, `accessibility-on`, `folio` e `upgrade`, più manifest SHA e log.
 3. Verificare su Windows che `F` apra il folio riparato nella PR #29, con valori corretti e chiusura Esc; il nuovo test headless verifica già il dispatch ma non la resa GPU.
 4. Verificare `big_text`, `high_contrast` e `reduced_animations` e gli FPS della stessa schermata.
 5. Annotare i risultati e passare a P1 **solo** quando il gate P0 è completo.
@@ -65,7 +65,15 @@
 - `src/features/farkle/hud.lua`: fix crash modale folio con `FolioView.draw`; conserva target/valori Farkle e allineamento del testo.
 - `tests/ui_v2_folio_modal_regression_test.lua`: test modale `folio` su vista virtuale 720p/1080p/ultrawide e controllo dei dialog esistenti.
 - `scripts/capture_ui_v2_baseline.py` e [UI_V2_BASELINE_CAPTURE.md](UI_V2_BASELINE_CAPTURE.md): procedura riproducibile per screenshot LÖVE e manifest per commit.
-- Nessun redesign ancora effettuato; **P0 rimane IN CORSO**, in attesa di immagini e FPS realmente misurati sul PC Windows.
+- Nessun redesign ancora effettuato; **P0 rimane IN CORSO**, in attesa di screenshot veri e FPS misurati sul PC Windows.
+
+## Intervento P0 corrente — screenshot della presa dei sei dadi
+
+- `tests/smoke/farkle_hud.lua`: percorso opt-in `MANUSCRIPT_UI_V2_P0_CAPTURE` che usa **il controller originale** per marquee, presa destra di sei dadi, frame con gruppo afferrato ed Esc cancel; registra un frame con le tre impostazioni di accessibilità attivate e ripristinate.
+- `scripts/run_smoke.py`: nuovo flag `--ui-v2-baseline` solo per `hud`, senza cambiare i normali smoke di altri sistemi.
+- `scripts/capture_ui_v2_baseline.py`: richiede screenshot `fresh-pre-grip`, `marquee-six`, `physical-group-held`, `accessibility-on`, `fresh-after-cancel`, `folio`, `upgrade` a entrambe le risoluzioni, oppure fallisce. Scrive manifest dei frame reali.
+- `tests/ui_v2_capture_wiring_test.lua`: test headless della presenza di trigger, gesti reali, nomi e informazioni di tracciabilità.
+- [Procedura Windows aggiornata](UI_V2_BASELINE_CAPTURE.md). **La QA grafica non è stata ancora eseguita.**
 
 ## Rischi e decisioni sospese
 
@@ -84,7 +92,7 @@
 | 2026-10-31 | P0 | Matrice e test integrazione degli input, PR #28 integrata | [PR #28](https://github.com/Askeladd22/manuscript/pull/28); [main CI 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **successo** | Baseline Windows |
 | 2026-10-31 | P0 | Fix folio, test modali e utility screenshot riproducibile; P0 non completata | [PR #29](https://github.com/Askeladd22/manuscript/pull/29); [CI 41189472532](https://github.com/Askeladd22/manuscript/actions/runs/41189472532) **SUCCESS** | Windows: screenshot 720p/1080p, folio, gruppo in mano, accessibilità/FPS |
 
-### Mini-template di aggiornamento (duplicare a fine sessione)
+| 2026-10-31 | P0 | Aggiunto smoke opt-in con screenshot reali di presa multipla e accessibilità; mantenuto gameplay invariato | PR e CI in aggiornamento | Eseguire baseline su LÖVE Windows e controllare frame/FPS, poi avviare P1 |\n\n### Mini-template di aggiornamento (duplicare a fine sessione)
 
 ```text
 DATA:
