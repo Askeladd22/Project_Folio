@@ -71,8 +71,10 @@ local next_turn=pos("if self.buttons['next']")
 local rescue=pos("if self.buttons['rescue']")
 assert(space<take and take<roll and roll<next_turn and next_turn<rescue,
  'Space must prioritize take/roll/next/rescue')
-for _,key in ipairs({"'f8'","'tab'","'f'","'space'","'return'",
-                      "'kpenter'","'a'","'n'","'m'"}) do
+for _,key in ipairs({"if k=='f8'","if k=='tab'","if k=='f'",
+                      "if k=='space'","if k=='return'",
+                      "or k=='kpenter'","space='roll'","a='take'",
+                      "n='next'","m='rescue'"}) do
  exact(c,key,'keyboard shortcut')
 end
 for _,key in ipairs({"'f9'","'f10'","'f11'"}) do
@@ -104,7 +106,8 @@ assert(s.phase=='fresh' and next(s.selected)==nil and s.turn==1,
 assert(not Marquee.dragged({x0=100,y0=100,x=102,y=101}))
 assert(R.start(s) and s.phase=='rolling')
 assert(not R.can_roll(s) and not R.toggle(s,1))
-assert(#R.options(s)==0 and not H.eligible(s)[1])
+local rollingEligible=H.eligible(s)
+assert(#R.options(s)==0 and not rollingEligible[1])
 assert(R.settle(s,{1,1,5,2,3,4}) and s.phase=='ready')
 local eligible=H.eligible(s)
 assert(eligible[1] and eligible[2] and eligible[3])
