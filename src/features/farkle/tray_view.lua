@@ -46,7 +46,14 @@ function T.fit(owner,tray,view,extents)
  local margin=18*require('src.core.resolution_manager').get_scale()
  local target=math.min((tray.w-2*margin)/(maxx-minx),(tray.h-2*margin)/(maxy-miny))
  -- Fixed launch envelope, independent of body positions and frame rate.
- local scale=target
+ -- Apply a small optical pullback *after* fitting the scene. Altering
+ -- only view.distance would be canceled by the fitter (and would break
+ -- mouse picking if it did not update the whole projection).
+ local Zoom=require('src.features.farkle.group_hold_projection')
+ local now=(love and love.timer and love.timer.getTime and love.timer.getTime()) or 0
+ local grip=owner.mouseThrow
+ local camera_factor=Zoom.advance(owner,now,grip and grip.group or false)
+ local scale=target*camera_factor
  owner.trayScale=scale
  local cx=tray.x+tray.w/2-(minx+maxx)*scale/2
  local cy=tray.y+tray.h/2-(miny+maxy)*scale/2
