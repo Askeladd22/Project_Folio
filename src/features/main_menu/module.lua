@@ -348,6 +348,17 @@ local function begin_new_game()
     Navigation.go(NAVIGATION_NEW_GAME)
 end
 
+local function begin_bot_duel()
+    -- Independent opponent uses official scoring; human still throws physical D6.
+    local seed = os.time()
+    pcall(function()
+        if love.math and love.math.setRandomSeed then
+            love.math.setRandomSeed(seed)
+        end
+    end)
+    Navigation.go(NAVIGATION_CONTINUE, {new_run = true, bot_duel = true})
+end
+
 local function continue_game()
     -- No Farkle resume format exists yet. Continue remains disabled.
 end
@@ -734,6 +745,8 @@ function MainMenu:activate(idx)
 
     if item.id == "new-game" then
         queue_transition(begin_new_game)
+    elseif item.id == "bot-duel" then
+        queue_transition(begin_bot_duel)
     elseif item.id == "continue" then
         queue_transition(continue_game)
     elseif item.id == "settings" then

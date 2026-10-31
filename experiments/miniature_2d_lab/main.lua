@@ -3,6 +3,8 @@
 local Figure=require('src.features.scriptorium.miniature_2d')
 local Ink=require('src.features.scriptorium.folio_ink_text')
 local PostFX=require('src.features.scriptorium.dream_postfx_2d')
+local Toasts=require('src.features.farkle.toast_messages')
+local Res=require('src.core.resolution_manager')
 local g=love.graphics
 local state={reduced=false,visible=false,fx=nil,figure=nil,text=nil,
   heading=nil,caption=nil,sheet=nil}
@@ -53,6 +55,7 @@ end
 local function reveal()
  state.figure:move_to(545,522,1.65,1.05,state.reduced)
  state.visible=true
+ Toasts.show('La miniatura si desta!')
  state.text=Ink.new('Dal margine del codice, una figura prende vita.',{
   font=state.caption,wrap=620,speed=.040,color={.25,.15,.07,1}
  })
@@ -61,6 +64,7 @@ end
 local function retreat()
  state.figure:return_to_page(.80,state.reduced)
  state.visible=false
+ Toasts.show('Il monaco ritorna nel folio.')
  state.text=Ink.new('La figura ritorna alla sua miniatura.',{
   font=state.caption,wrap=620,speed=.040,color={.25,.15,.07,1}
  })
@@ -69,6 +73,7 @@ end
 function love.load()
  love.window.setTitle('Project Folio - 2D miniature & ink laboratory')
  love.window.setMode(1280,720,{resizable=true,vsync=1})
+ Res.init(1920,1080)
  state.heading=g.newFont('resources/font/IMFeENsc28P.ttf',34)
  state.caption=g.newFont('resources/font/IMFeENsc28P.ttf',22)
  state.sheet=build_sheet()
@@ -83,6 +88,7 @@ function love.load()
 end
 
 function love.update(dt)
+ Toasts.update(dt)
  state.figure:update(dt,state.reduced)
  state.text:update(dt,state.reduced)
 end
@@ -117,6 +123,7 @@ end
 function love.draw()
  g.push('all')
  if state.fx then state.fx:draw(draw_2d) else draw_2d() end
+ Toasts.draw(false)
  g.setColor(1,.89,.68,1)
  g.setFont(state.caption)
  g.print('P: la miniatura esce    R: ritorna    V: vignettatura 2D    M: riduci movimento    Esc: esci',
@@ -127,6 +134,7 @@ function love.draw()
 end
 
 function love.resize(w,h)
+ Res.refresh(w,h)
  if state.fx then state.fx:resize(w,h) end
 end
 
