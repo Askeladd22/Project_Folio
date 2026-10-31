@@ -4,6 +4,7 @@ local I18n = require("src.core.i18n")
 local MenuParticles = require("src.core.menu_particles")
 local Navigation = require("src.core.navigation")
 local RuntimeUI = require("src.core.runtime_ui")
+local Version = require("src.core.version")
 local Schema = require("src.core.schema")
 local SettingsState = require("src.core.settings_state")
 local MainMenuSchema = require("src.data.main_menu_schema")
@@ -27,7 +28,6 @@ local FONT_UPPERCASE = expect_string(ASSET_SCHEMA.font_uppercase, "assets.font_u
 local FONT_FALLBACK = expect_string(ASSET_SCHEMA.font_fallback, "assets.font_fallback")
 local WISHLIST_URL = expect_string(LINKS_SCHEMA.wishlist_url, "links.wishlist_url")
 local SUBTITLE_ENTRY = expect_entry(LABEL_SCHEMA.subtitle, "labels.subtitle")
-local FOOTER_VERSION_ENTRY = expect_entry(LABEL_SCHEMA.footer_version, "labels.footer_version")
 local FOOTER_ALPHA_ENTRY = expect_entry(LABEL_SCHEMA.footer_alpha, "labels.footer_alpha")
 local BRANDING_TITLE_ENTRY = expect_entry(LABEL_SCHEMA.branding_title, "labels.branding_title")
 local MODAL_NO_SAVE_ENTRY = expect_entry(MODAL_SCHEMA.no_save, "modals.no_save")
@@ -50,7 +50,7 @@ local function get_subtitle_label()
 end
 
 local function get_footer_version_label()
-    return tr(FOOTER_VERSION_ENTRY.key, FOOTER_VERSION_ENTRY.default)
+    return 'v' .. Version.current()
 end
 
 local function get_footer_alpha_label()
