@@ -37,13 +37,13 @@ function M.configure(shader,mode,view,is_d8)
  shader:send('fillDirection',M.fill)
  shader:send('viewDirection',M.view_direction(view))
  shader:send('materialTint',M.tint(is_d8,mode))
- shader:send('ambientStrength',.38)
- shader:send('keyStrength',.54)
+ shader:send('ambientStrength',.46)
+ shader:send('keyStrength',.46)
  shader:send('fillStrength',.15)
- shader:send('specularStrength',.14)
+ shader:send('specularStrength',.075)
  shader:send('specularExponent',30)
  shader:send('pipTexel',{0,0})
- shader:send('pipReliefStrength',.11)
+ shader:send('pipReliefStrength',.045)
 end
 
 -- The pip texture is a white face with dark dots. Sampling adjacent
