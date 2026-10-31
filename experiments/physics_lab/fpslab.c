@@ -176,6 +176,52 @@ FPSLAB_API int fpslab_grip_step(fpslab *w,const float *hand,float dt,
     return 1;
 }
 
+/* Lab 5 optional compatibility pressure, holding phase only.
+ * FPS's native cuboid contacts pack dice closer than Manuscript's
+ * sphere-approximation collision envelope. Gradual soft pairwise forces
+ * expand that envelope BEFORE transfer. No scripted die slots/teleports.
+ * Original fpslab_grip_step and the vendor solver remain untouched. */
+FPSLAB_API int fpslab_grip_step_compatible(
+    fpslab *w,const float *hand,float dt,float stiffness,float damping,
+    float shake,int contacts,float clearance,float repel
+) {
+    if(!w || !hand || !valid_float(dt) || dt<=0 || dt>.05f ||
+       !valid_float(stiffness) || stiffness<=0 || stiffness>200 ||
+       !valid_float(damping) || damping<0 || damping>100 ||
+       !valid_float(shake) || fabsf(shake)>30 ||
+       (contacts!=0 && contacts!=1) ||
+       !valid_float(clearance) || clearance<=w->edge ||
+       clearance>3*w->edge ||
+       !valid_float(repel) || repel<0 || repel>500)return 0;
+    for(int axis=0;axis<3;axis++)
+        if(!valid_float(hand[axis]))return 0;
+    for(int i=0;i<w->n;i++) {
+        float a[3];fps_body_position_get(w->dice[i],a);
+        for(int j=i+1;j<w->n;j++) {
+            float b[3];fps_body_position_get(w->dice[j],b);
+            float d[3]={b[0]-a[0],b[1]-a[1],b[2]-a[2]};
+            float length=sqrtf(d[0]*d[0]+d[1]*d[1]+d[2]*d[2]);
+            if(length>=clearance)continue;
+            if(length<1e-6f) {
+                d[0]=(i%2==0)?1.0f:-1.0f;
+                d[1]=(j%2==0)?1.0f:-1.0f;
+                d[2]=.3f;length=sqrtf(d[0]*d[0]+d[1]*d[1]+.09f);
+            }
+            float force=fminf(140.0f,repel*(clearance-length));
+            float fa[3],fb[3];
+            for(int k=0;k<3;k++) {
+                float component=d[k]*(force/length);
+                fa[k]=-component;fb[k]=component;
+            }
+            fps_body_sleeping_set(w->dice[i],FPS_FALSE);
+            fps_body_sleeping_set(w->dice[j],FPS_FALSE);
+            fps_body_force_apply(w->dice[i],fa);
+            fps_body_force_apply(w->dice[j],fb);
+        }
+    }
+    return fpslab_grip_step(w,hand,dt,stiffness,damping,shake,contacts);
+}
+
 /* 16 world transform values, then 3 linear + 3 angular velocities. */
 FPSLAB_API int fpslab_state(const fpslab *w,int index,float *out22) {
     if(!w || !out22 || index<0 || index>=w->n)return 0;
