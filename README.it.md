@@ -2,7 +2,7 @@
 
 **Un roguelite solitario di dadi ambientato in una bottega di copisti e miniatori del XV secolo.**
 
-[English README](README.md) · [Game design](docs/GAME_DESIGN.md) · [Regole Farkle](docs/FARKLE_RULES.md)
+[English README](README.md) · [Game design](docs/GAME_DESIGN.md) · [Regole Farkle](docs/FARKLE_RULES.md) · [Roadmap UI 2.0](docs/UI_V2_ROADMAP.md)
 
 ## Il progetto
 
