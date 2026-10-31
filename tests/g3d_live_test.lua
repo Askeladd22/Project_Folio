@@ -5,8 +5,8 @@ local d6={
  faceValueMap={1,6,3,5,4,2}
 }
 local r=Live.new()
-assert(r.enabled and not r.failed and r.width==0 and not r.g3d)
-assert(r:toggle()==false and r:toggle()==true)
+assert(r.width==0 and not r.g3d and r.toggle==nil,
+ 'g3d-only renderer must not expose the F9 painter switch')
 local entries={{index=1,entry={die=d6}},{index=2,entry={die=d6}}}
 assert(Live.supported(entries),'real runtime candidate format incorrectly rejected')
 assert(Live.supported({{die=d6}}),'direct lab die should be supported')
@@ -41,7 +41,7 @@ local original=verts[1][9]
 Live.highlight_vertices(verts,true)
 assert(verts[1][9]>original,'usable die gains a GPU tint')
 assert(not package.loaded['lib.g3d'],'headless geometry must not load GPU')
-print('PASS production g3d: default-ready, reversible, shadows, folio rules and highlights')
+print('PASS production g3d: default-ready, single-renderer, shadows, folio rules and highlights')
 
 local Scene=require('src.engine3d.g3d_scenery')
 for _,style in ipairs({'book','current','A','B','C'}) do
