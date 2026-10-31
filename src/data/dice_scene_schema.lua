@@ -25,10 +25,14 @@ return {
         d6_ratio = 2 / 3,
         unified = {
             x_center = 0.0,
-            y_back = -3.45,
-            y_front = 3.45,
-            half_back = 6.3,
-            half_front = 8.4,
+            -- Full usable inner parchment area in the visible g3d board.
+            -- Old 6.3/8.4 world-unit trapezoid made the ordinary six-D6
+            -- roll bounce against invisible boundaries inside the tray.
+            -- Keep a small margin from the real box walls at +/-9.2.
+            y_back = -3.55,
+            y_front = 3.55,
+            half_back = 8.70,
+            half_front = 8.70,
             bounce = 0.34,
             slide_damping = 0.90,
         },

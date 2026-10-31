@@ -218,23 +218,36 @@ end
 function U:mousepressed(x,y,b)
  if b==2 then
   if self.mouseThrow or self.marquee or not can_grab(self) then return end
-  local i=Bridge.pickTrayDie(x,y)
+  local clicked=Bridge.pickTrayDie(x,y)
+  local selected={}
+  if self.dragSelected then
+   for k in pairs(self.dragSelected) do
+    if dice and dice[k] and not dice[k].kept and
+       (not self.manualRoll or self.manualRoll.pending[k]) then
+     selected[#selected+1]=k
+    end
+   end
+   table.sort(selected)
+  end
+  -- A selected group can be gathered even by pressing right on an EMPTY
+  -- patch of parchment. Right clicking a nonselected die still grabs only it.
+  local use_group=#selected>1 and in_tray(x,y) and
+      (not clicked or self.dragSelected[clicked])
+  local i=use_group and (clicked or selected[1]) or clicked
   if not i or not dice or not dice[i] or dice[i].kept then return end
   if not self.manualRoll and not self:request(false,nil,true) then return end
   if not (self.manualRoll and self.manualRoll.pending[i]) then return end
 
-  local indices={i}
-  if self.dragSelected and self.dragSelected[i] then
-   indices={}
-   for k in pairs(self.dragSelected) do
-    if self.manualRoll.pending[k] and dice[k] and not dice[k].kept then
-     indices[#indices+1]=k
-    end
+  if use_group then
+   local hx,hy=nil,nil
+   for _,hit in ipairs(Bridge.getTrayDieHits()) do
+    if hit.index==i then hx,hy=hit.x,hit.y;break end
    end
-   table.sort(indices)
-  end
-  if #indices>1 then
-   self.mouseThrow=GroupThrow.begin(indices,dice,x,y,love.timer.getTime())
+   -- In a blank-area grab, the cursor is offset from the anchor die's
+   -- projected center, so the constellation still converges at the pointer.
+   self.mouseThrow=GroupThrow.begin(selected,dice,x,y,love.timer.getTime(),
+     require('src.engine3d.view'),self.trayScale or 1,
+     require('src.data.dice_scene_schema').box,i,hx,hy)
   else
    self.mouseThrow=MouseThrow.begin(i,dice[i].body,x,y,love.timer.getTime())
   end

@@ -36,11 +36,32 @@ function T.begin(index,body,x,y,time)
  return g
 end
 
-function T.move(g,x,y,time,view,scale,bounds)
+-- Update the gesture/swing without teleports. Group handling uses this
+-- while guiding several ACTUAL rigid bodies to a compact formation.
+function T.track(g,x,y,time)
  if not g or not(finite(x) and finite(y) and finite(time)) then return false end
- local dt=math.max(.001,math.min(.05,time-g.t))
+ local elapsed=time-g.t
  local dx,dy=x-g.x,y-g.y
  g.x,g.y,g.t=x,y,math.max(g.t,time)
+ -- A group release may request the SAME pointer sample twice in one frame.
+ -- Preserve the last actual flick spin rather than resetting it to idle.
+ if elapsed>.0001 and (math.abs(dx)+math.abs(dy))>.01 then
+  local dt=math.max(.001,math.min(.05,elapsed))
+  g.angular[1]=clamp(2.0+dy*.050/dt,-13,13)
+  g.angular[2]=clamp(1.4+dx*.050/dt,-13,13)
+  g.angular[3]=clamp(.6+(dx-dy)*.012/dt,-8,8)
+ end
+ local sample=g.samples
+ if #sample==0 or g.t>sample[#sample].t+.0001 or
+    math.abs(x-sample[#sample].x)+math.abs(y-sample[#sample].y)>.01 then
+  sample[#sample+1]={x=x,y=y,t=g.t}
+ end
+ while #sample>2 and g.t-sample[1].t>.18 do table.remove(sample,1) end
+ return true
+end
+
+function T.move(g,x,y,time,view,scale,bounds)
+ if not T.track(g,x,y,time) then return false end
  local vx,vy=T.world_motion(x-g.x0,y-g.y0,view,scale)
  local b=g.body
  local pad=math.max(.4,(b.radius or .5)*.7)
@@ -49,14 +70,6 @@ function T.move(g,x,y,time,view,scale,bounds)
  b.position[1]=clamp(g.original.position[1]+vx,-hw,hw)
  b.position[2]=clamp(g.original.position[2]+vy,-hh,hh)
  b.position[3]=math.max(2.1,math.min(4.2,g.original.position[3]+1.2))
- -- Rotational response is applied to the ACTUAL physical vertices while held,
- -- not to a decal, and is continued in tick() between mousemove callbacks.
- g.angular[1]=clamp(2.0+dy*.050/dt,-13,13)
- g.angular[2]=clamp(1.4+dx*.050/dt,-13,13)
- g.angular[3]=clamp(.6+(dx-dy)*.012/dt,-8,8)
- local sample=g.samples
- sample[#sample+1]={x=x,y=y,t=g.t}
- while #sample>2 and g.t-sample[1].t>.18 do table.remove(sample,1) end
  return true
 end
 
