@@ -10,6 +10,31 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.10] - 2026-10-31
+
+**Tipo:** polish esclusivamente grafico dell'HUD Farkle UI 2.0.
+
+### Modificato
+- Intestazione della commissione e pannello Strumenti ridisegnati
+  con toni pergamena, bordi d'inchiostro e testo bruno ad alto contrasto;
+  tolti i precedenti riquadri quasi neri.
+- Pulsanti primari, secondari, contestuali e di navigazione
+  nello stesso stile delle voci del menu, tramite
+  `src/features/ui_v2/menu_surface.lua`, con stati disabilitati
+  chiaramente distinguibili al posto del vecchio pulsante verde.
+- Geometrie del tavolo, pagina del manoscritto, area di lancio g3d,
+  raccoglitore dei dadi e disposizione degli hitbox **immutate**.
+  Nessuna duplicazione dell'HUD e nessun ramo legacy.
+
+### Verifiche e limiti
+- Nuovo `tests/ui_v2_parchment_hud_test.lua`: mock di disegno e
+  geometrie a 720p/1080p/1440p, controlli di input, colori del
+  folio e immutabilità dei punteggi Farkle.
+- CI Lua 5.4/LuaJIT da verificare; QA visiva con LÖVE su Windows
+  ancora necessaria per spaziature, hover, contrasto e texture 3D.
+- Nessuna modifica a Farkle, bot Monaco, dadi, g3d, fisica, salvataggi,
+  impostazioni o splash originale del motore LÖVE.
+
 ## [0.1.0-dev.9] - 2026-10-31
 
 **Tipo:** UI 2.0 — redesign della schermata Settings.
