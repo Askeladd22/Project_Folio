@@ -1,4 +1,4 @@
--- Production g3d GPU dice + book rim; legacy is the F9 fallback.
+-- Production g3d GPU dice and book rim. The only 3D renderer.
 -- Owns graphics only. Reads existing physical positions, faces and textures,
 -- never RNG, dice scores, physics steps, input picking or HUD state.
 -- The GPU library loads lazily on first supported draw; physics and gameplay are untouched.
@@ -25,7 +25,7 @@ function M.new()
  local override=os.getenv('MANUSCRIPT_DICE_MATERIAL')
  local mode=Materials.valid(override) and override or Materials.default
  return setmetatable({
-  enabled=true,failed=nil,models={},images={},canvas=nil,
+  models={},images={},canvas=nil,
   material_mode=mode,dice_shader=nil,shader_error=nil,
   bevel_enabled=true,bevel_fraction=Bevel.default_fraction,
   width=0,height=0,floor_model=nil,walls=nil,lines=nil,divider_model=nil,wall_signature=nil,
@@ -308,7 +308,7 @@ function M:_draw_scene(args)
  local cam=self.g3d.camera
  self.camera.apply(args.view,cam,self.width,self.height,args.scale)
  -- Shift orthographic clip space to the exact projected tray position.
- -- Camera.apply's centre is canvas centre; the legacy overlay may use
+ -- Camera.apply's centre is canvas centre; the 2D overlay may use
  -- a different centre due to fitting, so preserve that screen alignment.
  local dx=args.cx-vp.x-self.width/2
  local dy=args.cy-vp.y-self.height/2
@@ -368,26 +368,13 @@ function M:_draw_scene(args)
 end
 
 function M:draw(args)
- if not self.enabled then return false end
- if not supported(args.entries) then return false end
- local ok,err=xpcall(function() self:_draw_scene(args) end,debug.traceback)
- if not ok then
-  self.failed=err
-  self.enabled=false
-  -- Preserve the painter's active translated/scaled tray transform.
-  -- _draw_scene wraps graphics in push('all') / pop(); an additional
-  -- graphics.origin() here previously broke the F9/error fallback.
-  pcall(function() love.graphics.setDepthMode() end)
-  print('[Manuscript g3d] reverting to legacy painter: '..tostring(err))
-  return false
- end
- return true
-end
-
-function M:toggle()
- self.enabled=not self.enabled
- self.failed=nil
- return self.enabled
+  assert(type(args)=='table' and type(args.entries)=='table',
+   'g3d needs an explicit scene')
+  assert(supported(args.entries),'unsupported die mesh in g3d scene')
+  -- _draw_scene restores the complete LÖVE graphics state on error.
+  -- Fail explicitly rather than silently switching renderers mid-roll.
+  self:_draw_scene(args)
+  return true
 end
 
 function M.supported(entries)
