@@ -38,9 +38,77 @@ function M.install(U)
    assert(not U.buttons.roll and not U.buttons.bank and not U.buttons.take,'terminal gameplay buttons remain')
   end
  end
+ -- P0 diagnostic only: actually grab all six PHYSICAL bodies with the
+ -- production controller and capture the held state. No mocked dice or
+ -- synthetic score, and never used in ordinary gameplay.
+ local function physical_grip_baseline(prefix)
+  U:draw()
+  local hits=Bridge.getTrayDieHits()
+  assert(#hits==6,'P0 group baseline requires six projected physical dice')
+  local tray=assert(Bridge.getDiceTrayRect(),'P0 tray bounds missing')
+  local minx,miny,maxx,maxy=math.huge,math.huge,-math.huge,-math.huge
+  for _,hit in ipairs(hits) do
+   minx=math.min(minx,hit.x);miny=math.min(miny,hit.y)
+   maxx=math.max(maxx,hit.x);maxy=math.max(maxy,hit.y)
+  end
+  local x0=math.max(tray.x+4,minx-12)
+  local y0=math.max(tray.y+4,miny-12)
+  local x1=math.min(tray.x+tray.w-4,maxx+12)
+  local y1=math.min(tray.y+tray.h-4,maxy+12)
+  assert(x1>x0+9 and y1>y0+9,'P0 selected dice do not fit tray bounds')
+  U:mousepressed(x0,y0,1)
+  assert(U.marquee,'P0 physical marquee did not start')
+  U:mousemoved(x1,y1)
+  U:mousereleased(x1,y1,1)
+  local count=require('src.features.farkle.marquee_selection').count
+  assert(count(U.dragSelected)==6,'P0 marquee failed to select every real D6')
+  assert(U.game.phase=='fresh','P0 physical select must not spend a roll')
+  shot(prefix..'marquee-six')
+  local first=hits[1]
+  U:mousepressed(first.x,first.y,2)
+  assert(U.mouseThrow and U.mouseThrow.group and #U.mouseThrow.held==6,
+    'P0 real right-click group grip not engaged')
+  assert(U.manualRoll and U.manualRoll.count==6,
+    'P0 grip must not register any physical release yet')
+  U:mousemoved(first.x+48,first.y-24)
+  for i=1,25 do U:update(.03) end
+  shot(prefix..'physical-group-held')
+  U:keypressed('escape')
+  assert(not U.mouseThrow and U.manualRoll and U.manualRoll.count==6,
+    'P0 Esc should cancel grip without fake Farkle release')
+  U:reset('build')
+  record('PASS '..prefix..' physically grabbed 6 D6 and cancelled without scoring')
+ end
+ local function accessibility_baseline(prefix)
+  local state=require('src.core.runtime_state')
+  local settings=state.get_game_settings() or {}
+  local extended={}
+  for k,v in pairs(settings) do extended[k]=v end
+  extended.accessibility={
+    big_text=true,high_contrast=true,reduced_animations=true
+  }
+  state.apply_settings(extended)
+  local UI=require('src.core.runtime_ui')
+  assert(UI.big_text() and UI.high_contrast() and
+         UI.reduced_animations() and UI.scale()>1,
+         'P0 accessibility test settings were not activated')
+  shot(prefix..'accessibility-on')
+  state.apply_settings(settings)
+  assert(not UI.big_text() or (settings.accessibility and settings.accessibility.big_text),
+         'P0 accessibility settings not restored')
+  record('PASS '..prefix..' accessibility flags exercised and restored')
+ end
  local function scenario(w,h)
   love.window.setMode(w,h,{resizable=true});love.resize(w,h);U.hud_variant='standard';U:reset('build')
   local prefix='hud-usability-'..w..'-'
+  if os.getenv('MANUSCRIPT_UI_V2_P0_CAPTURE')=='1' then
+   -- Extra P0 frames before the existing full HUD smoke scenarios.
+   -- Reset after the held/cancel test so fixture state is unchanged.
+   shot(prefix..'fresh-pre-grip')
+   physical_grip_baseline(prefix)
+   accessibility_baseline(prefix)
+   shot(prefix..'fresh-after-cancel')
+  end
     if os.getenv('UI_DREAM_TABLE') then
      U.hud_variant='minimal'
      shot(prefix..'normal');click('roll');wait()
