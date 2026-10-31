@@ -53,7 +53,7 @@ for _,f in ipairs(faces) do
  end
 end
 local actual=Live.new()
-assert(actual.enabled and Material.valid(actual.material_mode))
+assert(actual.toggle==nil and Material.valid(actual.material_mode))
 assert(Material.valid(actual:cycle_material()))
 assert(not package.loaded['lib.g3d'],
  'headless material/normal checks must never require GPU initialization')
