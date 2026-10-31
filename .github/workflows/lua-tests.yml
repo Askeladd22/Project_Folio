@@ -70,7 +70,7 @@ jobs:
       - name: Python source tests
         run: |
           set -eu
-          python3 -m py_compile scripts/capture_ui_v2_baseline.py scripts/run_smoke.py
+          python3 -m py_compile scripts/capture_ui_v2_baseline.py scripts/run_smoke.py scripts/run_ui_v2_layout_study.py
           PYTHONPATH=. python3 scripts/test_checkpoint.py
           PYTHONPATH=. python3 scripts/test_capture_retention.py
           PYTHONPATH=. python3 scripts/test_love_runtime.py
