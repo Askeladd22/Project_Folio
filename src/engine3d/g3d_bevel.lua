@@ -2,7 +2,9 @@
 -- vertices. No extra physical vertices, no collider or face-value changes.
 -- Faces retain their original pip UV orientation; chamfers use plain white.
 local B={}
-B.default_fraction=.11
+-- Subtle edge rounding: a broad 11% chamfer read as an extra square
+-- laid on top of the cube in 2026-10-31 screenshots.
+B.default_fraction=.055
 B.max_fraction=.20
 local TRIANGLES={1,2,3,1,3,4}
 local function lerp(a,b,t) return a+(b-a)*t end
