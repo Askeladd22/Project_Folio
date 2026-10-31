@@ -13,6 +13,9 @@
 > Lo storico più sotto descrive le versioni precedenti
 > e non le dipendenze attive della versione dev.7.
 > Ulteriore P4 polish dei dialoghi e dei menu ancora aperto.
+> Test headless e dipendenze eseguiti con successo in
+> [CI #41240278666](https://github.com/Askeladd22/Project_Folio/actions/runs/41240278666).
+> Non si tratta di QA grafica Windows.
 >
 
 > **0.1.0-dev.3 — Modalità Monaco:** animato il ritorno 2D della
