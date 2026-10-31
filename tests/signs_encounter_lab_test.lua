@@ -137,6 +137,18 @@ assert(expected_face==Turn.matched_rolls(20481,2)(1,6,3,5))
 assert(not pcall(function() r1(1,6,0,1) end))
 assert(not pcall(function() r1(1,6,1,7) end))
 assert(not pcall(function() Turn.matched_rolls(0,1) end))
+-- Catch the earlier linear-offset RNG bug: six D6 patterns must not
+-- collapse into a tiny family for neighboring scenario seeds.
+local unique={}
+local total=0
+for seed=20261031,20261286 do
+ local stream=Turn.matched_rolls(seed,1)
+ local dice={}
+ for id=1,6 do dice[id]=stream(1,6,1,id) end
+ local pattern=table.concat(dice,',')
+ if not unique[pattern] then unique[pattern]=true;total=total+1 end
+end
+assert(total>160,'matched RNG generated strongly correlated physical D6 lanes')
 
 local rows=Sim.compare(3,30401)
 assert(#rows==12,'A/B/C0/C controls by three risk policies required')
