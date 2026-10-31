@@ -1,5 +1,17 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **v0.1.0-dev.8 — frontend del folio:** menu principale,
+> selezione delle commissioni e dialoghi/ricompense
+> condividono ora una stessa superficie di pergamena.
+> Rimosse le bande nere sovrapposte allo sfondo
+> illustrato; introdotti layout responsive e test
+> di geometria a 720p/1080p/1440p. La UI 2.0
+> **rimane l'unico HUD**. Test statici/headless
+> disponibili; **QA grafica Windows non ancora
+> completata**. Splash e schermata impostazioni
+> restano in una fase successiva.
+>
+
 > **CUTOVER 0.1.0-dev.7 — 31 ottobre 2026:** la UI 2.0
 > è ora **l'unica interfaccia di partita**. L'opzione d'ambiente,
 > il tasto F6 per tornare al precedente HUD e i file
