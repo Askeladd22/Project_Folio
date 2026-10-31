@@ -1,5 +1,16 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.9 — impostazioni sulla pergamena:** tutte e
+> cinque le sezioni Settings condividono ora lo
+> stile e i componenti grafici della UI 2.0,
+> mantenendo impostazioni, slider e salvataggi.
+> Lo splash rosa/azzurro con cuore è **di LÖVE**,
+> non un residuo legacy: è stato preservato
+> integralmente. Verifiche geometriche/headless
+> a 720p, 1080p e 1440p; **QA grafica Windows
+> ancora aperta**.
+>
+
 > **v0.1.0-dev.8 — frontend del folio:** menu principale,
 > selezione delle commissioni e dialoghi/ricompense
 > condividono ora una stessa superficie di pergamena.

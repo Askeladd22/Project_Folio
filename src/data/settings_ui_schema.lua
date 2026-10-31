@@ -6,19 +6,14 @@ return {
         font_fallback = "resources/font/EagleLake-Regular.ttf",
     },
     colors = {
-        title_gold = {0.90, 0.74, 0.34},
-        subtitle_ivory = {0.84, 0.80, 0.72},
-        text_active = {0.97, 0.86, 0.62},
-        text_selected = {0.98, 0.88, 0.58},
-        text_primary = {0.88, 0.80, 0.68},
-        text_secondary = {0.68, 0.61, 0.52},
-        text_shadow = {0.02, 0.015, 0.01},
-        accent_fill = {0.86, 0.66, 0.24},
+        -- Ink and ochre on the shared manuscript surface; sliders only.
+        title_gold = {0.57, 0.37, 0.13},
+        text_secondary = {0.64, 0.49, 0.31},
     },
     text = {
         branding_title = {
             key = "branding.title",
-            default = "Scriptorium",
+            default = "Project Folio",
         },
         subtitle_sections = {
             key = "settings.subtitle.sections",
