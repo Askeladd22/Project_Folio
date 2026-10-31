@@ -12,6 +12,8 @@ int fpslab_floor_guard(fpslab *,float *max_depth);
 int fpslab_probe(const fpslab *,float *out4);
 int fpslab_step_support(fpslab *,float dt);
 int fpslab_set_euler(fpslab *,int index,float rx,float ry,float rz);
+int fpslab_grip_step(fpslab *, const float *hand,float dt,
+                     float stiffness,float damping,float shake,int contacts);
 int fpslab_version(void);
 ]]
 local so=ffi.os=='Windows' and './experiments/physics_lab/build/fpslab.dll'
@@ -70,6 +72,21 @@ function N.support_step(world,dt)
  assert(wakes>=0,'FPS support test failed')
  return wakes
 end
+-- Only Lab 4: all six native bodies chase one hand point; real FPS
+-- contacts may be enabled/disabled for paired deterministic comparisons.
+local hand=ffi.new('float[3]')
+function N.grip_step(world,target,dt,stiffness,damping,shake,contacts)
+ assert(type(target)=='table' and #target==3)
+ for k=1,3 do
+  local n=tonumber(target[k])
+  assert(n and n==n and math.abs(n)<math.huge,'finite target required')
+  hand[k-1]=n
+ end
+ assert(lib.fpslab_grip_step(world,hand,dt,stiffness or 25,
+                            damping or 8,shake or 0,contacts and 1 or 0)==1,
+        'FPS Lab 4 grip step rejected')
+end
+
 function N.set_euler(world,index,rx,ry,rz)
  assert(lib.fpslab_set_euler(world,index-1,rx,ry,rz)==1,
   'invalid FPS single-die orientation')

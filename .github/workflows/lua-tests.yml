@@ -45,6 +45,10 @@ jobs:
         run: |
           set -eu
           bash experiments/physics_lab/build-linux.sh
+          # Lab 4 is an isolated hold-only test; no production physics.
+          luajit experiments/physics_lab/test_grip.lua
+          luajit experiments/physics_lab/run_grip.lua > experiments/physics_lab/build/grip-ci.log
+          grep -E '^(GRIP |GRIP_COMPARE |NOTE:|PASS FPS Lab 4:)' experiments/physics_lab/build/grip-ci.log
           luajit experiments/physics_lab/run.lua 8 450
           test -s experiments/physics_lab/build/results.csv
           luajit experiments/physics_lab/test_floor_guard.lua
