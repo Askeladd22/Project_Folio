@@ -25,6 +25,7 @@ function Ink:ensure()
 end
 
 function Ink:show_all()
+ if self.visible then return end
  self.visible=true
  if self.box then self.box:send(self.message,self.wrap,true) end
 end
