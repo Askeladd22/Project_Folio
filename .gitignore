@@ -20,3 +20,6 @@ runs.csv
 
 # Reproducible UI baseline capture output; local PNGs and manifests
 /audits/ui-v2-p0/
+
+# Reproducible FX-lab screenshots (the opt-in audit regenerates these)
+/experiments/fx_lab/audit/*.png

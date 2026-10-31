@@ -141,7 +141,7 @@ function W.border(render,view,height)
  return true
 end
 -- Returns graphical collection coordinates only; identities and transfer timing
--- remain in presentation_view. The current shelf is deliberately untouched.
+-- remain in the active hud_minimal upper-shelf presenter. F8 does not alter them.
 function W.shelf(ax,ay,bx,by)
  if W.current=='current' then return end
  local g=love.graphics;local id=W.current;local depth=48

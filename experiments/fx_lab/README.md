@@ -25,3 +25,12 @@ Audit detail: animated blocks measure an actual active model update, then restor
 Canvas contents are repainted into the existing objects after resize or a window mode change, since the graphics backend can discard their pixels. Each audit mode change also reads all three canvases back outside the timed intervals, asserting substantial opaque content and color variation so two blank panels cannot pass merely by matching each other. Runtime output includes these content checks and LOVE/renderer/version/vendor/device metadata.
 
 At both resolutions the audit calls the actual keyboard and mouse callbacks to check five tabs, play/pause/replay, repeat, independent remembered effect toggles, immediate reduced motion, duration and intensity. Mouse coordinates are transformed through the current letterbox scale/offset. These are synthetic callback tests, not operating-system input automation. Model and selection state are restored afterwards; the checks run outside benchmark sampling.
+
+
+### Versionamento degli output grafici (31 ottobre 2026)
+
+Gli screenshot di `audit/*.png` sono generati da `audit.ps1`, non
+sono risorse del gioco: dopo la pulizia della repository non sono piu
+tracciati e `.gitignore` li esclude da futuri commit. I report storici
+`audit/{metrics.csv,pixel-checks.csv,runtime.txt}` sono conservati.
+Per ricreare i 20 PNG a 720p/1080p rieseguire il comando di audit.

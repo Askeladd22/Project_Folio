@@ -115,7 +115,7 @@ Due comandi iniziali di discovery Python non erano adatti al repository: importa
 
 ## Prestazioni: cosa misurano i numeri
 
-Dati completi e riproducibili: [metrics.csv](experiments/fx_lab/audit/metrics.csv), [runtime.txt](experiments/fx_lab/audit/runtime.txt), [pixel-checks.csv](experiments/fx_lab/audit/pixel-checks.csv).
+Dati completi dello storico audit: [metrics.csv](../experiments/fx_lab/audit/metrics.csv), [runtime.txt](../experiments/fx_lab/audit/runtime.txt), [pixel-checks.csv](../experiments/fx_lab/audit/pixel-checks.csv).
 
 Ogni caso ha dieci frame iniziali esclusi e 54 campioni. Il costo di disegno è **tempo CPU di invio dell'intero laboratorio**, compresi entrambi i pannelli e l'interfaccia. Il modello viene aggiornato realmente, poi la posa di disegno è riportata a metà animazione per il confronto. Non è un benchmark della fluidità di una partita né della durata reale della sequenza. Lettura Canvas, acquisizione PNG e controlli pixel sono fuori dall'intervallo di disegno misurato, ma possono influire indirettamente sul carico del processo.
 
@@ -133,15 +133,22 @@ L'ultima misura osservata è circa **0,12–0,19 ms CPU di disegno** per caso e 
 
 **Tempo GPU non misurato.** Le misure CPU non dimostrano che shader, compositing o LÖVE siano privi di colli di bottiglia su altre schede. La macchina non è stata isolata da tutte le altre applicazioni. Non viene attribuito alcun miglioramento prestazionale al gioco principale, che non è stato modificato.
 
-## Evidenze visive
+## Evidenze visive (rigenerabili)
 
-- [Trasferimento 720p](experiments/fx_lab/audit/effect-1-1280x720-animated.png) / [1080p](experiments/fx_lab/audit/effect-1-1920x1080-animated.png)
-- [Conteggio 720p](experiments/fx_lab/audit/effect-2-1280x720-animated.png) / [1080p](experiments/fx_lab/audit/effect-2-1920x1080-animated.png)
-- [Inchiostro 720p](experiments/fx_lab/audit/effect-3-1280x720-animated.png) / [1080p](experiments/fx_lab/audit/effect-3-1920x1080-animated.png)
-- [Oro 720p](experiments/fx_lab/audit/effect-4-1280x720-animated.png) / [1080p](experiments/fx_lab/audit/effect-4-1920x1080-animated.png)
-- [Luce 720p](experiments/fx_lab/audit/effect-5-1280x720-animated.png) / [1080p](experiments/fx_lab/audit/effect-5-1920x1080-animated.png)
+I **20 PNG dello storico audit** (5 effetti × 2 risoluzioni ×
+animato/disabilitato) sono stati rimossi dal repository il 31 ottobre 2026:
+sono catture generate, non asset di gioco. Restano recuperabili tramite
+la cronologia Git precedente alla pulizia oppure rigenerabili con:
 
-Nella stessa cartella ci sono i dieci confronti `disabled`. Sono snapshot controllati, non filmati a velocità reale. Per giudicare il movimento usare Replay/Repeat nel laboratorio eseguibile; non inferire la qualità del ritmo da una sola immagine.
+```powershell
+powershell -ExecutionPolicy Bypass -File experiments/fx_lab/audit.ps1
+```
+
+I nuovi screenshot saranno salvati localmente in
+`experiments/fx_lab/audit/` e ignorati da Git. I tre report testuali
+storici riportati sopra restano tracciati e verificabili.
+Una cattura statica non dimostra il ritmo di animazione: per questo
+occorre comunque osservare Replay/Repeat nel laboratorio LÖVE.
 
 ## Graduatoria per un'eventuale integrazione
 
