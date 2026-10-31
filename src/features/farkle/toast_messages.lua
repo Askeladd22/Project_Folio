@@ -25,6 +25,10 @@ end
 
 function M.show(message)
  if type(message)~='string' or message=='' then return end
+ -- The canonical V2 HUD now emits notifications in every Farkle path.
+ -- In headless rules/controller tests LÖVE graphics is intentionally absent:
+ -- never load upstream Lovely Toasts before graphics exists.
+ if not (love and love.graphics and love.graphics.newFont) then return end
  local t=instance()
  t.options.animationDuration=RuntimeUI.reduced_animations() and .001 or .23
  -- Position 113 in 1920x1080 virtual coordinates, above the actual tray;
