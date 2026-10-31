@@ -11,9 +11,9 @@
 - **BASELINE DI DOCUMENTAZIONE:** `main@929e377fafde2b76a0d40681bf3c1e42ff655914`.
 - **BRANCH DI DOCUMENTAZIONE:** `docs/ui-v2-execution-plan-20261031`.
 - **PR DI DOCUMENTAZIONE:** [#27 — UI 2.0 roadmap e tracker](https://github.com/Askeladd22/manuscript/pull/27) (aperta; attendere verifica CI/review).
-- **PR DI P0 (inventario e test):** branch `docs/ui-v2-p0-interaction-baseline-20261031`, PR da registrare dopo la creazione. Nessuna modifica al gioco né alla UI visuale.
+- **PR DI P0 (inventario e test):** [#28](https://github.com/Askeladd22/manuscript/pull/28), branch `docs/ui-v2-p0-interaction-baseline-20261031` (stacked su PR #27). Nessuna modifica al gioco né alla UI visuale.
 - **UI 2.0 NEL GIOCO:** non esiste ancora; l'HUD attuale resta quello predefinito.
-- **CI per la baseline P0:** `tests/ui_v2_interaction_inventory_test.lua` creato; risultato dell'ultima CI da verificare dopo apertura PR.
+- **CI per la baseline P0:** [run 41188657689](https://github.com/Askeladd22/manuscript/actions/runs/41188657689) **SUCCESS** (Lua 5.4, LuaJIT, laboratori FPS, test Python); il primo run 41188566125 falliva per un'errata aspettativa del test su `ended`, corretta nella PR #28.
 - **QA WINDOWS / SCREENSHOT:** non ancora completata per una baseline identificata con commit; servono 1920×1080 e 1280×720 (fresh, held gruppo, ready con combinazione, modale, ricompensa).
 
 ## Fasi e gate
@@ -74,7 +74,7 @@
 | Data | Fase | Risultato reale | Link/CI | Prossimo passo |
 |---|---|---|---|---|
 | 2026-10-31 | P0 | Roadmap e tracker iniziali | [PR #27](https://github.com/Askeladd22/manuscript/pull/27); CI riuscita | Matrice e baseline verificabile |
-| 2026-10-31 | P0 | Matrice di interazione e test headless introdotti; produzione intatta | PR P0 da registrare; CI da verificare | Screenshot Windows, folio modal, accessibilità e FPS baseline |
+| 2026-10-31 | P0 | Matrice di interazione e test headless introdotti; produzione intatta. Corretto test: `ended` termina il turno, non la commissione | [PR #28](https://github.com/Askeladd22/manuscript/pull/28); [CI 41188657689](https://github.com/Askeladd22/manuscript/actions/runs/41188657689) **successo** | Screenshot Windows, folio modal, accessibilità e FPS baseline |
 
 ### Mini-template di aggiornamento (duplicare a fine sessione)
 
