@@ -10,7 +10,7 @@ Risk every throw. Build your manuscript. Decide when to stop.
 ![LÖVE](https://img.shields.io/badge/L%C3%96VE-11.x-ec5d94)
 ![Status](https://img.shields.io/badge/status-active%20prototype-cc9955)
 
-[**Italiano**](README.it.md) · [Game design](docs/GAME_DESIGN.md) · [Farkle rules](docs/FARKLE_RULES.md) · [Technical notes](docs/TECHNICAL.md)
+[**Italiano**](README.it.md) · [Game design](docs/GAME_DESIGN.md) · [Farkle rules](docs/FARKLE_RULES.md) · [Technical notes](docs/TECHNICAL.md) · [UI 2.0 roadmap](docs/UI_V2_ROADMAP.md)
 
 </div>
 
