@@ -148,3 +148,13 @@ For detailed design decisions, consult [GAME_DESIGN.md](docs/GAME_DESIGN.md) and
 - Additional third-party fonts, effects and assets have their notices in `third_party/`, `resources/` and related source directories. Check individual terms before redistributing any asset.
 
 **The repository has no project-wide root `LICENSE` file at present.** MIT permissions for vendored libraries **do not** automatically license the game's original source code, artwork or music. Contact the repository owner for redistribution or commercial-use authorization until a project license is published.
+
+
+## Beta duel vs a 2D manuscript miniature
+
+Choose **Sfida il Monaco (beta)** in the main menu to play an optional
+one-commission Farkle duel against an AI-controlled **flat 2D monk**.
+The human still uses the original physically rolled g3d dice and tray.
+The opponent uses an independent fair virtual D6 generator and official
+Farkle rules; the normal solo campaign is unchanged. See
+[bot duel and Lovely Toasts documentation](docs/BOT_DUEL_AND_TOASTS.md).
