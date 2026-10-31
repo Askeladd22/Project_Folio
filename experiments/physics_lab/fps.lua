@@ -14,6 +14,8 @@ int fpslab_step_support(fpslab *,float dt);
 int fpslab_set_euler(fpslab *,int index,float rx,float ry,float rz);
 int fpslab_grip_step(fpslab *, const float *hand,float dt,
                      float stiffness,float damping,float shake,int contacts);
+int fpslab_grip_step_compatible(fpslab *,const float *hand,float dt,
+ float stiffness,float damping,float shake,int contacts,float clearance,float repel);
 int fpslab_version(void);
 ]]
 local so=ffi.os=='Windows' and './experiments/physics_lab/build/fpslab.dll'
@@ -85,6 +87,21 @@ function N.grip_step(world,target,dt,stiffness,damping,shake,contacts)
  assert(lib.fpslab_grip_step(world,hand,dt,stiffness or 25,
                             damping or 8,shake or 0,contacts and 1 or 0)==1,
         'FPS Lab 4 grip step rejected')
+end
+
+-- Lab 5 only: add smooth *held-stage* pairwise repulsion, rather than
+-- teleporting FPS cubes apart at the instant of release. Manuscript's
+-- production solver approximates contacts with larger collision spheres.
+function N.grip_step_compatible(world,target,dt,stiffness,damping,shake,clearance,repel)
+ assert(type(target)=='table' and #target==3)
+ for k=1,3 do
+  local n=tonumber(target[k])
+  assert(n and n==n and math.abs(n)<math.huge,'finite target required')
+  hand[k-1]=n
+ end
+ assert(lib.fpslab_grip_step_compatible(world,hand,dt,stiffness or 23,
+  damping or 8,shake or 0,1,clearance or 1.64,repel or 180)==1,
+  'FPS Lab 5 compatible grip rejected')
 end
 
 function N.set_euler(world,index,rx,ry,rz)
