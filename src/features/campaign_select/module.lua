@@ -3,6 +3,7 @@ local I18n = require("src.core.i18n")
 local MenuParticles = require("src.core.menu_particles")
 local Navigation = require("src.core.navigation")
 local RuntimeUI = require("src.core.runtime_ui")
+local MenuSurface = require("src.features.ui_v2.menu_surface")
 local Schema = require("src.core.schema")
 local CommissionMenu = require("src.data.commission_menu")
 local CampaignSelectSchema = require("src.data.campaign_select_schema")
@@ -10,27 +11,17 @@ local CampaignSelectSchema = require("src.data.campaign_select_schema")
 local CampaignSelect = {}
 
 local ASSET_SCHEMA = CampaignSelectSchema.assets or {}
-local COLOR_SCHEMA = CampaignSelectSchema.colors or {}
 local TEXT_SCHEMA = CampaignSelectSchema.text or {}
 local FLOW_SCHEMA = CampaignSelectSchema.flow or {}
 
 local expect_string = Schema.expect_string
 local expect_number = Schema.expect_number
 local expect_entry = Schema.expect_entry
-local expect_color3 = Schema.expect_color3
 
 local MENU_BG_PATH = expect_string(ASSET_SCHEMA.background_path, "assets.background_path")
 local FONT_TEXT = expect_string(ASSET_SCHEMA.font_text, "assets.font_text")
 local FONT_UPPERCASE = expect_string(ASSET_SCHEMA.font_uppercase, "assets.font_uppercase")
 local FONT_FALLBACK = expect_string(ASSET_SCHEMA.font_fallback, "assets.font_fallback")
-
-local MENU_TITLE_GOLD = expect_color3(COLOR_SCHEMA.title_gold, "colors.title_gold")
-local MENU_SUBTITLE_IVORY = expect_color3(COLOR_SCHEMA.subtitle_ivory, "colors.subtitle_ivory")
-local MENU_TEXT_ACTIVE = expect_color3(COLOR_SCHEMA.text_active, "colors.text_active")
-local MENU_TEXT_PRIMARY = expect_color3(COLOR_SCHEMA.text_primary, "colors.text_primary")
-local MENU_TEXT_SECONDARY = expect_color3(COLOR_SCHEMA.text_secondary, "colors.text_secondary")
-local MENU_TEXT_SHADOW = expect_color3(COLOR_SCHEMA.text_shadow, "colors.text_shadow")
-local MENU_ACCENT_FILL = expect_color3(COLOR_SCHEMA.accent_fill, "colors.accent_fill")
 
 local BRANDING_TITLE_ENTRY = expect_entry(TEXT_SCHEMA.branding_title, "text.branding_title")
 local SUBTITLE_ENTRY = expect_entry(TEXT_SCHEMA.subtitle, "text.subtitle")
@@ -119,7 +110,9 @@ local function load_font(candidates, size)
 end
 
 local function ensure_assets()
-    local scale = RuntimeUI.scale()
+    local _,height = love.graphics.getDimensions()
+    local scale = RuntimeUI.scale() * math.max(.63,math.min(1.15,height/1080))
+        * (RuntimeUI.big_text() and 1.12 or 1)
     if cached_scale ~= scale then
         title_font = nil
         subtitle_font = nil
@@ -135,16 +128,16 @@ local function ensure_assets()
     end
 
     if not title_font then
-        title_font = load_font({FONT_TEXT, FONT_UPPERCASE, FONT_FALLBACK}, RuntimeUI.sized(94))
+        title_font = load_font({FONT_TEXT, FONT_UPPERCASE, FONT_FALLBACK}, math.max(24,math.floor(94*scale+.5)))
     end
     if not subtitle_font then
-        subtitle_font = load_font({FONT_TEXT, FONT_UPPERCASE, FONT_FALLBACK}, RuntimeUI.sized(46))
+        subtitle_font = load_font({FONT_TEXT, FONT_UPPERCASE, FONT_FALLBACK}, math.max(18,math.floor(46*scale+.5)))
     end
     if not item_font then
-        item_font = load_font({FONT_TEXT, FONT_UPPERCASE, FONT_FALLBACK}, RuntimeUI.sized(38))
+        item_font = load_font({FONT_TEXT, FONT_UPPERCASE, FONT_FALLBACK}, math.max(18,math.floor(38*scale+.5)))
     end
     if not detail_font then
-        detail_font = load_font({FONT_TEXT, FONT_UPPERCASE, FONT_FALLBACK}, RuntimeUI.sized(22))
+        detail_font = load_font({FONT_TEXT, FONT_UPPERCASE, FONT_FALLBACK}, math.max(13,math.floor(22*scale+.5)))
     end
 end
 
@@ -157,82 +150,55 @@ local function update_particles(dt)
 end
 
 local function build_layout()
-    local w, h = love.graphics.getWidth(), love.graphics.getHeight()
-    local center_x = w * 0.5
-    local max_main_w = math.min(980, w * 0.78)
-
-    local layout = {
-        w = w,
-        h = h,
-        center_x = center_x,
-        max_main_w = max_main_w,
-        title_y = math.floor(h * 0.08),
-        subtitle_y = math.floor(h * 0.31),
-        items = {},
-    }
-
-    local entries = #campaigns + 1
-    local item_face = item_font or love.graphics.getFont()
-    local detail_face = detail_font or love.graphics.getFont()
-    local item_h = item_face:getHeight()
-    local detail_h = detail_face:getHeight()
-    local row_h = math.max(item_h + detail_h + RuntimeUI.sized(12), math.floor(h * 0.065))
-    local row_gap = math.max(14, math.floor(row_h * 0.30))
-    local subtitle_h = (subtitle_font and subtitle_font:getHeight()) or math.floor(h * 0.05)
-    local top_anchor = layout.subtitle_y + subtitle_h + 34
-    local bottom_limit = h - math.floor(h * 0.16)
-    local available = math.max(row_h, bottom_limit - top_anchor)
-    local total_h = entries * row_h + (entries - 1) * row_gap
-
-    if total_h > available and entries > 1 then
-        local fitted_gap = math.floor((available - entries * row_h) / (entries - 1))
-        row_gap = math.max(8, fitted_gap)
-        total_h = entries * row_h + (entries - 1) * row_gap
-        if total_h > available then
-            row_h = math.max(item_h + detail_h + 8, math.floor((available - (entries - 1) * row_gap) / entries))
-            total_h = entries * row_h + (entries - 1) * row_gap
-        end
+    local w,h=love.graphics.getDimensions()
+    local panel_w=math.min(math.floor(w*.78),RuntimeUI.sized(1100))
+    local panel_x=(w-panel_w)*.5
+    local pad=math.max(18,math.floor(panel_w*.07))
+    local content_w=panel_w-2*pad
+    local title_y=math.floor(h*.145)
+    local subtitle_y=math.floor(h*.31)
+    local item_face=item_font or love.graphics.getFont()
+    local detail_face=detail_font or love.graphics.getFont()
+    local item_h=item_face:getHeight()
+    local detail_h=detail_face:getHeight()
+    local row_h=math.max(item_h+detail_h+RuntimeUI.sized(14),
+        math.floor(h*.080))
+    local row_gap=math.max(10,math.floor(h*.018))
+    local subtitle_h=(subtitle_font or love.graphics.getFont()):getHeight()
+    local start_y=subtitle_y+subtitle_h+math.max(28,math.floor(h*.052))
+    local entries=#campaigns+1
+    local bottom_limit=h-math.max(26,math.floor(h*.09))
+    local available=bottom_limit-start_y-30
+    if row_h*entries+row_gap*(entries-1)>available then
+        row_gap=math.max(6,math.floor(row_gap*.60))
+        row_h=math.max(item_h+detail_h+4,
+            math.floor((available-row_gap*(entries-1))/entries))
     end
-
-    local start_y = top_anchor
-    if total_h < available then
-        start_y = top_anchor + math.floor((available - total_h) * 0.14)
-    end
-
-    local row_w = max_main_w * 0.92
-
-    for i, campaign in ipairs(campaigns) do
-        local y = start_y + (i - 1) * (row_h + row_gap)
-        local label = campaign.title or campaign.id
-        if campaign.subtitle and campaign.subtitle ~= "" then
-            label = label .. " - " .. campaign.subtitle
+    local items={}
+    for i,campaign in ipairs(campaigns) do
+        local label=campaign.title or campaign.id
+        if campaign.subtitle and campaign.subtitle~="" then
+            label=label.." - "..campaign.subtitle
         end
-        local detail = campaign.detail
-        layout.items[#layout.items + 1] = {
-            id = "campaign:" .. tostring(i),
-            kind = "campaign",
-            campaign_index = i,
-            label = label,
-            detail = detail,
-            x = center_x - row_w * 0.5,
-            y = y,
-            w = row_w,
-            h = row_h,
+        items[#items+1]={
+            id="campaign:"..tostring(i),kind="campaign",campaign_index=i,
+            label=label,detail=campaign.detail,
+            x=panel_x+pad,y=start_y+(i-1)*(row_h+row_gap),
+            w=content_w,h=row_h,
         }
     end
-
-    local back_y = start_y + (#campaigns) * (row_h + row_gap)
-    layout.items[#layout.items + 1] = {
-        id = "back",
-        kind = "back",
-        label = tr_entry(BACK_ENTRY),
-        x = center_x - row_w * 0.5,
-        y = back_y,
-        w = row_w,
-        h = row_h,
+    local back_y=start_y+#campaigns*(row_h+row_gap)
+    items[#items+1]={
+        id="back",kind="back",label=tr_entry(BACK_ENTRY),
+        x=panel_x+pad,y=back_y,w=content_w,h=row_h,
     }
-
-    return layout
+    local frame_top=math.max(18,title_y-math.max(34,math.floor(h*.052)))
+    local frame_bottom=math.min(h-18,back_y+row_h+math.max(25,math.floor(h*.048)))
+    return {
+        w=w,h=h,center_x=w*.5,max_main_w=panel_w,
+        title_y=title_y,subtitle_y=subtitle_y,items=items,
+        frame={x=panel_x,y=frame_top,w=panel_w,h=frame_bottom-frame_top},
+    }
 end
 
 local function draw_background(layout)
@@ -250,16 +216,8 @@ local function draw_background(layout)
         love.graphics.rectangle("fill", 0, 0, w, h)
     end
 
-    love.graphics.setColor(0, 0, 0, high_contrast and 0.90 or 0.83)
-    love.graphics.rectangle("fill", 0, 0, w * 0.52, h)
-    love.graphics.setColor(0, 0, 0, high_contrast and 0.52 or 0.38)
-    love.graphics.rectangle("fill", w * 0.52, 0, w * 0.24, h)
-    love.graphics.setColor(0, 0, 0, high_contrast and 0.58 or 0.50)
-    love.graphics.rectangle("fill", 0, 0, w, h * 0.16)
-    love.graphics.setColor(0, 0, 0, high_contrast and 0.80 or 0.68)
-    love.graphics.rectangle("fill", 0, h * 0.84, w, h * 0.16)
-    love.graphics.setColor(0.36, 0.20, 0.06, high_contrast and 0.12 or 0.08)
-    love.graphics.rectangle("fill", 0, 0, w, h)
+    MenuSurface.backdrop(w,h,high_contrast,1)
+    MenuSurface.panel(layout.frame,{high_contrast=high_contrast})
 
     MenuParticles.draw(particles, w, h, RuntimeUI.scale(), high_contrast)
 end
@@ -271,82 +229,46 @@ local function draw_title(layout)
     local subtitle_face = subtitle_font or love.graphics.getFont()
 
     love.graphics.setFont(title_face)
-    love.graphics.setColor(MENU_TEXT_SHADOW[1], MENU_TEXT_SHADOW[2], MENU_TEXT_SHADOW[3], high_contrast and 0.74 or 0.54)
-    local title_text = tr_entry(BRANDING_TITLE_ENTRY)
-    love.graphics.printf(title_text, center_x - 500 + 3, layout.title_y + 3, 1000, "center")
-    love.graphics.setColor(MENU_TITLE_GOLD[1], MENU_TITLE_GOLD[2], MENU_TITLE_GOLD[3], 1)
-    love.graphics.printf(title_text, center_x - 500, layout.title_y, 1000, "center")
-
+    local title_text=tr_entry(BRANDING_TITLE_ENTRY)
+    love.graphics.setColor(.29,.18,.09,1)
+    love.graphics.printf(title_text,center_x-layout.max_main_w*.5+20,
+        layout.title_y,layout.max_main_w-40,"center")
     love.graphics.setFont(subtitle_face)
-    love.graphics.setColor(
-        high_contrast and 1.00 or MENU_SUBTITLE_IVORY[1],
-        high_contrast and 0.96 or MENU_SUBTITLE_IVORY[2],
-        high_contrast and 0.88 or MENU_SUBTITLE_IVORY[3],
-        high_contrast and 1.00 or 0.92
-    )
-    love.graphics.printf(tr_entry(SUBTITLE_ENTRY), center_x - 450, layout.subtitle_y, 900, "center")
-
-    local y = layout.subtitle_y + subtitle_face:getHeight() + 8
-    love.graphics.setColor(0.92, 0.74, 0.32, high_contrast and 0.50 or 0.34)
-    love.graphics.rectangle("fill", center_x - 210, y, 180, 2)
-    love.graphics.rectangle("fill", center_x + 30, y, 180, 2)
-    love.graphics.polygon("fill", center_x, y + 6, center_x + 6, y, center_x, y - 6, center_x - 6, y)
+    love.graphics.setColor(.43,.29,.16,1)
+    love.graphics.printf(tr_entry(SUBTITLE_ENTRY),
+        center_x-layout.max_main_w*.5+30,layout.subtitle_y,
+        layout.max_main_w-60,"center")
+    local y=layout.subtitle_y+subtitle_face:getHeight()+math.max(8,layout.h*.012)
+    MenuSurface.rule(center_x-170,y,340,1)
 end
 
 local function draw_items(layout)
-    local item_face = item_font or love.graphics.getFont()
-    local detail_face = detail_font or love.graphics.getFont()
-    local item_h = item_face:getHeight()
-    local detail_h = detail_face:getHeight()
-
-    for i, item in ipairs(layout.items) do
-        local item_progress = ease_out_cubic(get_entrance_progress(0.14 + (i - 1) * 0.08, 0.55))
-        local x_offset = RuntimeUI.sized(24) * (1 - item_progress)
-        local draw_x = item.x - x_offset
-        local is_hovered = hovered_id == item.id
-        local is_selected = item.kind == "campaign" and selected_index == item.campaign_index
-        local active = is_hovered or is_selected
-
-        if active then
-            love.graphics.setColor(MENU_ACCENT_FILL[1], MENU_ACCENT_FILL[2], MENU_ACCENT_FILL[3], 0.16 * item_progress)
-            love.graphics.rectangle("fill", draw_x, item.y + 2, item.w, item.h - 4, 8, 8)
-        end
-
-        local label_color = active and MENU_TEXT_ACTIVE or MENU_TEXT_PRIMARY
-        local detail_color = active and MENU_TEXT_ACTIVE or MENU_TEXT_SECONDARY
-        if item.kind == "back" then
-            label_color = active and MENU_TEXT_ACTIVE or MENU_TEXT_PRIMARY
-        end
-
-        if item.kind == "campaign" then
-            local text_block_h = item_h + detail_h + RuntimeUI.sized(4)
-            local text_top = item.y + math.floor((item.h - text_block_h) * 0.5)
-            local label_w = item_face:getWidth(item.label)
-            local label_x = draw_x + (item.w - label_w) * 0.5
-            local detail_w = detail_face:getWidth(item.detail)
-            local detail_x = draw_x + (item.w - detail_w) * 0.5
-
-            love.graphics.setFont(item_face)
-            love.graphics.setColor(MENU_TEXT_SHADOW[1], MENU_TEXT_SHADOW[2], MENU_TEXT_SHADOW[3], 0.56 * item_progress)
-            love.graphics.print(item.label, label_x + 1, text_top + 1)
-            love.graphics.setColor(label_color[1], label_color[2], label_color[3], (active and 1.0 or 0.95) * item_progress)
-            love.graphics.print(item.label, label_x, text_top)
-
-            love.graphics.setFont(detail_face)
-            love.graphics.setColor(MENU_TEXT_SHADOW[1], MENU_TEXT_SHADOW[2], MENU_TEXT_SHADOW[3], 0.46 * item_progress)
-            love.graphics.print(item.detail, detail_x + 1, text_top + item_h + RuntimeUI.sized(4) + 1)
-            love.graphics.setColor(detail_color[1], detail_color[2], detail_color[3], (active and 0.95 or 0.85) * item_progress)
-            love.graphics.print(item.detail, detail_x, text_top + item_h + RuntimeUI.sized(4))
-        else
-            local label_w = item_face:getWidth(item.label)
-            local label_x = draw_x + (item.w - label_w) * 0.5
-            local label_y = item.y + math.floor((item.h - item_h) * 0.5)
-
-            love.graphics.setFont(item_face)
-            love.graphics.setColor(MENU_TEXT_SHADOW[1], MENU_TEXT_SHADOW[2], MENU_TEXT_SHADOW[3], 0.56 * item_progress)
-            love.graphics.print(item.label, label_x + 1, label_y + 1)
-            love.graphics.setColor(label_color[1], label_color[2], label_color[3], (active and 1.0 or 0.95) * item_progress)
-            love.graphics.print(item.label, label_x, label_y)
+    local face=item_font or love.graphics.getFont()
+    local detail=detail_font or love.graphics.getFont()
+    local item_h=face:getHeight()
+    local detail_h=detail:getHeight()
+    for i,item in ipairs(layout.items) do
+        local progress=ease_out_cubic(get_entrance_progress(.14+(i-1)*.08,.55))
+        local active=hovered_id==item.id or
+           (item.kind=='campaign' and selected_index==item.campaign_index)
+        local disabled=item.kind=='campaign' and
+           not campaigns[item.campaign_index].implemented
+        MenuSurface.item(item,{
+            active=active,disabled=disabled,
+            primary=item.kind=='campaign',alpha=progress})
+        local ink=active and {.29,.18,.08} or {.35,.24,.13}
+        local faded={.49,.36,.23}
+        if disabled then ink={.56,.51,.43};faded=ink end
+        local top=item.y+(item.h-item_h-(item.kind=='campaign' and
+           (detail_h+RuntimeUI.sized(4)) or 0))*.5
+        love.graphics.setFont(face)
+        love.graphics.setColor(ink[1],ink[2],ink[3],progress)
+        love.graphics.printf(item.label,item.x+20,top,item.w-40,"center")
+        if item.kind=='campaign' then
+            love.graphics.setFont(detail)
+            love.graphics.setColor(faded[1],faded[2],faded[3],progress)
+            love.graphics.printf(item.detail or "",item.x+20,
+              top+item_h+RuntimeUI.sized(4),item.w-40,"center")
         end
     end
 end

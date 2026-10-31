@@ -61,6 +61,18 @@ vivono in `ui_v2/dialogs.lua`; il loro redesign
 visivo completo è ancora un'attività aperta.
 Vedere [stato e gate di QA](docs/UI_V2_STATUS.md).
 
+## Menu e commissioni — stile folio
+
+Da `0.1.0-dev.8` il menu principale, la scelta di
+commissioni e i dialoghi del Farkle utilizzano il
+componente comune `src/features/ui_v2/menu_surface.lua`:
+pagine di pergamena e bordi miniati al posto
+delle vecchie fasce scure. È conservato il fondale
+della bottega; le azioni del menu e le regole
+di gioco rimangono le stesse. Le risoluzioni
+720p/1080p/1440p sono coperte dai test di geometria;
+la verifica fotografica LÖVE Windows resta da fare.
+
 ## Overview
 
 The display name is temporary. The `manuscript` repository, internal `scriptorium` scene IDs and existing save identity stay unchanged for compatibility; they are not the public-facing game title.
