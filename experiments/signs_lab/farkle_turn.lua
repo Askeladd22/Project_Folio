@@ -30,6 +30,19 @@ end
 -- Same (seed, hand, roll index, D6 ID) => same die face even if other
 -- policies previously consumed a different number of virtual dice.
 -- Not a cryptographic RNG and not suitable as a production physics source.
+-- Lua 5.1/5.4 portable 31-bit XOR: index mixing needs an avalanche,
+-- not just a linear congruential offset (which gives highly correlated dice).
+local function xor31(a,b)
+ local out,place=0,1
+ for _=1,31 do
+  if a%2~=b%2 then out=out+place end
+  a=math.floor(a/2)
+  b=math.floor(b/2)
+  place=place*2
+ end
+ return out
+end
+
 function M.matched_rolls(seed,hand)
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and
   seed<2147483647,'seed must be integer 1..2147483646')
@@ -41,10 +54,12 @@ function M.matched_rolls(seed,hand)
    'valid roll index required')
   assert(type(id)=='number' and id%1==0 and id>=1 and id<=6,
    'physical die ID required')
-  local value=(seed+(hand-1)*104729+(roll-1)*13007+
-   (id-1)*8191)%2147483646+1
+  local value=(seed+hand*104729+roll*13007+id*8191)%2147483646+1
+  value=xor31(value,math.floor(value/32768))
+  value=(value*48271)%2147483647
+  value=xor31(value,math.floor(value/4096))
   value=(value*16807)%2147483647
-  value=(value*16807)%2147483647
+  value=xor31(value,math.floor(value/256))
   return 1+math.floor((value/2147483647)*6)
  end
 end
