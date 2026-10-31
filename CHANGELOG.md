@@ -10,6 +10,57 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.5] - 2026-10-31
+
+**Tipo:** esperimento di game design riproducibile, non nuova funzione
+della campagna né modifica alle regole Farkle approvate.
+
+### Aggiunto
+- Laboratorio isolato `experiments/signs_lab/` per verificare
+  l'ipotesi di **Incontri asimmetrici e Duello delle Poste**.
+  Il `Leone della Bordura` dispone di un sacchetto di sei Segni
+  (Assalto, Guardia, Occasione) con forze e conseguenze
+  **esplicitamente provvisorie** tratte dal documento di design.
+- Sacchetto deterministico con **pesca senza reinserimento**,
+  categoria annunciata prima della scelta di rischio, forza
+  rivelata solo alla risoluzione, scarti e riciclo solo
+  dopo esaurimento.
+- Simulatore A/B/C in Lua puro, con le **vere** funzioni
+  di `src/gameplay/farkle/rules.lua` per lanciare virtualmente,
+  scegliere combinazioni, accantonare, rilanciare, incassare
+  o perdere il provvisorio al Farkle. Non viene alterato il
+  gioco fisico né il RNG globale.
+- Tre politiche di rischio diagnostiche (prudente, audace,
+  reattiva alla categoria annunciata), con tabella
+  riproducibile di frequenze, durata, Farkle, scelte
+  e stati di disaccordo. Comando:
+  `luajit experiments/signs_lab/run.lua 100 20261031`.
+- Nuovi test `tests/signs_encounter_lab_test.lua` per
+  forza non rivelata, un solo Segno per mano completata,
+  riciclo, vincita/sconfitta/parità, esiti Farkle,
+  punteggio ufficiale e assenza di hook in produzione.
+
+### Modificato
+- `version.txt` da `0.1.0-dev.4` a `0.1.0-dev.5`.
+- Aggiornati documento Incontri e Segni, Game Design,
+  README e istruzioni del laboratorio, distinguendo
+  **fixture sperimentale** e gameplay effettivo.
+- Il workflow di regressione esegue un breve benchmark
+  a seme fisso oltre ai test automatici.
+
+### Verifiche e limiti
+- Controlli Lua 5.4/LuaJIT, laboratorio fisico FPS e test
+  Python richiesti via CI; **nessun playtest Windows LÖVE
+  e nessuna approvazione di bilanciamento**.
+- Le percentuali di successo A, B e C **non sono
+  confrontabili come misura di difficoltà**, perché
+  gli obiettivi e i massimi di mani differiscono.
+  L'analisi serve a individuare scelte dominate e
+  domande per un vero playtest.
+- **Non modifica** `main.lua`, controller Farkle,
+  g3d, fisica, menu, ricompense, medaglie o
+  il beta simmetrico contro il Monaco.
+
 ## [0.1.0-dev.4] - 2026-10-31
 
 **Tipo:** hotfix per crash di avvio segnalato su Windows LÖVE.

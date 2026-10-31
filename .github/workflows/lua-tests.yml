@@ -56,6 +56,9 @@ jobs:
             luajit "$test"
             echo "::endgroup::"
           done
+      - name: Deterministic A/B/C signs benchmark (research only)
+        run: |
+          luajit experiments/signs_lab/run.lua 12 20261031
       - name: Build and smoke-test isolated native FPS lab
         run: |
           set -eu

@@ -2,6 +2,14 @@
 
 **Versione 0.7 · 30 ottobre 2026.** Documento canonico. Manuscript è il titolo di lavoro; Scriptorium è il nome storico. Le etichette distinguono **attuale**, **approvato**, **proposta** e **aperto**. Per il comportamento effettivo prevalgono sorgenti e test; un'intenzione non è una funzionalità implementata.
 
+> **Stato prototipi al 31 ottobre 2026:** nel laboratorio
+> [`experiments/signs_lab`](../experiments/signs_lab/README.md)
+> esiste una simulazione riproducibile A/B/C di Incontri e
+> Segni. La variante C è una *ipotesi non approvata* e non
+> entra nel gameplay. Nel gioco resta separatamente
+> disponibile il beta simmetrico del Monaco (PR #36);
+> miniatura 2D e dadi/tray g3d 3D sono invariati.
+>
 ## Identità e pilastri
 
 Roguelite solitario ambientato in una bottega libraria del XV secolo, con una **nuova cornice narrativa approvata come direzione di progetto**: un copista lavora di giorno, frequenta un luogo di gioco d'azzardo la sera e, nel sonno, sovrappone la tensione dei dadi al proprio lavoro sul manoscritto. L'esatta città, la routine, i personaggi e la forma della narrazione rimangono aperti. Il nucleo è sempre il Farkle fisico: lanciare sei dadi, scegliere che cosa accantonare, assicurare punti o rischiarli. **Attuale:** commissioni e turni disponibili definiscono la sfida, senza IA avversaria. **Direzione di game design approvata, non implementata:** figure miniaturizzate che escono dal folio e diventano avversari asimmetrici; una volta superate, ritornano nel libro. Il Farkle resta il protagonista e il rischio deve essere più emozionante, non più burocratico. Vedere [Incontri e Segni](INCONTRI_E_SEGNI.md).
