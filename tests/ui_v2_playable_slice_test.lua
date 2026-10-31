@@ -134,18 +134,20 @@ local function source(path)
  local f=assert(io.open(path));local s=f:read('*a');f:close();return s
 end
 local c=source('src/features/farkle/controller.lua')
-assert(c:find("os.getenv('MANUSCRIPT_UI_V2_EXPERIMENT')=='1'",1,true))
-assert(c:find("if k=='f6'",1,true))
-assert(c:find("require('src.features.farkle.hud_minimal').draw(self)",1,true),
- 'P2 legacy HUD rollback must exist')
+assert(not c:find('hud_minimal',1,true),
+ 'retired frontend must have no production fallback')
+assert(not c:find('MANUSCRIPT_UI_V2_EXPERIMENT',1,true))
+assert(not c:find("if k=='f6'",1,true),
+ 'F6 must not switch back to deleted HUD')
 assert(c:find("require('src.features.farkle.ui_v2.hud').draw(self)",1,true),
- 'P2 playable renderer must be reachable')
+ 'the V2 HUD must be the default display')
 local v=source('src/features/farkle/ui_v2/hud.lua')
-assert(v:find('Indicators.draw(u,hits)',1,true) and
-       v:find('Legacy.overlay(u,hits,{hideIndicators=true})',1,true),
- 'P3 must own dice indications while preserving real shelf and modal overlays')
+assert(v:find('Indicators.draw(u,hits)',1,true))
+assert(v:find('Accepted.draw(u)',1,true))
+assert(v:find('Dialogs.overlay(u,hits)',1,true))
+assert(not v:find('hud_minimal',1,true))
 assert(v:find('Folio.draw(s,u.presentation',1,true),
  'P2 folio must use current Farkle state')
 assert(v:find('u.buttons[a.id]',1,true),
  'P2 must register input in original controller hitbox table')
-print('PASS UI v2 P2: authoritative Farkle action availability, direct bank, manual grip, reward/modals, rollback and hitbox projection')
+print('PASS UI v2 default: Farkle actions, grip, reward/dialogs, no legacy fallback and hitbox projection')
