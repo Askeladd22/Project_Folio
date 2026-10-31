@@ -6,6 +6,8 @@ local H=require('src.features.farkle.hud_model')
 local Res=require('src.core.resolution_manager')
 local Presentation=require('src.features.farkle.presentation')
 local FolioView=require('src.features.farkle.folio_view')
+local MenuSurface=require('src.features.ui_v2.menu_surface')
+local RuntimeUI=require('src.core.runtime_ui')
 -- Dialog/reward presenter for the canonical UI v2. This module owns modal hitboxes
 -- but never draws the old work surface or implements a fallback HUD.
 local V={};local fonts={}
@@ -14,25 +16,24 @@ local function txt(s,x,y,w,size,c,align)
  local g=love.graphics;fonts[size]=fonts[size] or g.newFont(size);g.setFont(fonts[size]);g.setColor(unpack(c or ink));g.printf(tostring(s),x,y,w,align or 'left')
 end
 local function panel(x,y,w,h)
- local g=love.graphics;g.setColor(.08,.04,.02,.35);g.rectangle('fill',x+5,y+7,w,h,5)
- g.setColor(.96,.89,.74,1);g.rectangle('fill',x,y,w,h,3)
- g.setColor(.40,.26,.13,1);g.setLineWidth(2);g.rectangle('line',x,y,w,h,3)
- g.setLineWidth(1)
+ MenuSurface.panel({x=x,y=y,w=w,h=h},
+  {high_contrast=RuntimeUI.high_contrast()})
 end
 local function button(u,id,label,x,y,w,h,on,fn,primary)
- local g=love.graphics;local c=not on and {.73,.69,.60,1} or primary and green or {.96,.89,.73,1}
+ local g=love.graphics
  local dieIndicator=id:match('^die%d$')
  if not dieIndicator or primary then
-  g.setColor(unpack(c));g.rectangle('fill',x,y,w,h,4);g.setColor(.37,.24,.12);g.rectangle('line',x,y,w,h,4)
+  MenuSurface.item({x=x,y=y,w=w,h=h},
+   {active=primary and on,primary=primary,disabled=not on})
  elseif id~='die1' then
-  g.setColor(.55,.39,.22);g.line(x-5,y+12,x-5,y+h-12)
+  g.setColor(.55,.39,.22,1)
+  g.line(x-5,y+12,x-5,y+h-12)
  end
  local size=w<215 and 22 or 24
  fonts[size]=fonts[size] or g.newFont(size)
  local _,lines=fonts[size]:getWrap(label,w-28)
- txt(label,x+14,y+(h-#lines*fonts[size]:getHeight())/2,w-28,size,primary and on and cream or ink)
- if on and primary then g.setColor(.84,.66,.31,1);g.setLineWidth(2);g.rectangle('line',x+3,y+3,w-6,h-6,3);g.setLineWidth(1) end
- if not on and not dieIndicator then g.setColor(.32,.29,.23,1);g.line(x+8,y+8,x+8,y+h-8) end
+ txt(label,x+14,y+(h-#lines*fonts[size]:getHeight())/2,
+  w-28,size,on and ink or {.49,.44,.36,1})
  u.buttons[id]={x=x,y=y,w=w,h=h,enabled=on,fn=fn,label=label}
 end
 local function reward(u)
