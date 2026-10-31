@@ -68,11 +68,11 @@ function M.build(u)
     'primary','[Spazio] · Destro: presa fisica')
   end
   local ok,total,min=R.bank_status(s)
-  if not has_selection then
-   add('bank','Incassa '..total..' pt',ok,
-    function() u:act('bank',function() return R.bank_turn(s) end) end,
-    'secondary','[Invio] · minimo '..min..' pt')
-  end
+  -- Existing Farkle rules permit banking a VALID selected combination
+  -- directly, without forcing a separate Set aside action first.
+  add('bank','Incassa '..total..' pt',ok,
+   function() u:act('bank',function() return R.bank_turn(s) end) end,
+   'secondary','[Invio] · minimo '..min..' pt')
  end
  return a
 end
