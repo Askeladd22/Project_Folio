@@ -2,6 +2,15 @@
 
 **Stato: proposta di game design, 30 ottobre 2026. Nessuna delle meccaniche di incontro descritte qui è dichiarata implementata.** Questo documento sviluppa la direzione discussa dopo il prototipo di folio progressivo. Riferimenti canonici: [GAME_DESIGN.md](GAME_DESIGN.md) per visione e priorità, [FARKLE_RULES.md](FARKLE_RULES.md) per le regole effettive del Farkle.
 
+> **Aggiornamento di laboratorio — 31 ottobre 2026 / 0.1.0-dev.5:**
+> è ora implementato esclusivamente
+> [`experiments/signs_lab/`](../experiments/signs_lab/README.md)
+> il primo modello A/B/C con sacchetto, soglie e politiche
+> provvisorie del Leone della Bordura. Questo è **codice
+> sperimentale separato**, non una funzionalità giocabile
+> in `main.lua` o nella campagna; nessuna regola è stata
+> approvata automaticamente. I gate di playtest restano aperti.
+>
 ## Sintesi della direzione
 
 **Direzione condivisa:** le figure raffigurate nei manoscritti (re, monaci, animali fantastici, allegorie, creature marginali) prendono vita, escono dal folio e diventano gli interlocutori/avversari del copista nel sogno. Superato un incontro, la figura rientra nella miniatura; completare le figure del libro porta alla conclusione della run. Tipologia e iconografia del libro orientano il cast: per esempio, un salterio può presentare figure bibliche, allegoriche e marginali coerenti con il suo repertorio, non un assortimento arbitrario di nemici.
