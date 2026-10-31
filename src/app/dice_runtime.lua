@@ -1000,7 +1000,6 @@ function love.draw()
         g.setColor(.96,.82,.50,.92)
         local label='Renderer: g3d'
         label=label..'  |  Dadi: '..live_g3d.material_mode..' [F10]'..' | Smusso: '..(live_g3d.bevel_enabled and 'ON' or 'OFF')..' [F11]'
-        if live_g3d.shader_error then label=label..' (shader non disponibile)' end
         g.print(label,15,g.getHeight()-24)
         g.pop()
     end
