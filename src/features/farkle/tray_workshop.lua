@@ -3,6 +3,17 @@
 local W={current='book'}
 local order={'book','current','A','B','C'}
 local labels={book='Libro aperto / prototipo',current='Attuale',A='A / Vassoio artigianale',B='B / Plancia integrata',C='C / Tavolo da gioco'}
+-- F8 remains the gameplay-facing switch for g3d book/tray skins.
+function W.cycle()
+ for i,id in ipairs(order) do
+  if id==W.current then
+   W.current=order[i%#order+1]
+   return W.current
+  end
+ end
+ error('unrecognized g3d tray style')
+end
+
 -- Returns graphical collection coordinates only; identities and transfer timing
 -- remain in the active hud_minimal upper-shelf presenter. F8 does not alter them.
 function W.shelf(ax,ay,bx,by)
