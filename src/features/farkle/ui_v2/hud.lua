@@ -1,6 +1,6 @@
--- P2 experimental PLAYABLE first slice, enabled explicitly by the controller.
--- g3d remains responsible for the dice and existing Farkle overlay/modal
--- paths remain active until their independent P3/P4 migration gates.
+-- Shipping folio HUD: one presentation path, one authoritative hitbox table.
+-- g3d owns physical dice and tray. Non-modal HUD no longer imports old HUD.
+-- The existing modal/reward presenter remains an explicitly tracked P4 task.
 local Actions=require('src.features.farkle.ui_v2.actions')
 local Layout=require('src.features.farkle.ui_v2.layout_candidates')
 local R=require('src.gameplay.farkle.rules')
@@ -8,7 +8,8 @@ local H=require('src.features.farkle.hud_model')
 local Res=require('src.core.resolution_manager')
 local UI=require('src.core.runtime_ui')
 local Folio=require('src.features.farkle.folio_view')
-local Legacy=require('src.features.farkle.hud_minimal')
+local Accepted=require('src.features.farkle.ui_v2.accepted_dice')
+local Dialogs=require('src.features.farkle.hud')
 local Indicators=require('src.features.farkle.ui_v2.overlay')
 local V={}
 local fonts={}
@@ -109,6 +110,11 @@ function V.draw(u)
  local s=u.game
  if not s then return end
  local layout=Layout.build('single_folio')
+ -- The Monk's status occupies the top of this sidebar: keep the
+ -- manuscript folio BELOW it, never behind an opaque overlay.
+ if u.botDuel then
+  layout.folio={x=layout.folio.x,y=320,w=layout.folio.w,h=370}
+ end
  local actions=Actions.build(u)
  u.buttons={} -- a single authoritative hitbox table for controller.lua
  local g=love.graphics
@@ -116,8 +122,10 @@ function V.draw(u)
  Res.begin_ui()
  work_surface(layout)
  header(u,s,layout,actions)
- write('MANOSCRITTO',layout.folio.x+4,layout.folio.y-21,
-       layout.folio.w-8,17,highlight,'center')
+ if not u.botDuel then
+  write('MANOSCRITTO',layout.folio.x+4,layout.folio.y-21,
+        layout.folio.w-8,17,highlight,'center')
+ end
  Folio.draw(s,u.presentation,layout.folio.x,layout.folio.y,
             layout.folio.w,layout.folio.h,write,R.contracts[s.stage].target)
  for _,a in ipairs(actions) do
@@ -151,18 +159,20 @@ function V.draw(u)
   if a.slot=='primary' then action_button(u,a,layout.primary)
   elseif a.slot=='secondary' then action_button(u,a,layout.secondary) end
  end
- if not H.reward_active(s) then
-  write('UI 2.0 · sperimentale  |  F6: torna alla UI legacy',
-     1250,1044,590,14,muted,'right')
- end
+
  Res.end_ui()
  g.pop()
 end
 
--- P3 owns the physical/scoring visual hints while the existing controller,
--- shelf of accepted dice and modal/reward renderer are preserved.
+-- Physical and scoring indicators are non-mutating screen-space strokes.
+-- Accepted dice belong to the V2 register; only dialog/reward content
+-- stays in the shared modal presenter until a separate P4 redesign.
 function V.overlay(u,hits)
+ u.hits=hits
  Indicators.draw(u,hits)
- return Legacy.overlay(u,hits,{hideIndicators=true})
+ Accepted.draw(u)
+ if H.reward_active(u.game) or u.modal then
+  Dialogs.overlay(u,hits)
+ end
 end
 return V
