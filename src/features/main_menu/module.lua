@@ -5,6 +5,7 @@ local MenuParticles = require("src.core.menu_particles")
 local Navigation = require("src.core.navigation")
 local RuntimeUI = require("src.core.runtime_ui")
 local Version = require("src.core.version")
+local MenuSurface = require("src.features.ui_v2.menu_surface")
 local Schema = require("src.core.schema")
 local SettingsState = require("src.core.settings_state")
 local MainMenuSchema = require("src.data.main_menu_schema")
@@ -189,7 +190,7 @@ end
 
 local function get_resolution_text_scale(view_h)
     local h = tonumber(view_h) or 1080
-    return clamp(h / 1080, 1.0, 1.50)
+    return clamp(h / 1080, 0.62, 1.15)
 end
 
 local function ensure_fonts(view_h)
@@ -365,81 +366,82 @@ end
 
 local function compute_layout(w, h)
     ensure_fonts(h)
-
-    local left_pad = math.max(RuntimeUI.sized(18), math.floor(w * 0.06))
-    local panel_w = math.min(math.floor(w * 0.68), RuntimeUI.sized(900))
-    local menu_w = math.min(panel_w - RuntimeUI.sized(36), RuntimeUI.sized(560))
-    menu_w = math.max(menu_w, RuntimeUI.sized(300))
-    local menu_x = left_pad + RuntimeUI.sized(10)
-    if menu_x + menu_w > w - RuntimeUI.sized(14) then
-        menu_w = math.max(RuntimeUI.sized(180), w - menu_x - RuntimeUI.sized(14))
-    end
-
+    local border = math.max(12, math.floor(h * .038))
+    local left = math.max(border, math.floor(w * .045))
+    local panel_w = math.min(math.floor(w * .48), RuntimeUI.sized(670), w - left - border)
+    local menu_x = left + math.max(18, math.floor(panel_w * .060))
+    local menu_w = panel_w - (menu_x - left) * 2
     local title_text = tr_entry(BRANDING_TITLE_ENTRY)
     local title_font = pick_font_for_text(title_text, fonts.title, fonts.title_upper)
     local subtitle_text = get_subtitle_label()
     local subtitle_font = pick_font_for_text(subtitle_text, fonts.subtitle, fonts.subtitle_upper)
     local title_h = title_font:getHeight()
     local subtitle_h = subtitle_font:getHeight()
-    local primary_h = RuntimeUI.sized(92)
-    local primary_gap = RuntimeUI.sized(14)
-    local secondary_h = RuntimeUI.sized(72)
-    local secondary_gap = RuntimeUI.sized(10)
-    local divider_h = RuntimeUI.sized(36)
-    local footer_h = RuntimeUI.sized(30)
-
-    local title_block_h = title_h + RuntimeUI.sized(14) + subtitle_h + RuntimeUI.sized(8)
-    local pre_divider_gap = RuntimeUI.sized(18)
-    local post_divider_gap = RuntimeUI.sized(22)
-    local content_h = title_block_h + pre_divider_gap + divider_h + post_divider_gap
-        + primary_h * 2 + primary_gap + secondary_h * 3 + secondary_gap * 2
-        + RuntimeUI.sized(44) + footer_h
-    local start_y = math.floor(math.max(RuntimeUI.sized(18), (h - content_h) * 0.5))
-
-    local layout = {
-        panel_x = left_pad,
-        menu_x = menu_x,
-        menu_w = menu_w,
-        title_y = start_y,
-        subtitle_y = start_y + title_h + RuntimeUI.sized(7),
-        divider_y = 0,
-        footer_y = 0,
-        mute_rect = nil,
-        item_rects = {},
-    }
-
-    layout.divider_y = start_y + title_block_h + pre_divider_gap
-
-    local y = layout.divider_y + divider_h + post_divider_gap
+    local row_gap = math.max(5, math.floor(h * .008))
+    local item_heights = {}
+    local total_rows = 0
     for i, item in ipairs(menu_items) do
-        local item_h = item.primary and primary_h or secondary_h
-        layout.item_rects[i] = {x = menu_x, y = y, w = menu_w, h = item_h}
-        if item.primary then
-            y = y + item_h + primary_gap
-        else
-            y = y + item_h + secondary_gap
-        end
+        local face = pick_font_for_text(item.label,
+            item.primary and fonts.primary or fonts.secondary,
+            item.primary and fonts.primary_upper or fonts.secondary_upper)
+        local nominal = item.primary and h * .061 or h * .052
+        item_heights[i] = math.max(face:getHeight() + 8, math.floor(nominal))
+        total_rows = total_rows + item_heights[i]
     end
-
-    layout.footer_y = y + RuntimeUI.sized(24)
-    local footer_version_text = get_footer_version_label()
-    local footer_alpha_text = get_footer_alpha_label()
-    local footer_version_font = pick_font_for_text(footer_version_text, fonts.footer, fonts.footer_upper) or love.graphics.getFont()
-    local footer_alpha_font = pick_font_for_text(footer_alpha_text, fonts.footer, fonts.footer_upper) or love.graphics.getFont()
-    local footer_version_w = footer_version_font:getWidth(footer_version_text)
-    local footer_alpha_w = footer_alpha_font:getWidth(footer_alpha_text)
-    local footer_sep_gap = RuntimeUI.sized(8)
-    local footer_after_gap = RuntimeUI.sized(12)
-    local footer_block_w = footer_version_w + footer_sep_gap + 1 + footer_sep_gap + footer_alpha_w
-    layout.mute_rect = {
-        x = menu_x + footer_block_w + footer_after_gap,
-        y = layout.footer_y - RuntimeUI.sized(2),
-        w = RuntimeUI.sized(24),
-        h = RuntimeUI.sized(20),
+    local title_gap = math.max(7, math.floor(h * .010))
+    local header_gap = math.max(13, math.floor(h * .020))
+    local divider_space = math.max(14, math.floor(h * .023))
+    local footer_gap = math.max(16, math.floor(h * .027))
+    local footer_h = fonts.footer:getHeight() + 7
+    local content_h = title_h + title_gap + subtitle_h +
+        header_gap + divider_space + total_rows +
+        (#menu_items-1) * row_gap + footer_gap + footer_h
+    -- Keep all six menu entries and the mute control within the window
+    -- at both 720p and 1080p. Accessibility scale is not ignored.
+    local max_h = h - 2*border - 44
+    if content_h > max_h then
+        local scale = max_h / content_h
+        for i=1,#item_heights do
+            item_heights[i] = math.max(20,math.floor(item_heights[i]*scale))
+        end
+        row_gap = math.max(3,math.floor(row_gap*scale))
+        title_gap = math.floor(title_gap*scale)
+        header_gap = math.floor(header_gap*scale)
+        divider_space = math.floor(divider_space*scale)
+        footer_gap = math.floor(footer_gap*scale)
+        content_h = title_h + title_gap + subtitle_h + header_gap +
+            divider_space + footer_gap + footer_h
+        for _,height in ipairs(item_heights) do content_h = content_h + height end
+        content_h = content_h + (#menu_items-1)*row_gap
+    end
+    local start_y = math.floor((h-content_h)*.5)
+    local layout = {
+        panel_x=left, menu_x=menu_x, menu_w=menu_w,
+        title_y=start_y, subtitle_y=start_y+title_h+title_gap,
+        divider_y=0, footer_y=0, mute_rect=nil, item_rects={},
+    }
+    layout.divider_y = layout.subtitle_y + subtitle_h + header_gap
+    local y = layout.divider_y + divider_space
+    for i,item in ipairs(menu_items) do
+        layout.item_rects[i] = {x=menu_x,y=y,w=menu_w,h=item_heights[i]}
+        y = y + item_heights[i] + row_gap
+    end
+    layout.footer_y = y - row_gap + footer_gap
+    local version_label = get_footer_version_label()
+    local alpha_label = get_footer_alpha_label()
+    local face=pick_font_for_text(version_label,fonts.footer,fonts.footer_upper)
+    local alpha_face=pick_font_for_text(alpha_label,fonts.footer,fonts.footer_upper)
+    local text_w=face:getWidth(version_label)+alpha_face:getWidth(alpha_label)+20
+    layout.mute_rect={
+        x=math.min(menu_x+menu_w-32,menu_x+text_w+18),
+        y=layout.footer_y-4,w=32,h=28,
+    }
+    layout.frame={
+        x=left, y=math.max(border,start_y-26), w=panel_w,
+        h=math.min(h-border,start_y+content_h+25)-math.max(border,start_y-26)
     }
     return layout
 end
-
 local function get_item_rect(layout, idx)
     local base = layout and layout.item_rects and layout.item_rects[idx]
     local item = menu_items[idx]
@@ -463,7 +465,7 @@ local function draw_mute_icon(rect, is_muted, scene_alpha)
     local size = rect.h * 0.65
     local line_w = math.max(1.0, RuntimeUI.scale() * 1.2)
 
-    set_color(0.88, 0.84, 0.76, 0.62, scene_alpha)
+    set_color(0.35, 0.24, 0.13, 0.92, scene_alpha)
     love.graphics.setLineWidth(line_w)
     love.graphics.polygon("line",
         cx - size * 0.58, cy - size * 0.30,
@@ -478,7 +480,7 @@ local function draw_mute_icon(rect, is_muted, scene_alpha)
         love.graphics.line(cx + size * 0.16, cy - size * 0.48, cx + size * 0.58, cy - size * 0.06)
         love.graphics.line(cx + size * 0.16, cy - size * 0.06, cx + size * 0.58, cy - size * 0.48)
     else
-        set_color(0.90, 0.82, 0.55, 0.75, scene_alpha)
+        set_color(0.44, 0.31, 0.17, 0.90, scene_alpha)
         love.graphics.arc("line", "open", cx + size * 0.10, cy, size * 0.34, -0.75, 0.75)
         love.graphics.arc("line", "open", cx + size * 0.10, cy, size * 0.52, -0.75, 0.75)
     end
@@ -572,16 +574,8 @@ function MainMenu:draw()
         love.graphics.rectangle("fill", 0, 0, w, h)
     end
 
-    set_color(0, 0, 0, high_contrast and 0.90 or 0.83, scene_alpha)
-    love.graphics.rectangle("fill", 0, 0, w * 0.52, h)
-    set_color(0, 0, 0, high_contrast and 0.52 or 0.38, scene_alpha)
-    love.graphics.rectangle("fill", w * 0.52, 0, w * 0.24, h)
-    set_color(0, 0, 0, high_contrast and 0.58 or 0.50, scene_alpha)
-    love.graphics.rectangle("fill", 0, 0, w, h * 0.16)
-    set_color(0, 0, 0, high_contrast and 0.80 or 0.68, scene_alpha)
-    love.graphics.rectangle("fill", 0, h * 0.84, w, h * 0.16)
-    set_color(0.36, 0.20, 0.06, high_contrast and 0.12 or 0.08, scene_alpha)
-    love.graphics.rectangle("fill", 0, 0, w, h)
+    MenuSurface.backdrop(w,h,high_contrast,scene_alpha)
+    MenuSurface.panel(cached_layout.frame,{high_contrast=high_contrast,alpha=scene_alpha})
 
     MenuParticles.draw(particles, w, h, RuntimeUI.scale(), high_contrast, scene_alpha)
 
@@ -591,7 +585,7 @@ function MainMenu:draw()
     local title_label = tr_entry(BRANDING_TITLE_ENTRY)
     local title_font = pick_font_for_text(title_label, fonts.title, fonts.title_upper) or love.graphics.getFont()
     love.graphics.setFont(title_font)
-    set_color(0.90, 0.74, 0.34, title_p, scene_alpha)
+    set_color(0.30, 0.17, 0.08, title_p, scene_alpha)
     love.graphics.print(title_label, title_x, title_y)
 
     local subtitle_label = get_subtitle_label()
@@ -601,7 +595,7 @@ function MainMenu:draw()
     local subtitle_w = subtitle_font:getWidth(subtitle_label)
     local subtitle_x = title_x + (title_w - subtitle_w) * 0.5
     love.graphics.setFont(subtitle_font)
-    set_color(0.84, 0.80, 0.72, title_p * 0.42, scene_alpha)
+    set_color(0.42, 0.28, 0.15, title_p * 0.88, scene_alpha)
     love.graphics.print(subtitle_label, subtitle_x, subtitle_y)
 
     for i, item in ipairs(menu_items) do
@@ -609,14 +603,9 @@ function MainMenu:draw()
         local hovered_item = mouse_has_moved and hovered == i
         local selected_item = selected == i
 
-        if hovered_item or selected_item then
-            local glow = item.primary and 0.10 or 0.07
-            set_color(0.86, 0.66, 0.24, glow * item_p, scene_alpha)
-            love.graphics.rectangle("fill", rect.x, rect.y, rect.w, rect.h, 3, 3)
-            set_color(0.90, 0.74, 0.34, 0.70 * item_p, scene_alpha)
-            love.graphics.rectangle("fill", rect.x, rect.y, RuntimeUI.sized(item.primary and 3 or 2), rect.h)
-            draw_diamond(rect.x - RuntimeUI.sized(6), rect.y + rect.h * 0.5, RuntimeUI.sized(4), 0.93, 0.76, 0.35, 0.95 * item_p, scene_alpha)
-        end
+        MenuSurface.item(rect,{active=hovered_item or selected_item,
+            primary=item.primary,disabled=not item.enabled,
+            alpha=item_p*scene_alpha})
 
         local font = pick_font_for_text(
             item.label,
@@ -628,19 +617,14 @@ function MainMenu:draw()
         local tx = rect.x + RuntimeUI.sized(12)
         local ty = rect.y + (rect.h - th) * 0.5
 
-        set_color(0, 0, 0, (high_contrast and 0.72 or 0.52) * item_p, scene_alpha)
-        love.graphics.print(item.label, tx + 2, ty + 2)
-
         if not item.enabled then
-            set_color(0.58, 0.52, 0.46, 0.70 * item_p, scene_alpha)
-        elseif selected_item then
-            set_color(0.98, 0.88, 0.58, 0.98 * item_p, scene_alpha)
-        elseif hovered_item then
-            set_color(0.97, 0.86, 0.62, 0.95 * item_p, scene_alpha)
+            set_color(.49,.43,.34,.75*item_p,scene_alpha)
+        elseif selected_item or hovered_item then
+            set_color(.30,.18,.07,item_p,scene_alpha)
         elseif item.primary then
-            set_color(0.88, 0.80, 0.68, 0.93 * item_p, scene_alpha)
+            set_color(.25,.15,.09,.97*item_p,scene_alpha)
         else
-            set_color(0.68, 0.61, 0.52, 0.88 * item_p, scene_alpha)
+            set_color(.38,.26,.15,.92*item_p,scene_alpha)
         end
         love.graphics.print(item.label, tx, ty)
     end
@@ -650,10 +634,8 @@ function MainMenu:draw()
     local dx = cached_layout.menu_x
     local dw = cached_layout.menu_w
     local cx = dx + dw * 0.5
-    set_color(0.92, 0.74, 0.32, 0.23 * divider_p, scene_alpha)
-    love.graphics.rectangle("fill", dx + RuntimeUI.sized(8), dy, dw * 0.5 - RuntimeUI.sized(20), 1)
-    love.graphics.rectangle("fill", cx + RuntimeUI.sized(12), dy, dw * 0.5 - RuntimeUI.sized(20), 1)
-    draw_diamond(cx, dy, RuntimeUI.sized(4), 0.93, 0.76, 0.35, 0.34 * divider_p, scene_alpha)
+    MenuSurface.rule(dx+RuntimeUI.sized(12),dy,dw-RuntimeUI.sized(24),
+        divider_p*scene_alpha)
 
     local footer_p = ease_out_cubic(get_entrance_progress(0.70, 0.60))
     local footer_version_label = get_footer_version_label()
@@ -667,12 +649,12 @@ function MainMenu:draw()
     local alpha_x = divider_x + footer_sep_gap + 1
 
     love.graphics.setFont(footer_version_font)
-    set_color(0.88, 0.84, 0.76, 0.34 * footer_p, scene_alpha)
+    set_color(0.38, 0.27, 0.17, 0.88 * footer_p, scene_alpha)
     love.graphics.print(footer_version_label, cached_layout.menu_x, fy)
-    set_color(0.88, 0.84, 0.76, 0.18 * footer_p, scene_alpha)
+    set_color(0.46, 0.34, 0.21, 0.5 * footer_p, scene_alpha)
     love.graphics.rectangle("fill", divider_x, fy + RuntimeUI.sized(1), 1, RuntimeUI.sized(12))
     love.graphics.setFont(footer_alpha_font)
-    set_color(0.88, 0.84, 0.76, 0.34 * footer_p, scene_alpha)
+    set_color(0.38, 0.27, 0.17, 0.88 * footer_p, scene_alpha)
     love.graphics.print(footer_alpha_label, alpha_x, fy)
 
     if hovered_mute then
