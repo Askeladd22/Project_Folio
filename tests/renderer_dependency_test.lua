@@ -17,6 +17,10 @@ for _,path in ipairs{
  assert(not s:find('render.paint()',1,true),path..' draws with retired painter')
 end
 local runtime=read('src/app/dice_runtime.lua')
+assert(not runtime:find('light.plastic',1,true),
+ 'deleted CPU painter light must not be used during real g3d startup')
+assert(not runtime:find('material = die_material',1,true),
+ 'deleted painter-only material field must not return to g3d spawn')
 assert(runtime:find('live_g3d:draw({',1,true))
 assert(not runtime:find("key=='f9'",1,true))
 assert(not runtime:find('draw_legacy_floor',1,true))
