@@ -99,5 +99,12 @@ local colliding=results.static_contacts.final
 print(string.format('GRIP_COMPARE still_hand: contactsDepth=%.4f noContactsDepth=%.4f contactsPairs=%d noContactsPairs=%d',
  colliding.max_overlap,free.max_overlap,
  colliding.overlap_pairs,free.overlap_pairs))
+assert(colliding.max_overlap < free.max_overlap*.20,
+ 'native FPS contacts must substantially reduce interpenetration versus disabled contacts')
+assert(colliding.min_centers>.80,
+ 'gathered die centers must remain separated under FPS collisions')
+assert(results.moving_contacts.final.max_overlap<
+       results.moving_no_contacts.final.max_overlap*.25,
+ 'native contacts must also improve overlap while hand is moving')
 print('NOTE: This lab tests holding only, not floor collision, drop settling, face validity or production safety.')
 print('PASS FPS Lab 4: six force-driven real bodies chase one hand; optional native contacts remain experimental')
