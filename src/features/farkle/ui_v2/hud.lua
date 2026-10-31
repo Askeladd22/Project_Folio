@@ -149,6 +149,9 @@ local function work_surface(layout)
  -- Never draw over the 3D throw rectangle. Ornamentation lives
  -- only in the book margins between the six accepted slots and tray.
  if layout.shelf_caption then
+  -- A narrow illuminated rubric stays legible across the leather/paper
+  -- seam at the top of the leaf, above every accepted-die rectangle.
+  panel(layout.shelf_caption,rgba(.93,.85,.69,.98),nil,4)
   write_fitted('REGISTRO DEI DADI ACCANTONATI',layout.shelf_caption,
    14,11,paper_ink,'center')
   g.setColor(.39,.27,.16,UI.high_contrast() and .90 or .52)
