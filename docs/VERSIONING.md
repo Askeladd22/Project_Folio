@@ -48,6 +48,22 @@ pubblica, adottare versioni SemVer stabili e/o prerelease standard.
 Si può aumentare minor/major per cambi incompatibili o nuove tappe
 di prodotto: la CI richiede solo l'ordine SemVer corretto.
 
+### Cronologia retrospettiva già ricostruita
+
+Con la versione **0.1.0-dev.2** è stato aggiunto al
+[`CHANGELOG.md`](../CHANGELOG.md) un indice verificabile di
+**tutte le PR #1–#39 integrate** (16–31 ottobre 2026), insieme
+alla cronologia pre-PR dal **6 marzo 2026** e ai commit Farkle del
+**1–2 luglio 2026**. Le PR sono ordinate per numero e riportano
+la data effettiva di merge e il link diretto.
+
+Questo è un **resoconto retrospettivo di commit e PR**, non una
+serie di versioni storiche: prima del 31 ottobre non esisteva
+`version.txt`, perciò nessun modulo storico riceve artificialmente
+un numero SemVer. La vecchia voce `0.1.0-dev.1` viene conservata
+come baseline della prima versione ufficiale; ogni intervento futuro
+apre una sezione nuova sopra la precedente.
+
 **Non modificare il numero dentro vecchie sezioni:** sono uno
 storico verificabile. Correggere eventuali errori aggiungendo una nota
 alla nuova sezione, salvo rettifica esplicitamente documentata.
