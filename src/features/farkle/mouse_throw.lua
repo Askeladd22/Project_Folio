@@ -40,14 +40,22 @@ end
 -- while guiding several ACTUAL rigid bodies to a compact formation.
 function T.track(g,x,y,time)
  if not g or not(finite(x) and finite(y) and finite(time)) then return false end
- local dt=math.max(.001,math.min(.05,time-g.t))
+ local elapsed=time-g.t
  local dx,dy=x-g.x,y-g.y
  g.x,g.y,g.t=x,y,math.max(g.t,time)
- g.angular[1]=clamp(2.0+dy*.050/dt,-13,13)
- g.angular[2]=clamp(1.4+dx*.050/dt,-13,13)
- g.angular[3]=clamp(.6+(dx-dy)*.012/dt,-8,8)
+ -- A group release may request the SAME pointer sample twice in one frame.
+ -- Preserve the last actual flick spin rather than resetting it to idle.
+ if elapsed>.0001 and (math.abs(dx)+math.abs(dy))>.01 then
+  local dt=math.max(.001,math.min(.05,elapsed))
+  g.angular[1]=clamp(2.0+dy*.050/dt,-13,13)
+  g.angular[2]=clamp(1.4+dx*.050/dt,-13,13)
+  g.angular[3]=clamp(.6+(dx-dy)*.012/dt,-8,8)
+ end
  local sample=g.samples
- sample[#sample+1]={x=x,y=y,t=g.t}
+ if #sample==0 or g.t>sample[#sample].t+.0001 or
+    math.abs(x-sample[#sample].x)+math.abs(y-sample[#sample].y)>.01 then
+  sample[#sample+1]={x=x,y=y,t=g.t}
+ end
  while #sample>2 and g.t-sample[1].t>.18 do table.remove(sample,1) end
  return true
 end
