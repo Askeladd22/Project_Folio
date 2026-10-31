@@ -1,62 +1,60 @@
-# Renderer retirement audit — Scriptorium
+# Project Folio — dismissione definitiva del painter CPU
 
-## Decision (2026-10-30)
+**Stato: 31 ottobre 2026 — PR #38.** Il renderer 3D è esclusivamente
+**g3d**. Questo documento sostituisce il precedente audit del
+30 ottobre, nel quale il painter era mantenuto come fallback.
 
-**Do not delete `src/engine3d/render.lua` yet.** g3d is the production
-renderer for the **book + six D6** scene, not for every renderer call site.
-The legacy painter is still a live dependency in production, not simply an
-unused experiment.
+## Eliminato
 
-Verified active dependencies:
-- `src/app/dice_runtime.lua` imports `src.engine3d.render` for the 2D
-  board, optional projected shadows, old D6 rendering, z-buffer and fallback.
-  The F9 toggle and the error path explicitly render via this module.
-- `src/features/farkle/tray_workshop.lua` uses its z-buffer and border
-  routines for F8 workshop layouts `current`, `A`, `B`, `C` and `book`
-  on fallback.
-- `src/features/farkle/hud_minimal.lua` still uses `render.tray_border`
-  and `render.die` in layout and presentation paths.
-- `experiments/g3d_lab/main.lua` uses the original painter for A/B
-  comparisons with the same physical dice.
+- `src/engine3d/render.lua`: renderer CPU con z-buffer e texture dipinte.
+- Il comando **F9** che alternava g3d e il painter; disabilitati i vecchi
+  override `MANUSCRIPT_RENDERER=legacy` e
+  `MANUSCRIPT_G3D_INGAME=0`.
+- Pavimento, ombre, bordi, separatore, dadi e glow del vecchio painter
+  nella pipeline `src/app/dice_runtime.lua`.
+- Selezione del renderer sul bridge fra fisica e UI: non esistono
+  più modalità di rendering alternative.
+- `hud_minimal.lua`: floor/border CPU e la cattura dei dadi
+  accantonati tramite `render.die`. Rimane soltanto la
+  cattura g3d di `src/engine3d/g3d_portrait.lua`.
+- Funzioni di pavimento e bordo 2D del F8 workshop ormai non richiamate;
+  l'interruttore **F8** e le cinque varianti **book/current/A/B/C**
+  restano gestiti tramite `g3d_scenery.lua`.
+- Il laboratorio g3d conserva fisica e prove di camera/mesh, ma usa
+  **solo g3d**, senza il secondo Canvas per confrontare il painter.
 
-### Safe retirement checklist
+## Rimane
 
-1. Render all supported F8 variants, non-D6 geometries, and divided trays
-   using the g3d path, including material/pip mapping and hitbox parity.
-2. Move required 2D floor drawing/overlays to distinct 2D helpers without
-   depending on `render.lua`; retain read-only geometry/physics utilities.
-3. Replace the existing painter error fallback with a **verified** recovery
-   mechanism that does not make a graphics failure fatal. Decide whether F9
-   is still desirable for on-device diagnostics.
-4. Port the renderer A/B tests to independent reference fixtures, or retain
-   an explicit historical test-only painter outside runtime.
-5. Search imports and direct calls across `src/`, `experiments/` and
-   `tests/`; run both native and visual tests (at least two resolutions).
-6. Only then remove the legacy production module and adjust docs. Keep
-   upstream MIT licenses, old Git commits and historical comparison data.
+- **F10**: materiali e diagnostica degli shader g3d.
+- **F11**: smusso grafico dei dadi g3d.
+- Tutta la fisica e il flusso Farkle, senza cambiamenti a seed,
+  lettura delle facce, RNG, picking, coordinate della camera o
+  accantonamento.
+- Interfaccia e miniature del manoscritto in **2D**; solo tray e dadi
+  in **3D**.
+- Laboratori FPS in `experiments/physics_lab`, non produzione.
+- UI v2 sperimentale con F6: è una scelta di layout e composizione 2D,
+  **non** un renderer fisico di fallback.
 
-This decision is separate from FPS evaluation: **do not replace
-`src/engine3d/physics.lua` while testing alternate contact solvers.**
+## Error handling
 
-## Migration checkpoint — g3d F8, D8 and held-die portraits
+Il rendering g3d conserva il ripristino dello stato LÖVE tramite
+`graphics.push('all')`/`pop()`, anche se fallisce. La gestione degli errori
+**non** spegne più g3d per avviare il painter. Geometrie non supportate
+e compilazioni fallite dello shader g3d ora producono un errore
+esplicito, che deve essere diagnosticato anziché mascherato.
 
-The `feature/g3d-all-tray-variants-20261030` branch moves the active
-three-dimensional rendering of all five F8 tray skins, the split divider,
-triangular D8 bodies and accepted-die HUD portraits to g3d. The latter
-captures the real physical die pose once per kept-die entry.
+Questa scelta elimina la possibilità di continuare una run su GPU
+non compatibili: è il compromesso richiesto dall'eliminazione dei fallback,
+non un miglioramento verificato dell'affidabilità.
 
-**Why the painter remains for now:**
-- GPU rendering in these newly supported modes has not yet undergone
-  Windows/LÖVE visual QA; static geometry and headless Lua tests cannot
-  prove correct 3D appearance or pixel-aligned mouse interaction.
-- A graphics error must still leave an existing run playable.
-- Explicit F9 comparison and historical g3d A/B experiments require the
-  independent painter implementation.
-- The 2D parchment, overlays and HUD primitives remain 2D intentionally;
-  they are not incomplete GPU migrations. The held-die painter snapshot is
-  still an opt-in/error fallback, not the default when g3d draws successfully.
+## Verifiche ancora necessarie
 
-Retirement of `src/engine3d/render.lua` should occur only after all F8
-variants, D6/D8, HUD held dice, GPU failure recovery and multiple
-resolutions have passed screenshot and interaction parity. Removing the
-module immediately would trade source-code tidiness for a fragile build.
+La CI verifica Lua 5.4, LuaJIT, geometria g3d, regole Farkle e
+laboratorio FPS. **Non prova la compilazione dello shader OpenGL né
+l'assenza di artefatti sulle GPU reali.** Su Windows LÖVE controllare:
+1280×720 e 1920×1080, tutte le varianti F8, F10/F11, lancio fisico
+manuale e automatico, Farkle, dadi accantonati e loro ritratti g3d,
+HUD precedente e UI v2 con F6, schermate di ricompensa, sfida al Monaco
+e notifiche Lovely Toasts. Se fallisce un pass 3D, annotare
+errore, driver, LÖVE e impostazioni; non riattivare il painter.
