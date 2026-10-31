@@ -1,6 +1,6 @@
 -- Shipping folio HUD: one presentation path, one authoritative hitbox table.
 -- g3d owns physical dice and tray. Non-modal HUD no longer imports old HUD.
--- The existing modal/reward presenter remains an explicitly tracked P4 task.
+-- Gameplay rules and six physical D6 are owned elsewhere; this module paints only the HUD.
 local Actions=require('src.features.farkle.ui_v2.actions')
 local Layout=require('src.features.farkle.ui_v2.layout_candidates')
 local R=require('src.gameplay.farkle.rules')
@@ -11,13 +11,21 @@ local Folio=require('src.features.farkle.folio_view')
 local Accepted=require('src.features.farkle.ui_v2.accepted_dice')
 local Dialogs=require('src.features.farkle.ui_v2.dialogs')
 local Indicators=require('src.features.farkle.ui_v2.overlay')
+local MenuSurface=require('src.features.ui_v2.menu_surface')
 local V={}
 local fonts={}
+local unpack=table.unpack or unpack
 local function rgba(r,g,b,a) return {r,g,b,a or 1} end
 local ink=rgba(.16,.13,.10)
 local pale=rgba(.94,.89,.78)
 local muted=rgba(.70,.65,.53)
 local highlight=rgba(.95,.77,.36)
+-- Match the frontend's illuminated folio, without covering the 3D dice field.
+local parchment=rgba(.89,.81,.65,.98)
+local border_ink=rgba(.48,.32,.16,.92)
+local paper_ink=rgba(.24,.15,.09)
+local paper_muted=rgba(.43,.32,.22)
+local paper_gold=rgba(.53,.34,.12)
 local function size(n)
  return math.floor(n*math.min(1.35,UI.scale())*
      (UI.big_text() and 1.16 or 1)+.5)
@@ -43,20 +51,28 @@ local function panel(r,fill,stroke,radius)
   g.rectangle('line',r.x+.8,r.y+.8,r.w-1.6,r.h-1.6,radius or 5)
  end
 end
+local function pointer_over(rect)
+ if not (love.mouse and love.mouse.getPosition) then return false end
+ local mx,my=love.mouse.getPosition()
+ if type(mx)~='number' or type(my)~='number' then return false end
+ local vx,vy=Res.to_virtual(mx,my)
+ return MenuSurface.contains(rect,vx,vy)
+end
 local function action_button(u,a,rect)
- local g=love.graphics
  local isPrimary=a.slot=='primary'
- local enabled=a.enabled
- local fill=enabled and
-     (isPrimary and rgba(.25,.43,.31) or rgba(.31,.28,.24)) or
-     rgba(.30,.29,.26,.85)
- local edge=enabled and (isPrimary and highlight or muted) or rgba(.48,.45,.40)
- panel(rect,fill,edge,8)
- write(a.label,rect.x+12,rect.y+12,rect.w-24,
-   a.slot=='context' and 17 or 24,enabled and pale or muted,'center')
+ -- Every visible control uses the same rectangular hitbox as the
+ -- authoritative controller action table; no decorative overlay eats input.
+ -- Give even disabled actions a light leaf underneath: their semi-transparent
+ -- shared widget fill would otherwise sit directly on the dark desk.
+ panel(rect,parchment,nil,5)
+ MenuSurface.item(rect,{primary=isPrimary,disabled=not a.enabled,
+   active=a.enabled and pointer_over(rect)})
+ write(a.label,rect.x+12,rect.y+(rect.h>=66 and 10 or 11),rect.w-24,
+   a.slot=='context' and 17 or 24,
+   a.enabled and paper_ink or paper_muted,'center')
  if a.detail and rect.h>=66 then
   write(a.detail,rect.x+8,rect.y+46,rect.w-16,15,
-    enabled and rgba(.84,.81,.71) or muted,'center')
+    paper_muted,'center')
  end
  u.buttons[a.id]={x=rect.x,y=rect.y,w=rect.w,h=rect.h,
     enabled=a.enabled,fn=a.fn,label=a.label}
@@ -64,9 +80,9 @@ end
 local function header(u,s,layout,actions)
  local g=love.graphics
  local c=R.contracts[s.stage]
- panel(layout.header,rgba(.16,.13,.11,.94),rgba(.53,.42,.28,.72),7)
- write('COMMISSIONE '..s.stage..'/3',70,26,300,18,highlight)
- write(c.name,70,53,402,16,pale)
+ panel(layout.header,parchment,border_ink,7)
+ write('COMMISSIONE '..s.stage..'/3',70,26,300,18,paper_gold)
+ write(c.name,70,53,402,16,paper_ink)
  local remaining=math.max(0,c.limit-s.turn+
      ((s.phase=='ended' or H.commission_closed(s)) and 0 or 1))
  local values={
@@ -76,8 +92,8 @@ local function header(u,s,layout,actions)
   {'TURNI',tostring(remaining),1190}
  }
  for _,v in ipairs(values) do
-  write(v[1],v[3],28,195,13,muted)
-  write(v[2],v[3],50,195,24,v[1]=='A RISCHIO' and highlight or pale)
+  write(v[1],v[3],28,195,13,paper_muted)
+  write(v[2],v[3],50,195,24,v[1]=='A RISCHIO' and paper_gold or paper_ink)
  end
  for _,a in ipairs(actions) do
   if a.slot=='header' then
@@ -136,9 +152,9 @@ function V.draw(u)
                      enabled=a.enabled,fn=a.fn,label=a.label}
   end
  end
- panel(layout.context,rgba(.17,.14,.12,.95),rgba(.55,.44,.29,.85),5)
+ panel(layout.context,parchment,border_ink,5)
  write('STRUMENTI',layout.context.x+13,layout.context.y+7,
-       layout.context.w-24,14,muted)
+       layout.context.w-24,14,paper_gold)
  local c=0
  for _,a in ipairs(actions) do
   if a.slot=='context' then
@@ -149,7 +165,7 @@ function V.draw(u)
  end
  if c==0 then
   write('Consulta la pagina [F]',layout.context.x+12,
-      layout.context.y+62,layout.context.w-24,17,muted,'center')
+      layout.context.y+62,layout.context.w-24,17,paper_muted,'center')
  end
  write(Actions.state(u),layout.message.x,
        layout.message.y,layout.message.w,18,
