@@ -80,6 +80,17 @@ The **book tray** uses g3d by default. **F9** toggles the historical painter for
 
 A renderer failure should fall back to the historical painter without changing the physics or game state. The painter still serves emergency recovery and A/B comparison; removing it requires a separate parity review ([audit](docs/RENDERER_RETIREMENT.md)).
 
+## Optional 2D miniature presentation toolkit
+
+The game now includes pinned, MIT-licensed (or license-noted) 2D libraries
+for sprite animation (anim8), tweens (Flux), manuscript text (SYSL-Text),
+and an **opt-in-only 2D** vignette (Moonshine). None of these libraries
+changes the g3d 3D dice/tray or Farkle physics.
+
+See [2D toolkit and dependency licenses](docs/2D_PRESENTATION_LIBRARIES.md)
+and [isolated miniature lab](experiments/miniature_2d_lab/README.md).
+The library lab is not a production battle or a 3D character engine.
+
 ## Project architecture
 
 ```text
