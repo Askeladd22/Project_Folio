@@ -10,6 +10,48 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.3] - 2026-10-31
+
+**Tipo:** presentazione dell'incontro beta, senza modifiche al punteggio o
+alla fisica dei dadi. **Stato:** prototipo, non release pubblica.
+
+### Aggiunto
+- **Prima ricomposizione visiva del folio dopo un incontro:** il Monaco,
+  figura piana 2D, emerge dalla pagina a inizio duello e torna alla
+  miniatura quando il giocatore lo sconfigge. In caso di sconfitta o
+  parità non viene mostrata una falsa vittoria.
+- Resoconto leggibile della sfida nel margine del manoscritto:
+  punteggi effettivi del giocatore e del bot, mano corrente,
+  obiettivo della commissione, **facce dell'ultimo tiro virtuale**
+  con trattini per i dadi non rilanciati, incasso o Farkle.
+  Tutti i valori provengono dai rapporti reali di `Rules`; nessun
+  lancio, bonus o avversario 3D viene creato dalla UI.
+- Modello puro `src/features/farkle/bot_duel_presentation.lua`
+  separato da LÖVE e dalla logica dell'avversario; test headless
+  `tests/bot_duel_presentation_test.lua` per rendicontazione,
+  duplicati, vittoria/sconfitta/parità e replay.
+
+### Corretto
+- Il pulsante **R / Riprova** ricrea la presentazione del Monaco,
+  eliminando il risultato e le transizioni 2D della partita precedente.
+- La modalità **animazioni ridotte**, attivata anche durante
+  una transizione Flux già avviata, ora sposta immediatamente la
+  miniatura alla destinazione corretta anziché lasciarla a metà.
+  Aggiornati i test del toolkit delle miniature 2D.
+
+### Test e limitazioni
+- CI Lua 5.4 / LuaJIT, laboratorio FPS nativo e test Python
+  richiesti dalla PR, senza considerare superate verifiche prima
+  dell'esito effettivo.
+- La miniatura è ancora un disegno originale **provvisorio**,
+  generato dal codice. L'esecuzione Windows LÖVE a 1280×720 e
+  1920×1080, l'eventuale sovrapposizione con la UI v2 e il
+  ritmo della transizione richiedono **QA grafica reale**.
+- La modalità è sempre il beta Farkle contro Farkle della
+  [PR #36](https://github.com/Askeladd22/Project_Folio/pull/36),
+  non il sistema di Incontri e Segni né una nuova regola
+  di completamento della run.
+
 ## [0.1.0-dev.2] - 2026-10-31
 
 **Tipo:** documentazione storica verificabile, senza variazioni a gameplay, renderer o risorse.
