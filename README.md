@@ -6,7 +6,7 @@
 
 Risk every throw. Build your manuscript. Decide when to stop.
 
-[![Lua regression tests](https://github.com/Askeladd22/manuscript/actions/workflows/lua-tests.yml/badge.svg)](https://github.com/Askeladd22/manuscript/actions/workflows/lua-tests.yml)
+[![Lua regression tests](https://github.com/Askeladd22/Project_Folio/actions/workflows/lua-tests.yml/badge.svg)](https://github.com/Askeladd22/Project_Folio/actions/workflows/lua-tests.yml)
 ![LÖVE](https://img.shields.io/badge/L%C3%96VE-11.x-ec5d94)
 ![Status](https://img.shields.io/badge/status-active%20prototype-cc9955)
 
@@ -25,7 +25,15 @@ funzioni aggiunte/modificate/rimosse, test e limitazioni.
 **La CI rifiuta una PR senza bump di versione e changelog aggiornato.**
 Per il procedimento completo vedere [`docs/VERSIONING.md`](docs/VERSIONING.md).
 La versione del documento di game design resta indipendente da quella
-del software. La baseline iniziale è `0.1.0-dev.1` (31 ottobre 2026).
+del software. La **prima baseline ufficiale** è `0.1.0-dev.1`
+(31 ottobre 2026); la ricostruzione retrospettiva completa è entrata
+nella successiva `0.1.0-dev.2`.
+
+Il [registro storico](CHANGELOG.md) documenta anche l'evoluzione
+**precedente a version.txt**: dai primi commit del marzo 2026
+alla prima IA e allo scoring Farkle del luglio 2026, fino alle
+**39 PR integrate** fra il 16 e il 31 ottobre, con date e link originali.
+Non si confondono esperimenti rimossi, funzionalità attive o release.
 
 ## Overview
 
