@@ -48,6 +48,13 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+Dalla `0.1.0-dev.10` anche intestazione della commissione,
+pannello Strumenti e pulsanti del Farkle adottano i toni
+pergamena/inchiostro del frontend, mantenendo gli stessi
+hitbox, tiri di dadi 3D e regole. La verifica grafica reale
+sotto LÖVE Windows resta necessaria.
+
+
 Dalla versione `0.1.0-dev.7` il gioco usa **esclusivamente**
 `src/features/farkle/ui_v2/hud.lua` per la schermata
 Farkle. Il vecchio HUD, il fallback con F6 e la
