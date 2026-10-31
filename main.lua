@@ -33,3 +33,7 @@ if os.getenv('MANUSCRIPT_HUD_COMPARISON')=='1' then require('tests.smoke.compare
 -- Explicit diagnostics only; ordinary play never loads audit modules.
 if os.getenv('MANUSCRIPT_SOURCE_CASE') then require('tests.smoke.driver') end
 if os.getenv('MANUSCRIPT_FRONTEND_SMOKE') then require('tests.smoke.frontend') end
+-- P1 wireframe-only inspection. Never installed in ordinary play.
+if os.getenv('MANUSCRIPT_UI_V2_LAYOUT_STUDY')=='1' then
+ require('tests.smoke.ui_v2_layout_preview').install()
+end
