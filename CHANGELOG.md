@@ -10,6 +10,50 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.9] - 2026-10-31
+
+**Tipo:** UI 2.0 — redesign della schermata Settings.
+**Conservato integralmente** lo splash originale del motore LÖVE,
+con i suoi colori rosa e azzurro e il cuore: non è materiale
+legacy di Project Folio e non va confuso con la GUI del gioco.
+
+### Modificato
+- `src/features/settings/module.lua`: le cinque sezioni e
+  le schermate dei controlli utilizzano ora la superficie
+  di pergamena condivisa `ui_v2/menu_surface.lua`,
+  con righe selezionabili, tinta d'inchiostro e ornamenti.
+- Eliminate dalla sola Settings le quattro fasce
+  nere del vecchio layout; resta visibile lo sfondo
+  illustrato della bottega.
+- Font delle Settings dimensionati in funzione
+  dell'altezza della finestra, oltre alla scala UI
+  e all'opzione testo grande. I rettangoli cliccabili
+  non vengono spostati rispetto a quelli disegnati.
+- `settings_ui_schema.lua`: eliminati colori storici
+  non più letti e adeguati oro e toni secondari
+  a inchiostro su pergamena. Nome predefinito
+  corretto in `Project Folio`.
+- Conservati `SettingsState.save/apply`, le cinque
+  sezioni Game/Controls/Accessibility/Video/Audio,
+  le regolazioni slider, l'anteprima audio,
+  `Reset`, `Confirm`, `Back`, i relativi
+  eventi e il comportamento della navigazione.
+
+### Verifiche
+- `tests/settings_folio_layout_test.lua`:
+  verifica sezioni, controlli, slider, pulsanti e
+  pagine a 1280×720, 1920×1080 e 2560×1440;
+  accerta che lo **splash LÖVE** continui a mostrare
+  la propria animazione e mantenga lo skip
+  da tastiera/mouse.
+- Test di regressione Settings, Lua 5.4/LuaJIT,
+  Python e FPS Lab da verificare in CI.
+- **QA grafica Windows ancora aperta** per
+  contrasto, selezione, font e clic reali.
+- Nessuna modifica a Farkle, dadi g3d, fisica,
+  miniature 2D o progressione. Nessun
+  fallback HUD legacy introdotto.
+
 ## [0.1.0-dev.8] - 2026-10-31
 
 **Tipo:** redesign visivo del frontend e unificazione delle superfici
