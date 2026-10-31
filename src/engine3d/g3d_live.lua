@@ -95,11 +95,17 @@ end
 -- Soft radial contact shadow on the unchanged z=0 manuscript floor.
 local function shadow_vertices(body,offset)
  local p=assert(body.position,'physical body position required')
- local h=math.max(0,p[3] or 0)
- local radius=math.max(.32,(body.radius or .65)*.90)*(1+math.min(h,8)*.025)
- local alpha=.26/(1+h*.22)
- local cx=p[1]-(offset or 0)+h*.11
- local cy=p[2]-h*.07
+ -- Height above actual ground is the approximate cube clearance,
+ -- NOT the vertical position of its center. At rest the old shadow
+ -- incorrectly faded as though the die were already airborne.
+ local clearance=math.max(0,(p[3] or 0)-(body.radius or .65))
+ local radius=math.max(.42,(body.radius or .65)*1.18)*
+  (1+math.min(clearance,8)*.045)
+ local alpha=.34/(1+clearance*.32)
+ -- Small warm-light cast to make the footprint readable without adding
+ -- an exaggerated opaque black blob under the entire cube.
+ local cx=p[1]-(offset or 0)+.13+clearance*.11
+ local cy=p[2]-.12-clearance*.07
  local vertices={}
  local function vertex(x,y,a)
   return {x,y,.012,0,0,0,0,1,.16,.105,.06,a}
