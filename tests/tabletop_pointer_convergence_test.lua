@@ -21,13 +21,17 @@ end
 local indices={1,2,3,4,5,6}
 local p=Group.formation(6,1.3)
 assert(#p==6)
+local lower,upper=0,0
 for i=1,6 do
+ if p[i].z==0 then lower=lower+1 else upper=upper+1 end
  for j=i+1,6 do
-  local dx,dy=p[i].x-p[j].x,p[i].y-p[j].y
-  assert(dx*dx+dy*dy>1.3*1.3-.001,
-   'compact group must not overlap its own dice')
+  local dx,dy,dz=p[i].x-p[j].x,p[i].y-p[j].y,p[i].z-p[j].z
+  assert(dx*dx+dy*dy+dz*dz>1.3*1.3-.001,
+   'real 3D piled bodies must not overlap each other')
  end
 end
+assert(lower==3 and upper==3,'six dice should form a real 3+3 pile, not a 3x2 grid')
+assert(Group.clearance(p)>1.3,'pile must have a safe 3D separation')
 
 local dice=make_dice()
 local old={}
@@ -61,10 +65,10 @@ for j,t in ipairs(grab.targets) do
  'entire group must remain within physical board')
  for k=j+1,#grab.targets do
   local u=grab.targets[k]
-  local dx,dy=t.x-u.x,t.y-u.y
+  local dx,dy,dz=t.x-u.x,t.y-u.y,t.z-u.z
   local r1,r2=grab.held[j].body.radius,grab.held[k].body.radius
-  assert(dx*dx+dy*dy>(r1+r2)^2,
-   'board edge clamping must never compress dice into each other')
+  assert(dx*dx+dy*dy+dz*dz>(r1+r2)^2,
+   'board edge clamping must never compress 3D piled dice into each other')
  end
 end
 local results=assert(Group.release(grab,800,500,2.1,view,scale,bounds))
