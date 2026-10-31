@@ -21,6 +21,13 @@
 > è stato approvato: vedere
 > [protocollo e limiti](../experiments/signs_lab/README.md).
 >
+> **Esito dei primi 256 scenari accoppiati:**
+> [rapporto del laboratorio 0.1.0-dev.6](../experiments/signs_lab/RESULTS_2026_10_31.md).
+> La variante C con doppi premi **non supera C0**
+> in percentuale di successo in nessuna delle tre
+> politiche provate. Non è una decisione definitiva
+> di game design; manca ancora un vero playtest.
+>
 ## Sintesi della direzione
 
 **Direzione condivisa:** le figure raffigurate nei manoscritti (re, monaci, animali fantastici, allegorie, creature marginali) prendono vita, escono dal folio e diventano gli interlocutori/avversari del copista nel sogno. Superato un incontro, la figura rientra nella miniatura; completare le figure del libro porta alla conclusione della run. Tipologia e iconografia del libro orientano il cast: per esempio, un salterio può presentare figure bibliche, allegoriche e marginali coerenti con il suo repertorio, non un assortimento arbitrario di nemici.
