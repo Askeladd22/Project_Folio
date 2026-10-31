@@ -48,9 +48,9 @@ local failure_count=0
 local first_example
 local by_mode={
  native={runs=0,first_step=0,envelope=0,max_overlap=0,invalid=0,
-        moving=0,tilt=0,floor=0,airborne=0,gap=0},
+        moving=0,tilt=0,floor=0,airborne=0,gap=0,invalid8=0,moving8=0,floor8=0},
  compatible={runs=0,first_step=0,envelope=0,max_overlap=0,invalid=0,
-        moving=0,tilt=0,floor=0,airborne=0,gap=0}
+        moving=0,tilt=0,floor=0,airborne=0,gap=0,invalid8=0,moving8=0,floor8=0}
 }
 for seed=1,seeds do
  for variant=1,4 do
@@ -141,6 +141,13 @@ for seed=1,seeds do
   metrics.floor=metrics.floor+out.invalid_floor
   metrics.airborne=metrics.airborne+out.invalid_airborne
   metrics.gap=metrics.gap+out.invalid_gap
+  -- Extended diagnostic horizon: distinguish 5-second unsettled dice
+  -- from persistent invalid floor/face results, without changing the game.
+  for step=501,800 do O.step(handoff,.01) end
+  local late=M.finish(M.new(),O.snapshot(handoff))
+  metrics.invalid8=metrics.invalid8+late.invalid_faces
+  metrics.moving8=metrics.moving8+late.invalid_moving
+  metrics.floor8=metrics.floor8+late.invalid_floor
   if not first_example then first_example={pairs=pairs,overlap=overlap} end
  end
 end
@@ -148,9 +155,9 @@ print(string.format('HANDOFF runs=%d dice=%d transferMax=%.9f firstStepMax=%.5f 
  rounds,rounds*6,worst_snap,worst_first_step,worst_overlap))
 for _,mode in ipairs({'native','compatible'}) do
  local m=by_mode[mode]
- print(string.format('HANDOFF_MODE %s runs=%d dice=%d firstStepMax=%.5f envelopeDeficit=%.5f fpsOverlap=%.5f invalid=%d moving=%d tilt=%d floor=%d airborne=%d gap=%d',
+ print(string.format('HANDOFF_MODE %s runs=%d dice=%d firstStepMax=%.5f envelopeDeficit=%.5f fpsOverlap=%.5f invalid5s=%d moving5s=%d tilt5s=%d floor5s=%d airborne5s=%d gap5s=%d invalid8s=%d moving8s=%d floor8s=%d',
  mode,m.runs,m.runs*6,m.first_step,m.envelope,m.max_overlap,m.invalid,
- m.moving,m.tilt,m.floor,m.airborne,m.gap))
+ m.moving,m.tilt,m.floor,m.airborne,m.gap,m.invalid8,m.moving8,m.floor8))
 end
 print(string.format('HANDOFF finalInvalid=%d/%d unsettled=%d failingRuns=%d/%d initialOverlapPairs=%d initialOverlap=%.5f',
  total_invalid,rounds*6,total_unsettled,failure_count,rounds,
