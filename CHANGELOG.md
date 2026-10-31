@@ -49,6 +49,18 @@ di Farkle, alla fisica o al rendering 3D g3d.
 - Versione canonica `0.1.0-dev.6` → `0.1.0-dev.7`;
   documentati nuovo percorso unico e limiti della QA.
 
+### Ulteriori correzioni dopo i test
+- L'inizializzazione di Lovely Toasts è esclusivamente
+  grafica: nei test headless, `Toast.show` non può
+  caricare il font prima dell'esistenza di LÖVE.
+  Aggiornato `tests/lovely_toasts_adapter_test.lua`.
+- Eliminato da `main.lua` l'ultimo hook
+  `MANUSCRIPT_HUD_COMPARISON` che richiamava lo smoke
+  tra due HUD ormai eliminati.
+- [CI #41240278666](https://github.com/Askeladd22/Project_Folio/actions/runs/41240278666)
+  **superata**: Lua 5.4, LuaJIT, benchmark degli Incontri,
+  laboratorio FPS nativo, test Python e gate versione.
+
 ### Verifiche e limiti
 - CI Lua 5.4, LuaJIT, FPS Lab nativo e Python da
   verificare nell'esecuzione della PR. Nessuna
