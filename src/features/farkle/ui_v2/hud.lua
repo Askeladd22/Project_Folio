@@ -51,6 +51,13 @@ local function panel(r,fill,stroke,radius)
   g.rectangle('line',r.x+.8,r.y+.8,r.w-1.6,r.h-1.6,radius or 5)
  end
 end
+local function pointer_over(rect)
+ if not (love.mouse and love.mouse.getPosition) then return false end
+ local mx,my=love.mouse.getPosition()
+ if type(mx)~='number' or type(my)~='number' then return false end
+ local vx,vy=Res.to_virtual(mx,my)
+ return MenuSurface.contains(rect,vx,vy)
+end
 local function action_button(u,a,rect)
  local isPrimary=a.slot=='primary'
  -- Every visible control uses the same rectangular hitbox as the
@@ -58,7 +65,8 @@ local function action_button(u,a,rect)
  -- Give even disabled actions a light leaf underneath: their semi-transparent
  -- shared widget fill would otherwise sit directly on the dark desk.
  panel(rect,parchment,nil,5)
- MenuSurface.item(rect,{primary=isPrimary,disabled=not a.enabled})
+ MenuSurface.item(rect,{primary=isPrimary,disabled=not a.enabled,
+   active=a.enabled and pointer_over(rect)})
  write(a.label,rect.x+12,rect.y+(rect.h>=66 and 10 or 11),rect.w-24,
    a.slot=='context' and 17 or 24,
    a.enabled and paper_ink or paper_muted,'center')
