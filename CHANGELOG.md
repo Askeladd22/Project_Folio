@@ -10,6 +10,59 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.6] - 2026-10-31
+
+**Tipo:** secondo esperimento isolato sui Segni; riallineamento dei
+controlli del benchmark e test contro strategie dominanti.
+**Nessuna modifica al gioco principale.**
+
+### Corretto
+- Risolto il confronto metodologicamente diseguale della prima
+  variante B: B, C0 e C richiedono ora tutte **tre marche in
+  massimo sei mani**; la baseline A mantiene la prima
+  commissione ufficiale a quattro mani e 100 punti.
+- Evitata la correlazione dei dadi virtuali introdotta dal
+  semplice offset numerico fra semi. Il generatore di laboratorio
+  usa ora una mescolatura non lineare portabile Lua 5.1/5.4,
+  con test sulla varietà di 256 mani iniziali.
+
+### Aggiunto
+- **C0 (ablation test):** stesso sacchetto e forze della C
+  ma senza i premi di due marche. Permette di isolare
+  l'effetto dei bonus di Assalto e Occasione.
+- **Confronto accoppiato** con stesso seme, mano,
+  rilancio e ID dado per politiche differenti; le
+  estrazioni del sacchetto sono indipendenti dai dadi
+  ma riprodotte con lo stesso seme.
+- Rapporti per categoria (Assalto, Guardia, Occasione)
+  con frequenze incasso/rilancio e situazioni in cui
+  le politiche dissentono; confronti B→C e C0→C
+  con differenze osservate e intervalli descrittivi
+  approssimativi al 95%.
+- Test di regressione su stream virtuali, obiettivi
+  dei controlli, C0 senza marche doppie, ripetibilità
+  e coerenza dei confronti accoppiati.
+
+### Modificato
+- Versione canonica `0.1.0-dev.5` → `0.1.0-dev.6`.
+- README e specifiche del laboratorio aggiornata la
+  distinzione tra protocollo dev.5 e quello nuovo.
+- Benchmark CI con campione più ampio ma di sola diagnostica.
+
+### Limiti e gate
+- I semi appaiati riducono una fonte di variabilità,
+  ma non rendono identici gli stati raggiunti dopo
+  decisioni differenti; non provano superiorità,
+  bilanciamento o interesse delle scelte.
+- Il gioco rimane Farkle con **sei dadi fisici g3d,
+  personaggi 2D e duello beta al Monaco invariati**.
+  La promozione di Incontri e Segni richiede ancora
+  un vero playtest, studio dell'eventuale strategia
+  prudente dominante e approvazione del design.
+- Prove automatiche Lua 5.4, LuaJIT, FPS, Python e
+  gate versione richiesti alla CI; nessuna prova
+  grafica Windows LÖVE viene dichiarata eseguita.
+
 ## [0.1.0-dev.5] - 2026-10-31
 
 **Tipo:** esperimento di game design riproducibile, non nuova funzione
