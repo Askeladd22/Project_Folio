@@ -25,6 +25,8 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
   con data di merge e link alla sua cronologia GitHub, più una
   ricostruzione tematica di renderer g3d, dadi fisici, UI 2.0, bot e
   librerie 2D. I PR #1–#39 erano già integrati prima di questa versione.
+- Test automatico `tests/changelog_retrospective_test.lua` per
+  preservare l'indice delle 39 PR e le origini del Farkle.
 - Distinzione esplicita fra la **semplice IA Farkle sperimentale
   del luglio 2026** e il **Monaco beta** introdotto dalla PR #36.
   Le funzionalità eliminate in seguito non sono presentate come attuali.
