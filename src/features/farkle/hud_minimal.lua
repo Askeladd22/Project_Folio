@@ -617,12 +617,15 @@ function M.draw(u)
 end
 
 -- 3D Dice Selection Overlay and Front Canalina
-function M.overlay(u, hits)
+function M.overlay(u, hits, options)
     u.hits = hits
     local g = love.graphics
     local s = u.game
     if not s then return end
 
+    -- UI v2 supplies its own non-invasive indicators; keep the old
+    -- presentation intact for the default HUD and retain shared shelf/modals.
+    if not (options and options.hideIndicators) then
     local eligible = H.eligible(s)
 
     -- Draw the hand trajectory while the actual rigid body is being held.
@@ -684,6 +687,7 @@ function M.overlay(u, hits)
         end
     end
     g.setLineWidth(1)
+    end -- only legacy HUD draws full dice selection rings
 
     -- Physical front canalina with 6 carved niches for held dice
     Res.begin_ui()
