@@ -12,6 +12,7 @@ local Accepted=require('src.features.farkle.ui_v2.accepted_dice')
 local Dialogs=require('src.features.farkle.ui_v2.dialogs')
 local Indicators=require('src.features.farkle.ui_v2.overlay')
 local MenuSurface=require('src.features.ui_v2.menu_surface')
+local LabelFit=require('src.features.farkle.ui_v2.label_fit')
 local V={}
 local fonts={}
 local unpack=table.unpack or unpack
@@ -26,22 +27,41 @@ local border_ink=rgba(.48,.32,.16,.92)
 local paper_ink=rgba(.24,.15,.09)
 local paper_muted=rgba(.43,.32,.22)
 local paper_gold=rgba(.53,.34,.12)
+local paper_warning=rgba(.52,.20,.15)
 local function size(n)
  return math.floor(n*math.min(1.35,UI.scale())*
      (UI.big_text() and 1.16 or 1)+.5)
 end
-local function font(n)
- n=size(n)
- if not fonts[n] then
-  fonts[n]=love.graphics.newFont('resources/font/IMFeENsc28P.ttf',n)
+local function font_px(px)
+ if not fonts[px] then
+  fonts[px]=love.graphics.newFont('resources/font/IMFeENsc28P.ttf',px)
  end
- return fonts[n]
+ return fonts[px]
+end
+local function font(n)
+ return font_px(size(n))
 end
 local function write(label,x,y,w,pt,color,align)
  local g=love.graphics
  g.setFont(font(pt))
  g.setColor(unpack(color or pale))
  g.printf(tostring(label),x,y,w,align or 'left')
+end
+-- One measured line per visual cell: no wraps behind other controls.
+-- Use font metrics (not string length), with UTF-8-safe abbreviation only
+-- when a readable minimum size still cannot fit the available rectangle.
+local function write_fitted(value,rect,pt,min_pt,color,align)
+ local g=love.graphics
+ local text,px=LabelFit.fit(value,function(s,n)
+  local f=font_px(n)
+  return f:getWidth(s),f:getHeight()
+ end,size(pt),size(min_pt or math.max(10,pt*.7)),rect.w,rect.h)
+ if text=='' then return end
+ local face=font_px(px)
+ g.setFont(face)
+ g.setColor(unpack(color or paper_ink))
+ g.printf(text,rect.x,rect.y+math.max(0,(rect.h-face:getHeight())*.5),
+  rect.w,align or 'left')
 end
 local function panel(r,fill,stroke,radius)
  local g=love.graphics
@@ -67,12 +87,13 @@ local function action_button(u,a,rect)
  panel(rect,parchment,nil,5)
  MenuSurface.item(rect,{primary=isPrimary,disabled=not a.enabled,
    active=a.enabled and pointer_over(rect)})
- write(a.label,rect.x+12,rect.y+(rect.h>=66 and 10 or 11),rect.w-24,
-   a.slot=='context' and 17 or 24,
+ local caption={x=rect.x+12,y=rect.y+8,w=rect.w-24,
+   h=a.detail and rect.h>=66 and 32 or rect.h-16}
+ write_fitted(a.label,caption,a.slot=='context' and 17 or 24,14,
    a.enabled and paper_ink or paper_muted,'center')
  if a.detail and rect.h>=66 then
-  write(a.detail,rect.x+8,rect.y+46,rect.w-16,15,
-    paper_muted,'center')
+  local detail={x=rect.x+8,y=rect.y+44,w=rect.w-16,h=rect.h-50}
+  write_fitted(a.detail,detail,15,11,paper_muted,'center')
  end
  u.buttons[a.id]={x=rect.x,y=rect.y,w=rect.w,h=rect.h,
     enabled=a.enabled,fn=a.fn,label=a.label}
@@ -80,26 +101,36 @@ end
 local function header(u,s,layout,actions)
  local g=love.graphics
  local c=R.contracts[s.stage]
+ local readout=layout.header_readout
  panel(layout.header,parchment,border_ink,7)
- write('COMMISSIONE '..s.stage..'/3',70,26,300,18,paper_gold)
- write(c.name,70,53,402,16,paper_ink)
+ -- The commission name and the four numbers occupy measured cells:
+ -- long campaign titles and large-text settings cannot wrap into stats.
+ write_fitted('COMMISSIONE '..s.stage..'/3',
+   readout.commission_tag,18,12,paper_gold)
+ write_fitted(c.name,readout.commission_name,18,12,paper_ink)
  local remaining=math.max(0,c.limit-s.turn+
      ((s.phase=='ended' or H.commission_closed(s)) and 0 or 1))
  local values={
-  {'OBIETTIVO',c.target..' pt',520},
-  {'ASSICURATI',s.bank..' pt',744},
-  {'A RISCHIO',s.pot..' pt',970},
-  {'TURNI',tostring(remaining),1190}
+  {'OBIETTIVO',c.target..' pt'},
+  {'ASSICURATI',s.bank..' pt'},
+  {'A RISCHIO',s.pot..' pt'},
+  {'TURNI',tostring(remaining)}
  }
- for _,v in ipairs(values) do
-  write(v[1],v[3],28,195,13,paper_muted)
-  write(v[2],v[3],50,195,24,v[1]=='A RISCHIO' and paper_gold or paper_ink)
+ g.setLineWidth(1)
+ g.setColor(border_ink[1],border_ink[2],border_ink[3],
+   UI.high_contrast() and .70 or .34)
+ for _,x in ipairs(readout.dividers) do
+  g.line(x,30,x,82)
+ end
+ for i,v in ipairs(values) do
+  local cell=readout.metrics[i]
+  write_fitted(v[1],cell.caption,13,10,paper_muted)
+  write_fitted(v[2],cell.value,24,15,
+   i==3 and paper_warning or paper_ink)
  end
  for _,a in ipairs(actions) do
   if a.slot=='header' then
-   local rect=a.id=='help' and
-      {x=1510,y=33,w=155,h=49} or {x=1682,y=33,w=156,h=49}
-   action_button(u,a,rect)
+   action_button(u,a,a.id=='help' and readout.help or readout.runmenu)
   end
  end
 end
@@ -164,13 +195,18 @@ function V.draw(u)
   end
  end
  if c==0 then
-  write('Consulta la pagina [F]',layout.context.x+12,
-      layout.context.y+62,layout.context.w-24,17,paper_muted,'center')
+  write_fitted('Consulta la pagina [F]',
+    {x=layout.context.x+12,y=layout.context.y+53,
+     w=layout.context.w-24,h=38},17,12,paper_muted,'center')
  end
- write(Actions.state(u),layout.message.x,
-       layout.message.y,layout.message.w,18,
-       (s.phase=='rescue' or s.phase=='lost') and rgba(.92,.44,.36) or pale,
-       'center')
+ -- Treat the actual state message as a manuscript status strip,
+ -- not free-floating small text on the dark desk.
+ panel(layout.message,rgba(.89,.81,.65,.98),border_ink,5)
+ write_fitted(Actions.state(u),
+   {x=layout.message.x+12,y=layout.message.y+2,
+    w=layout.message.w-24,h=layout.message.h-4},18,12,
+   (s.phase=='rescue' or s.phase=='lost') and paper_warning or paper_ink,
+   'center')
  for _,a in ipairs(actions) do
   if a.slot=='primary' then action_button(u,a,layout.primary)
   elseif a.slot=='secondary' then action_button(u,a,layout.secondary) end

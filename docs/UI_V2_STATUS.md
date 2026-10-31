@@ -1,5 +1,16 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.11 — leggibilità HUD:** riquadri dati
+> commissione con geometrie pure, etichette
+> autoadattate a una sola riga usando misure del
+> font e abbreviazione UTF-8 sicura, più fascia
+> di stato su pergamena. Hitbox, Farkle, g3d e
+> splash LÖVE invariati. Test headless introdotti
+> a 720p/1080p/1440p; CI e screenshot Windows
+> vanno verificati prima di dichiarare QA completata.
+>
+
+
 > **0.1.0-dev.10 — HUD Farkle, solo presentazione:** la
 > barra commissione, il pannello Strumenti e tutti i pulsanti
 > ora usano superfici pergamena/inchiostro coerenti con

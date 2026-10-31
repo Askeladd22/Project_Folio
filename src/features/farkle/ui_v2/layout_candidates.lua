@@ -12,6 +12,21 @@ end
 local function common()
  return {
   header=rect(48,18,1824,76),
+  -- Readout geometry is visual-only; it does not change any button
+  -- positions or enlarge the physical tray's interaction footprint.
+  header_readout={
+   commission_tag=rect(70,26,408,22),
+   commission_name=rect(70,51,408,31),
+   metrics={
+    {caption=rect(520,27,195,21),value=rect(520,50,195,36)},
+    {caption=rect(744,27,195,21),value=rect(744,50,195,36)},
+    {caption=rect(970,27,195,21),value=rect(970,50,195,36)},
+    {caption=rect(1190,27,195,21),value=rect(1190,50,195,36)},
+   },
+   dividers={500,730,954,1177,1420},
+   help=rect(1510,33,155,49),
+   runmenu=rect(1682,33,156,49),
+  },
   -- The status line and the two large contextual actions are outside
   -- the playable surface, so a six-die throw cannot hit the buttons.
   message=rect(100,910,1720,34),
