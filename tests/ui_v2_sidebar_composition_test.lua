@@ -106,6 +106,7 @@ for _,size in ipairs{{1280,720},{1920,1080},{2560,1440}} do
   assert(stack==unstack,'sidebar painting left a graphics transform open')
   assert(rect_drawn(layout.sidebar_frame),'folio needs a unified outer binding')
   assert(rect_drawn(layout.context),'tools card must remain inside the sidebar')
+  assert(rect_drawn(layout.shelf_caption),'rubric must sit on an illuminated ribbon')
   assert(caption_visible('REGISTRO DEI DADI ACCANTONATI',layout.shelf_caption),
    'accepted-dice title is obscured by slot drawings')
   assert(not duel or not caption_visible('MANOSCRITTO',layout.sidebar_caption),
