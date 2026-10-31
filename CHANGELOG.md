@@ -10,6 +10,37 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.3] - 2026-10-31
+
+**Tipo:** correzione urgente del crash di avvio introdotto dalla rimozione del
+painter CPU in PR #38. Questa versione è un hotfix del `main`
+`0.1.0-dev.2`, non una nuova release pubblica.
+
+### Corretto
+- Risolto `src/app/dice_runtime.lua:761: attempt to index global 'light'
+  (a nil value)` durante `spawn_initial_dice()`. Il materiale grafico
+  `light.plastic` era rimasto dopo che il renderer CPU e il suo import
+  erano stati eliminati.
+- Eliminati **il riferimento e la proprietà `material` del vecchio
+  painter** dai dadi creati in avvio. Le texture, i colori, la geometria
+  e i materiali fisici `bone` rimangono invariati; il rendering
+  continua esclusivamente con **g3d**, senza introdurre alcun fallback.
+
+### Test
+- Aggiunto `tests/dice_startup_g3d_only_test.lua`: esegue in ambiente
+  headless **il vero corpo di `spawn_initial_dice()`** con stub del
+  motore fisico, verificando che D6/D8 e regioni siano creati
+  e registrati senza `light` o materiali CPU.
+- Rafforzato `tests/renderer_dependency_test.lua` per impedire
+  di reintrodurre questa dipendenza.
+- Verifica automatica Lua 5.4/LuaJIT, test Python e laboratorio
+  FPS richiesta su GitHub Actions; **avvio grafico Windows ancora
+  da verificare** con l'eseguibile LÖVE reale.
+- **Nota di integrazione:** la precedente PR #41, ancora aperta al
+  momento dell'hotfix, ha proposto `0.1.0-dev.3` in parallelo.
+  Dopo l'integrazione di questo fix dovrà assumere un numero
+  successivo e riallineare il suo changelog.
+
 ## [0.1.0-dev.2] - 2026-10-31
 
 **Tipo:** documentazione storica verificabile, senza variazioni a gameplay, renderer o risorse.
