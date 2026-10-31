@@ -1,5 +1,13 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.3 — Modalità Monaco:** animato il ritorno 2D della
+> figura sconfitta sul folio e aggiunto il registro di mano basato
+> sui risultati effettivi dei tiri virtuali del bot. Test automatici
+> dedicati senza modificare g3d, il Farkle o i gate P0/P3.
+> La QA visiva Windows (layout 720p/1080p, miniature e glosse)
+> **rimane aperta**. Specifica: [BOT_DUEL_AND_TOASTS.md](BOT_DUEL_AND_TOASTS.md).
+
+
 > **31 ottobre 2026 — notifiche e bot beta:** Lovely Toasts viene usato
 > come feedback 2D nella UI v2 e nella nuova sfida al Monaco, selezionabile
 > dal menu principale. Quest'ultima usa il Farkle ufficiale e una
