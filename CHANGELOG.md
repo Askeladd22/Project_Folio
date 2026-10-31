@@ -25,6 +25,9 @@ di Farkle, alla fisica o al rendering 3D g3d.
   dialoghi e le ricompense in `ui_v2/dialogs.lua`.
 - `tests/smoke/compare_huds.lua`, confronto storico fra
   due HUD ormai inesistenti. Nessun fallback CPU/3D ripristinato.
+- Coordinate inutilizzate `H.tray`, `H.slots` e `H.feedback`
+  dal modello di presentazione Farkle; la geometria unica
+  è definita da `ui_v2/layout_candidates.lua`.
 
 ### Aggiunto
 - `ui_v2/accepted_dice.lua`: canalina/registro 2D dei
