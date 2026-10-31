@@ -87,17 +87,41 @@ now=now+.05;U:mousemoved(centers[1].x+45,centers[1].y+30)
 U:update(.03)
 assert(dice[1].body.position[1]~=originalX,'group bodies must physically move')
 assert(dice[2].body._grabbed and dice[6].body._grabbed,'entire group must be in hand')
-local gap=dice[2].body.position[1]-dice[1].body.position[1]
-assert(math.abs(gap-1)<1e-6,'group motion should maintain relative spacing')
--- Even if a drag reaches the board border, all six dice must retain their
--- original physical spacing instead of independently clamping together.
+-- Dice converge toward the right-clicked anchor, not their old
+-- scattered positions; merely holding without moving keeps gathering them.
+local grip=U.mouseThrow
+assert(grip.targets and #grip.targets==6)
+assert(math.abs(grip.anchor_x-dice[1].body.position[1])<5,
+ 'anchor should be derived from the clicked physical die')
+for i=1,30 do U:update(.03) end
+for j,member in ipairs(grip.held) do
+ local pos,target=member.body.position,grip.targets[j]
+ assert(math.abs(pos[1]-target.x)<.01 and math.abs(pos[2]-target.y)<.01,
+  'all held physical dice must converge under the cursor')
+end
+local compactX=math.abs(dice[6].body.position[1]-dice[1].body.position[1])
+assert(compactX<4,'selected six must be a compact group, not their original 5-unit spread')
+-- Group boundaries clamp the constellation as a whole, never compress it.
 now=now+.02;U:mousemoved(centers[1].x+5000,centers[1].y+30)
-assert(math.abs((dice[6].body.position[1]-dice[1].body.position[1])-5)<1e-6,
- 'clamped group drag must not squeeze dice near the rim')
+local t=U.mouseThrow.targets
+local step=U.mouseThrow.offsets
+assert(math.abs((t[6].x-t[1].x)-(step[6].x-step[1].x))<1e-9,
+ 'clamped group motion must preserve non-overlapping formation offsets')
+for _,target in ipairs(t) do
+ assert(target.x<=9.2 and target.x>=-9.2 and
+        target.y<=3.8 and target.y>=-3.8,
+  'all grouped dice targets must stay inside the physical board')
+end
 now=now+.02;U:mousemoved(centers[1].x+45,centers[1].y+30)
 now=now+.06;U:mousereleased(centers[1].x+90,centers[1].y+35,2)
 assert(#ends==6 and starts==1 and U.logicalRollId==1,
  'six released dice must be exactly one official Farkle roll')
+for i=1,6 do
+ local body=dice[i].body
+ assert(body.position[1]>=-9.2 and body.position[1]<=9.2 and
+        body.position[2]>=-3.8 and body.position[2]<=3.8,
+  'release must preserve valid world-space die positions')
+end
 assert(U.manualRoll==nil and U.game.phase=='rolling' and U.game.pot==0,
  'no face scoring until full physical settlement')
 for i=1,6 do assert(not dice[i].body._manual_pending and not dice[i].body.asleep) end
