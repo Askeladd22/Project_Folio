@@ -54,7 +54,7 @@ def main():
             "No real LÖVE capture at " + resolution)
     expected = (
         "fresh-pre-grip", "marquee-six", "physical-group-held",
-        "accessibility-on", "fresh-after-cancel", "folio", "reward",
+        "accessibility-on", "fresh-after-cancel", "folio", "upgrade",
     )
     for resolution in ("1920", "1280"):
         for state in expected:
