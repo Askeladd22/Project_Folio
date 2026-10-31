@@ -118,3 +118,20 @@ g3d rendering imports these experimental functions.
   `dt=0.01`; then visual Windows QA on real dice, and separate statistical
   fairness analysis. CI passing does not imply these gates were met.
 
+
+## Lab 4 — held-dice spring experiment
+
+See [LAB4_GRIP.md](LAB4_GRIP.md). This new, separate native experiment
+tests how **six FPS rigid bodies dynamically chase the same hand target**
+under spring forces and die/die contact rather than occupying a fixed
+3D formation. It compares collisions on/off and stationary/moving hands.
+
+```powershell
+.\experiments\physics_lab\build-windows.ps1
+luajit experiments\physics_lab\test_grip.lua
+luajit experiments\physics_lab\run_grip.lua
+```
+
+The experiment does **not** alter or replace the production physics,
+dice scoring, face classification, HUD, g3d or mouse pickup. It is a
+held-only trial; FPS still fails some official landing tests.
