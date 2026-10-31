@@ -234,7 +234,15 @@ function U:mousepressed(x,y,b)
    table.sort(indices)
   end
   if #indices>1 then
-   self.mouseThrow=GroupThrow.begin(indices,dice,x,y,love.timer.getTime())
+   -- The clicked die is the hand anchor, even if it is not the first
+   -- selected ID. A projected hit lets the group center follow the pointer.
+   local hx,hy=nil,nil
+   for _,hit in ipairs(Bridge.getTrayDieHits()) do
+    if hit.index==i then hx,hy=hit.x,hit.y;break end
+   end
+   self.mouseThrow=GroupThrow.begin(indices,dice,x,y,love.timer.getTime(),
+     require('src.engine3d.view'),self.trayScale or 1,
+     require('src.data.dice_scene_schema').box,i,hx,hy)
   else
    self.mouseThrow=MouseThrow.begin(i,dice[i].body,x,y,love.timer.getTime())
   end
