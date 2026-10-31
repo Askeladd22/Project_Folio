@@ -58,3 +58,21 @@ manuale e automatico, Farkle, dadi accantonati e loro ritratti g3d,
 HUD precedente e UI v2 con F6, schermate di ricompensa, sfida al Monaco
 e notifiche Lovely Toasts. Se fallisce un pass 3D, annotare
 errore, driver, LÖVE e impostazioni; non riattivare il painter.
+
+## Fix successivo: crash avvio `light.plastic` (0.1.0-dev.4)
+
+Nel runtime post-PR #38 il metodo `spawn_initial_dice()` referenziava
+ancora `light.plastic` per impostare `die.material`. Con il painter
+CPU eliminato, `light` non veniva più importato e all'avvio
+appariva l'errore `attempt to index global 'light' (a nil value)`
+(segnalato alla riga 761). La funzione material apparteneva
+**solo al renderer CPU**; g3d legge invece geometrie e texture dei
+dadi indipendentemente da quel campo.
+
+Il fix elimina definitivamente l'assegnazione; non ripristina
+`light.lua`, non introduce fallback e mantiene il materiale fisico
+`materials.get('bone')`. Il nuovo test
+`tests/dice_startup_g3d_only_test.lua` esegue proprio lo spawn del
+runtime in modalità headless con `light` intenzionalmente non definito,
+coprendo una dipendenza che in precedenza non era intercettata dalla
+sola compilazione sintattica. **QA manuale Windows LÖVE ancora aperta.**

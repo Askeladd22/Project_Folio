@@ -10,6 +10,37 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.4] - 2026-10-31
+
+**Tipo:** hotfix per crash di avvio segnalato su Windows LÖVE.
+**Base:** `0.1.0-dev.3` (PR #41 del Monaco già integrata);
+nessuna modifica al gameplay, ai controlli o alle miniature 2D.
+
+### Corretto
+- Eliminato `src/app/dice_runtime.lua:761: attempt to index global
+  'light' (a nil value)` durante `spawn_initial_dice()`.
+  La PR #38 aveva eliminato correttamente l'import del vecchio painter
+  CPU, ma lasciato il riferimento obsoleto `light.plastic` nella
+  creazione dei dadi.
+- Rimossa la proprietà `die.material` del renderer CPU ormai dismesso.
+  **g3d resta l'unico renderer 3D**, senza aggiungere import,
+  materiali alternativi o fallback. Preservati i materiali fisici
+  `bone`, corpi, facce, colori e geometrie D6/D8.
+
+### Test
+- Nuovo `tests/dice_startup_g3d_only_test.lua`: estrae e invoca
+  **l'effettiva funzione** `spawn_initial_dice()` del runtime,
+  con ambiente fisico minimo e `light` assente. Verifica la
+  generazione e registrazione di tutti i dadi, incluso D8 dove
+  previsto, e l'applicazione del materiale fisico.
+- Esteso `tests/renderer_dependency_test.lua` per bloccare
+  il ritorno di riferimenti a `light.plastic` e
+  `material = die_material`.
+- Gate CI Lua 5.4, LuaJIT, FPS Lab e Python da verificare
+  sull'esecuzione della PR. **Avvio grafico Windows non ancora
+  riprovato**: serve confermare che la schermata iniziale
+  e i dadi siano visualizzati correttamente in LÖVE.
+
 ## [0.1.0-dev.3] - 2026-10-31
 
 **Tipo:** presentazione dell'incontro beta, senza modifiche al punteggio o
