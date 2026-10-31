@@ -10,6 +10,60 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.8] - 2026-10-31
+
+**Tipo:** redesign visivo del frontend e unificazione delle superfici
+del manoscritto, successivo al cutover definitivo UI 2.0.
+**Nessuna reintroduzione del vecchio HUD né modifica al Farkle.**
+
+### Aggiunto
+- `src/features/ui_v2/menu_surface.lua`: geometria pura e
+  rendering condiviso per pergamene, bordi ornamentali,
+  righe selezionabili e separatori, riutilizzato dal menu
+  principale, dalla scelta commissioni e dai dialoghi
+  della UI 2.0. Conservata la scena illustrata sullo sfondo.
+- `tests/frontend_folio_surface_test.lua`: verifica in
+  ambiente Lua headless geometrie a 1280×720,
+  1920×1080 e 2560×1440, tutte le **sei azioni**
+  del menu, il controllo volume e i comandi della
+  campagna dentro l'area visibile e senza sovrapposizioni;
+  controlla inoltre che non tornino le bande nere legacy.
+
+### Modificato
+- Il menu principale non disegna più quattro fasce
+  nere opache: presenta una **pagina di pergamena**
+  laterale con testi color inchiostro, titoli
+  medievali, sei righe interattive, evidenziazione
+  oro/ocra e versione canonica leggibile.
+- La selezione della commissione utilizza una
+  **pagina centrale** e card coerenti con il
+  menu, mantenendo `Farkle Roguelite` e `Back`.
+  Gli hitbox coincidono con il disegno; le
+  dimensioni dei caratteri ora dipendono anche
+  dall'altezza della finestra.
+- I dialoghi, le opzioni e le ricompense usano
+  gli stessi bordi, pannelli e pulsanti della UI 2.0,
+  senza cambiare le callback, l'ordine delle
+  opzioni o i dati del gioco.
+- Eliminati vecchi colori del menu commissioni
+  rimasti inutilizzati e la funzione grafica
+  di un ornamento non più chiamato.
+- Versione canonica `0.1.0-dev.7` → `0.1.0-dev.8`.
+
+### Verifiche e limiti
+- I test automatici e il gate versione/changelog
+  sono eseguiti via GitHub Actions; **il risultato
+  effettivo va verificato prima del merge**.
+- La GUI usa ancora la grafica illustrata esistente
+  e alcuni font/copy storici; il redesign di
+  `startup_splash` e impostazioni è separato.
+- **QA grafica reale Windows LÖVE ancora aperta**:
+  verifica contrasto, interazioni e hitbox,
+  menu/commissione/dialoghi a 720p e 1080p,
+  testi grandi, animazioni ridotte e screenshot.
+- Farkle, g3d, bot, sei dadi fisici, RNG, miniature
+  2D, progressione e salvataggi **invariati**.
+
 ## [0.1.0-dev.7] - 2026-10-31
 
 **Tipo:** rimozione definitiva del fallback dell'HUD legacy e cutover
