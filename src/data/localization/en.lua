@@ -1,7 +1,7 @@
 return {
-    ["branding.title"] = "Scriptorium",
+    ["branding.title"] = "Project Folio",
 
-    ["main_menu.subtitle"] = "The Art of Illumination",
+    ["main_menu.subtitle"] = "A Dream of Ink and Dice",
     ["main_menu.footer.version"] = "v0.1",
     ["main_menu.footer.alpha"] = "alpha",
 
@@ -90,9 +90,9 @@ return {
     ["run.action.next_folio"] = "Next Folio (test)",
     ["run.hint.mouse_only"] = "Mouse-only controls",
 
-    ["commission.title.commission_mvp"] = "Scriptorium MVP",
+    ["commission.title.commission_mvp"] = "Prototype Commission",
     ["commission.subtitle.commission_mvp"] = "Core A - Ink Budget",
-    ["commission.title.commission_1"] = "Scriptorium Initiation",
+    ["commission.title.commission_1"] = "First Commission",
     ["commission.subtitle.commission_1"] = "Easy",
     ["commission.title.commission_2"] = "Rubrication",
     ["commission.subtitle.commission_2"] = "Medium",
