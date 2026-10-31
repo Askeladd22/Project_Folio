@@ -1,4 +1,4 @@
--- Clean g3d presentation regression: geometry, render order, fallback safety.
+-- Clean g3d presentation regression: geometry and render order.
 -- No graphics context; only pure geometry and static execution path checks.
 local Scene=require('src.engine3d.g3d_scenery')
 local Mesh=require('src.engine3d.g3d_mesh')
@@ -30,11 +30,13 @@ local function read(path)
 end
 local runtime=read('src/app/dice_runtime.lua')
 local renderer=read('src/engine3d/g3d_live.lua')
-local fallback=assert(runtime:find('if not gpu_drawn then',1,true))
-local floorCall=assert(runtime:find('draw_legacy_floor()',fallback,true))
-assert(floorCall>fallback,'legacy floor must draw only on the fallback branch')
-assert(not runtime:sub(1,fallback-1):find('draw_legacy_floor()%s*\n',1,false),
- 'legacy floor must not be drawn before GPU attempt')
+assert(runtime:find('live_g3d:draw({',1,true),
+ 'production tray must always draw through g3d')
+assert(not runtime:find('render.paint()',1,true),
+ 'CPU fallback painter must not be called')
+assert(not runtime:find('draw_legacy_floor',1,true),
+ 'legacy floor must not remain')
+assert(not runtime:find("key=='f9'",1,true),'F9 fallback must be removed')
 local floorPos=assert(renderer:find('self.floor_model:draw()',1,true))
 local shadowPos=assert(renderer:find('self.models[item.index].shadow:draw()',1,true))
 local wallPos=assert(renderer:find('self.walls:draw()',1,true))
@@ -46,4 +48,4 @@ assert(Live.supported({{die={faces={{1,2,3},{1,2,3},{1,2,3},{1,2,3},
  {1,2,3},{1,2,3},{1,2,3},{1,2,3}},faceValueMap={1,2,3,4,5,6,7,8}}}}),
  'D8 support must survive the visual cleanup')
 assert(not package.loaded['lib.g3d'],'headless checks must not load GPU')
-print('PASS g3d clean presentation: plain floor, thin frame, rendering isolation and F9 fallback')
+print('PASS g3d clean presentation: plain floor, thin frame, rendering isolation without legacy painter fallback')
