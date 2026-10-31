@@ -22,6 +22,8 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
   nello stesso stile delle voci del menu, tramite
   `src/features/ui_v2/menu_surface.lua`, con stati disabilitati
   chiaramente distinguibili al posto del vecchio pulsante verde.
+  Hover evidenziato usando il passaggio canonico da coordinate
+  dello schermo a quelle virtuali, senza cambiare il click.
 - Geometrie del tavolo, pagina del manoscritto, area di lancio g3d,
   raccoglitore dei dadi e disposizione degli hitbox **immutate**.
   Nessuna duplicazione dell'HUD e nessun ramo legacy.
