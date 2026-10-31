@@ -15,6 +15,9 @@ local removed={
  'tests/desk_assets_test.lua',
  'tests/retired_desk_assets_test.lua',
  'src/engine3d/render.lua',
+ 'src/features/farkle/hud_minimal.lua',
+ 'src/features/farkle/hud.lua',
+ 'tests/smoke/compare_huds.lua',
  'resources/ui/bulb.png',
 }
 local function read(path)
@@ -30,9 +33,9 @@ for _,path in ipairs{
  'main.lua',
  'src/app/dice_runtime.lua',
  'src/features/farkle/controller.lua',
- 'src/features/farkle/hud_minimal.lua',
- 'src/features/farkle/hud.lua',
  'src/features/farkle/ui_v2/hud.lua',
+ 'src/features/farkle/ui_v2/dialogs.lua',
+ 'src/features/farkle/ui_v2/accepted_dice.lua',
  'src/features/campaign_select/module.lua',
  'src/features/main_menu/module.lua',
  'src/features/farkle/tray_workshop.lua',
