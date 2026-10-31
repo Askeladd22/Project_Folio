@@ -7,14 +7,19 @@ from scripts.love_runtime import find_love
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('case',choices=['all','hud','frontend','partial','face-gate','integration','tray'],nargs='?',default='all')
 parser.add_argument('--out',type=Path,default=ROOT/'audits/farkle-promotion/after')
+parser.add_argument('--ui-v2-baseline',action='store_true',help='Capture real six-die grip and accessibility frames in HUD smoke only')
 args=parser.parse_args()
 cases=['partial','face-gate','integration','hud','frontend'] if args.case=='all' else [args.case]
+if args.ui_v2_baseline and args.case!='hud':
+ raise SystemExit('--ui-v2-baseline requires case=hud')
 for case in cases:
  out=(args.out/case).resolve();out.mkdir(parents=True,exist_ok=True);(out/'appdata').mkdir(exist_ok=True)
  env={k:v for k,v in os.environ.items() if not k.startswith('MANUSCRIPT_')}
  env.update(APPDATA=str(out/'appdata'),MANUSCRIPT_AUDIT_OUT=out.as_posix())
  if case in ('hud','tray'):
   env['MANUSCRIPT_FARKLE_'+case.upper()+'_SMOKE']='1'
+  if case=='hud' and args.ui_v2_baseline:
+   env['MANUSCRIPT_UI_V2_P0_CAPTURE']='1'
   name,success=('hud-smoke.log','PASS all HUD scenarios at both resolutions') if case=='hud' else ('tray-smoke.log','PASS all six dice physically cross old divider')
  elif case=='frontend':env['MANUSCRIPT_FRONTEND_SMOKE']='current';name,success='frontend.log','PASS frontend complete'
  else:
