@@ -758,7 +758,6 @@ local function spawn_initial_dice()
 
             local faceColors = build_face_colors(spec, #faces)
             local is_d8 = (spec.kind == "d8")
-            local die_material = light.plastic
             local die_color = is_d8 and D8_PROTO_COLOR or D6_PROTO_COLOR
             local die_text = is_d8 and D8_PROTO_TEXT or D6_PROTO_TEXT
 
@@ -771,7 +770,6 @@ local function spawn_initial_dice()
                     {DICE_INITIAL_SPIN[1], DICE_INITIAL_SPIN[2], DICE_INITIAL_SPIN[3]}
                 ),
                 die = clone(die_template, {
-                    material = die_material,
                     faceColors = faceColors,
                     color = die_color,
                     text = die_text,
