@@ -12,13 +12,12 @@ local Marquee=require('src.features.farkle.marquee_selection')
 local GroupThrow=require('src.features.farkle.group_throw')
 local BotDuel=require('src.gameplay.farkle.bot_duel')
 local Toasts=require('src.features.farkle.toast_messages')
--- Single in-game HUD: the manuscript view.
-local U={state='waiting',buttons={},dice_results={},
- uiV2Experimental=os.getenv('MANUSCRIPT_UI_V2_EXPERIMENT')=='1'}
+-- The new folio interface is the only gameplay HUD.
+-- The MANUSCRIPT_UI_V2_EXPERIMENT opt-in/F6 legacy switch is retired.
+local U={state='waiting',buttons={},dice_results={}}
 function U:getTrayRect()
- local t = self.uiV2Experimental and
-    require('src.features.farkle.ui_v2.layout_candidates').build('single_folio').tray or
-    require('src.features.farkle.hud_minimal').tray
+ local t=require('src.features.farkle.ui_v2.layout_candidates')
+    .build('single_folio').tray
  local x,y=Res.to_screen(t.x,t.y);return {x=x,y=y,w=t.w*Res.get_scale(),h=t.h*Res.get_scale()}
 end
 function U:getTrayProjection(tray,view,extents)
@@ -104,7 +103,7 @@ function U:act(name,fn)
   local duel_event=self.botDuel and
     (name=='bank' or name=='accept_bust' or name=='next')
   if duel_event then self:after_duel_turn()
-  elseif self.uiV2Experimental and not self.botDuel then
+  elseif not self.botDuel then
    if name=='bank' then Toasts.show('Punti incassati: +'..(self.lastBank or 0))
    elseif name=='accept_bust' then Toasts.show('Farkle: punti a rischio perduti') end
   end
@@ -232,7 +231,7 @@ function U:onDiceSettled(values)
  if s.phase=='ended' or s.phase=='lost' then self.lastLoss=pot end
  self.activePhysical=nil;self.manualRoll=nil;self.marquee=nil;self.dragSelected=nil;self.dice_results={};self:sync();self:log('settled',table.concat(s.hand,'/'))
  if self.botDuel then self:after_duel_turn()
- elseif self.uiV2Experimental and (s.phase=='ended' or s.phase=='lost') then
+ elseif s.phase=='ended' or s.phase=='lost' then
   Toasts.show('Farkle: turno concluso')
  end
  return true
@@ -246,18 +245,10 @@ function U:select_option(mask)
  return false
 end
 function U:draw()
- if self.uiV2Experimental then
-  require('src.features.farkle.ui_v2.hud').draw(self)
- else
-  require('src.features.farkle.hud_minimal').draw(self)
- end
+ require('src.features.farkle.ui_v2.hud').draw(self)
 end
 function U:drawDeskOverlays(hits)
- if self.uiV2Experimental then
-  require('src.features.farkle.ui_v2.hud').overlay(self,hits)
- else
-  require('src.features.farkle.hud_minimal').overlay(self,hits)
- end
+ require('src.features.farkle.ui_v2.hud').overlay(self,hits)
  if self.botDuel and not self.modal then
   require('src.features.farkle.bot_duel_view').draw(self.botDuel)
  end
@@ -412,18 +403,6 @@ function U:keypressed(k)
  if self.botDuel and self.botDuel.finished then
   if k=='r' then self:reset('control')
   elseif k=='escape' then require('src.core.navigation').go('main_menu') end
-  return
- end
- -- Only in an explicitly launched A/B session: no switch while physics,
- -- grip, dialog or reward input is live. F8/F9 remain independent.
- if k=='f6' and os.getenv('MANUSCRIPT_UI_V2_EXPERIMENT')=='1' then
-  if self.game and not self.mouseThrow and not self.marquee and
-     not self.manualRoll and self.state~='rolling' and
-     not self.modal and not H.reward_active(self.game) then
-   self.uiV2Experimental=not self.uiV2Experimental
-   self.dragSelected=nil
-   self.buttons={} -- never dispatch an obsolete hitbox on the next frame
-  end
   return
  end
  if k=='escape' and self.mouseThrow then
