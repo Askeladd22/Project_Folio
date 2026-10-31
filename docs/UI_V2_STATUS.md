@@ -1,5 +1,40 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+## Aggiornamento operativo — 31 ottobre 2026, Project Folio
+
+**Questo aggiornamento prevale sullo snapshot storico P0 riportato più sotto.**
+Repository attuale: `Askeladd22/Project_Folio`; `Project Folio` è un
+**titolo pubblico provvisorio**, non il nome commerciale definitivo.
+
+- **Main verificato:** `7c521cdb72b999260a7bb08ce41074903872ce1c`.
+- **P0 — QA grafica Windows:** ancora aperta; screenshot e benchmark FPS
+  reali non sono attestati dai soli test headless.
+- **P1 — studio geometrico:** confronto folio singolo / codice aperto disponibile
+  in PR #31, ma nessuna approvazione visiva definitiva. La modalità sperimentale
+  usa provvisoriamente `single_folio`.
+- **P2 — vertical slice giocabile:** implementata e integrata in **PR #32**.
+  Si attiva **solo** con `MANUSCRIPT_UI_V2_EXPERIMENT=1`, con **F6**
+  per passare alla UI precedente quando lo stato del controller è sicuro.
+  Non dichiarare P2 superata prima della QA Windows.
+- **Branding provvisorio:** PR #33 integrata (titolo Project Folio).
+- **P3 — intervento corrente:** indicatori di presa e scoring UI v2 autonomi;
+  niente sei cerchi invasivi durante la presa di gruppo, feedback distinto
+  per selezione Farkle valida/non valida, eligible e presa fisica.
+  `hud_minimal.overlay` rimane il proprietario temporaneo soltanto della
+  canalina e dei modali condivisi tramite `hideIndicators=true` nel percorso v2.
+  La modalità legacy conserva tutti i propri indicatori.
+- **P3 stato:** **IN CORSO / QA WINDOWS NON ESEGUITA**. Test puri:
+  `tests/ui_v2_dice_overlay_test.lua`. La comparazione di output con
+  F8/F9/F10/F11, prove mouse reale, FPS e screenshot resta obbligatoria.
+
+**Prossima azione:** dopo la CI della PR P3, eseguire su Windows una
+partita con opt-in UI v2 e screenshot a 720p/1080p per verifica dei
+segnali durante marquee, sei dadi in mano, lancio parziale, selezione
+scoring valida/non valida e modali; solo poi decidere la promozione P3.
+
+---
+
+
 > **Aggiornare questo file dopo ogni sessione che modifica il redesign.**
 > Non dedurre «DONE» dal fatto che esiste una PR: servono gate e test.
 > Roadmap completa e prompt: [UI_V2_ROADMAP.md](UI_V2_ROADMAP.md).
