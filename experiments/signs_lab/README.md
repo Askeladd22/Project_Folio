@@ -10,6 +10,11 @@ La prima versione dev.5 e l'ablation test dev.6 sviluppano la prova proposta in
 senza confonderla con il **duello Farkle simmetrico contro il Monaco**
 già giocabile nella beta.
 
+**Risultati di regressione estesa (256 semi):**
+[rapporto sperimentale con evidenze CI](RESULTS_2026_10_31.md).
+Il campione non dimostra che i bonus C migliorino le scelte:
+l'ablazione C0 va leggermente meglio per tutte le politiche.
+
 ## Analisi della v0.1.0-dev.6 — controllo più equo e ablation test
 
 Il primo esperimento `dev.5` aveva tre limiti: **B mirava a
