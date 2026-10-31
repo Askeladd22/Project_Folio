@@ -46,6 +46,18 @@ function M.build(which)
   a.tray=rect(68,216,1402,666)
   a.folio=rect(1512,128,352,562)
   a.context=rect(1512,724,352,152)
+  -- Decorative composition only: these rectangles do not alter the
+  -- camera, the 3D tray, the existing folio click region or game buttons.
+  a.sidebar_frame=rect(1498,104,380,788)
+  a.sidebar_caption=rect(1526,105,324,20)
+  a.sidebar_divider=rect(1518,707,340,1)
+  a.context_caption=rect(1525,730,326,20)
+  a.context_actions={
+   rect(1524,755,328,52),
+   rect(1524,814,328,52),
+  }
+  a.shelf_caption=rect(140,113,1252,20)
+  a.shelf_divider=rect(140,208,1252,1)
   a.page_main=rect(60,120,1420,764)
   a.page_info=nil
  else
@@ -126,6 +138,32 @@ function M.validate(layout)
  for _,id in ipairs({'header','message','primary','secondary','context'}) do
   if M.overlap(layout.tray,layout[id])>0 then
    return false,id..' obscures the 3D dice surface'
+  end
+ end
+ if layout.sidebar_frame then
+  for _,name in ipairs({'folio','context','sidebar_caption','sidebar_divider',
+    'context_caption'}) do
+   if not layout[name] or not M.contains(layout.sidebar_frame,layout[name]) then
+    return false,'sidebar element outside the decorative frame: '..name
+   end
+  end
+  if M.overlap(layout.sidebar_frame,layout.tray)>0 then
+   return false,'decorative sidebar overlaps physical D6 tray'
+  end
+  if M.overlap(layout.sidebar_divider,layout.folio)>0
+   or M.overlap(layout.sidebar_divider,layout.context)>0 then
+   return false,'sidebar ornament overlaps interactive areas'
+  end
+  for _,r in ipairs(layout.context_actions or {}) do
+   if not M.contains(layout.context,r) then
+    return false,'context action outside manuscript tools panel'
+   end
+  end
+  if not M.contains(layout.book,layout.shelf_caption)
+   or not M.contains(layout.book,layout.shelf_divider)
+   or M.overlap(layout.shelf_caption,layout.shelf)>0
+   or M.overlap(layout.shelf_divider,layout.tray)>0 then
+   return false,'shelf ornaments cover 3D dice or accepted slots'
   end
  end
  if M.overlap(layout.primary,layout.secondary)>0 then
