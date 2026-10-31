@@ -1,13 +1,20 @@
--- Purely flat, original painted placeholder for the Farkle opponent.
--- Uses the already approved 2D animation stack. No meshes, g3d characters
--- or input over the physical D6 area.
+-- Optional Farkle encounter with a FLAT illuminated-manuscript figure.
+-- g3d remains the sole renderer for the physical six D6 and book tray.
+-- The figure's return-to-folio motion is decorative, never a game rule.
 local Miniature=require('src.features.scriptorium.miniature_2d')
+local Model=require('src.features.farkle.bot_duel_presentation')
 local Res=require('src.core.resolution_manager')
 local RuntimeUI=require('src.core.runtime_ui')
 local M={}
 local monk=nil
+local status=Model.new()
 local titleFont=nil
 local bodyFont=nil
+
+-- Virtual 1920x1080 folio area: x=1512..1864, y=128..690.
+-- The portrait stays well outside the physical 3D tray.
+local PAGE_X,PAGE_Y,PAGE_SCALE=1740,621,.26
+local STAGE_X,STAGE_Y,STAGE_SCALE=1735,543,.90
 
 local function build_monk()
  local g=love.graphics
@@ -40,28 +47,77 @@ local function build_monk()
   g.line(x+8,96,x+29,96)
  end
  g.pop()
- return Miniature.new(sheet,{
-  x=1780,y=330,scale=.86,frameWidth=72,frameHeight=120,
-  frames=4,frameTime=.3,
+ local figure=Miniature.new(sheet,{
+  x=PAGE_X,y=PAGE_Y,scale=PAGE_SCALE,
+  frameWidth=72,frameHeight=120,frames=4,frameTime=.3,
  })
+ if status.return_to_page then
+  -- A completed duel can be presented before the first graphical frame.
+  figure:return_to_page(0,true)
+ else
+  figure:move_to(STAGE_X,STAGE_Y,STAGE_SCALE,.75,
+    RuntimeUI.reduced_animations())
+ end
+ return figure
+end
+
+function M.reset()
+ -- Explicitly discard every previous result/transition on replay.
+ -- The actor is recreated lazily during the next graphical frame.
+ status=Model.new()
+ monk=nil
+end
+
+function M.on_turn(event)
+ if not Model.observe(status,event) then return false end
+ if status.return_to_page and monk then
+  monk:return_to_page(.85,RuntimeUI.reduced_animations())
+ end
+ return true
 end
 
 function M.update(dt)
  if monk then monk:update(dt,RuntimeUI.reduced_animations()) end
 end
 
-local function message(g,x,y,w,h,title,text)
+local function panel(g)
  g.setColor(.12,.095,.065,.94)
- g.rectangle('fill',x,y,w,h,8)
+ g.rectangle('fill',1510,122,350,177,8)
  g.setColor(.7,.51,.29,1)
  g.setLineWidth(1.7)
- g.rectangle('line',x+1,y+1,w-2,h-2,8)
+ g.rectangle('line',1511,123,348,175,8)
  g.setFont(titleFont)
  g.setColor(.94,.78,.43,1)
- g.print(title,x+16,y+10)
+ g.print('SFIDA AL MONACO',1525,132)
  g.setFont(bodyFont)
  g.setColor(.96,.91,.79,1)
- g.print(text,x+16,y+44)
+ g.print('TU: '..status.player..'    MONACO: '..status.bot,1525,172)
+ g.print('MANO '..status.round..'/'..status.limit..
+  '  |  META '..status.target,1525,201)
+ g.setColor(.86,.72,.48,1)
+ g.print('Ultimo tiro: '..status.last_roll,1525,231)
+ g.setColor(.95,.89,.76,1)
+ g.printf(status.status,1525,261,316,'left')
+end
+
+local function final_panel(g)
+ local verdict=status.winner=='player' and 'HAI VINTO!' or
+   status.winner=='bot' and 'IL MONACO HA VINTO' or 'PARITA'
+ g.setColor(.12,.095,.065,.97)
+ g.rectangle('fill',600,440,720,152,8)
+ g.setColor(.7,.51,.29,1)
+ g.setLineWidth(1.7)
+ g.rectangle('line',601,441,718,150,8)
+ g.setFont(titleFont)
+ g.setColor(.94,.78,.43,1)
+ g.print(verdict,618,450)
+ g.setFont(bodyFont)
+ g.setColor(.96,.91,.79,1)
+ g.print('R: nuova sfida   |   ESC: menu principale',618,487)
+ g.setColor(.8,.67,.45,1)
+ g.rectangle('line',780,540,350,45,6)
+ g.setFont(bodyFont)
+ g.print('RIPROVA   /   CLICCA QUI',812,553)
 end
 
 function M.draw(duel)
@@ -72,23 +128,11 @@ function M.draw(duel)
  if not monk then monk=build_monk() end
  if not titleFont then titleFont=g.newFont('resources/font/IMFeENsc28P.ttf',22) end
  if not bodyFont then bodyFont=g.newFont('resources/font/IMFeENsc28P.ttf',18) end
- -- Entire scoreboard is outside the playable 3D tray in both HUD layouts.
- message(g,1510,122,350,96,'SFIDA AL MONACO',
-  'TU: '..(duel.last and duel.last.player or 0)..
-  '    MONACO: '..duel.bot.game.bank..' pt')
- -- Flat 2D foe on the narrow folio region, never over physical D6.
+ panel(g)
  monk:draw()
- if duel.finished then
-  local verdict=duel.winner=='player' and 'HAI VINTO!' or
-    duel.winner=='bot' and 'IL MONACO HA VINTO' or 'PARITA'
-  message(g,600,440,720,152,verdict,
-    'R: nuova sfida   |   ESC: menu principale')
-  g.setColor(.8,.67,.45,1)
-  g.rectangle('line',780,540,350,45,6)
-  g.setFont(bodyFont)
-  g.print('RIPROVA   /   CLICCA QUI',812,553)
- end
+ if status.finished then final_panel(g) end
  Res.end_ui()
  g.pop()
 end
+
 return M

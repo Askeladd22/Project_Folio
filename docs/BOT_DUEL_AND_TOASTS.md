@@ -31,6 +31,34 @@ ad aprire la campagna corrente, senza avversario.
 - A fine sfida **R** ricomincia, **Esc** ritorna al menu principale;
   si può anche cliccare sul pulsante di riprova nel pannello finale.
 
+## Aggiornamento 0.1.0-dev.3 — Il monaco torna sul folio
+
+Il bot presenta ora un **registro visivo dell'ultima mano**: punteggi
+reali del giocatore e del monaco, mano corrente, obiettivo, numero
+e facce dell'ultimo tiro virtuale (un trattino significa che quel
+dado non è stato rilanciato), più esito di incasso/Farkle.
+Il registro non può modificare i punteggi del `rules.lua`.
+
+Il monaco nasce nel margine del folio e si porta in primo piano
+con una transizione **esclusivamente 2D**. Quando il confronto
+termina con una vittoria del giocatore, `miniature_2d.lua`
+riporta la figura alla sua miniatura, riducendone le dimensioni.
+In caso di parità o di vittoria del monaco non viene simulato un
+ritorno che suggerirebbe un incontro vinto. `R` o il pulsante
+Riprova ripristinano figura e resoconto senza lasciare animazioni
+del duello precedente.
+
+Chi usa **animazioni ridotte** vede l'ingresso e il ritorno
+immediati, anche se l'opzione è attivata durante una transizione
+già in corso. Le coordinate sono vincolate al folio della UI
+1920×1080; **nessun oggetto 3D** nuovo e nessun click sui dadi.
+La grafica del monaco resta un placeholder da sostituire in una
+successiva fase di direzione artistica.
+
+Verifica automatica: `tests/bot_duel_presentation_test.lua` e
+`tests/miniature_2d_libraries_test.lua`; da provare graficamente
+in LÖVE a 720p e 1080p con la UI precedente e la UI 2.0.
+
 ## Lovely Toasts: glosse, non finestre modali
 
 Originale MIT [Loucee/Lovely-Toasts](https://github.com/Loucee/Lovely-Toasts)

@@ -24,6 +24,7 @@ function M.new(image,options)
    image=image,animation=Anim8.newAnimation(frames,options.frameTime or .16),
    origin={x=x,y=y,scale=scale},
    pose={x=x,y=y,scale=scale,opacity=1},
+   target={x=x,y=y,scale=scale},
    group=Flux.group(),width=fw,height=fh,
  },Figure)
 end
@@ -32,6 +33,7 @@ function Figure:move_to(x,y,scale,duration,reduced)
  assert(type(x)=='number' and type(y)=='number',
    'miniature position must be numeric')
  scale=scale or self.pose.scale
+ self.target={x=x,y=y,scale=scale}
  self.group=Flux.group() -- replace previous ornamental motion cleanly
  if reduced or not duration or duration<=0 then
   self.pose.x,self.pose.y,self.pose.scale=x,y,scale
@@ -48,7 +50,14 @@ end
 
 function Figure:update(dt,reduced)
  if reduced then
+  -- When accessibility mode is enabled during an in-flight transition,
+  -- snap to its intended destination rather than freezing halfway.
   self.group=Flux.group()
+  if self.target then
+   self.pose.x=self.target.x
+   self.pose.y=self.target.y
+   self.pose.scale=self.target.scale
+  end
   self.animation:gotoFrame(1)
  else
   self.group:update(math.max(0,dt or 0))
