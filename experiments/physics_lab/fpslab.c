@@ -127,6 +127,55 @@ FPSLAB_API int fpslab_step(fpslab *w,float dt) {
     return 1;
 }
 
+/* Lab 4: force-based experimental hand. No scripted per-die positions.
+ * All real FPS bodies follow the SAME target; die/die contacts optionally
+ * resolve the pile. Gravity/floor are excluded DURING the held-only trial,
+ * not during ordinary FPS lab rolling. Upstream FPS header is untouched.
+ * caller provides time-varying shake torque (signed, bounded). */
+FPSLAB_API int fpslab_grip_step(fpslab *w,const float *hand,float dt,
+                               float stiffness,float damping,float shake,
+                               int contacts) {
+    if(!w || !hand || !valid_float(dt) || dt<=0 || dt>.05f ||
+       !valid_float(stiffness) || stiffness<=0 || stiffness>200 ||
+       !valid_float(damping) || damping<0 || damping>100 ||
+       !valid_float(shake) || fabsf(shake)>30 ||
+       (contacts!=0 && contacts!=1))return 0;
+    for(int j=0;j<3;j++)if(!valid_float(hand[j]))return 0;
+    for(int i=0;i<w->n;i++) {
+        fps_body *body=w->dice[i];
+        float pos[3],velocity[3],angular[3],force[3],torque[3];
+        fps_body_position_get(body,pos);
+        fps_body_velocity_get(body,velocity);
+        fps_body_angular_velocity_get(body,angular);
+        float mass=fps_body_mass_get(body);
+        for(int axis=0;axis<3;axis++) {
+            float acceleration=stiffness*(hand[axis]-pos[axis])-
+                               damping*velocity[axis];
+            /* Cap force to avoid exploding when the hand jumps. */
+            if(acceleration>100)acceleration=100;
+            if(acceleration< -100)acceleration=-100;
+            force[axis]=mass*acceleration;
+        }
+        torque[0]=mass*(shake-3.2f*angular[0]);
+        torque[1]=mass*(-0.70f*shake-3.2f*angular[1]);
+        torque[2]=mass*(0.45f*shake-3.2f*angular[2]);
+        /* A held die must keep pursuing the hand even if upstream FPS's
+           low-speed sleep threshold tripped last fixed step. */
+        fps_body_sleeping_set(body,FPS_FALSE);
+        fps_body_force_apply(body,force);
+        fps_body_torque_apply(body,torque);
+    }
+    if(contacts) {
+        for(int i=0;i<w->n;i++)
+            for(int j=i+1;j<w->n;j++)
+                fps_collision_test(w->dice[i],w->dice[j]);
+    }
+    /* No floor/rim contacts while held: this isolates hand dynamics.
+       This lab is not a test of dice landing or final face validity. */
+    for(int i=0;i<w->n;i++)fps_body_step(w->dice[i],dt);
+    return 1;
+}
+
 /* 16 world transform values, then 3 linear + 3 angular velocities. */
 FPSLAB_API int fpslab_state(const fpslab *w,int index,float *out22) {
     if(!w || !out22 || index<0 || index>=w->n)return 0;
