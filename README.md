@@ -48,6 +48,15 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+Dalla `0.1.0-dev.11` la barra Farkle mostra dati di
+commissione in celle di lettura distinte e il messaggio
+di stato appare su una fascia pergamena. Pulsanti e
+titoli lunghi adattano il font alla larghezza senza
+andare a capo o troncare i caratteri UTF-8.
+Nessun cambiamento a dadi g3d, controlli o gameplay.
+La QA grafica reale Windows rimane necessaria.
+
+
 Dalla `0.1.0-dev.10` anche intestazione della commissione,
 pannello Strumenti e pulsanti del Farkle adottano i toni
 pergamena/inchiostro del frontend, mantenendo gli stessi
