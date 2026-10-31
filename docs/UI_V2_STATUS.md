@@ -1,5 +1,14 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **31 ottobre 2026 — notifiche e bot beta:** Lovely Toasts viene usato
+> come feedback 2D nella UI v2 e nella nuova sfida al Monaco, selezionabile
+> dal menu principale. Quest'ultima usa il Farkle ufficiale e una
+> miniatura 2D, con i dadi 3D del giocatore invariati.
+> [Specifiche e gate](BOT_DUEL_AND_TOASTS.md). La campagna rimane solitaria
+> e la proposta di Incontri asimmetrici con Segni rimane una direzione
+> distinta, ancora da prototipare. QA grafica Windows tuttora da eseguire.
+
+
 > **Toolkit 2D opzionale (31 ottobre 2026):** integrazione di Flux, anim8,
 > SYSL-Text e vignettatura Moonshine nella sola infrastruttura di
 > presentazione 2D. [Dettagli, licenze e gate](2D_PRESENTATION_LIBRARIES.md).
