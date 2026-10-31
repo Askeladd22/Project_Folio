@@ -1,6 +1,7 @@
 -- Physical one-at-a-time mouse handling for Manuscript's existing solver.
 -- The held body is real; its vertices rotate while _manual_pending freezes
 -- ordinary gravity/collisions. Release restores dynamic physics immediately.
+local Shake=require('src.features.farkle.shake_detector')
 local T={}
 local function clamp(x,lo,hi) return math.max(lo,math.min(hi,x)) end
 local function finite(x) return type(x)=='number' and x==x and math.abs(x)<math.huge end
@@ -31,7 +32,7 @@ function T.begin(index,body,x,y,time)
  body.velocity[1],body.velocity[2],body.velocity[3]=0,0,0
  local g={index=index,body=body,x0=x,y0=y,x=x,y=y,t0=time,t=time,
   original=original,samples={{x=x,y=y,t=time}},
-  angular={2.0,1.4,.6}}
+  angular={2.0,1.4,.6},shake=Shake.new(index,x,y,time)}
  body.position[3]=math.max(body.position[3],2.1)
  return g
 end
@@ -50,6 +51,16 @@ function T.track(g,x,y,time)
   g.angular[1]=clamp(2.0+dy*.050/dt,-13,13)
   g.angular[2]=clamp(1.4+dx*.050/dt,-13,13)
   g.angular[3]=clamp(.6+(dx-dy)*.012/dt,-8,8)
+ end
+ -- Detect alternating back-and-forth hand motion, NOT one swift throw.
+ -- Shake spin affects the REAL held body's next physical orientation.
+ -- It is separate from the Farkle RNG and never sets a face value.
+ local shake_spin=Shake.sample(g.shake,x,y,g.t)
+ if shake_spin then
+  for k=1,3 do
+   g.angular[k]=clamp(g.angular[k]+shake_spin[k],
+     k==3 and -10 or -14,k==3 and 10 or 14)
+  end
  end
  local sample=g.samples
  if #sample==0 or g.t>sample[#sample].t+.0001 or
@@ -115,13 +126,16 @@ function T.release(g,x,y,time,view,scale,bounds)
  local b=g.body
  -- A simple release still drops the held die; vigorous swipes impart speed.
  b.velocity[1],b.velocity[2],b.velocity[3]=vx,vy,-3.5-math.min(7,math.sqrt(vx*vx+vy*vy)*.22)
- b.angular[1]=clamp(g.angular[1],-14,14)
- b.angular[2]=clamp(g.angular[2],-14,14)
- b.angular[3]=clamp(g.angular[3],-10,10)
+ local recent_shake=Shake.recent(g.shake,g.t)
+ local boost=recent_shake and .42 or 0
+ b.angular[1]=clamp(g.angular[1]+g.shake.last_spin[1]*boost,-14,14)
+ b.angular[2]=clamp(g.angular[2]+g.shake.last_spin[2]*boost,-14,14)
+ b.angular[3]=clamp(g.angular[3]+g.shake.last_spin[3]*boost,-10,10)
  b.asleep=false
  b.sleep_timer=0
  b._grabbed=false
  b._manual_pending=false
- return {index=g.index,velocity=copy3(b.velocity),angular=copy3(b.angular)}
+ return {index=g.index,velocity=copy3(b.velocity),angular=copy3(b.angular),
+  shake_events=g.shake.events}
 end
 return T
