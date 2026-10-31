@@ -26,12 +26,12 @@ function M.build(which)
  local a=common()
  if which=='single_folio' then
   -- A broad physical playing folio and a narrower on-desk work ledger.
-  a.book=rect(48,112,1412,780)
-  a.shelf=rect(136,140,1232,90)
-  a.tray=rect(76,252,1356,620)
-  a.folio=rect(1496,128,360,562)
-  a.context=rect(1496,724,360,152)
-  a.page_main=rect(60,124,1388,756)
+  a.book=rect(48,108,1444,784)
+  a.shelf=rect(140,136,1252,64)
+  a.tray=rect(68,216,1402,666)
+  a.folio=rect(1512,128,352,562)
+  a.context=rect(1512,724,352,152)
+  a.page_main=rect(60,120,1420,764)
   a.page_info=nil
  else
   -- Real two-facing-page silhouette: left playable, right for work.
