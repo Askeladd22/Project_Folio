@@ -1,5 +1,15 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.10 — HUD Farkle, solo presentazione:** la
+> barra commissione, il pannello Strumenti e tutti i pulsanti
+> ora usano superfici pergamena/inchiostro coerenti con
+> il menu; i controlli continuano a registrare gli
+> stessi rettangoli e callback, e l'area dei sei D6 3D
+> non è stata modificata. Test headless 720p/1080p/1440p
+> introdotto; CI e QA grafica Windows da verificare.
+> Splash originale del motore LÖVE preservato.
+>
+
 > **0.1.0-dev.9 — impostazioni sulla pergamena:** tutte e
 > cinque le sezioni Settings condividono ora lo
 > stile e i componenti grafici della UI 2.0,
