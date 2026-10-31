@@ -1,4 +1,4 @@
-# Manuscript — Farkle roguelite
+# Project Folio — titolo provvisorio
 
 **Un roguelite solitario di dadi ambientato in una bottega di copisti e miniatori del XV secolo.**
 
@@ -6,7 +6,9 @@
 
 ## Il progetto
 
-Il nucleo di Manuscript è il **Farkle a sei dadi tridimensionali**: scegliere combinazioni, accantonare dadi e decidere se incassare o rischiare un nuovo lancio. La bottega medievale, le commissioni e le pagine del manoscritto definiscono l'identità del gioco e la progressione roguelite in sviluppo. Non si tratta di un gioco completo o pubblicato.
+**Project Folio** è un nome di lavorazione temporaneo: non è ancora il titolo commerciale. Il nome del repository `manuscript`, gli identificatori tecnici `scriptorium` e l'identità dei salvataggi non cambiano per ragioni di compatibilità.
+
+Il nucleo di Project Folio è il **Farkle a sei dadi tridimensionali**: scegliere combinazioni, accantonare dadi e decidere se incassare o rischiare un nuovo lancio. La bottega medievale, le commissioni e le pagine del manoscritto definiscono l'identità del gioco e la progressione roguelite in sviluppo. Non si tratta di un gioco completo o pubblicato.
 
 ## Funzioni attuali
 
