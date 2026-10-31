@@ -453,11 +453,6 @@ local function get_item_rect(layout, idx)
     return {x = base.x - offset, y = base.y, w = base.w, h = base.h}, progress
 end
 
-local function draw_diamond(cx, cy, size, r, g, b, a, scene_alpha)
-    set_color(r, g, b, a, scene_alpha)
-    love.graphics.polygon("fill", cx, cy - size, cx + size, cy, cx, cy + size, cx - size, cy)
-end
-
 local function draw_mute_icon(rect, is_muted, scene_alpha)
     if not rect then return end
     local cx = rect.x + rect.w * 0.5
@@ -669,9 +664,9 @@ function MainMenu:draw()
         local bh = RuntimeUI.sized(140)
         local mx = (w - bw) * 0.5
         local my = (h - bh) * 0.5
-        set_color(0, 0, 0, high_contrast and 0.88 or 0.74, scene_alpha)
-        love.graphics.rectangle("fill", mx, my, bw, bh, 8, 8)
-        set_color(0.96, 0.90, 0.80, 0.96, scene_alpha)
+        MenuSurface.panel({x=mx,y=my,w=bw,h=bh},
+            {alpha=scene_alpha,high_contrast=high_contrast})
+        set_color(.27, .17, .09, .98, scene_alpha)
         local modal_font = pick_font_for_text(modal_message, fonts.modal, fonts.modal_upper) or love.graphics.getFont()
         love.graphics.setFont(modal_font)
         love.graphics.printf(modal_message, mx + RuntimeUI.sized(18), my + RuntimeUI.sized(24), bw - RuntimeUI.sized(36), "center")
