@@ -58,3 +58,21 @@ manuale e automatico, Farkle, dadi accantonati e loro ritratti g3d,
 HUD precedente e UI v2 con F6, schermate di ricompensa, sfida al Monaco
 e notifiche Lovely Toasts. Se fallisce un pass 3D, annotare
 errore, driver, LÖVE e impostazioni; non riattivare il painter.
+
+## Hotfix avvio dopo PR #38 — 0.1.0-dev.3
+
+In seguito alla rimozione del painter CPU, `spawn_initial_dice()`
+usava ancora la funzione grafica `light.plastic` senza importare
+`light.lua`. Il gioco arrestava quindi l'inizializzazione prima
+di mostrare il gameplay (errore `dice_runtime.lua:761`).
+La proprietà `die.material` apparteneva al renderer rimosso e
+**non viene letta dalla pipeline g3d**: è stata eliminata, senza
+ripristinare il renderer alternativo.
+
+Il nuovo test `tests/dice_startup_g3d_only_test.lua` richiama
+il **codice effettivo** di generazione dei dadi con un
+`light` globale intenzionalmente assente; verifica creazione dei
+corpi, colori, dimensioni, assegnazione al tray e materiali fisici.
+Gli esiti della CI non sostituiscono una nuova prova LÖVE su Windows:
+il crash riportato dall'utente è stato riprodotto staticamente,
+ma l'avvio grafico non è attestato finché non viene rieseguito.
