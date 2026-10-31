@@ -26,6 +26,44 @@ function M.new_rng(seed)
  end
 end
 
+-- Stateless per-roll/per-physical-ID stream used by the paired benchmark.
+-- Same (seed, hand, roll index, D6 ID) => same die face even if other
+-- policies previously consumed a different number of virtual dice.
+-- Not a cryptographic RNG and not suitable as a production physics source.
+-- Lua 5.1/5.4 portable 31-bit XOR: index mixing needs an avalanche,
+-- not just a linear congruential offset (which gives highly correlated dice).
+local function xor31(a,b)
+ local out,place=0,1
+ for _=1,31 do
+  if a%2~=b%2 then out=out+place end
+  a=math.floor(a/2)
+  b=math.floor(b/2)
+  place=place*2
+ end
+ return out
+end
+
+function M.matched_rolls(seed,hand)
+ assert(type(seed)=='number' and seed%1==0 and seed>=1 and
+  seed<2147483647,'seed must be integer 1..2147483646')
+ assert(type(hand)=='number' and hand%1==0 and hand>=1 and hand<=100,
+  'benchmark hand must be 1..100')
+ return function(min,max,roll,id)
+  assert(min==1 and max==6,'matched rolls represent fair virtual D6')
+  assert(type(roll)=='number' and roll%1==0 and roll>=1 and roll<=64,
+   'valid roll index required')
+  assert(type(id)=='number' and id%1==0 and id>=1 and id<=6,
+   'physical die ID required')
+  local value=(seed+hand*104729+roll*13007+id*8191)%2147483646+1
+  value=xor31(value,math.floor(value/32768))
+  value=(value*48271)%2147483647
+  value=xor31(value,math.floor(value/4096))
+  value=(value*16807)%2147483647
+  value=xor31(value,math.floor(value/256))
+  return 1+math.floor((value/2147483647)*6)
+ end
+end
+
 function M.decision(strategy,state)
  assert(strategy=='prudent' or strategy=='audace' or
   strategy=='reattiva','unknown benchmark policy')
@@ -47,7 +85,7 @@ function M.play(random,strategy,category,observer)
  for _=1,64 do
   assert(Rules.start(state),'official Farkle roll was not permitted')
   local faces={}
-  for _,index in ipairs(state.active) do faces[index]=random(1,6) end
+  for _,index in ipairs(state.active) do faces[index]=random(1,6,rolls+1,index) end
   rolls=rolls+1
   assert(Rules.settle(state,faces),'official Farkle settle failed')
   if state.phase=='ended' or state.phase=='lost' then

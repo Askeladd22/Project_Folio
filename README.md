@@ -37,9 +37,9 @@ Non si confondono esperimenti rimossi, funzionalità attive o release.
 
 ## Prototipi di gameplay isolati
 
-Il laboratorio [**Incontri e Segni A/B/C**](experiments/signs_lab/README.md)
+Il laboratorio [**Incontri e Segni A/B/C0/C**](experiments/signs_lab/README.md)
 confronta il Farkle corrente, una progressione lineare e un
-duello sperimentale contro la miniatura del Leone della Bordura,
+duello sperimentale (con e senza bonus) contro la miniatura del Leone della Bordura,
 con estrazione di Segni senza reinserimento e criteri di rischio
 riproducibili. Si avvia con
 `luajit experiments/signs_lab/run.lua 100 20261031`:

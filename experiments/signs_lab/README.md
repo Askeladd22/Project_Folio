@@ -1,14 +1,80 @@
-# Project Folio — laboratorio A/B/C «Incontri e Segni»
+# Project Folio — laboratorio A/B/C0/C «Incontri e Segni»
 
-**31 ottobre 2026 — v0.1.0-dev.5: esperimento NON approvato né integrato nella partita.**
+**31 ottobre 2026 — aggiornato alla v0.1.0-dev.6: esperimento NON approvato né integrato nella partita.**
 Il gioco effettivo resta il Farkle con sei D6 fisici g3d; personaggi e
 miniature sono 2D. Nessuna modifica a `src/`, a `main.lua`, allo
 scoring, alla fisica o ai comandi è richiesta per lanciare il laboratorio.
 
-Il laboratorio sviluppa la prova proposta in
+La prima versione dev.5 e l'ablation test dev.6 sviluppano la prova proposta in
 [`docs/INCONTRI_E_SEGNI.md`](../../docs/INCONTRI_E_SEGNI.md),
 senza confonderla con il **duello Farkle simmetrico contro il Monaco**
 già giocabile nella beta.
+
+**Risultati di regressione estesa (256 semi):**
+[rapporto sperimentale con evidenze CI](RESULTS_2026_10_31.md).
+Il campione non dimostra che i bonus C migliorino le scelte:
+l'ablazione C0 va leggermente meglio per tutte le politiche.
+
+## Analisi della v0.1.0-dev.6 — controllo più equo e ablation test
+
+Il primo esperimento `dev.5` aveva tre limiti: **B mirava a
+100 punti in sei mani** mentre **C mirava a tre marche**,
+quindi le quote di vittoria non erano comparabili; il semplice
+offset tra stream pseudocasuali di dadi era correlato; inoltre
+non si poteva distinguere il contributo delle forze dei Segni
+da quello dei bonus. Il nuovo laboratorio corregge il protocollo,
+non il gameplay e non dimostra automaticamente la profondità.
+
+**Quattro condizioni (A/B/C0/C):**
+
+| Modalità | Condizione di successo | Limite |
+|---|---|---|
+| A | Commissione Farkle reale: 100 punti incassati | 4 mani |
+| B | Progressione fissa: 3 marche, una per ogni mano con almeno 35 punti incassati | 6 mani |
+| C0 | Stesso sacchetto, forze e obiettivo della C, **ma senza marche doppie** | 6 mani |
+| C | Leone con sacchetto, forze nascoste e bonus esplorativi | 6 mani |
+
+B, C0 e C hanno **tre marche e sei mani**; restano comunque
+differenti per frequenza delle soglie, informazioni, riciclo
+e bonus. A resta un riferimento di controllo alle regole
+attuali, non un benchmark con pari difficoltà.
+
+Per la prova riproducibile ora si usa un generatore virtuale
+**indicizzato da (seme, mano, rilancio, ID del D6)**. I dadi
+della medesima posizione ricevono la stessa faccia iniziale
+nelle tre strategie anche quando queste consumano una diversa
+quantità di tiri; il sacchetto è mescolato separatamente.
+Il mescolamento con XOR a 31 bit è scritto in puro Lua
+5.1/5.4: evita il precedente collasso in poche sequenze,
+ma **non costituisce una certificazione di casualità fisica**.
+
+L'output ora include:
+- **PAIRED_OUTCOMES**, con risultati congiunti sui medesimi
+  semi, varianti C contro B e C contro C0, inclusa differenza
+  di frequenza delle vittorie e intervallo approssimativo
+  al 95% (non un test di causalità o divertimento);
+- **PUBLIC_CATEGORY_CHOICES**, con incassi, rilanci e
+  divergenze degli stati osservati sotto Assalto, Guardia
+  e Occasione;
+- i contatori precedenti di durata, Farkle e rilanci.
+
+Le tre strategie restano politiche a soglia inventate per
+l'esperimento. La prima domanda da falsificare è se
+**C batte C0 soltanto grazie alle marche doppie**, e
+se **prudente** continua a prevalere a campioni maggiori.
+Non promuovere C a modalità giocabile in base a questa
+tabella senza playtest umano.
+
+### Riproduzione
+
+```powershell
+luajit experiments/signs_lab/run.lua 256 20261031
+```
+
+Il benchmark in CI usa un campione più piccolo per
+limitare i tempi di regressione. Nella documentazione
+i risultati numerici vanno dichiarati **solo dopo**
+l'effettiva esecuzione, con numero di semi e commit.
 
 ## Avvio, senza LÖVE né compilazioni native
 
@@ -32,7 +98,13 @@ Farkle, incassi, rilanci e divergenze di scelta fra le strategie.
 A parità di seme e versione sorgente, il risultato è riproducibile.
 Non scrive file né cambia impostazioni o salvataggi del gioco.
 
-## A/B/C — che cosa misuriamo (e che cosa NON misuriamo)
+## Dati storici del primo esperimento dev.5 (protocollo superato)
+
+> **Nota v0.1.0-dev.6:** questa sezione descrive il protocollo
+> della versione `dev.5`; la modalità B è stata ridefinita
+> e C0 aggiunta come descritto sopra. Non usare la tabella
+> seguente per interpretare i nuovi risultati del CLI.
+
 
 | Modalità | Condizione sperimentale | Limite |
 |---|---|---|
