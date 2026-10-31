@@ -1,5 +1,23 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **CUTOVER 0.1.0-dev.7 — 31 ottobre 2026:** la UI 2.0
+> è ora **l'unica interfaccia di partita**. L'opzione d'ambiente,
+> il tasto F6 per tornare al precedente HUD e i file
+> `hud_minimal.lua`/`hud.lua` sono stati **rimossi**.
+> Indicatori, canalina dei dadi, dialoghi e ricompense
+> sono gestiti da `ui_v2/`, senza import del vecchio HUD.
+> Nella sfida al Monaco la pagina è stata abbassata per
+> evitare la sovrapposizione con il pannello di stato.
+> **P6 — cutover tecnico eseguito sul branch; P5 —
+> QA Windows 720p/1080p NON ancora eseguita**.
+> Lo storico più sotto descrive le versioni precedenti
+> e non le dipendenze attive della versione dev.7.
+> Ulteriore P4 polish dei dialoghi e dei menu ancora aperto.
+> Test headless e dipendenze eseguiti con successo in
+> [CI #41240278666](https://github.com/Askeladd22/Project_Folio/actions/runs/41240278666).
+> Non si tratta di QA grafica Windows.
+>
+
 > **0.1.0-dev.3 — Modalità Monaco:** animato il ritorno 2D della
 > figura sconfitta sul folio e aggiunto il registro di mano basato
 > sui risultati effettivi dei tiri virtuali del bot. Test automatici

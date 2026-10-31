@@ -13,7 +13,7 @@ function love.load()
  engine_load();D.install('normal');require('src.core.navigation').go('startup_splash')
  -- Historical game-only diagnostics explicitly bypass the restored frontend.
  if os.getenv('MANUSCRIPT_FARKLE_TRAY_SMOKE')=='1' or os.getenv('MANUSCRIPT_TRAY_WORKSHOP_SMOKE')=='1'
- or os.getenv('MANUSCRIPT_FARKLE_HUD_SMOKE')=='1' or os.getenv('MANUSCRIPT_HUD_COMPARISON')=='1' or os.getenv('MANUSCRIPT_SOURCE_CASE') then
+ or os.getenv('MANUSCRIPT_FARKLE_HUD_SMOKE')=='1' or os.getenv('MANUSCRIPT_SOURCE_CASE') then
   require('src.core.navigation').go('scriptorium')
  end
  -- initialize_runtime already applies the user's persisted video settings.
@@ -29,7 +29,6 @@ end
 if os.getenv('MANUSCRIPT_FARKLE_TRAY_SMOKE')=='1' then require('tests.smoke.farkle_tray').install(U) end
 if os.getenv('MANUSCRIPT_FARKLE_HUD_SMOKE')=='1' then require('tests.smoke.farkle_hud').install(U) end
 if os.getenv('MANUSCRIPT_TRAY_WORKSHOP_SMOKE')=='1' then require('tests.smoke.tray_workshop').install(U) end
-if os.getenv('MANUSCRIPT_HUD_COMPARISON')=='1' then require('tests.smoke.compare_huds').install(U) end
 -- Explicit diagnostics only; ordinary play never loads audit modules.
 if os.getenv('MANUSCRIPT_SOURCE_CASE') then require('tests.smoke.driver') end
 if os.getenv('MANUSCRIPT_FRONTEND_SMOKE') then require('tests.smoke.frontend') end

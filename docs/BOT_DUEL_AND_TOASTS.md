@@ -1,3 +1,9 @@
+> **v0.1.0-dev.7:** la UI 2.0 è l'unica UI di
+> gioco e la pagina del Monaco si colloca ora
+> sotto il pannello di resoconto, non dietro di esso.
+> Il contrasto, il ritmo delle animazioni e l'allineamento
+> a 720p/1080p richiedono verifica grafica Windows.
+>
 # Project Folio — Lovely Toasts e sfida sperimentale al Monaco
 
 31 ottobre 2026. Funzioni implementate come test giocabile isolato dalla

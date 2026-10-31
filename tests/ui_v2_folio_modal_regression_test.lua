@@ -1,9 +1,9 @@
--- P0 graphics-headless UI regression: render the real legacy modal
+-- Canonical UI V2 graphics-headless regression: render the real Farkle modal
 -- dispatcher with a small LÖVE graphics mock, never fake Farkle rules.
 local R=require('src.gameplay.farkle.rules')
 local P=require('src.features.farkle.presentation')
 local Res=require('src.core.resolution_manager')
-local Hud=require('src.features.farkle.hud')
+local Hud=require('src.features.farkle.ui_v2.dialogs')
 
 unpack=unpack or table.unpack
 local displayed={}
@@ -80,4 +80,4 @@ for _,mode in ipairs({'run','help','choices','medals'}) do
  assert(pushes==pops,'dialog stack unbalanced: '..mode)
 end
 
-print('PASS P0 folio: real modal rendering, score preservation, viewport alignment and unchanged other dialogs')
+print('PASS UI V2 folio: real modal rendering, score preservation, viewport alignment and unchanged other dialogs')

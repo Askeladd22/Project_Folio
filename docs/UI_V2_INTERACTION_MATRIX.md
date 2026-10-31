@@ -1,5 +1,13 @@
 # UI 2.0 — P0 / Inventario degli stati e delle interazioni esistenti
 
+> **Aggiornamento 0.1.0-dev.7:** il seguente è l'inventario
+> storico del precedente HUD, ora **rimosso**. Il percorso
+> attivo è `ui_v2/hud.lua` + `ui_v2/actions.lua`,
+> `ui_v2/overlay.lua`, `ui_v2/accepted_dice.lua` e
+> `ui_v2/dialogs.lua`. Nessun fallback F6 rimane.
+> Test aggiornato: `tests/ui_v2_interaction_inventory_test.lua`.
+>
+
 **Verificato sulla baseline:** `main@929e377fafde2b76a0d40681bf3c1e42ff655914`, 31 ottobre 2026.  
 **Scopo:** descrivere **ciò che fa il codice oggi**, non aggiungere meccaniche né scegliere prematuramente il layout UI 2.0.  
 **Test di inventario:** `tests/ui_v2_interaction_inventory_test.lua`.  

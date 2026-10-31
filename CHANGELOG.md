@@ -10,6 +10,74 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.7] - 2026-10-31
+
+**Tipo:** rimozione definitiva del fallback dell'HUD legacy e cutover
+della schermata di gioco a UI 2.0. Nessuna modifica alle regole
+di Farkle, alla fisica o al rendering 3D g3d.
+
+### Rimosso
+- `src/features/farkle/hud_minimal.lua` e il percorso di drawing,
+  overlay e pulsanti della vecchia schermata di gioco.
+- Variabile `MANUSCRIPT_UI_V2_EXPERIMENT`, biforcazione HUD
+  e scorciatoia F6 che ritornava alla UI precedente.
+- `src/features/farkle/hud.lua` dopo aver trasferito i
+  dialoghi e le ricompense in `ui_v2/dialogs.lua`.
+- `tests/smoke/compare_huds.lua`, confronto storico fra
+  due HUD ormai inesistenti. Nessun fallback CPU/3D ripristinato.
+- Coordinate inutilizzate `H.tray`, `H.slots` e `H.feedback`
+  dal modello di presentazione Farkle; la geometria unica
+  è definita da `ui_v2/layout_candidates.lua`.
+
+### Aggiunto
+- `ui_v2/accepted_dice.lua`: canalina/registro 2D dei
+  sei dadi accantonati sulla pagina, con ritratti g3d
+  originali e feedback sulle combinazioni; fuori dalla
+  superficie di lancio dei dadi fisici.
+- Test `tests/ui_v2_no_legacy_fallback_test.lua` per
+  proteggere la UI 2.0 come unico percorso di gameplay,
+  geometrie della canalina, viewport e non-mutazione
+  dello stato Farkle.
+
+### Modificato
+- `controller.lua` e `ui_v2/hud.lua` chiamano soltanto
+  l'HUD nuovo e i suoi componenti indipendenti per
+  shelf, indicatori fisici/scoring, dialoghi e ricompense.
+- Nella sfida al Monaco la pagina si sposta sotto il
+  pannello di stato, eliminando la sovrapposizione
+  evidente nella schermata utente.
+- Test inventario, modali, percorsi di produzione e
+  dipendenze renderer adeguati per **vietare il ritorno
+  dei file di fallback**.
+- Versione canonica `0.1.0-dev.6` → `0.1.0-dev.7`;
+  documentati nuovo percorso unico e limiti della QA.
+
+### Ulteriori correzioni dopo i test
+- L'inizializzazione di Lovely Toasts è esclusivamente
+  grafica: nei test headless, `Toast.show` non può
+  caricare il font prima dell'esistenza di LÖVE.
+  Aggiornato `tests/lovely_toasts_adapter_test.lua`.
+- Eliminato da `main.lua` l'ultimo hook
+  `MANUSCRIPT_HUD_COMPARISON` che richiamava lo smoke
+  tra due HUD ormai eliminati.
+- [CI #41240278666](https://github.com/Askeladd22/Project_Folio/actions/runs/41240278666)
+  **superata**: Lua 5.4, LuaJIT, benchmark degli Incontri,
+  laboratorio FPS nativo, test Python e gate versione.
+
+### Verifiche e limiti
+- CI Lua 5.4, LuaJIT, FPS Lab nativo e Python da
+  verificare nell'esecuzione della PR. Nessuna
+  certificazione grafica Windows viene dedotta dai
+  test headless.
+- Dialoghi e ricompense **restano funzionalmente
+  equivalenti**, ma la loro estetica sarà oggetto
+  del prossimo redesign. Menu principale e scelta
+  commissioni hanno asset/pannelli da rifinire.
+- **QA manuale ancora aperta**: avvio normale,
+  sfida al Monaco, tiri Farkle, dadi accantonati,
+  modali, ricompense, scorciatoie e layout
+  1280×720/1920×1080, comprese opzioni di accessibilità.
+
 ## [0.1.0-dev.6] - 2026-10-31
 
 **Tipo:** secondo esperimento isolato sui Segni; riallineamento dei

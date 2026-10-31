@@ -1,6 +1,14 @@
 -- Headless adapter verification for unchanged upstream Lovely Toasts.
 -- The real library needs LÖVE graphics at require time; mock only that API.
 local oldLove,oldUnpack,oldToasts=love,unpack,_toasts
+-- Mandatory V2 notifications must be a no-op without a graphical runtime.
+local UI=require('src.features.farkle.toast_messages')
+love=nil
+UI.show('Headless Farkle event')
+UI.update(.1)
+UI.draw(false)
+assert(_toasts==oldToasts,
+ 'headless Farkle notification must not initialize upstream library')
 unpack=unpack or table.unpack
 local calls={draw=0,rect=0,mouse=0}
 local dummyFont={
@@ -22,7 +30,6 @@ love={graphics={
  rectangle=function() calls.rect=calls.rect+1 end,
  print=function() calls.draw=calls.draw+1 end,
 }}
-local UI=require('src.features.farkle.toast_messages')
 UI.show('Una glossa del monaco')
 assert(#_toasts==1 and _toasts[1].text=='Una glossa del monaco')
 local upstream=require('lib.lovelyToasts')

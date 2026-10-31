@@ -1,7 +1,7 @@
 # MANUSCRIPT / SCRIPTORIUM — UI 2.0
 ## Roadmap esecutiva e contratto operativo per ChatGPT
 
-**Stato:** P0 — audit da completare; nessun redesign implementato da questa roadmap.  
+**Stato attuale (v0.1.0-dev.7):** percorso di partita UI 2.0 unico, senza fallback; P5/QA Windows ancora aperta. Il piano di migrazione sottostante è storico.  
 **Baseline:** `main` al commit `929e377fafde2b76a0d40681bf3c1e42ff655914` (31/10/2026).  
 **Tracker obbligatorio:** [UI_V2_STATUS.md](UI_V2_STATUS.md).  
 **Documento di design vincolante:** [GAME_DESIGN.md](GAME_DESIGN.md).  

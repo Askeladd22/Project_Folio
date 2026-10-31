@@ -6,6 +6,8 @@ local H=require('src.features.farkle.hud_model')
 local Res=require('src.core.resolution_manager')
 local Presentation=require('src.features.farkle.presentation')
 local FolioView=require('src.features.farkle.folio_view')
+-- Dialog/reward presenter for the canonical UI v2. This module owns modal hitboxes
+-- but never draws the old work surface or implements a fallback HUD.
 local V={};local fonts={}
 local ink={.12,.075,.035,1};local cream={.96,.90,.76,1};local green={.18,.30,.23,1};local red={.56,.13,.10,1}
 local function txt(s,x,y,w,size,c,align)

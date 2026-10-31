@@ -1,5 +1,5 @@
--- P0: executable inventory of shipping Farkle UI interactions.
--- Intentional baseline test, not a new HUD / gameplay rules implementation.
+-- Executable inventory for the canonical V2-only Farkle UI.
+-- No legacy renderer, HUD or deprecated switching controls are permitted.
 -- Structural checks must be updated ONLY after equivalent functionality
 -- migrates to UI v2; otherwise they detect accidentally lost controls.
 local R=require('src.gameplay.farkle.rules')
@@ -12,8 +12,10 @@ local function read(path)
  local data=file:read('*a');file:close();return data
 end
 local sources={
- hud=read('src/features/farkle/hud_minimal.lua'),
- modals=read('src/features/farkle/hud.lua'),
+ hud=read('src/features/farkle/ui_v2/hud.lua'),
+ actions=read('src/features/farkle/ui_v2/actions.lua'),
+ indicators=read('src/features/farkle/ui_v2/overlay_model.lua'),
+ modals=read('src/features/farkle/ui_v2/dialogs.lua'),
  medal=read('src/features/farkle/medal_panel.lua'),
  controller=read('src/features/farkle/controller.lua'),
  runtime=read('src/app/dice_runtime.lua'),
@@ -23,7 +25,7 @@ local function exact(source,fragment,where)
  assert(source:find(fragment,1,true),where..' lost: '..fragment)
 end
 local buttons={
- hud={"'help'","'runmenu'","'folio'","'roll'","'take'",
+ actions={"'help'","'runmenu'","'folio'","'roll'","'take'",
       "'bank'","'next'","'rescue'","'fail'","'retryphysical'",
       "'choices'","'medaluse'"},
  modals={"'weighted'","'engraved'","'medal'","'none'","'close'",
@@ -82,12 +84,16 @@ for _,key in ipairs({"'f10'","'f11'"}) do
 end
 assert(not sources.runtime:find("key=='f9'",1,true),
  'F9 CPU painter shortcut was intentionally retired')
-exact(sources.hud,'u.buttons = {}','single active HUD button table')
+exact(sources.hud,'u.buttons={} -- a single authoritative hitbox table','single active V2 button table')
 exact(sources.modals,'u.modalButtons={}','modal-specific active button table')
-exact(sources.hud,'u.dragSelected[hit.index or hit.roll_index]',
+exact(sources.indicators,'u.dragSelected and u.dragSelected[id]',
  'group-grab highlight distinct from scoring selection')
-exact(sources.hud,'s.selected[i] or eligible[i]',
+exact(sources.indicators,'s.selected and s.selected[id]',
  'scoring highlight distinct from physical grab')
+assert(not sources.controller:find('hud_minimal',1,true))
+assert(not sources.hud:find('hud_minimal',1,true))
+assert(not sources.controller:find('uiV2Experimental',1,true))
+assert(not sources.controller:find("k=='f6'",1,true))
 exact(sources.medal,'u.medalDice','third independent selection for medal targets')
 
 -- Actual rules, never guessed UI booleans: scoring must be unavailable
@@ -152,4 +158,4 @@ local ux,uy=Res.to_virtual(ex+720,ey+540)
 assert(math.abs(ux-720)<1e-8 and math.abs(uy-540)<1e-8)
 Res.refresh(1920,1080)
 
-print('PASS UI v2 P0: legacy action inventory, modal IDs, shortcut precedence, physical/scoring split and viewport mapping')
+print('PASS UI v2: canonical action inventory, modal IDs, shortcut precedence, physical/scoring split and viewport mapping')
