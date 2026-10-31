@@ -146,12 +146,30 @@ local function work_surface(layout)
  g.setLineWidth(2)
  g.line(layout.page_main.x+15,layout.page_main.y+15,
         layout.page_main.x+15,layout.page_main.y+layout.page_main.h-15)
- -- Do not paint opaque graphics over the projected physical D6 plane.
- g.setColor(.22,.16,.09,.4)
- g.line(layout.tray.x,layout.tray.y,
-        layout.tray.x+layout.tray.w,layout.tray.y)
- write('REGISTRO DEI DADI ACCANTONATI',
-       layout.shelf.x+18,layout.shelf.y+6,layout.shelf.w-36,15,ink)
+ -- Never draw over the 3D throw rectangle. Ornamentation lives
+ -- only in the book margins between the six accepted slots and tray.
+ if layout.shelf_caption then
+  write_fitted('REGISTRO DEI DADI ACCANTONATI',layout.shelf_caption,
+   14,11,paper_ink,'center')
+  g.setColor(.39,.27,.16,UI.high_contrast() and .90 or .52)
+  g.setLineWidth(1)
+  g.line(layout.shelf_divider.x,layout.shelf_divider.y,
+   layout.shelf_divider.x+layout.shelf_divider.w,
+   layout.shelf_divider.y)
+ end
+ -- A restrained bookbinding frame joins the working leaf and notes
+ -- without changing the folio's actual geometry or interaction.
+ if layout.sidebar_frame then
+  local side=layout.sidebar_frame
+  panel(side,rgba(.25,.18,.12,1),rgba(.68,.49,.26,.97),9)
+  g.setColor(.86,.68,.39,UI.high_contrast() and .86 or .40)
+  g.setLineWidth(1)
+  g.rectangle('line',side.x+7,side.y+7,side.w-14,side.h-14,6)
+  for _,y in ipairs({side.y+22,side.y+side.h-22}) do
+   g.line(side.x+9,y,side.x+17,y)
+   g.line(side.x+side.w-17,y,side.x+side.w-9,y)
+  end
+ end
 end
 function V.draw(u)
  local s=u.game
@@ -169,9 +187,9 @@ function V.draw(u)
  Res.begin_ui()
  work_surface(layout)
  header(u,s,layout,actions)
- if not u.botDuel then
-  write('MANOSCRITTO',layout.folio.x+4,layout.folio.y-21,
-        layout.folio.w-8,17,highlight,'center')
+ if not u.botDuel and layout.sidebar_caption then
+  write_fitted('MANOSCRITTO',layout.sidebar_caption,17,13,
+   rgba(.97,.85,.61), 'center')
  end
  Folio.draw(s,u.presentation,layout.folio.x,layout.folio.y,
             layout.folio.w,layout.folio.h,write,R.contracts[s.stage].target)
@@ -183,15 +201,21 @@ function V.draw(u)
                      enabled=a.enabled,fn=a.fn,label=a.label}
   end
  end
+ if layout.sidebar_divider then
+  MenuSurface.rule(layout.sidebar_divider.x,layout.sidebar_divider.y,
+   layout.sidebar_divider.w,UI.high_contrast() and 1 or .82)
+ end
  panel(layout.context,parchment,border_ink,5)
- write('STRUMENTI',layout.context.x+13,layout.context.y+7,
-       layout.context.w-24,14,paper_gold)
+ write_fitted('STRUMENTI',layout.context_caption,14,11,paper_gold,'center')
  local c=0
  for _,a in ipairs(actions) do
   if a.slot=='context' then
    c=c+1
-   action_button(u,a,{x=layout.context.x+12,
-      y=layout.context.y+31+(c-1)*59,w=layout.context.w-24,h=52})
+   -- Exactly the same input geometry as before; it is now named and
+   -- validated alongside the decorative folio/sidebar proportions.
+   local rect=assert(layout.context_actions[c],
+    'missing visual-only contextual button slot')
+   action_button(u,a,rect)
   end
  end
  if c==0 then
