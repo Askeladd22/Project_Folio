@@ -1,6 +1,11 @@
 local R=require('src.gameplay.farkle.rules')
 local H=require('src.features.farkle.hud_model')
-assert(H.tray.x<100 and H.tray.w>=1300 and H.tray.h>=640,'dominant left-centre tray')
+local layout=require('src.features.farkle.ui_v2.layout_candidates')
+ .build('single_folio')
+assert(layout.tray.x<100 and layout.tray.w>=1300 and
+ layout.tray.h>=640,'dominant 3D folio tray under V2')
+assert(H.tray==nil and H.slots==nil and H.feedback==nil,
+ 'HUD model must not retain retired fallback positions')
 assert(H.reward_active({phase='upgrade'}) and H.reward_active({phase='medal'}))
 assert(not H.reward_active({phase='ready'}))
 local sections=H.help_sections(R.new())
