@@ -49,6 +49,23 @@ controlli del benchmark e test contro strategie dominanti.
   distinzione tra protocollo dev.5 e quello nuovo.
 - Benchmark CI con campione più ampio ma di sola diagnostica.
 
+### Risultati verificati in CI
+
+- **256 scenari per strategia, seme iniziale 20261031**:
+  in C, successo del 63,7% (prudente), 55,9% (audace)
+  e 66,0% (reattiva); in C0, rispettivamente
+  64,5%, 59,8%, 68,4%. Gli intervalli approssimativi
+  dei delta accoppiati C0→C includono tutti lo zero:
+  i bonus non hanno ancora dimostrato un vantaggio
+  netto in questa fixture.
+- Rapporto con numeri, semi, confronti B→C e C0→C,
+  esiti accoppiati e limiti statistici:
+  [`experiments/signs_lab/RESULTS_2026_10_31.md`](experiments/signs_lab/RESULTS_2026_10_31.md).
+- [Workflow di verifica #41236347898](https://github.com/Askeladd22/Project_Folio/actions/runs/41236347898)
+  superato per Lua 5.4, LuaJIT, test degli incontri,
+  benchmark a 256 semi, FPS Lab nativo e Python.
+  Nessuna QA grafica LÖVE effettuata.
+
 ### Limiti e gate
 - I semi appaiati riducono una fonte di variabilità,
   ma non rendono identici gli stati raggiunti dopo
