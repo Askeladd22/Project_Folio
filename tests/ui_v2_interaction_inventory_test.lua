@@ -77,9 +77,11 @@ for _,key in ipairs({"if k=='f8'","if k=='tab'","if k=='f'",
                       "n='next'","m='rescue'"}) do
  exact(c,key,'keyboard shortcut')
 end
-for _,key in ipairs({"'f9'","'f10'","'f11'"}) do
+for _,key in ipairs({"'f10'","'f11'"}) do
  exact(sources.runtime,key,'renderer debug shortcut')
 end
+assert(not sources.runtime:find("key=='f9'",1,true),
+ 'F9 CPU painter shortcut was intentionally retired')
 exact(sources.hud,'u.buttons = {}','single active HUD button table')
 exact(sources.modals,'u.modalButtons={}','modal-specific active button table')
 exact(sources.hud,'u.dragSelected[hit.index or hit.roll_index]',

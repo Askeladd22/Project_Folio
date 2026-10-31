@@ -1,31 +1,5 @@
 -- Presentation only: fit the unchanged tray and physical vertices into the HUD.
 local T={}
--- Scenery only: all points stay on the existing physical floor.
-function T.floor(view,x1,x2,y1,y2)
- if require('src.features.farkle.tray_workshop').floor(view,x1,x2,y1,y2) then return end
- if require('src.features.farkle.hud_minimal').floor(view,x1,x2,y1,y2) then return end
- local g=love.graphics
- local function quad(inset,color)
-  local points={}
-  for _,p in ipairs({{x1+inset,y1+inset},{x2-inset,y1+inset},{x2-inset,y2-inset},{x1+inset,y2-inset}}) do
-   local x,y=view.project(p[1],p[2],0);points[#points+1]=x;points[#points+1]=y
-  end
-  g.setColor(unpack(color));g.polygon('fill',unpack(points))
- end
- quad(0,{.105,.078,.057,1})
- quad(.16,{.24,.205,.15,1})
- quad(.21,{.145,.16,.135,1})
- -- Fine, deterministic leather grain; no RNG shared with dice rolls.
- for row=1,24 do for col=1,46 do
-  local x=x1+.27+(x2-x1-.54)*(col-.5)/46
-  local y=y1+.27+(y2-y1-.54)*(row-.5)/24
-  local px,py=view.project(x,y,0)
-  local qx,qy=view.project(x+.035,y+.012,0)
-  g.setColor(.34,.32,.24,.10+((row*17+col*13)%7)*.008)
-  g.setLineWidth(.012);g.line(px,py,qx,qy)
- end end
- g.setLineWidth(1)
-end
 function T.fit(owner,tray,view,extents)
  view.projection='orthographic'
  view.pitch=.48;view.cos_pitch=math.cos(view.pitch);view.sin_pitch=math.sin(view.pitch)

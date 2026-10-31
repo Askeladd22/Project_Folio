@@ -1,5 +1,15 @@
 # Project Folio — pulizia conservativa del repository (2026-10-31)
 
+> **Aggiornamento successivo (PR #38, 31 ottobre 2026):**
+> il precedente punto di conservazione del painter F9 non è più attuale.
+> Su richiesta è stato eliminato `src/engine3d/render.lua` insieme
+> al fallback CPU, all'interruttore F9 e alla schermata A/B del laboratorio.
+> Il renderer del tray e dei D6 è esclusivamente g3d.
+> Per motivazione, elenco e QA consultare
+> [RENDERER_RETIREMENT.md](RENDERER_RETIREMENT.md).
+> Le sezioni storiche sotto descrivono l'audit **prima** della PR #38.
+
+
 ## Perimetro verificato
 
 Audit condotto su `main@7f5b1ace269546a8036fdf599ff326bd69f1de2c`:

@@ -1,18 +1,37 @@
--- Prevent accidental deletion of an active renderer before parity is proven.
+-- Regression gate: g3d is the only renderer of the physical tray.
 local function read(path)
  local f=assert(io.open(path,'rb'),'missing '..path)
  local s=f:read('*a');f:close();return s
 end
-local r=read('src/engine3d/render.lua')
+assert(io.open('src/engine3d/render.lua','rb')==nil,
+ 'CPU painter source must not be kept as fallback')
+for _,path in ipairs{
+ 'src/app/dice_runtime.lua',
+ 'src/features/farkle/hud_minimal.lua',
+ 'src/features/farkle/tray_workshop.lua',
+ 'src/features/farkle/tray_view.lua',
+ 'experiments/g3d_lab/main.lua',
+} do
+ local s=read(path)
+ assert(not s:find('src.engine3d.render',1,true),path..' imports retired painter')
+ assert(not s:find('render.paint()',1,true),path..' draws with retired painter')
+end
 local runtime=read('src/app/dice_runtime.lua')
+assert(runtime:find('live_g3d:draw({',1,true))
+assert(not runtime:find("key=='f9'",1,true))
+assert(not runtime:find('draw_legacy_floor',1,true))
+assert(not runtime:find("MANUSCRIPT_RENDERER",1,true))
+assert(not runtime:find("MANUSCRIPT_G3D_INGAME",1,true))
+assert(not runtime:find('experiments.physics_lab.fps',1,true))
+local live=read('src/engine3d/g3d_live.lua')
+assert(live:find('self:_draw_scene(args)',1,true))
+assert(not live:find('reverting to legacy',1,true))
+assert(not live:find('function M:toggle()',1,true))
 local workshop=read('src/features/farkle/tray_workshop.lua')
+assert(workshop:find('function W.cycle()',1,true))
+assert(not workshop:find('function W.floor(',1,true))
+assert(not workshop:find('function W.border(',1,true))
 local hud=read('src/features/farkle/hud_minimal.lua')
-local lab=read('experiments/g3d_lab/main.lua')
-assert(r:find('function render.die',1,true) and r:find('function render.tray_border',1,true))
-assert(runtime:find('require("src.engine3d.render")',1,true),'runtime still has painter dependencies')
-assert(runtime:find('render.paint()',1,true),'runtime must keep visible fallback while g3d is partial')
-assert(workshop:find('render.tray_border',1,true),'F8 layouts still use legacy borders')
-assert(hud:find('render.die',1,true),'HUD-related legacy rendering is still active')
-assert(lab:find("require('src.engine3d.render')",1,true),'historical A/B reference still needed')
-assert(not runtime:find("experiments.physics_lab.fps",1,true),'native FPS must not be loaded by game')
-print('PASS renderer retirement audit: legacy is still referenced, FPS isolated')
+assert(hud:find('src.engine3d.g3d_portrait',1,true))
+assert(not hud:find('local function snapshot(',1,true))
+print('PASS g3d sole renderer: no F9, CPU painter, legacy HUD portraits, or FPS production')

@@ -14,9 +14,7 @@ M.tray = {x = 40, y = 60, w = 1460, h = 808}
 
 local fonts = {}
 local textures = {}
-local meshes = {}
 local shelfWood, shelfQuad, shelfWidth
-
 local ink = {0.12, 0.075, 0.035, 1}
 local cream = {0.96, 0.90, 0.76, 1}
 local muted_cream = {0.78, 0.72, 0.60, 1}
@@ -25,88 +23,24 @@ local green = {0.20, 0.58, 0.32, 1}
 local red = {0.78, 0.18, 0.14, 1}
 
 local function get_font(size)
-    local g = love.graphics
-    if not fonts[size] then
-        fonts[size] = g.newFont('resources/font/IMFeENsc28P.ttf', size)
-    end
-    return fonts[size]
+ local g=love.graphics
+ if not fonts[size] then fonts[size]=g.newFont('resources/font/IMFeENsc28P.ttf',size) end
+ return fonts[size]
 end
-
-local function txt(s, x, y, w, size, c, align)
-    local g = love.graphics
-    local f = get_font(size)
-    g.setFont(f)
-    g.setColor(unpack(c or ink))
-    g.printf(tostring(s), x, y, w, align or 'left')
+local function txt(value,x,y,w,size,color,align)
+ local g=love.graphics
+ g.setFont(get_font(size))
+ g.setColor(unpack(color or ink))
+ g.printf(tostring(value),x,y,w,align or 'left')
 end
-
 local function get_texture(name)
-    local g = love.graphics
-    if not textures[name] then
-        local path = 'resources/textures/' .. name .. '.png'
-        if love.filesystem.getInfo(path) then
-            local img = g.newImage(path)
-            img:setFilter('linear', 'linear')
-            textures[name] = img
-        end
-    end
-    return textures[name]
-end
-
--- 3D floor rendering: distinct felt lining providing high contrast for white dice
-function M.floor(view, x1, x2, y1, y2)
-    local g = love.graphics
-    local points = {{x1, y1, 0}, {x2, y1, 0}, {x2, y2, 0}, {x1, y2, 0}}
-    local vertices, flat = {}, {}
-    for i, p in ipairs(points) do
-        local x, y = view.project(p[1], p[2], p[3] or 0)
-        flat[#flat + 1] = x
-        flat[#flat + 1] = y
-        local uv = ({{0, 0}, {1, 0}, {1, 1}, {0, 1}})[i]
-        vertices[i] = {x, y, uv[1], uv[2], 1, 1, 1, 1}
-    end
-
-    local felt = get_texture('felt')
-    if felt then
-        local mesh = meshes['minimal-felt-floor']
-        if not mesh then
-            mesh = g.newMesh(vertices, 'fan', 'dynamic')
-            meshes['minimal-felt-floor'] = mesh
-        else
-            mesh:setVertices(vertices)
-        end
-        mesh:setTexture(felt)
-        -- Deep tavern green baize
-        g.setColor(0.25, 0.34, 0.29, 1)
-        g.draw(mesh)
-    else
-        g.setColor(0.23, 0.31, 0.26, 1)
-        g.polygon('fill', unpack(flat))
-    end
-
-    -- Fine inlaid gold/tan border stitching inside the felt surface
-    local inset = 0.14
-    local inlay = {
-        {x1 + inset, y1 + inset, x2 - inset, y1 + inset},
-        {x2 - inset, y1 + inset, x2 - inset, y2 - inset},
-        {x2 - inset, y2 - inset, x1 + inset, y2 - inset},
-        {x1 + inset, y2 - inset, x1 + inset, y1 + inset}
-    }
-    g.setColor(0.72, 0.54, 0.28, 0.50)
-    g.setLineWidth(0.018)
-    for _, edge in ipairs(inlay) do
-        local ax, ay = view.project(edge[1], edge[2], 0)
-        local bx, by = view.project(edge[3], edge[4], 0)
-        g.line(ax, ay, bx, by)
-    end
-    g.setLineWidth(1)
-    return true
-end
-
--- 3D border rendering: solid, tactile wooden tray rim (width 0.40)
-function M.border(render, view, height)
-    render.tray_border(render.zbuffer, 0.40, height, {88, 56, 32})
-    return true
+ local g=love.graphics
+ if not textures[name] then
+  local image=g.newImage('resources/textures/'..name..'.png')
+  image:setFilter('linear','linear')
+  textures[name]=image
+ end
+ return textures[name]
 end
 
 -- Continuous wooden surface background: one expansive table
@@ -262,38 +196,6 @@ local function draw_top_bar(u, s)
     mini_button(u, 'runmenu', 'Menu [Esc]', 1555, 24, 125, 42, s.phase ~= 'rolling', function() u.modal = 'run' end)
 end
 
--- Capture draw commands from a graphical die body for physical isometric rendering in the niches
-local function snapshot(entry, projection)
-    local view = require('src.engine3d.view')
-    local render = require('src.engine3d.render')
-    local saved = {}
-    for _, k in ipairs({'pitch', 'cos_pitch', 'sin_pitch', 'yaw', 'cos_yaw', 'sin_yaw', 'projection'}) do
-        saved[k] = view[k]
-    end
-    view.pitch = projection.pitch
-    view.cos_pitch = math.cos(view.pitch)
-    view.sin_pitch = math.sin(view.pitch)
-    view.yaw = projection.yaw
-    view.cos_yaw = math.cos(view.yaw)
-    view.sin_yaw = math.sin(view.yaw)
-    view.projection = 'orthographic'
-
-    local body = {position = vector{0, 0, 0}}
-    for i, v in ipairs(entry.body) do
-        body[i] = vector{v[1], v[2], v[3]}
-    end
-
-    local calls = {}
-    render.die(function(z, fn)
-        calls[#calls + 1] = {z = z, fn = fn}
-    end, entry.die, body)
-
-    for k, v in pairs(saved) do view[k] = v end
-    if saved.projection == nil then view.projection = nil end
-    table.sort(calls, function(a, b) return a.z < b.z end)
-    return calls
-end
-
 -- Physical front canalina with 6 carved niches integrated into the tray rim
 local function draw_upper_shelf(u, s)
     local projection = u.trayProjection
@@ -415,42 +317,19 @@ local function draw_upper_shelf(u, s)
                 g.setLineWidth(1)
             end
 
-            -- GPU portrait captures the accepted physical orientation once.
-            -- Never modify the body; fallback to historical shelf commands
-            -- if the current renderer is legacy or GPU capture fails.
-            local gpuDrawn=false
-            if e and dice and dice[i] and
-               require('src.core.engine_bridge').rendererMode()=='g3d' then
+            -- g3d only: accepted physical orientation captured once.
+            if e and dice and dice[i] then
                 if e.g3dPortrait==nil then
-                    local ok,image=pcall(function()
-                        return require('src.engine3d.g3d_portrait').capture(dice[i],projection)
-                    end)
-                    e.g3dPortrait=ok and image or false
+                    e.g3dPortrait=require('src.engine3d.g3d_portrait')
+                        .capture(dice[i],projection)
                 end
-                if e.g3dPortrait then
-                    g.push('all')
-                    g.setBlendMode('alpha','premultiplied')
-                    g.setColor(1,1,1,1)
-                    local scalePortrait=.68
-                    g.draw(e.g3dPortrait,x-56*scalePortrait,
-                        y-56*scalePortrait,0,scalePortrait,scalePortrait)
-                    g.pop()
-                    gpuDrawn=true
-                end
-            end
-            if not gpuDrawn then
-                local drawCalls = e and e.drawCalls
-                if not drawCalls and dice and dice[i] then
-                    drawCalls = snapshot(dice[i], projection)
-                    if e then e.drawCalls = drawCalls end
-                end
-                if drawCalls then
-                    g.push()
-                    g.translate(x, y)
-                    g.scale(scale)
-                    for _, call in ipairs(drawCalls) do call.fn() end
-                    g.pop()
-                end
+                g.push('all')
+                g.setBlendMode('alpha','premultiplied')
+                g.setColor(1,1,1,1)
+                local portraitScale=.68
+                g.draw(e.g3dPortrait,x-56*portraitScale,
+                    y-56*portraitScale,0,portraitScale,portraitScale)
+                g.pop()
             end
 
             -- Value pill badge above the niche
@@ -628,7 +507,7 @@ function M.overlay(u, hits, options)
     local eligible = H.eligible(s)
 
     -- Draw the hand trajectory while the actual rigid body is being held.
-    -- Its physical vertices follow and rotate with the cursor, in g3d and F9.
+    -- Its physical vertices follow and rotate with the cursor, in the g3d scene.
     if u.mouseThrow then
         local gesture=u.mouseThrow
         local ax,ay=Res.to_virtual(gesture.x0,gesture.y0)
@@ -686,7 +565,7 @@ function M.overlay(u, hits, options)
         end
     end
     g.setLineWidth(1)
-    end -- only legacy HUD draws full dice selection rings
+    end -- only the classic 2D HUD draws full dice selection rings
 
     -- Physical front canalina with 6 carved niches for held dice
     Res.begin_ui()

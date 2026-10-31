@@ -29,11 +29,11 @@ The world is a late-medieval workshop of scribes and illuminators. Manuscript pa
 - **Six physical D6**, with shared rigid-body simulation, identifiable upper faces and textured 3D geometry.
 - **Farkle-inspired push-your-luck**: choose scoring combinations, keep selected dice, reroll or bank your turn; risk a Farkle if a throw produces no valid scoring option.
 - **Commission-oriented progression**, with a dedicated manuscript-themed folio and HUD. Some objective values are currently prototype parameters.
-- **Interactive 3D book tray** using [g3d](https://github.com/groverburger/g3d) for supported scenes, GPU depth testing, paper-edge geometry, contact shadows and highlighted usable dice.
+- **Interactive 3D book tray** using [g3d](https://github.com/groverburger/g3d) exclusively, GPU depth testing, paper-edge geometry, contact shadows and highlighted usable dice.
 - **Original production physics** retained while alternative solvers are evaluated independently.
 - **Menu, settings, resolution scaling, sound and keyboard/mouse controls** with regression and smoke-test tooling.
 
-Experimental workshop layouts and non-D6 geometry are being migrated to g3d. The historical renderer remains as an explicit compatibility and recovery fallback until GPU visual parity has been verified on all supported scenes. The alternative [Free Physics Solver](https://github.com/0x1ED1CE/FPS) is **not** used by the playable game.
+All F8 tray variants and existing D8 geometry use g3d; the CPU painter and F9 switch have been retired. g3d shader or Canvas failures are now reported explicitly rather than silently switching renderers. Windows graphical verification is still required. The alternative [Free Physics Solver](https://github.com/0x1ED1CE/FPS) is **not** used by the playable game.
 
 ## Getting started
 
@@ -62,7 +62,6 @@ On Windows, use **`Avvia.cmd`** instead of `love .`; it searches for a LÖVE exe
 | Open medal panel | **M** |
 | Close an overlay / navigate back | **Esc** |
 | Cycle experimental tray artwork | **F8** |
-| Toggle g3d / historical renderer | **F9** |
 | Cycle dice render material / normal debug | **F10** |
 | Toggle visual D6 bevel (g3d normals/diffuse/ivory) | **F11** |
 
@@ -70,15 +69,16 @@ Actions are context dependent; dice selection and scoring actions are blocked wh
 
 ### Renderer options
 
-The **book tray** uses g3d by default. **F9** toggles the historical painter for comparison and recovery. The following environment variables are primarily for diagnostics:
+**g3d is the only 3D renderer** for the six physical D6 and the book tray.
+F8 changes the tray artwork, F10 cycles g3d dice materials and F11
+toggles the g3d bevel diagnostic. **F9 no longer toggles a CPU painter.**
+`MANUSCRIPT_RENDERER=legacy` and `MANUSCRIPT_G3D_INGAME=0` are retired.
+Set `MANUSCRIPT_G3D_DEBUG=1` to display the g3d material diagnostic.
 
-| Variable | Effect |
-|:--|:--|
-| `MANUSCRIPT_RENDERER=legacy` | Start with the historical painter |
-| `MANUSCRIPT_G3D_INGAME=0` | Alternative legacy startup switch |
-| `MANUSCRIPT_G3D_DEBUG=1` | Display the on-screen renderer diagnostic |
-
-A renderer failure should fall back to the historical painter without changing the physics or game state. The painter still serves emergency recovery and A/B comparison; removing it requires a separate parity review ([audit](docs/RENDERER_RETIREMENT.md)).
+A g3d / required shader failure is now surfaced directly. Check the
+LÖVE console or error report; there is **no silent CPU-renderer
+recovery**. See the [retirement record](docs/RENDERER_RETIREMENT.md)
+for the changes and remaining Windows visual QA.
 
 ## Optional 2D miniature presentation toolkit
 
@@ -106,7 +106,7 @@ src/
 lib/g3d/                Vendored third-party g3d library
 resources/              Art, shaders, dice textures, fonts, audio
 experiments/
-  g3d_lab/              Reproducible visual renderer A/B tests
+  g3d_lab/              Isolated g3d camera and physics diagnostics
   physics_lab/          Optional native FPS benchmarks (C / LuaJIT FFI)
 tests/                  Pure Lua regression tests and graphical smoke harnesses
 docs/                   Design, engineering notes and research
@@ -137,7 +137,7 @@ The lab saves a reproducible comparison to `experiments/physics_lab/build/result
 
 ## Roadmap
 
-The priorities are to finish moving the remaining required visual paths to g3d, validate physical rolls and interaction across resolutions, refine manuscript-specific roguelite progression, and complete structured testing of alternative contact solvers. These are planned improvements, **not promises of implemented features**.
+The priorities are to validate the now g3d-only visual paths, physical rolls and interaction across resolutions, refine manuscript-specific roguelite progression, and complete structured testing of alternative contact solvers. These are planned improvements, **not promises of implemented features**.
 
 For detailed design decisions, consult [GAME_DESIGN.md](docs/GAME_DESIGN.md) and [FARKLE_RULES.md](docs/FARKLE_RULES.md).
 
