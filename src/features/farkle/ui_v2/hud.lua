@@ -9,6 +9,7 @@ local Res=require('src.core.resolution_manager')
 local UI=require('src.core.runtime_ui')
 local Folio=require('src.features.farkle.folio_view')
 local Legacy=require('src.features.farkle.hud_minimal')
+local Indicators=require('src.features.farkle.ui_v2.overlay')
 local V={}
 local fonts={}
 local function rgba(r,g,b,a) return {r,g,b,a or 1} end
@@ -158,9 +159,10 @@ function V.draw(u)
  g.pop()
 end
 
--- P2 preserves the *real* selection, shelf, physical-grip and reward/modal
--- renderers. They will be independently migrated in P3/P4, not duplicated.
+-- P3 owns the physical/scoring visual hints while the existing controller,
+-- shelf of accepted dice and modal/reward renderer are preserved.
 function V.overlay(u,hits)
- return Legacy.overlay(u,hits)
+ Indicators.draw(u,hits)
+ return Legacy.overlay(u,hits,{hideIndicators=true})
 end
 return V

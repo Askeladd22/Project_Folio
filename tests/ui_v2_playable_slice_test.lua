@@ -141,8 +141,9 @@ assert(c:find("require('src.features.farkle.hud_minimal').draw(self)",1,true),
 assert(c:find("require('src.features.farkle.ui_v2.hud').draw(self)",1,true),
  'P2 playable renderer must be reachable')
 local v=source('src/features/farkle/ui_v2/hud.lua')
-assert(v:find('Legacy.overlay(u,hits)',1,true),
- 'P2 may not drop real physical group, shelf or modal overlays')
+assert(v:find('Indicators.draw(u,hits)',1,true) and
+       v:find('Legacy.overlay(u,hits,{hideIndicators=true})',1,true),
+ 'P3 must own dice indications while preserving real shelf and modal overlays')
 assert(v:find('Folio.draw(s,u.presentation',1,true),
  'P2 folio must use current Farkle state')
 assert(v:find('u.buttons[a.id]',1,true),
