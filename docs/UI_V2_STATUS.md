@@ -11,9 +11,9 @@
 - **BASELINE VERIFICATA:** `main@74ee2b32ef3383924bb239305e26bde521487f68` (PR #30 già integrata e CI verde).
 - **BRANCH CORRENTE:** `experiment/ui-v2-p1-layout-study-20261031` (studio geometrie P1, senza promuovere P0).
 - **PR DI DOCUMENTAZIONE:** [#27](https://github.com/Askeladd22/manuscript/pull/27) **integrata in main**.
-- **PR DI P0:** [#27](https://github.com/Askeladd22/manuscript/pull/27), [#28](https://github.com/Askeladd22/manuscript/pull/28), [#29](https://github.com/Askeladd22/manuscript/pull/29) e [#30](https://github.com/Askeladd22/manuscript/pull/30) **integrate**; PR dello studio geometrico P1 da registrare.
+- **PR DI P0:** [#27](https://github.com/Askeladd22/manuscript/pull/27), [#28](https://github.com/Askeladd22/manuscript/pull/28), [#29](https://github.com/Askeladd22/manuscript/pull/29) e [#30](https://github.com/Askeladd22/manuscript/pull/30) **integrate**; [#31](https://github.com/Askeladd22/manuscript/pull/31) **bozza aperta** per studio P1.
 - **UI 2.0 NEL GIOCO:** non esiste ancora; l'HUD attuale resta quello predefinito.
-- **CI baseline P0:** [main 41190871754](https://github.com/Askeladd22/manuscript/actions/runs/41190871754) **SUCCESS**. Test dei candidati P1 su PR dedicata: da verificare.
+- **CI baseline P0:** [main 41190871754](https://github.com/Askeladd22/manuscript/actions/runs/41190871754) **SUCCESS**; [PR #31 CI 41191467268](https://github.com/Askeladd22/manuscript/actions/runs/41191467268) **SUCCESS** (test candidati P1, Lua5.4/LuaJIT, lab FPS e Python).
 - **QA WINDOWS / SCREENSHOT:** **non ancora effettuata** sulla build di questa PR. Lo script ora acquisisce in automatico anche il gruppo fisico dei sei D6 e i flag accessibilità in entrambe le risoluzioni, ma servono esecuzione Windows, confronto visivo e dati FPS.
 
 ## Fasi e gate
@@ -101,7 +101,7 @@
 | 2026-10-31 | P0 | Matrice e test integrazione degli input, PR #28 integrata | [PR #28](https://github.com/Askeladd22/manuscript/pull/28); [main CI 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **successo** | Baseline Windows |
 | 2026-10-31 | P0 | Fix folio, test modali e utility screenshot riproducibile; P0 non completata | [PR #29](https://github.com/Askeladd22/manuscript/pull/29); [CI 41189472532](https://github.com/Askeladd22/manuscript/actions/runs/41189472532) **SUCCESS** | Windows: screenshot 720p/1080p, folio, gruppo in mano, accessibilità/FPS |
 
-| 2026-10-31 | P0 | Smoke opt-in di presa multipla e accessibilità, PNG richiesti alle due risoluzioni; gameplay invariato | [PR #30](https://github.com/Askeladd22/manuscript/pull/30); [CI prima versione 41190597513](https://github.com/Askeladd22/manuscript/actions/runs/41190597513) PASS, ultima testa in attesa | Eseguire baseline su LÖVE Windows, confrontare immagini e annotare FPS prima di P1 |\n\n| 2026-10-31 | P0 aperta + studio P1 | Geometrie A/B pure, test di hitbox e wireframe F6 senza toccare HUD produzione | PR/CI in preparazione | Cattura P0 Windows, poi screenshot A/B e decisione P1 |\n\n### Mini-template di aggiornamento (duplicare a fine sessione)
+| 2026-10-31 | P0 | Smoke opt-in di presa multipla e accessibilità, PNG richiesti alle due risoluzioni; gameplay invariato | [PR #30](https://github.com/Askeladd22/manuscript/pull/30); [CI prima versione 41190597513](https://github.com/Askeladd22/manuscript/actions/runs/41190597513) PASS, ultima testa in attesa | Eseguire baseline su LÖVE Windows, confrontare immagini e annotare FPS prima di P1 |\n\n| 2026-10-31 | P0 aperta + studio P1 | Geometrie A/B pure, test di hitbox, wireframe F6/F7; HUD produzione invariato | [PR #31](https://github.com/Askeladd22/manuscript/pull/31) **draft**; [CI 41191467268](https://github.com/Askeladd22/manuscript/actions/runs/41191467268) **SUCCESS** | Cattura P0 Windows, screenshot A/B, valutazione leggibilità dei D6 |\n\n### Mini-template di aggiornamento (duplicare a fine sessione)
 
 ```text
 DATA:
