@@ -13,7 +13,7 @@
 - **PR DI DOCUMENTAZIONE:** [#27](https://github.com/Askeladd22/manuscript/pull/27) **integrata in main**.
 - **PR DI P0:** [#28](https://github.com/Askeladd22/manuscript/pull/28) **integrata** (matrice/test) e [#29](https://github.com/Askeladd22/manuscript/pull/29) **aperta** (correzione folio + cattura baseline riproducibile).
 - **UI 2.0 NEL GIOCO:** non esiste ancora; l'HUD attuale resta quello predefinito.
-- **CI per la baseline P0:** [main 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **SUCCESS**; CI di PR #29 da registrare dopo l'esecuzione (test modali Lua5.4/LuaJIT + suite intera).
+- **CI per la baseline P0:** [main 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **SUCCESS**; [PR #29 run 41189472532](https://github.com/Askeladd22/manuscript/actions/runs/41189472532) **SUCCESS** (nuovo test modali, Lua 5.4/LuaJIT, lab FPS e regressioni).
 - **QA WINDOWS / SCREENSHOT:** non ancora completata per una baseline identificata con commit; servono 1920×1080 e 1280×720 (fresh, held gruppo, ready con combinazione, modale, ricompensa).
 
 ## Fasi e gate
@@ -82,7 +82,7 @@
 |---|---|---|---|---|
 | 2026-10-31 | P0 | Roadmap e tracker iniziali | [PR #27](https://github.com/Askeladd22/manuscript/pull/27); CI riuscita | Matrice e baseline verificabile |
 | 2026-10-31 | P0 | Matrice e test integrazione degli input, PR #28 integrata | [PR #28](https://github.com/Askeladd22/manuscript/pull/28); [main CI 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **successo** | Baseline Windows |
-| 2026-10-31 | P0 | Fix folio, test modali e utility screenshot riproducibile; P0 non completata | [PR #29](https://github.com/Askeladd22/manuscript/pull/29); CI da verificare | Windows: screenshot 720p/1080p, folio, gruppo in mano, accessibilità/FPS |
+| 2026-10-31 | P0 | Fix folio, test modali e utility screenshot riproducibile; P0 non completata | [PR #29](https://github.com/Askeladd22/manuscript/pull/29); [CI 41189472532](https://github.com/Askeladd22/manuscript/actions/runs/41189472532) **SUCCESS** | Windows: screenshot 720p/1080p, folio, gruppo in mano, accessibilità/FPS |
 
 ### Mini-template di aggiornamento (duplicare a fine sessione)
 
