@@ -73,6 +73,16 @@ return {
             delay = 0.28,
         },
         {
+            id = "bot-duel",
+            label = {
+                key = "main_menu.item.bot_duel",
+                default = "Sfida il Monaco (beta)",
+            },
+            primary = false,
+            enabled = true,
+            delay = 0.36,
+        },
+        {
             id = "settings",
             label = {
                 key = "main_menu.item.settings",
