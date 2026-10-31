@@ -57,6 +57,7 @@ function U:reset(mode)
   local seed=os.time()+math.floor(love.timer.getTime()*1000)
   local rng=love.math.newRandomGenerator(seed)
   self.botDuel=BotDuel.new(function(a,b) return rng:random(a,b) end)
+  require('src.features.farkle.bot_duel_view').reset()
  else
   self.botDuel=nil
  end
@@ -75,6 +76,7 @@ function U:after_duel_turn()
  if not self.botDuel then return end
  local event=self.botDuel:after_player_turn(self.game)
  if not event then return end
+ require('src.features.farkle.bot_duel_view').on_turn(event)
  self:log('bot_turn',
    tostring(event.report.turn)..'/'..tostring(event.report.rolls)..
    '/'..tostring(event.report.banked))
