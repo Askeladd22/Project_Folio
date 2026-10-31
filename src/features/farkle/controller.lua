@@ -13,7 +13,7 @@ local GroupThrow=require('src.features.farkle.group_throw')
 local BotDuel=require('src.gameplay.farkle.bot_duel')
 local Toasts=require('src.features.farkle.toast_messages')
 -- The new folio interface is the only gameplay HUD.
--- The MANUSCRIPT_UI_V2_EXPERIMENT opt-in/F6 legacy switch is retired.
+-- No environment-controlled HUD variant and no F6 layout switch.
 local U={state='waiting',buttons={},dice_results={}}
 function U:getTrayRect()
  local t=require('src.features.farkle.ui_v2.layout_candidates')
