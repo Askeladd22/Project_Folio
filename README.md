@@ -10,9 +10,22 @@ Risk every throw. Build your manuscript. Decide when to stop.
 ![LÖVE](https://img.shields.io/badge/L%C3%96VE-11.x-ec5d94)
 ![Status](https://img.shields.io/badge/status-active%20prototype-cc9955)
 
-[Game design](docs/GAME_DESIGN.md) · [Farkle rules](docs/FARKLE_RULES.md) · [Technical notes](docs/TECHNICAL.md) · [UI 2.0 roadmap](docs/UI_V2_ROADMAP.md)
+[Game design](docs/GAME_DESIGN.md) · [Farkle rules](docs/FARKLE_RULES.md) · [Technical notes](docs/TECHNICAL.md) · [UI 2.0 roadmap](docs/UI_V2_ROADMAP.md) · **[Versione](version.txt) · [Registro aggiornamenti](CHANGELOG.md)**
 
 </div>
+
+## Versioni e aggiornamenti
+
+La versione attuale del prototipo è definita **esclusivamente**
+in [`version.txt`](version.txt) ed è mostrata automaticamente nel
+menu principale. Ogni update deve aumentare la versione e aggiungere
+una sezione datata al [`CHANGELOG.md`](CHANGELOG.md), indicando
+funzioni aggiunte/modificate/rimosse, test e limitazioni.
+
+**La CI rifiuta una PR senza bump di versione e changelog aggiornato.**
+Per il procedimento completo vedere [`docs/VERSIONING.md`](docs/VERSIONING.md).
+La versione del documento di game design resta indipendente da quella
+del software. La baseline iniziale è `0.1.0-dev.1` (31 ottobre 2026).
 
 ## Overview
 
