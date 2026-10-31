@@ -5,7 +5,6 @@ local FEATURE_DIR = "src/features"
 local FEATURE_FILES = {
     FEATURE_DIR .. "/campaign_select/module.lua",
     FEATURE_DIR .. "/main_menu/module.lua",
-    FEATURE_DIR .. "/scriptorium/desk_view.lua",
     FEATURE_DIR .. "/scriptorium/page_layout.lua",
     FEATURE_DIR .. "/settings/module.lua",
     FEATURE_DIR .. "/startup_splash/module.lua",
