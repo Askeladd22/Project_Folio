@@ -13,6 +13,7 @@ local w,h=1920,1080
 local pushes,pops=0,0
 local drawCalls={}
 local currentColor={}
+local mouseX,mouseY=nil,nil
 local function fakeFont(sz)
  sz=type(sz)=='number' and sz or 18
  return {
@@ -33,10 +34,22 @@ local gfx=setmetatable({
   drawCalls[#drawCalls+1]={mode=mode,x=x,y=y,w=rw,h=rh,c=currentColor}
  end,
 },{__index=function()return function()end end})
-love={graphics=gfx}
+love={graphics=gfx,mouse={getPosition=function()return mouseX,mouseY end}}
 local Hud=require('src.features.farkle.ui_v2.hud')
 local layout=Layout.build('single_folio')
 assert(Layout.validate(layout))
+local function activeFill(rect)
+ for _,call in ipairs(drawCalls) do
+  if call.mode=='fill' and call.x==rect.x and call.y==rect.y
+   and call.w==rect.w and call.h==rect.h
+   and math.abs((call.c[1] or 0)-.97)<.001
+   and math.abs((call.c[2] or 0)-.88)<.001
+   and math.abs((call.c[3] or 0)-.65)<.001 then
+   return true
+  end
+ end
+ return false
+end
 local function matchingFill(rect)
  for _,call in ipairs(drawCalls) do
   if call.mode=='fill' and call.x==rect.x and call.y==rect.y
@@ -54,6 +67,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  Res.init(1920,1080)
  Res.refresh(w,h)
  drawCalls={}
+ mouseX,mouseY=Res.to_screen(layout.primary.x+layout.primary.w/2,
+  layout.primary.y+layout.primary.h/2)
  local game=R.new()
  local ui={game=game,presentation=P.new(game)}
  local oldBank,oldPot,oldPhase=game.bank,game.pot,game.phase
@@ -61,6 +76,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  assert(pushes==pops,'Folio HUD leaked graphics state')
  assert(matchingFill(layout.header),'header must use ink-on-parchment')
  assert(matchingFill(layout.context),'tools panel must use parchment')
+ assert(activeFill(layout.primary),'primary button should react to hover using screen-to-virtual mapping')
+ assert(not activeFill(layout.secondary),'disabled action should never show hover')
  assert(ui.buttons.roll and ui.buttons.bank)
  assert(ui.buttons.help and ui.buttons.runmenu and ui.buttons.folio)
  assert(ui.buttons.roll.enabled and not ui.buttons.bank.enabled)
@@ -85,4 +102,4 @@ assert(source:find("Folio.draw(s,u.presentation",1,true))
 assert(source:find("Indicators.draw(u,hits)",1,true))
 assert(not source:find("hud_minimal",1,true))
 love=oldLove
-print('PASS Farkle HUD ink/parchment, preserved hitboxes and zero gameplay mutation at 720p/1080p/1440p')
+print('PASS Farkle HUD ink/parchment, hover mapping, unchanged hitboxes and score at 720p/1080p/1440p')
