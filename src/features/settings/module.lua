@@ -6,6 +6,7 @@ local I18n = require("src.core.i18n")
 local MenuParticles = require("src.core.menu_particles")
 local Navigation = require("src.core.navigation")
 local RuntimeUI = require("src.core.runtime_ui")
+local MenuSurface = require("src.features.ui_v2.menu_surface")
 local Schema = require("src.core.schema")
 local SettingsSchema = require("src.data.settings_schema")
 local SettingsUISchema = require("src.data.settings_ui_schema")
@@ -85,13 +86,7 @@ local FONT_UPPERCASE = expect_string(UI_ASSET_SCHEMA.font_uppercase, "assets.fon
 local FONT_FALLBACK = expect_string(UI_ASSET_SCHEMA.font_fallback, "assets.font_fallback")
 
 local MENU_TITLE_GOLD = expect_color3(UI_COLOR_SCHEMA.title_gold, "colors.title_gold")
-local MENU_SUBTITLE_IVORY = expect_color3(UI_COLOR_SCHEMA.subtitle_ivory, "colors.subtitle_ivory")
-local MENU_TEXT_ACTIVE = expect_color3(UI_COLOR_SCHEMA.text_active, "colors.text_active")
-local MENU_TEXT_SELECTED = expect_color3(UI_COLOR_SCHEMA.text_selected, "colors.text_selected")
-local MENU_TEXT_PRIMARY = expect_color3(UI_COLOR_SCHEMA.text_primary, "colors.text_primary")
 local MENU_TEXT_SECONDARY = expect_color3(UI_COLOR_SCHEMA.text_secondary, "colors.text_secondary")
-local MENU_TEXT_SHADOW = expect_color3(UI_COLOR_SCHEMA.text_shadow, "colors.text_shadow")
-local MENU_ACCENT_FILL = expect_color3(UI_COLOR_SCHEMA.accent_fill, "colors.accent_fill")
 
 local bg_image = nil
 local title_font = nil
@@ -176,7 +171,9 @@ local function load_font(candidates, size)
 end
 
 local function ensure_assets()
-    local scale = RuntimeUI.scale()
+    local height=love.graphics.getHeight()
+    local scale=RuntimeUI.scale()*math.max(.64,math.min(1.18,height/1080))
+      *(RuntimeUI.big_text() and 1.12 or 1)
     if cached_scale ~= scale then
         title_font = nil
         subtitle_font = nil
@@ -197,7 +194,7 @@ local function ensure_assets()
             FONT_TEXT,
             FONT_UPPERCASE,
             FONT_FALLBACK,
-        }, RuntimeUI.sized(94))
+        }, math.max(26,math.floor(94*scale+.5)))
     end
 
     if not subtitle_font then
@@ -205,7 +202,7 @@ local function ensure_assets()
             FONT_TEXT,
             FONT_UPPERCASE,
             FONT_FALLBACK,
-        }, RuntimeUI.sized(50))
+        }, math.max(18,math.floor(50*scale+.5)))
     end
 
     if not section_font then
@@ -213,7 +210,7 @@ local function ensure_assets()
             FONT_TEXT,
             FONT_UPPERCASE,
             FONT_FALLBACK,
-        }, RuntimeUI.sized(40))
+        }, math.max(17,math.floor(40*scale+.5)))
     end
 
     if not content_font then
@@ -221,7 +218,7 @@ local function ensure_assets()
             FONT_TEXT,
             FONT_UPPERCASE,
             FONT_FALLBACK,
-        }, RuntimeUI.sized(32))
+        }, math.max(15,math.floor(32*scale+.5)))
     end
 
     if not action_font then
@@ -229,7 +226,7 @@ local function ensure_assets()
             FONT_TEXT,
             FONT_UPPERCASE,
             FONT_FALLBACK,
-        }, RuntimeUI.sized(38))
+        }, math.max(16,math.floor(38*scale+.5)))
     end
 end
 
@@ -605,6 +602,21 @@ local function build_layout()
         end
     end
 
+    local frame_top=math.max(14,layout.title_y-math.max(24,math.floor(h*.035)))
+    local last_y=layout.subtitle_y+math.floor(h*.09)
+    if view_mode==VIEW_MODE_SECTIONS then
+        local item=layout.section_items[#layout.section_items]
+        if item then last_y=item.y+item.h end
+    else
+        local item=layout.actions[#layout.actions]
+        if item then last_y=item.y+item.h end
+    end
+    local frame_bottom=math.min(h-14,last_y+math.max(24,math.floor(h*.045)))
+    layout.frame={
+        x=center_x-math.min(w*.83,1160)*.5,
+        y=frame_top,w=math.min(w*.83,1160),
+        h=math.max(50,frame_bottom-frame_top),
+    }
     return layout
 end
 
@@ -623,17 +635,8 @@ local function draw_background(layout)
         love.graphics.rectangle("fill", 0, 0, w, h)
     end
 
-    -- Match main menu background treatment (dark left readability + vignette + warm tint).
-    love.graphics.setColor(0, 0, 0, high_contrast and 0.90 or 0.83)
-    love.graphics.rectangle("fill", 0, 0, w * 0.52, h)
-    love.graphics.setColor(0, 0, 0, high_contrast and 0.52 or 0.38)
-    love.graphics.rectangle("fill", w * 0.52, 0, w * 0.24, h)
-    love.graphics.setColor(0, 0, 0, high_contrast and 0.58 or 0.50)
-    love.graphics.rectangle("fill", 0, 0, w, h * 0.16)
-    love.graphics.setColor(0, 0, 0, high_contrast and 0.80 or 0.68)
-    love.graphics.rectangle("fill", 0, h * 0.84, w, h * 0.16)
-    love.graphics.setColor(0.36, 0.20, 0.06, high_contrast and 0.12 or 0.08)
-    love.graphics.rectangle("fill", 0, 0, w, h)
+    MenuSurface.backdrop(w,h,high_contrast,1)
+    MenuSurface.panel(layout.frame,{high_contrast=high_contrast})
 
     MenuParticles.draw(particles, w, h, RuntimeUI.scale(), high_contrast)
 end
@@ -645,30 +648,18 @@ local function draw_title(layout)
     local subtitle_face = subtitle_font or love.graphics.getFont()
 
     love.graphics.setFont(title_face)
-    love.graphics.setColor(MENU_TEXT_SHADOW[1], MENU_TEXT_SHADOW[2], MENU_TEXT_SHADOW[3], high_contrast and 0.74 or 0.54)
-    local title_text = tr_entry(TITLE_ENTRY)
-    love.graphics.printf(title_text, center_x - 500 + 3, layout.title_y + 3, 1000, "center")
-    -- Keep identical title color to Main Menu.
-    love.graphics.setColor(MENU_TITLE_GOLD[1], MENU_TITLE_GOLD[2], MENU_TITLE_GOLD[3], 1)
-    love.graphics.printf(title_text, center_x - 500, layout.title_y, 1000, "center")
-
+    local title_text=tr_entry(TITLE_ENTRY)
+    love.graphics.setColor(.29,.18,.09,1)
+    love.graphics.printf(title_text,layout.frame.x+20,
+        layout.title_y,layout.frame.w-40,'center')
+    local subtitle=view_mode==VIEW_MODE_SECTIONS
+      and tr_entry(SUBTITLE_SECTIONS_ENTRY) or get_active_tab().label
     love.graphics.setFont(subtitle_face)
-    local subtitle = (view_mode == VIEW_MODE_SECTIONS)
-        and tr_entry(SUBTITLE_SECTIONS_ENTRY)
-        or get_active_tab().label
-    love.graphics.setColor(
-        high_contrast and 1.00 or MENU_SUBTITLE_IVORY[1],
-        high_contrast and 0.96 or MENU_SUBTITLE_IVORY[2],
-        high_contrast and 0.88 or MENU_SUBTITLE_IVORY[3],
-        high_contrast and 1.00 or 0.92
-    )
-    love.graphics.printf(subtitle, center_x - 450, layout.subtitle_y, 900, "center")
-
-    local y = layout.subtitle_y + subtitle_face:getHeight() + 8
-    love.graphics.setColor(0.92, 0.74, 0.32, high_contrast and 0.50 or 0.34)
-    love.graphics.rectangle("fill", center_x - 210, y, 180, 2)
-    love.graphics.rectangle("fill", center_x + 30, y, 180, 2)
-    love.graphics.polygon("fill", center_x, y + 6, center_x + 6, y, center_x, y - 6, center_x - 6, y)
+    love.graphics.setColor(.44,.30,.17,1)
+    love.graphics.printf(subtitle,layout.frame.x+24,
+        layout.subtitle_y,layout.frame.w-48,'center')
+    MenuSurface.rule(center_x-165,
+        layout.subtitle_y+subtitle_face:getHeight()+8,330,1)
 end
 
 local function draw_slider_gems(rect, value, selected, alpha_mul)
@@ -700,126 +691,59 @@ local function draw_slider_gems(rect, value, selected, alpha_mul)
 end
 
 local function draw_sections(layout)
-    local section_face = section_font or love.graphics.getFont()
-    love.graphics.setFont(section_face)
-    local font_h = section_face:getHeight()
-
-    for i, item in ipairs(layout.section_items) do
-        local item_progress = ease_out_cubic(get_entrance_progress(0.14 + (i - 1) * 0.08, 0.55))
-        local x_offset = RuntimeUI.sized(24) * (1 - item_progress)
-        local draw_x = item.x - x_offset
-        local is_hovered = (hovered_id == item.id)
-        local active = is_hovered
-
-        if active then
-            love.graphics.setColor(MENU_ACCENT_FILL[1], MENU_ACCENT_FILL[2], MENU_ACCENT_FILL[3], 0.16 * item_progress)
-            love.graphics.rectangle("fill", draw_x, item.y + 2, item.w, item.h - 4, 8, 8)
-        end
-
-        local color
-        if active then
-            color = MENU_TEXT_ACTIVE
-        else
-            color = MENU_TEXT_PRIMARY
-        end
-
-        local text_w = section_face:getWidth(item.label)
-        local tx = draw_x + (item.w - text_w) * 0.5
-        local ty = item.y + math.floor((item.h - font_h) * 0.5)
-
-        love.graphics.setColor(MENU_TEXT_SHADOW[1], MENU_TEXT_SHADOW[2], MENU_TEXT_SHADOW[3], 0.56 * item_progress)
-        love.graphics.print(item.label, tx + 1, ty + 1)
-        love.graphics.setColor(color[1], color[2], color[3], (active and 1.0 or 0.95) * item_progress)
-        love.graphics.print(item.label, tx, ty)
+    local face=section_font or love.graphics.getFont()
+    local height=face:getHeight()
+    love.graphics.setFont(face)
+    for i,item in ipairs(layout.section_items) do
+        local progress=ease_out_cubic(get_entrance_progress(
+            .14+(i-1)*.08,.55))
+        local active=hovered_id==item.id
+        MenuSurface.item(item,{active=active,alpha=progress,
+            primary=item.type=='tab'})
+        local y=item.y+(item.h-height)*.5
+        love.graphics.setColor(active and .26 or .37,
+            active and .16 or .25,.12,progress)
+        love.graphics.printf(item.label,item.x+14,y,
+            item.w-28,'center')
     end
 end
-
 local function draw_content(layout)
-    local content_face = content_font or love.graphics.getFont()
-    love.graphics.setFont(content_face)
-    local font_h = content_face:getHeight()
-
-    local controls_count = #layout.controls
-    for i, row in ipairs(layout.controls) do
-        local item_progress = ease_out_cubic(get_entrance_progress(0.16 + (i - 1) * 0.06, 0.52))
-        local x_offset = RuntimeUI.sized(22) * (1 - item_progress)
-        local draw_x = row.x - x_offset
-        local label_x = row.label_rect.x - x_offset
-        local value_x = row.value_rect.x - x_offset
-        local is_selected = (selected_content_index == i)
-        local is_hovered = (hovered_id == row.id)
-        local active = is_selected or is_hovered
-        local control = row.control
-
-        if active then
-            love.graphics.setColor(MENU_ACCENT_FILL[1], MENU_ACCENT_FILL[2], MENU_ACCENT_FILL[3], 0.16 * item_progress)
-            love.graphics.rectangle("fill", draw_x, row.y + 2, row.w, row.h - 4, 7, 7)
-        end
-
-        local label_y = row.label_rect.y + math.floor((row.label_rect.h - font_h) * 0.5)
-        love.graphics.setColor(MENU_TEXT_SHADOW[1], MENU_TEXT_SHADOW[2], MENU_TEXT_SHADOW[3], 0.52 * item_progress)
-        love.graphics.print(control.label, label_x + 1, label_y + 1)
-        if active then
-            love.graphics.setColor(MENU_TEXT_ACTIVE[1], MENU_TEXT_ACTIVE[2], MENU_TEXT_ACTIVE[3], 1 * item_progress)
+    local g=love.graphics
+    local face=content_font or g.getFont()
+    local face_h=face:getHeight()
+    for i,row in ipairs(layout.controls) do
+        local progress=ease_out_cubic(get_entrance_progress(
+            .16+(i-1)*.06,.52))
+        local active=selected_content_index==i or hovered_id==row.id
+        MenuSurface.item(row,{active=active,alpha=progress})
+        local y=row.label_rect.y+(row.label_rect.h-face_h)*.5
+        g.setFont(face)
+        g.setColor(.29,.18,.10,progress)
+        g.print(row.control.label,row.label_rect.x,y)
+        if row.control.type=='slider' then
+            draw_slider_gems(row.slider_rect,row.control.value,
+                active,progress)
         else
-            love.graphics.setColor(MENU_TEXT_PRIMARY[1], MENU_TEXT_PRIMARY[2], MENU_TEXT_PRIMARY[3], 0.95 * item_progress)
-        end
-        love.graphics.print(control.label, label_x, label_y)
-
-        if control.type == "slider" then
-            local slider_rect = {
-                x = row.slider_rect.x - x_offset,
-                y = row.slider_rect.y,
-                w = row.slider_rect.w,
-                h = row.slider_rect.h,
-            }
-            draw_slider_gems(slider_rect, control.value, active, item_progress)
-        else
-            local value_text = control_display_value(control)
-            local text_w = content_face:getWidth(value_text)
-            local vx = value_x + (row.value_rect.w - text_w) * 0.5
-            local vy = row.value_rect.y + math.floor((row.value_rect.h - font_h) * 0.5)
-            love.graphics.setColor(MENU_TEXT_SHADOW[1], MENU_TEXT_SHADOW[2], MENU_TEXT_SHADOW[3], 0.52 * item_progress)
-            love.graphics.print(value_text, vx + 1, vy + 1)
-            if active then
-                love.graphics.setColor(MENU_TEXT_SELECTED[1], MENU_TEXT_SELECTED[2], MENU_TEXT_SELECTED[3], 1 * item_progress)
-            else
-                love.graphics.setColor(MENU_TEXT_SECONDARY[1], MENU_TEXT_SECONDARY[2], MENU_TEXT_SECONDARY[3], 0.95 * item_progress)
-            end
-            love.graphics.print(value_text, vx, vy)
+            local value=control_display_value(row.control)
+            local val_y=row.value_rect.y+(row.value_rect.h-face_h)*.5
+            g.setColor(.46,.31,.17,progress)
+            g.printf(value,row.value_rect.x,val_y,
+                row.value_rect.w,'center')
         end
     end
-
-    local action_face = action_font or love.graphics.getFont()
-    love.graphics.setFont(action_face)
-    local action_font_h = action_face:getHeight()
-    local action_delay_base = 0.18 + controls_count * 0.05
-    for i, row in ipairs(layout.actions) do
-        local item_progress = ease_out_cubic(get_entrance_progress(action_delay_base + (i - 1) * 0.07, 0.52))
-        local x_offset = RuntimeUI.sized(22) * (1 - item_progress)
-        local draw_x = row.x - x_offset
-        local global_index = controls_count + i
-        local is_selected = selected_content_index == global_index
-        local is_hovered = hovered_id == row.id
-        local active = is_selected or is_hovered
-        local label = row.action.label
-        local label_w = action_face:getWidth(label)
-        local tx = draw_x + (row.w - label_w) * 0.5
-        local ty = row.y + math.floor((row.h - action_font_h) * 0.5)
-
-        if active then
-            love.graphics.setColor(MENU_ACCENT_FILL[1], MENU_ACCENT_FILL[2], MENU_ACCENT_FILL[3], 0.14 * item_progress)
-            love.graphics.rectangle("fill", draw_x, row.y + 4, row.w, row.h - 8, 8, 8)
-        end
-
-        love.graphics.setColor(MENU_TEXT_SHADOW[1], MENU_TEXT_SHADOW[2], MENU_TEXT_SHADOW[3], 0.56 * item_progress)
-        love.graphics.print(label, tx + 1, ty + 1)
-        if active then
-            love.graphics.setColor(MENU_TEXT_SELECTED[1], MENU_TEXT_SELECTED[2], MENU_TEXT_SELECTED[3], 1 * item_progress)
-        else
-            love.graphics.setColor(MENU_TEXT_PRIMARY[1], MENU_TEXT_PRIMARY[2], MENU_TEXT_PRIMARY[3], 0.95 * item_progress)
-        end
-        love.graphics.print(label, tx, ty)
+    local action_face=action_font or g.getFont()
+    local action_h=action_face:getHeight()
+    for i,row in ipairs(layout.actions) do
+        local progress=ease_out_cubic(get_entrance_progress(
+            .18+#layout.controls*.05+(i-1)*.07,.52))
+        local selected=selected_content_index==#layout.controls+i
+        local active=selected or hovered_id==row.id
+        MenuSurface.item(row,{active=active,alpha=progress,
+            primary=row.action.action=='confirm'})
+        g.setFont(action_face)
+        g.setColor(.31,.20,.11,progress)
+        g.printf(row.action.label,row.x+12,
+            row.y+(row.h-action_h)*.5,row.w-24,'center')
     end
 end
 
