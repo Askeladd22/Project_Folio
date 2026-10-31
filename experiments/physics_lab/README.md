@@ -150,3 +150,7 @@ luajit experiments/physics_lab/run_handoff.lua 8
 ```
 
 Not part of gameplay. FPS landing remains unqualified.
+
+The measured 32-seed / 768-dice conclusions are in
+[LAB5_RESULTS.md](LAB5_RESULTS.md). **The compatible-repulsion variant
+has a persistent floor-penetration failure and is not ready for production.**
