@@ -5,10 +5,11 @@ local D=require('src.features.farkle.dice')
 local H=require('src.features.farkle.hud_model')
 local Res=require('src.core.resolution_manager')
 local Presentation=require('src.features.farkle.presentation')
+local FolioView=require('src.features.farkle.folio_view')
 local V={};local fonts={}
 local ink={.12,.075,.035,1};local cream={.96,.90,.76,1};local green={.18,.30,.23,1};local red={.56,.13,.10,1}
-local function txt(s,x,y,w,size,c)
- local g=love.graphics;fonts[size]=fonts[size] or g.newFont(size);g.setFont(fonts[size]);g.setColor(unpack(c or ink));g.printf(tostring(s),x,y,w,'left')
+local function txt(s,x,y,w,size,c,align)
+ local g=love.graphics;fonts[size]=fonts[size] or g.newFont(size);g.setFont(fonts[size]);g.setColor(unpack(c or ink));g.printf(tostring(s),x,y,w,align or 'left')
 end
 local function panel(x,y,w,h)
  local g=love.graphics;g.setColor(.08,.04,.02,.35);g.rectangle('fill',x+5,y+7,w,h,5)
@@ -85,8 +86,11 @@ if H.reward_active(s) then reward(u);return end
  elseif u.modal=='medals' or u.modal=='medaluse' then
   MedalPanel.draw(u,txt,button)
  elseif u.modal=='folio' then
-    txt('THE MANUSCRIPT',425,180,750,30);manuscript(s,665,245,510,625,u.presentation)
-  txt(R.contracts[s.stage].condition,435,892,1050,24)
+    txt('THE MANUSCRIPT',425,180,750,30)
+    -- Same folio renderer used by the in-game side panel; the previous
+    -- unbound manuscript(...) call crashed every time this modal opened.
+    FolioView.draw(s,u.presentation,665,245,510,625,txt,R.contracts[s.stage].target)
+    txt(R.contracts[s.stage].condition,435,892,1050,24)
  elseif u.modal=='choices' then
   txt('CURRENT ROLL OPTIONS',425,180,800,30)
   local choices=R.options(s);local pages=math.max(1,math.ceil(#choices/7))
