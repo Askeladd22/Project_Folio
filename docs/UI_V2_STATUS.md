@@ -8,12 +8,12 @@
 
 - **FASE ATTIVA:** `P0 — baseline e audit completo`.
 - **CONDIZIONE:** `IN CORSO` (matrice completa e test automatico di inventario aggiunti; resta QA grafica e manuale della baseline).
-- **BASELINE DI DOCUMENTAZIONE:** `main@929e377fafde2b76a0d40681bf3c1e42ff655914`.
-- **BRANCH DI DOCUMENTAZIONE:** `docs/ui-v2-execution-plan-20261031`.
-- **PR DI DOCUMENTAZIONE:** [#27 — UI 2.0 roadmap e tracker](https://github.com/Askeladd22/manuscript/pull/27) (aperta; attendere verifica CI/review).
-- **PR DI P0 (inventario e test):** [#28](https://github.com/Askeladd22/manuscript/pull/28), branch `docs/ui-v2-p0-interaction-baseline-20261031` (stacked su PR #27). Nessuna modifica al gioco né alla UI visuale.
+- **BASELINE DI DOCUMENTAZIONE:** `main@c3c0fc6e88bb3ed6c3e188f8457a04708d53af92` (verificato prima di PR #29).
+- **BRANCH DI DOCUMENTAZIONE:** `fix/ui-v2-p0-folio-baseline-20261031` (intervento P0 corrente).
+- **PR DI DOCUMENTAZIONE:** [#27](https://github.com/Askeladd22/manuscript/pull/27) **integrata in main**.
+- **PR DI P0:** [#28](https://github.com/Askeladd22/manuscript/pull/28) **integrata** (matrice/test) e [#29](https://github.com/Askeladd22/manuscript/pull/29) **aperta** (correzione folio + cattura baseline riproducibile).
 - **UI 2.0 NEL GIOCO:** non esiste ancora; l'HUD attuale resta quello predefinito.
-- **CI per la baseline P0:** [run 41188657689](https://github.com/Askeladd22/manuscript/actions/runs/41188657689) **SUCCESS** (Lua 5.4, LuaJIT, laboratori FPS, test Python); il primo run 41188566125 falliva per un'errata aspettativa del test su `ended`, corretta nella PR #28.
+- **CI per la baseline P0:** [main 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **SUCCESS**; CI di PR #29 da registrare dopo l'esecuzione (test modali Lua5.4/LuaJIT + suite intera).
 - **QA WINDOWS / SCREENSHOT:** non ancora completata per una baseline identificata con commit; servono 1920×1080 e 1280×720 (fresh, held gruppo, ready con combinazione, modale, ricompensa).
 
 ## Fasi e gate
@@ -41,15 +41,15 @@
 - `docs/GAME_DESIGN.md`: codice-libro/folio come vera superficie giocabile; sistema Incontri e Segni ancora non implementato e non completamente definito.
 - `docs/RENDERER_RETIREMENT.md`: il vecchio painter `src/engine3d/render.lua` è tuttora necessario per percorsi di fallback/esperimenti.
 
-**Non ancora verificato:** screenshot baseline, benchmark FPS, matrice completa di tutti gli input e di tutti i modali, simulazione con testo grande/contrasto alto, tutte le varianti F8/F9 in Windows.
+**Non ancora verificato:** screenshot baseline Windows a commit identificato, benchmark FPS, comportamento con testo grande/contrasto alto, manipolazione di gruppo e varianti F8/F9 in un'istanza reale LÖVE. Matrice input/modali verificata nel sorgente e coperta da test headless.
 
 ## Prossima azione concreta (una sola)
 
 **Chiudere la baseline P0 con screenshot e test reali su Windows a commit noto, senza toccare fisica o gameplay.**
 
 1. Verificare `main` e PR aperte e far passare la CI della PR P0.
-2. Acquisire almeno 1920×1080 e 1280×720 in `fresh`, `held` multiplo, `ready` con combinazione, `modal` e `upgrade/medal` con HUD attuale. Registrare commit, modalità F9, F10, F11 e impostazioni.
-3. Riprodurre il modale `folio` e annotare stack trace se fallisce; controllare Esc e focus.
+2. Su Windows eseguire `python scripts/capture_ui_v2_baseline.py` dalla radice del repository (vedi [UI_V2_BASELINE_CAPTURE.md](UI_V2_BASELINE_CAPTURE.md)); genera screenshot reali a 1920×1080 e 1280×720, manifest SHA e log. Il gruppo in mano richiede ancora una cattura manuale.
+3. Verificare su Windows che `F` apra il folio riparato nella PR #29, con valori corretti e chiusura Esc; il nuovo test headless verifica già il dispatch ma non la resa GPU.
 4. Verificare `big_text`, `high_contrast` e `reduced_animations` e gli FPS della stessa schermata.
 5. Annotare i risultati e passare a P1 **solo** quando il gate P0 è completo.
 
@@ -57,8 +57,15 @@
 
 - [UI_V2_INTERACTION_MATRIX.md](UI_V2_INTERACTION_MATRIX.md): tabella delle fasi Farkle/controller, ID dei pulsanti, modali, scorciatoie e priorità input reali; distinzione fra `dragSelected`, `game.selected` e `medalDice`.
 - `tests/ui_v2_interaction_inventory_test.lua`: verifica che le azioni e le scorciatoie del legacy restino raggiungibili; testa le regole di autorizzazione in `fresh/rolling/ready/rescue/ended`, l'indipendenza del marquee e la trasformazione della viewport.
-- **Possibile bug esistente:** in `src/features/farkle/hud.lua` il modal `folio` invoca `manuscript(...)` senza una definizione visibile nel modulo. Richiede verifica Windows; non corretto in P0.
+- **Bug confermato e corretto in PR #29:** in `src/features/farkle/hud.lua` il modal `folio` invocava `manuscript(...)` inesistente; ora usa il renderer condiviso `folio_view.draw`. Aggiunto test del modal `tests/ui_v2_folio_modal_regression_test.lua`; resta la verifica Windows.
 - Questo passaggio **non implementa ancora la UI 2.0** e non rende P0 completata; il gate manuale resta aperto.
+
+## Intervento P0 — PR #29
+
+- `src/features/farkle/hud.lua`: fix crash modale folio con `FolioView.draw`; conserva target/valori Farkle e allineamento del testo.
+- `tests/ui_v2_folio_modal_regression_test.lua`: test modale `folio` su vista virtuale 720p/1080p/ultrawide e controllo dei dialog esistenti.
+- `scripts/capture_ui_v2_baseline.py` e [UI_V2_BASELINE_CAPTURE.md](UI_V2_BASELINE_CAPTURE.md): procedura riproducibile per screenshot LÖVE e manifest per commit.
+- Nessun redesign ancora effettuato; **P0 rimane IN CORSO**, in attesa di immagini e FPS realmente misurati sul PC Windows.
 
 ## Rischi e decisioni sospese
 
@@ -74,7 +81,8 @@
 | Data | Fase | Risultato reale | Link/CI | Prossimo passo |
 |---|---|---|---|---|
 | 2026-10-31 | P0 | Roadmap e tracker iniziali | [PR #27](https://github.com/Askeladd22/manuscript/pull/27); CI riuscita | Matrice e baseline verificabile |
-| 2026-10-31 | P0 | Matrice di interazione e test headless introdotti; produzione intatta. Corretto test: `ended` termina il turno, non la commissione | [PR #28](https://github.com/Askeladd22/manuscript/pull/28); [CI 41188657689](https://github.com/Askeladd22/manuscript/actions/runs/41188657689) **successo** | Screenshot Windows, folio modal, accessibilità e FPS baseline |
+| 2026-10-31 | P0 | Matrice e test integrazione degli input, PR #28 integrata | [PR #28](https://github.com/Askeladd22/manuscript/pull/28); [main CI 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **successo** | Baseline Windows |
+| 2026-10-31 | P0 | Fix folio, test modali e utility screenshot riproducibile; P0 non completata | [PR #29](https://github.com/Askeladd22/manuscript/pull/29); CI da verificare | Windows: screenshot 720p/1080p, folio, gruppo in mano, accessibilità/FPS |
 
 ### Mini-template di aggiornamento (duplicare a fine sessione)
 
