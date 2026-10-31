@@ -10,7 +10,7 @@
 - **CONDIZIONE:** `IN CORSO` (mappatura iniziale verificata, test e screenshot di baseline ancora da fare).
 - **BASELINE DI DOCUMENTAZIONE:** `main@929e377fafde2b76a0d40681bf3c1e42ff655914`.
 - **BRANCH DI DOCUMENTAZIONE:** `docs/ui-v2-execution-plan-20261031`.
-- **PR DI DOCUMENTAZIONE:** da registrare dopo la creazione.
+- **PR DI DOCUMENTAZIONE:** [#27 — UI 2.0 roadmap e tracker](https://github.com/Askeladd22/manuscript/pull/27) (aperta; attendere verifica CI/review).
 - **PR DI IMPLEMENTAZIONE UI 2.0:** nessuna.
 - **UI 2.0 NEL GIOCO:** non esiste ancora; l'HUD attuale resta quello predefinito.
 - **CI per questa modifica:** da verificare; non esistono test UI 2.0 nuovi in questa fase documentale.
@@ -67,7 +67,7 @@ Ordine consigliato nella prossima sessione:
 
 | Data | Fase | Risultato reale | Link/CI | Prossimo passo |
 |---|---|---|---|---|
-| 2026-10-31 | P0 | Verificato lo scheletro del runtime e creati roadmap + tracker; **nessuna modifica al gioco** | PR documentale da registrare | Matrice interazioni; screenshot baseline |
+| 2026-10-31 | P0 | Verificato lo scheletro del runtime e creati roadmap + tracker; **nessuna modifica al gioco** | [PR #27](https://github.com/Askeladd22/manuscript/pull/27); CI da verificare | Matrice interazioni; screenshot baseline |
 
 ### Mini-template di aggiornamento (duplicare a fine sessione)
 
