@@ -5,7 +5,6 @@ local Medals = require('src.gameplay.farkle.medals')
 local D = require('src.features.farkle.dice')
 local H = require('src.features.farkle.hud_model')
 local Res = require('src.core.resolution_manager')
-local Desk = require('src.features.scriptorium.desk_view')
 local Presentation = require('src.features.farkle.presentation')
 
 local M = {}
