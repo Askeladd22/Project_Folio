@@ -32,10 +32,6 @@ return {
             key = "main_menu.subtitle",
             default = "A Dream of Ink and Dice",
         },
-        footer_version = {
-            key = "main_menu.footer.version",
-            default = "v0.1",
-        },
         footer_alpha = {
             key = "main_menu.footer.alpha",
             default = "alpha",

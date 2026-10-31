@@ -8,6 +8,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require version bump and changelog for every update
+        env:
+          CHECK_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          CHECK_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          python3 scripts/test_versioning.py
+          if [ -n "${CHECK_BASE_SHA}" ] && [ -n "${CHECK_HEAD_SHA}" ] &&
+             [ "${CHECK_BASE_SHA}" != "0000000000000000000000000000000000000000" ]; then
+            python3 scripts/check_versioning.py --base-sha "${CHECK_BASE_SHA}" --head-sha "${CHECK_HEAD_SHA}"
+          else
+            python3 scripts/check_versioning.py
+          fi
       - name: Install Lua runtimes
         run: |
           sudo apt-get update -qq
