@@ -35,6 +35,17 @@ alla prima IA e allo scoring Farkle del luglio 2026, fino alle
 **39 PR integrate** fra il 16 e il 31 ottobre, con date e link originali.
 Non si confondono esperimenti rimossi, funzionalità attive o release.
 
+## Prototipi di gameplay isolati
+
+Il laboratorio [**Incontri e Segni A/B/C**](experiments/signs_lab/README.md)
+confronta il Farkle corrente, una progressione lineare e un
+duello sperimentale contro la miniatura del Leone della Bordura,
+con estrazione di Segni senza reinserimento e criteri di rischio
+riproducibili. Si avvia con
+`luajit experiments/signs_lab/run.lua 100 20261031`:
+**non è una modalità già integrata nella partita** e non
+sostituisce la sfida beta al Monaco.
+
 ## Overview
 
 The display name is temporary. The `manuscript` repository, internal `scriptorium` scene IDs and existing save identity stay unchanged for compatibility; they are not the public-facing game title.
