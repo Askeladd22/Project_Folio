@@ -10,6 +10,32 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.11] - 2026-10-31
+
+**Tipo:** leggibilità e gerarchia visiva dell'HUD Farkle, soltanto interfaccia.
+
+### Modificato
+- Intestazione della commissione organizzata in celle misurate per
+  nome, obiettivo, punti assicurati, punti a rischio e turni restanti;
+  aggiunte sottili linee separatrici tra le informazioni.
+- Etichette dei pulsanti e numeri dell'HUD adattati alle dimensioni
+  effettive dei font e allo spazio disponibile: riduzione controllata
+  della misura ed eventuale abbreviazione UTF-8 sicura invece di righe
+  sovrapposte o caratteri spezzati.
+- Il messaggio di stato Farkle è ora su una fascia di pergamena
+  leggibile, con colore d'allerta in caso di Farkle/fallimento.
+- Nessuna modifica alle aree cliccabili, alla proiezione 3D,
+  alle regole Farkle, allo scoring o ai contenuti dei messaggi.
+
+### Verifiche e limiti
+- `tests/ui_v2_readability_test.lua`: controllo dei limiti delle
+  celle, dell'adattamento testo, del layout a 720p/1080p/1440p,
+  dello stato di partita e delle hitbox invariate.
+- Lua 5.4/LuaJIT e i gate di CI da verificare prima del merge.
+- QA grafica LÖVE Windows ancora aperta per contrasto, font reali,
+  pulsanti a testo grande e corrispondenza con dadi g3d.
+- Splash originale rosa/azzurro con cuore del motore LÖVE invariato.
+
 ## [0.1.0-dev.10] - 2026-10-31
 
 **Tipo:** polish esclusivamente grafico dell'HUD Farkle UI 2.0.
