@@ -26,6 +26,29 @@ function M.new_rng(seed)
  end
 end
 
+-- Stateless per-roll/per-physical-ID stream used by the paired benchmark.
+-- Same (seed, hand, roll index, D6 ID) => same die face even if other
+-- policies previously consumed a different number of virtual dice.
+-- Not a cryptographic RNG and not suitable as a production physics source.
+function M.matched_rolls(seed,hand)
+ assert(type(seed)=='number' and seed%1==0 and seed>=1 and
+  seed<2147483647,'seed must be integer 1..2147483646')
+ assert(type(hand)=='number' and hand%1==0 and hand>=1 and hand<=100,
+  'benchmark hand must be 1..100')
+ return function(min,max,roll,id)
+  assert(min==1 and max==6,'matched rolls represent fair virtual D6')
+  assert(type(roll)=='number' and roll%1==0 and roll>=1 and roll<=64,
+   'valid roll index required')
+  assert(type(id)=='number' and id%1==0 and id>=1 and id<=6,
+   'physical die ID required')
+  local value=(seed+(hand-1)*104729+(roll-1)*13007+
+   (id-1)*8191)%2147483646+1
+  value=(value*16807)%2147483647
+  value=(value*16807)%2147483647
+  return 1+math.floor((value/2147483647)*6)
+ end
+end
+
 function M.decision(strategy,state)
  assert(strategy=='prudent' or strategy=='audace' or
   strategy=='reattiva','unknown benchmark policy')
@@ -47,7 +70,7 @@ function M.play(random,strategy,category,observer)
  for _=1,64 do
   assert(Rules.start(state),'official Farkle roll was not permitted')
   local faces={}
-  for _,index in ipairs(state.active) do faces[index]=random(1,6) end
+  for _,index in ipairs(state.active) do faces[index]=random(1,6,rolls+1,index) end
   rolls=rolls+1
   assert(Rules.settle(state,faces),'official Farkle settle failed')
   if state.phase=='ended' or state.phase=='lost' then
