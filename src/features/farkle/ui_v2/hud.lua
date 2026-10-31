@@ -55,6 +55,9 @@ local function action_button(u,a,rect)
  local isPrimary=a.slot=='primary'
  -- Every visible control uses the same rectangular hitbox as the
  -- authoritative controller action table; no decorative overlay eats input.
+ -- Give even disabled actions a light leaf underneath: their semi-transparent
+ -- shared widget fill would otherwise sit directly on the dark desk.
+ panel(rect,parchment,nil,5)
  MenuSurface.item(rect,{primary=isPrimary,disabled=not a.enabled})
  write(a.label,rect.x+12,rect.y+(rect.h>=66 and 10 or 11),rect.w-24,
    a.slot=='context' and 17 or 24,
