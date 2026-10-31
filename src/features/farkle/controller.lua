@@ -10,6 +10,8 @@ local Audio=require('src.core.audio_manager')
 local MouseThrow=require('src.features.farkle.mouse_throw')
 local Marquee=require('src.features.farkle.marquee_selection')
 local GroupThrow=require('src.features.farkle.group_throw')
+local BotDuel=require('src.gameplay.farkle.bot_duel')
+local Toasts=require('src.features.farkle.toast_messages')
 -- Single in-game HUD: the manuscript view.
 local U={state='waiting',buttons={},dice_results={},
  uiV2Experimental=os.getenv('MANUSCRIPT_UI_V2_EXPERIMENT')=='1'}
@@ -23,7 +25,12 @@ function U:getTrayProjection(tray,view,extents)
  return require('src.features.farkle.tray_view').fit(self,tray,view,extents)
 end
 function U:isDeskLayout() return true end
-function U:enter(params) if not self.game or (params and params.new_run) then self:reset('build') end end
+function U:enter(params)
+ if not self.game or (params and params.new_run) then
+  self.duelActive=params and params.bot_duel==true or false
+  self:reset(self.duelActive and 'control' or 'build')
+ end
+end
 function U:log(event,detail)
  local s=self.game
  if not love.filesystem.getInfo('runs.csv') then love.filesystem.write('runs.csv','run,mode,commission,turn,build,medal,event,bank,pot,detail\n') end
@@ -43,16 +50,44 @@ end
 function U:shouldDrawTrayDie(index) return not (self.game and self.game.used[index]) end
 function U:reset(mode)
  if self.state=='rolling' then return end
+ Toasts.clear()
+ if self.duelActive then
+  -- A separate LÖVE generator keeps the opponent's virtual rolls independent
+  -- of the player's physical physics RNG and accepted face gate.
+  local seed=os.time()+math.floor(love.timer.getTime()*1000)
+  local rng=love.math.newRandomGenerator(seed)
+  self.botDuel=BotDuel.new(function(a,b) return rng:random(a,b) end)
+ else
+  self.botDuel=nil
+ end
  self.mouseThrow=nil
  self.manualRoll=nil
  self.marquee=nil
  self.dragSelected=nil
- self.game=R.new(mode);self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
+ self.game=R.new(self.duelActive and 'control' or mode);self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
  self.modal=nil;self.lastLoss=nil;self.lastBank=nil;self.physicalFailure=nil;self.physicalNotice=nil
  self.id=os.date('%Y%m%d-%H%M%S')..'-'..math.floor(love.timer.getTime()*1000)
  self.logicalRollId=0;self.physicalAttemptId=0
  D.install(self.game.build);self:sync();self:log('new')
  self:log('session_seed',self.sessionSeed or 'unknown')
+end
+function U:after_duel_turn()
+ if not self.botDuel then return end
+ local event=self.botDuel:after_player_turn(self.game)
+ if not event then return end
+ self:log('bot_turn',
+   tostring(event.report.turn)..'/'..tostring(event.report.rolls)..
+   '/'..tostring(event.report.banked))
+ if event.finished then
+  local label=event.winner=='player' and 'Hai vinto la sfida!' or
+    event.winner=='bot' and 'Il monaco ha vinto la sfida.' or
+    'Parita nella sfida.'
+  Toasts.show(label)
+ elseif event.report.loss then
+  Toasts.show('Il monaco ha fatto Farkle!')
+ else
+  Toasts.show('Il monaco incassa +'..event.report.banked..' punti.')
+ end
 end
 function U:act(name,fn)
  local pot=self.game.pot;local bank=self.game.bank
@@ -64,6 +99,13 @@ function U:act(name,fn)
   if name=='bank' then self.lastBank=self.game.bank-bank;self.lastLoss=nil end
   if name=='next' then self.lastLoss=nil;self.lastBank=nil end
   self:sync();self:log(name)
+  local duel_event=self.botDuel and
+    (name=='bank' or name=='accept_bust' or name=='next')
+  if duel_event then self:after_duel_turn()
+  elseif self.uiV2Experimental and not self.botDuel then
+   if name=='bank' then Toasts.show('Punti incassati: +'..(self.lastBank or 0))
+   elseif name=='accept_bust' then Toasts.show('Farkle: punti a rischio perduti') end
+  end
  end
 end
 function U:begin_physical(indices,technical,gesture,manual)
@@ -153,6 +195,8 @@ function U:update(dt)
  end
  self:sync_presentation()
  if self.presentation then Presentation.update(self.presentation,dt,RuntimeUI.reduced_animations()) end
+ Toasts.update(dt)
+ if self.botDuel then require('src.features.farkle.bot_duel_view').update(dt) end
  if self.retry then
   self.retry=self.retry-dt
   if self.retry<=0 then self.retry=nil;self:begin_physical({1},true) end
@@ -185,6 +229,10 @@ function U:onDiceSettled(values)
  Presentation.accepted(self.presentation,accepted)
  if s.phase=='ended' or s.phase=='lost' then self.lastLoss=pot end
  self.activePhysical=nil;self.manualRoll=nil;self.marquee=nil;self.dragSelected=nil;self.dice_results={};self:sync();self:log('settled',table.concat(s.hand,'/'))
+ if self.botDuel then self:after_duel_turn()
+ elseif self.uiV2Experimental and (s.phase=='ended' or s.phase=='lost') then
+  Toasts.show('Farkle: turno concluso')
+ end
  return true
 end
 function U:toggle(i) if R.toggle(self.game,i) then self:log('select',i) end end
@@ -208,6 +256,10 @@ function U:drawDeskOverlays(hits)
  else
   require('src.features.farkle.hud_minimal').overlay(self,hits)
  end
+ if self.botDuel and not self.modal then
+  require('src.features.farkle.bot_duel_view').draw(self.botDuel)
+ end
+ Toasts.draw(self.modal~=nil or H.reward_active(self.game))
 end
 -- Left-drag creates a *physical-grab selection*, never a Farkle score
 -- selection. Right-drag a selected die throws all selected physical bodies.
@@ -227,6 +279,15 @@ local function in_tray(x,y)
 end
 
 function U:mousepressed(x,y,b)
+ if self.botDuel and self.botDuel.finished then
+  if b==1 then
+   local vx,vy=Res.to_virtual(x,y)
+   if vx>=780 and vx<=1130 and vy>=540 and vy<=585 then
+    self:reset('control')
+   end
+  end
+  return
+ end
  if b==2 then
   if self.mouseThrow or self.marquee or not can_grab(self) then return end
   local clicked=Bridge.pickTrayDie(x,y)
@@ -346,6 +407,11 @@ function U:mousereleased(x,y,b)
  end
 end
 function U:keypressed(k)
+ if self.botDuel and self.botDuel.finished then
+  if k=='r' then self:reset('control')
+  elseif k=='escape' then require('src.core.navigation').go('main_menu') end
+  return
+ end
  -- Only in an explicitly launched A/B session: no switch while physics,
  -- grip, dialog or reward input is live. F8/F9 remain independent.
  if k=='f6' and os.getenv('MANUSCRIPT_UI_V2_EXPERIMENT')=='1' then
