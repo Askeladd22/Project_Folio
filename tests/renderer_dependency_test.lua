@@ -7,7 +7,7 @@ assert(io.open('src/engine3d/render.lua','rb')==nil,
  'CPU painter source must not be kept as fallback')
 for _,path in ipairs{
  'src/app/dice_runtime.lua',
- 'src/features/farkle/hud_minimal.lua',
+ 'src/features/farkle/ui_v2/hud.lua',
  'src/features/farkle/tray_workshop.lua',
  'src/features/farkle/tray_view.lua',
  'experiments/g3d_lab/main.lua',
@@ -35,7 +35,9 @@ local workshop=read('src/features/farkle/tray_workshop.lua')
 assert(workshop:find('function W.cycle()',1,true))
 assert(not workshop:find('function W.floor(',1,true))
 assert(not workshop:find('function W.border(',1,true))
-local hud=read('src/features/farkle/hud_minimal.lua')
-assert(hud:find('src.engine3d.g3d_portrait',1,true))
-assert(not hud:find('local function snapshot(',1,true))
-print('PASS g3d sole renderer: no F9, CPU painter, legacy HUD portraits, or FPS production')
+local hud=read('src/features/farkle/ui_v2/hud.lua')
+local shelf=read('src/features/farkle/ui_v2/accepted_dice.lua')
+assert(not hud:find('hud_minimal',1,true))
+assert(shelf:find('src.engine3d.g3d_portrait',1,true))
+assert(not shelf:find('local function snapshot(',1,true))
+print('PASS g3d sole renderer: no F9, CPU painter, legacy HUD fallback, or FPS production')
