@@ -3,7 +3,6 @@ require("core")
 local Physics = require("src.engine3d.physics")
 local Geometry = require("src.engine3d.geometry")
 local view = require("src.engine3d.view")
-local light = require("src.engine3d.light")
 local box = Physics.box
 local materials = Physics.materials
 local d6 = Geometry.d6
@@ -814,7 +813,6 @@ local function initialize_runtime()
 
     EngineBridge.configure({
         get_dice_tray_rect = get_dice_tray_rect,
-        get_renderer_mode = function() return 'g3d' end,
         get_tray_die_hits = function() return tray_die_hits end,
         pick_scriptorium_tray_die = pick_tray_die_at_screen,
         to_virtual_ui = function(x, y)
