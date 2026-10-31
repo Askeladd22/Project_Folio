@@ -2,7 +2,8 @@
 
 Uses the EXISTING real-game HUD smoke harness (not a fabricated mock UI).
 Captures its 1920x1080 and 1280x720 frames, plus source commit hashes.
-The group-held/grab and accessibility checks still require manual QA.
+The group-held and accessibility states are now captured automatically
+with the real controller; visual correctness still requires human QA.
 """
 from pathlib import Path
 import argparse
@@ -43,7 +44,7 @@ def main():
         print("WARNING: working tree contains local modifications", flush=True)
     subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "run_smoke.py"),
-         "hud", "--out", str(out)],
+         "hud", "--ui-v2-baseline", "--out", str(out)],
         cwd=ROOT, check=True
     )
     frames = sorted((out / "hud").glob("hud-usability-*.png"))
@@ -51,9 +52,22 @@ def main():
     for resolution in ("1920", "1280"):
         assert any("hud-usability-" + resolution + "-" in p.name for p in frames), (
             "No real LÖVE capture at " + resolution)
+    expected = (
+        "fresh-pre-grip", "marquee-six", "physical-group-held",
+        "accessibility-on", "fresh-after-cancel", "folio", "reward",
+    )
+    for resolution in ("1920", "1280"):
+        for state in expected:
+            assert any(
+                p.name == "hud-usability-" + resolution + "-" + state + ".png"
+                for p in frames
+            ), "Missing real LÖVE baseline at %s: %s" % (resolution, state)
     log = out / "hud" / "hud-smoke.log"
     text = log.read_text(encoding="utf-8")
     assert "PASS all HUD scenarios at both resolutions" in text
+    for resolution in ("1920", "1280"):
+        assert "PASS hud-usability-" + resolution + "- physically grabbed 6 D6" in text
+        assert "PASS hud-usability-" + resolution + "- accessibility flags" in text
     manifest = {
         "purpose": "P0 legacy HUD baseline for Manuscript UI 2.0",
         "commit": current,
@@ -68,11 +82,15 @@ def main():
                 "sha256": fingerprint(p),
             } for p in frames
         ],
+        "capture_modes": {
+            "six_die_group": "actual marquee, right-grab, held and Esc cancel; production controller",
+            "accessibility": "temporary big_text + high_contrast + reduced_animations; settings restored",
+        },
         "manual_checks_not_automated": [
-            "6-die physical group held and moving with right mouse",
-            "folio opened with F then Escape at both sizes",
-            "big text, high contrast, reduced animations",
-            "frame time/FPS with current g3d dice and renderer toggles",
+            "Visual appearance and pointer alignment in physical group screenshot",
+            "Visual readability, contrast, clipping and keyboard focus of folio/reward",
+            "Accessibility usability: larger text, high contrast and reduced animations",
+            "Frame time/FPS and F8/F9/F10/F11 renderer toggles on Windows hardware",
         ],
     }
     (out / "baseline-manifest.json").write_text(
