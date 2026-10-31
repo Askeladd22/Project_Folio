@@ -1,6 +1,6 @@
 <div align="center">
 
-# MANUSCRIPT
+# PROJECT FOLIO
 
 **A dice-driven roguelite set in a fifteenth-century scriptorium.**
 
@@ -16,7 +16,9 @@ Risk every throw. Build your manuscript. Decide when to stop.
 
 ## Overview
 
-**Manuscript** (working title: *Scriptorium*) is a single-player, dice-driven roguelite built with **Lua/LuaJIT and LÖVE 11.x**. Six physical three-dimensional dice are the heart of the experience. Each throw creates a decision: bank a promising result, set dice aside, or push your luck with another roll.
+The display name is temporary. The `manuscript` repository, internal `scriptorium` scene IDs and existing save identity stay unchanged for compatibility; they are not the public-facing game title.
+
+**Project Folio** (temporary working title; formerly presented as *Scriptorium*) is a single-player, dice-driven roguelite built with **Lua/LuaJIT and LÖVE 11.x**. Six physical three-dimensional dice are the heart of the experience. Each throw creates a decision: bank a promising result, set dice aside, or push your luck with another roll.
 
 The world is a late-medieval workshop of scribes and illuminators. Manuscript pages, commissions and the book-shaped tray provide the visual language for a game that retains the tension of **Farkle** rather than reproducing a conventional deck-building roguelite.
 
@@ -134,4 +136,4 @@ For detailed design decisions, consult [GAME_DESIGN.md](docs/GAME_DESIGN.md) and
 - [Free Physics Solver](https://github.com/0x1ED1CE/FPS) — MIT; used **only** by the optional lab; notice: [`experiments/physics_lab/vendor/LICENSE`](experiments/physics_lab/vendor/LICENSE).
 - Additional third-party fonts, effects and assets have their notices in `third_party/`, `resources/` and related source directories. Check individual terms before redistributing any asset.
 
-**The repository has no project-wide root `LICENSE` file at present.** MIT permissions for vendored libraries **do not** automatically license Manuscript's original source code, artwork or music. Contact the repository owner for redistribution or commercial-use authorization until a project license is published.
+**The repository has no project-wide root `LICENSE` file at present.** MIT permissions for vendored libraries **do not** automatically license the game's original source code, artwork or music. Contact the repository owner for redistribution or commercial-use authorization until a project license is published.

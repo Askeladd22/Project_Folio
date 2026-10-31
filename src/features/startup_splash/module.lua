@@ -36,6 +36,7 @@ local IMAGE_HEART_PATH = expect_string(ASSET_SCHEMA.image_heart_path, "assets.im
 local IMAGE_LOVE_PATH = expect_string(ASSET_SCHEMA.image_love_path, "assets.image_love_path")
 local IMAGE_TITLE_STROKE_MAP_PATH = expect_string(ASSET_SCHEMA.image_title_stroke_map_path, "assets.image_title_stroke_map_path")
 local IMAGE_TITLE_LOGO_CANDIDATES = expect_string_list(ASSET_SCHEMA.image_title_logo_candidates, "assets.image_title_logo_candidates")
+local IMAGE_TITLE_LOGO_ENABLED = ASSET_SCHEMA.image_title_logo_enabled ~= false
 local TITLE_FONT_PRIMARY = expect_string(ASSET_SCHEMA.title_font_primary, "assets.title_font_primary")
 local TITLE_FONT_FALLBACK = expect_string(ASSET_SCHEMA.title_font_fallback, "assets.title_font_fallback")
 local TITLE_BASE_FONT_SIZE = expect_number(ASSET_SCHEMA.title_base_font_size, "assets.title_base_font_size")
@@ -534,7 +535,11 @@ local function loadTransitionAssets()
 end
 
 local function loadTitleAssets()
-    titleLogoImage, titleLogoW, titleLogoH, titleLogoPath = tryLoadFirstAvailableImage(IMAGE_TITLE_LOGO_CANDIDATES)
+    -- A baked-in logo would show the retired title even after localization changes.
+    titleLogoImage, titleLogoW, titleLogoH, titleLogoPath = nil, 1, 1, nil
+    if IMAGE_TITLE_LOGO_ENABLED then
+        titleLogoImage, titleLogoW, titleLogoH, titleLogoPath = tryLoadFirstAvailableImage(IMAGE_TITLE_LOGO_CANDIDATES)
+    end
 
     local loadedStrokeMap = tryLoadImage(IMAGE_TITLE_STROKE_MAP_PATH)
     if not loadedStrokeMap then

@@ -26,11 +26,11 @@ return {
     labels = {
         branding_title = {
             key = "branding.title",
-            default = "Scriptorium",
+            default = "Project Folio",
         },
         subtitle = {
             key = "main_menu.subtitle",
-            default = "The Art of Illumination",
+            default = "A Dream of Ink and Dice",
         },
         footer_version = {
             key = "main_menu.footer.version",
