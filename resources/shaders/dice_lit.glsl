@@ -39,7 +39,13 @@ vec4 effect(vec4 color, Image texture, vec2 uv, vec2 screenCoords) {
         vec3 reflected = reflect(-normalize(lightDirection), n);
         float spec = pow(max(dot(reflected, normalize(viewDirection)), 0.0), specularExponent);
         // Warm and deliberately subdued: bone/ivory rather than glossy plastic.
-        lit += vec3(1.0, 0.90, 0.70) * (specularStrength * spec * key);
+        // Black pips are matte recessed pigment, not glossy black beads.
+        // Suppress the ivory reflection on dark texels instead of
+        // adding a white highlight on top of an ink-black pip.
+        float ivoryReflectance = smoothstep(0.12, 0.72,
+            dot(albedo.rgb, vec3(0.299, 0.587, 0.114)));
+        lit += vec3(1.0, 0.90, 0.70) *
+               (specularStrength * spec * key * ivoryReflectance);
     }
 
     if (debugMode == 4 && pipTexel.x > 0.0 && pipTexel.y > 0.0) {
