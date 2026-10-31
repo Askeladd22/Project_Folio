@@ -106,8 +106,15 @@ function N.snapshot(world,count)
     state[8]*x+state[9]*y+state[10]*z+state[11]
    }
   end
-  result[i]={position={state[3],state[7],state[11]},
-             vertices=vertices,asleep=lib.fpslab_sleeping(world,i-1)==1}
+  local velocities,angular,transform={},{},{}
+  for j=1,3 do
+   velocities[j]=tonumber(state[15+j])
+   angular[j]=tonumber(state[18+j])
+  end
+  for j=1,16 do transform[j]=tonumber(state[j-1]) end
+  result[i]={position={tonumber(state[3]),tonumber(state[7]),tonumber(state[11])},
+             vertices=vertices,velocity=velocities,angular=angular,
+             transform=transform,asleep=lib.fpslab_sleeping(world,i-1)==1}
  end
  return result
 end
