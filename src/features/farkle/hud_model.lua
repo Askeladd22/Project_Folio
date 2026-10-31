@@ -1,5 +1,6 @@
 local R=require('src.gameplay.farkle.rules')
-local H={tray={x=40,y=146,w=1320,h=650},slots={x=56,y=804,w=206,h=54,step=218},feedback={x=64,y=878,w=1272}}
+-- Pure Farkle presentation semantics only. Layout lives in ui_v2/.
+local H={}
 function H.reward_active(s) return s.phase=='upgrade' or s.phase=='medal' end
 function H.help_sections(s)
  local p=R.points;local c=R.contracts[s.stage];local rows={}
