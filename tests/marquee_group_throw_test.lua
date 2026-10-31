@@ -139,6 +139,25 @@ assert(#ends==6 and U.manualRoll==nil and starts==1,
  'a second selected group completes the same logical roll')
 assert(U.game.phase=='rolling' and U.game.pot==0)
 fresh()
+-- A right-click on empty parchment must still pick up the current
+-- marquee selection and converge it beneath the pointer.
+marquee(110,390)
+now=now+.1
+U:mousepressed(110,205,2)
+assert(U.mouseThrow and U.mouseThrow.group and #U.mouseThrow.held==6,
+ 'right-clicking empty board must gather all previously selected dice')
+for j=1,30 do U:update(.03) end
+for j,member in ipairs(U.mouseThrow.held) do
+ local target=U.mouseThrow.targets[j]
+ assert(math.abs(member.body.position[1]-target.x)<.02 and
+        math.abs(member.body.position[2]-target.y)<.02,
+  'all selected dice must converge even if the pointer stays motionless')
+end
+now=now+.08
+U:mousereleased(110,205,2)
+assert(#ends==6 and starts==1,'blank-area group grip is one official throw')
+
+fresh()
 -- A normal click should still be routed to the original Farkle toggle,
 -- not silently become a physical group selection.
 local clicked=false
