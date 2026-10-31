@@ -7,14 +7,14 @@
 ## Stato corrente — 31 ottobre 2026
 
 - **FASE ATTIVA:** `P0 — baseline e audit completo`.
-- **CONDIZIONE:** `IN CORSO` (mappatura iniziale verificata, test e screenshot di baseline ancora da fare).
+- **CONDIZIONE:** `IN CORSO` (matrice completa e test automatico di inventario aggiunti; resta QA grafica e manuale della baseline).
 - **BASELINE DI DOCUMENTAZIONE:** `main@929e377fafde2b76a0d40681bf3c1e42ff655914`.
 - **BRANCH DI DOCUMENTAZIONE:** `docs/ui-v2-execution-plan-20261031`.
 - **PR DI DOCUMENTAZIONE:** [#27 — UI 2.0 roadmap e tracker](https://github.com/Askeladd22/manuscript/pull/27) (aperta; attendere verifica CI/review).
-- **PR DI IMPLEMENTAZIONE UI 2.0:** nessuna.
+- **PR DI P0 (inventario e test):** branch `docs/ui-v2-p0-interaction-baseline-20261031`, PR da registrare dopo la creazione. Nessuna modifica al gioco né alla UI visuale.
 - **UI 2.0 NEL GIOCO:** non esiste ancora; l'HUD attuale resta quello predefinito.
-- **CI per questa modifica:** da verificare; non esistono test UI 2.0 nuovi in questa fase documentale.
-- **QA WINDOWS / SCREENSHOT:** non ancora eseguita per il redesign.
+- **CI per la baseline P0:** `tests/ui_v2_interaction_inventory_test.lua` creato; risultato dell'ultima CI da verificare dopo apertura PR.
+- **QA WINDOWS / SCREENSHOT:** non ancora completata per una baseline identificata con commit; servono 1920×1080 e 1280×720 (fresh, held gruppo, ready con combinazione, modale, ricompensa).
 
 ## Fasi e gate
 
@@ -45,14 +45,20 @@
 
 ## Prossima azione concreta (una sola)
 
-**Completare P0 con un inventario eseguibile delle interazioni e una matrice `stato → pulsanti/shortcut`, senza toccare ancora fisica o grafica di produzione.**
+**Chiudere la baseline P0 con screenshot e test reali su Windows a commit noto, senza toccare fisica o gameplay.**
 
-Ordine consigliato nella prossima sessione:
-1. Verificare SHA/PR e leggere roadmap + questo tracker.
-2. Estrarre da `controller.lua`, `hud_minimal.lua`, `hud.lua`, `medal_panel.lua` i callback e i comandi abilitati in ciascuna fase.
-3. Aggiungere `docs/UI_V2_INTERACTION_MATRIX.md` e un test puro per garantire che la futura view-model non dimentichi stati e azioni.
-4. Eseguire sintassi e CI; registrare l'esito qui.
-5. Chiedere soltanto gli screenshot Windows indispensabili per il gate grafico P0, senza confondere CI e verifica visiva.
+1. Verificare `main` e PR aperte e far passare la CI della PR P0.
+2. Acquisire almeno 1920×1080 e 1280×720 in `fresh`, `held` multiplo, `ready` con combinazione, `modal` e `upgrade/medal` con HUD attuale. Registrare commit, modalità F9, F10, F11 e impostazioni.
+3. Riprodurre il modale `folio` e annotare stack trace se fallisce; controllare Esc e focus.
+4. Verificare `big_text`, `high_contrast` e `reduced_animations` e gli FPS della stessa schermata.
+5. Annotare i risultati e passare a P1 **solo** quando il gate P0 è completo.
+
+## Inventario P0 aggiunto — 31 ottobre 2026
+
+- [UI_V2_INTERACTION_MATRIX.md](UI_V2_INTERACTION_MATRIX.md): tabella delle fasi Farkle/controller, ID dei pulsanti, modali, scorciatoie e priorità input reali; distinzione fra `dragSelected`, `game.selected` e `medalDice`.
+- `tests/ui_v2_interaction_inventory_test.lua`: verifica che le azioni e le scorciatoie del legacy restino raggiungibili; testa le regole di autorizzazione in `fresh/rolling/ready/rescue/ended`, l'indipendenza del marquee e la trasformazione della viewport.
+- **Possibile bug esistente:** in `src/features/farkle/hud.lua` il modal `folio` invoca `manuscript(...)` senza una definizione visibile nel modulo. Richiede verifica Windows; non corretto in P0.
+- Questo passaggio **non implementa ancora la UI 2.0** e non rende P0 completata; il gate manuale resta aperto.
 
 ## Rischi e decisioni sospese
 
@@ -67,7 +73,8 @@ Ordine consigliato nella prossima sessione:
 
 | Data | Fase | Risultato reale | Link/CI | Prossimo passo |
 |---|---|---|---|---|
-| 2026-10-31 | P0 | Verificato lo scheletro del runtime e creati roadmap + tracker; **nessuna modifica al gioco** | [PR #27](https://github.com/Askeladd22/manuscript/pull/27); CI da verificare | Matrice interazioni; screenshot baseline |
+| 2026-10-31 | P0 | Roadmap e tracker iniziali | [PR #27](https://github.com/Askeladd22/manuscript/pull/27); CI riuscita | Matrice e baseline verificabile |
+| 2026-10-31 | P0 | Matrice di interazione e test headless introdotti; produzione intatta | PR P0 da registrare; CI da verificare | Screenshot Windows, folio modal, accessibilità e FPS baseline |
 
 ### Mini-template di aggiornamento (duplicare a fine sessione)
 
