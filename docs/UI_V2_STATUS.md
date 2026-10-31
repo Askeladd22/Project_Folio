@@ -8,12 +8,12 @@
 
 - **FASE ATTIVA:** `P0 — baseline e audit completo`.
 - **CONDIZIONE:** `IN CORSO` (matrice completa e test automatico di inventario aggiunti; resta QA grafica e manuale della baseline).
-- **BASELINE DI DOCUMENTAZIONE:** `main@b8d5cb7a629e990e3d156950cbbc305dcc0b8842` (verificato dopo merge #29).
-- **BRANCH CORRENTE:** `test/ui-v2-p0-held-capture-20261031` (cattura P0 reale automatizzata).
+- **BASELINE VERIFICATA:** `main@74ee2b32ef3383924bb239305e26bde521487f68` (PR #30 già integrata e CI verde).
+- **BRANCH CORRENTE:** `experiment/ui-v2-p1-layout-study-20261031` (studio geometrie P1, senza promuovere P0).
 - **PR DI DOCUMENTAZIONE:** [#27](https://github.com/Askeladd22/manuscript/pull/27) **integrata in main**.
-- **PR DI P0:** [#28](https://github.com/Askeladd22/manuscript/pull/28) e [#29](https://github.com/Askeladd22/manuscript/pull/29) **integrate**; [#30](https://github.com/Askeladd22/manuscript/pull/30) **aperta** per cattura automatica del gruppo e accessibilità.
+- **PR DI P0:** [#27](https://github.com/Askeladd22/manuscript/pull/27), [#28](https://github.com/Askeladd22/manuscript/pull/28), [#29](https://github.com/Askeladd22/manuscript/pull/29) e [#30](https://github.com/Askeladd22/manuscript/pull/30) **integrate**; [#31](https://github.com/Askeladd22/manuscript/pull/31) **bozza aperta** per studio P1.
 - **UI 2.0 NEL GIOCO:** non esiste ancora; l'HUD attuale resta quello predefinito.
-- **CI per la baseline P0:** [main 41189792642](https://github.com/Askeladd22/manuscript/actions/runs/41189792642) **SUCCESS**; [PR #30 CI 41190597513](https://github.com/Askeladd22/manuscript/actions/runs/41190597513) **SUCCESS** su commit precedente `12cb212`. Le modifiche successive, inclusa verifica sintassi Python, **richiedono una nuova CI**; non chiamarle ancora verificate.
+- **CI baseline P0:** [main 41190871754](https://github.com/Askeladd22/manuscript/actions/runs/41190871754) **SUCCESS**; [PR #31 CI 41191467268](https://github.com/Askeladd22/manuscript/actions/runs/41191467268) **SUCCESS** (test candidati P1, Lua5.4/LuaJIT, lab FPS e Python).
 - **QA WINDOWS / SCREENSHOT:** **non ancora effettuata** sulla build di questa PR. Lo script ora acquisisce in automatico anche il gruppo fisico dei sei D6 e i flag accessibilità in entrambe le risoluzioni, ma servono esecuzione Windows, confronto visivo e dati FPS.
 
 ## Fasi e gate
@@ -21,7 +21,7 @@
 | Fase | Stato | Cosa serve per segnare DONE |
 |---|---|---|
 | P0 — Baseline e audit | **IN CORSO** | Inventario interazioni, screenshot correnti, matrice stati, baseline test |
-| P1 — Layout/UX | NON INIZIATA | Confronto 1 vs 2 pagine, layout scelto, matrice azioni/hitbox |
+| P1 — Layout/UX | STUDIO PRELIMINARE (gate P0 aperto) | Confronto A/B, screenshot Windows, layout scelto, matrice azioni/hitbox approvata |
 | P2 — Fondamenta e slice giocabile | NON INIZIATA | Flag/rollback, UI v2 principale, Farkle ancora giocabile |
 | P3 — Presa/scoring/overlay | NON INIZIATA | Mouse singolo/gruppo, punteggi, F8/F9, nessun evento duplicato |
 | P4 — Folio/modali/ricompense | NON INIZIATA | Run a 3 commissioni e tutti i percorsi preservati |
@@ -75,6 +75,15 @@
 - `tests/ui_v2_capture_wiring_test.lua`: test headless della presenza di trigger, gesti reali, nomi e informazioni di tracciabilità.
 - [Procedura Windows aggiornata](UI_V2_BASELINE_CAPTURE.md). **La QA grafica non è stata ancora eseguita.**
 
+## Studio anticipato P1 — non equivale ad approvazione
+
+- [UI_V2_LAYOUT_STUDY.md](UI_V2_LAYOUT_STUDY.md): confronto numerico e wireframe di **folio singolo** (tray 1402×666) e **codice aperto** (tray 1136×598); il codice aperto mantiene solo circa il 72,8% della superficie del primo.
+- `src/features/farkle/ui_v2/layout_candidates.lua`: geometrie pure e controlli di sovrapposizione, nessuna modifica al renderer 3D, gameplay, fisica, input e scoring.
+- `tests/ui_v2_layout_candidates_test.lua`: invarianti e coordinate screen/virtual per cinque risoluzioni (incluso ultrawide).
+- `tests/smoke/ui_v2_layout_preview.lua`: wireframe LÖVE opt-in con **F6** per confronto e **F7** per PNG; `scripts/run_ui_v2_layout_study.py` avvia la scena senza cambiare il normale gameplay.
+- **Ipotesi tecnica provvisoria:** folio singolo preferibile perché preserva più area ai D6. **Non approvata** senza screenshot veri della baseline P0 e confronto F6.
+- **Nessuna promozione di fase:** P0 resta attiva fino a QA Windows; P1 non può essere marcata DONE sulla base di sole misure di rettangoli.
+
 ## Rischi e decisioni sospese
 
 - **Layout a una o due pagine:** da confrontare in P1, non considerato approvato.
@@ -92,7 +101,7 @@
 | 2026-10-31 | P0 | Matrice e test integrazione degli input, PR #28 integrata | [PR #28](https://github.com/Askeladd22/manuscript/pull/28); [main CI 41188977393](https://github.com/Askeladd22/manuscript/actions/runs/41188977393) **successo** | Baseline Windows |
 | 2026-10-31 | P0 | Fix folio, test modali e utility screenshot riproducibile; P0 non completata | [PR #29](https://github.com/Askeladd22/manuscript/pull/29); [CI 41189472532](https://github.com/Askeladd22/manuscript/actions/runs/41189472532) **SUCCESS** | Windows: screenshot 720p/1080p, folio, gruppo in mano, accessibilità/FPS |
 
-| 2026-10-31 | P0 | Smoke opt-in di presa multipla e accessibilità, PNG richiesti alle due risoluzioni; gameplay invariato | [PR #30](https://github.com/Askeladd22/manuscript/pull/30); [CI prima versione 41190597513](https://github.com/Askeladd22/manuscript/actions/runs/41190597513) PASS, ultima testa in attesa | Eseguire baseline su LÖVE Windows, confrontare immagini e annotare FPS prima di P1 |\n\n### Mini-template di aggiornamento (duplicare a fine sessione)
+| 2026-10-31 | P0 | Smoke opt-in di presa multipla e accessibilità, PNG richiesti alle due risoluzioni; gameplay invariato | [PR #30](https://github.com/Askeladd22/manuscript/pull/30); [CI prima versione 41190597513](https://github.com/Askeladd22/manuscript/actions/runs/41190597513) PASS, ultima testa in attesa | Eseguire baseline su LÖVE Windows, confrontare immagini e annotare FPS prima di P1 |\n\n| 2026-10-31 | P0 aperta + studio P1 | Geometrie A/B pure, test di hitbox, wireframe F6/F7; HUD produzione invariato | [PR #31](https://github.com/Askeladd22/manuscript/pull/31) **draft**; [CI 41191467268](https://github.com/Askeladd22/manuscript/actions/runs/41191467268) **SUCCESS** | Cattura P0 Windows, screenshot A/B, valutazione leggibilità dei D6 |\n\n### Mini-template di aggiornamento (duplicare a fine sessione)
 
 ```text
 DATA:
