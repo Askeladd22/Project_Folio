@@ -58,7 +58,7 @@ local strong=Duel.new(function() return 1 end)
 local r=assert(strong:after_player_turn(starter))
 assert(r.finished and r.winner=='bot' and r.bot==625 and r.player==10)
 assert(starter.bank==10 and starter.phase=='ended',
- 'bot's virtual dice must not update physical human state')
+ 'bot virtual dice must not update physical human state')
 assert(strong:after_player_turn(starter)==nil)
 
 local source=assert(io.open('src/features/farkle/controller.lua')):read('*a')
