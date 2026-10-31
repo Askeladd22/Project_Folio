@@ -1,54 +1,38 @@
-# g3d — clean book-tray visual pass
+# g3d — verifica visiva del tray in Project Folio
 
-The previous Scriptorium screenshot (2026-10-30) showed thick book walls,
-huge rubricated crosses and floor panels competing with the actual dice. The
-GPU scene was still drawing **the painter's 2D floor first** and g3d dice
-on top. The old rubrics also used 1–2 world-unit line widths inside a
-scaled 2D transform, becoming very wide pixel bars.
+Il 30 ottobre 2026 era stata individuata una doppia superficie:
+il painter CPU disegnava le pagine prima della scena g3d, causando
+croci e riquadri molto grandi sopra il piano dei dadi. La correzione
+originaria aveva separato piano e 3D; il **31 ottobre**, con PR #38,
+il renderer CPU è stato definitivamente rimosso.
 
-## Design decision
+## Percorso attuale
 
-Keep the historical manuscript **context**, not a busy floor illustration.
-The default scene now uses an opaque, single-color g3d parchment plane at
-physical `z=0`, thinner decorative side panels and the existing physically transformed,
-textured dice. The established camera framing remains unchanged. Page ornaments
-are omitted inside the tray. **Physics, scoring, Farkle and input are unchanged.**
+Il solo pass 3D è **g3d**: pavimento a z=0, ombre di contatto,
+pareti e divisore, sei dadi fisici. Le miniature avversarie, le
+glosse, i pannelli e il folio rimangono **2D**.
 
-g3d draws floor → soft contact shadows → walls/divider → dice against a
-single GPU depth attachment. The 2D legacy floor is drawn **only** if the
-GPU renderer is disabled or a scene fails. This prevents duplicate
-floor graphics during normal play. The F9 legacy fallback also uses
-restrained parchment instead of cross-shaped rubrication.
+Non esiste più un toggle F9 e i seguenti override sono obsoleti:
+`MANUSCRIPT_RENDERER=legacy`, `MANUSCRIPT_G3D_INGAME=0`.
+La compilazione di shader obbligatori e gli errori di scena
+vengono segnalati esplicitamente.
 
-The renderer still retains GPU shadows and existing die highlights.
-A legacy toggle or GPU failure must not reset the painter's translated
-and scaled tray transform.
+## Checklist per Windows LÖVE 11.x
 
-## Verify on Windows
+1. Avviare `Avvia.cmd` ed eseguire una run normale e una partita
+   **Sfida il Monaco (beta)**.
+2. A **1280×720** e **1920×1080** controllare il libro e tutte le
+   cinque varianti del tray selezionabili con **F8**.
+3. Verificare sei D6 singoli, semi leggibili, faccia superiore
+   corrispondente al punteggio, pareti e ombre che si occultano
+   correttamente.
+4. Provare camera/proiezione, selezione e trascinamento manuale,
+   lancio di gruppo, accantonamento con i ritratti g3d;
+   includere Farkle, dadi caldi, rilanci e medaglie.
+5. Provare **F10** (materiali), **F11** (smusso), **F6**
+   quando l'esperimento UI v2 è abilitato, e notifiche 2D.
+6. Ripetere almeno 50 lanci accettati, verificando corrispondenza
+   tra valore fisico e punteggio. Registrare FPS e log di errore
+   nei casi di shader non supportato.
 
-```powershell
-git fetch origin
-git switch fix/g3d-clean-tray-depth-20261030
-.\Avvia.cmd
-```
-
-Compare the same run in g3d (default) and painter (**F9**). In the
-book layout, check:
-
-- The center is a **clear parchment field** without crosses, stacked
-  translucent rectangles or page rules drawn over dice.
-- Six **single** physical D6 render with correct, legible pips and
-  consistent face values. The original projected camera framing and die picking remain stable.
-- Dice remain inside the physical tray. Shadows lie on the paper, not
-  above the dice; near/far rim segments correctly occlude dice.
-- The book frame is noticeably thinner than in the original screenshot.
-- F8 alternatives, D8 split dividers and six accepted-die HUD portraits
-  remain functional. F9 and error fallback restore normal visuals.
-- Clicking and keyboard selection hit the same dice at **1920×1080**
-  and **1280×720**, with no leaking stencil or cropped front walls.
-- Test moving dice as well as settled dice, then inspect 50 accepted rolls
-  and record any displayed face-versus-scored-face mismatch.
-
-**CI only validates geometry and state routing**; it cannot verify
-live LÖVE GPU output or performance. Do not remove the historical painter
-from production until that visual test passes.
+**La CI headless non sostituisce questa prova GPU.**
