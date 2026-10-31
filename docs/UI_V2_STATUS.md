@@ -1,5 +1,13 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **Toolkit 2D opzionale (31 ottobre 2026):** integrazione di Flux, anim8,
+> SYSL-Text e vignettatura Moonshine nella sola infrastruttura di
+> presentazione 2D. [Dettagli, licenze e gate](2D_PRESENTATION_LIBRARIES.md).
+> Un laboratorio a parte verifica miniature piatte e glosse senza
+> cambiare l'interfaccia attiva, g3d, i dadi o le regole Farkle.
+> **P0/P1 Windows QA e P3 non sono dichiarate completate da questa integrazione.**
+
+
 ## Aggiornamento operativo — 31 ottobre 2026, Project Folio
 
 **Questo aggiornamento prevale sullo snapshot storico P0 riportato più sotto.**
