@@ -46,8 +46,16 @@ local worst_overlap=0
 local total_invalid,total_unsettled=0,0
 local failure_count=0
 local first_example
+local by_mode={
+ native={runs=0,first_step=0,envelope=0,max_overlap=0,invalid=0},
+ compatible={runs=0,first_step=0,envelope=0,max_overlap=0,invalid=0}
+}
 for seed=1,seeds do
- for variant=1,2 do
+ for variant=1,4 do
+  local compatible=(variant>2)
+  local moving=(variant%2==0)
+  local mode=compatible and 'compatible' or 'native'
+  local metrics=by_mode[mode]
   local world,n=N.new(input(seed))
   for i=1,n do
    N.set_euler(world,i,.18*math.sin(i+seed),.22*math.cos(i+seed),.12*i)
@@ -58,18 +66,34 @@ for seed=1,seeds do
    local time=step*.005
    local hand={0,0,3.35}
    local shake=0
-   if variant==2 then
+   if moving then
     hand[1]=.9*math.sin(3.4*time)
     hand[2]=.6*math.cos(4.1*time)
     hand[3]=3.35+.18*math.sin(2*time)
     shake=5*math.sin(13*time)
    end
-   N.grip_step(world,hand,.005,23,8,shake,true)
+   if compatible then
+    N.grip_step_compatible(world,hand,.005,23,8,shake,1.64,180)
+   else
+    N.grip_step(world,hand,.005,23,8,shake,true)
+   end
   end
   local original=N.snapshot(world,n)
   local pairs,overlap=overlap_count(original)
   worst_overlap=math.max(worst_overlap,overlap)
   local handoff=H.handoff(original)
+  local maxEnvelope=0
+  for i=1,n do for j=i+1,n do
+   local ai,aj=handoff[i],handoff[j]
+   local dx=ai.position[1]-aj.position[1]
+   local dy=ai.position[2]-aj.position[2]
+   local dz=ai.position[3]-aj.position[3]
+   local separation=math.sqrt(dx*dx+dy*dy+dz*dz)
+   maxEnvelope=math.max(maxEnvelope,
+       math.max(0,ai.radius+aj.radius-separation))
+  end end
+  metrics.envelope=math.max(metrics.envelope,maxEnvelope)
+  metrics.max_overlap=math.max(metrics.max_overlap,overlap)
   local err=H.error(original,handoff)
   local maxerr=math.max(err.vertex,err.position,err.velocity,err.spin)
   worst_snap=math.max(worst_snap,maxerr)
@@ -90,6 +114,7 @@ for seed=1,seeds do
    local a,b=original[i].position,immediately[i].position
    local move=math.sqrt((a[1]-b[1])^2+(a[2]-b[2])^2+(a[3]-b[3])^2)
    worst_first_step=math.max(worst_first_step,move)
+   metrics.first_step=math.max(metrics.first_step,move)
   end
   local out=M.new()
   M.observe(out,immediately,.01,schema.half_x,schema.half_y)
@@ -107,11 +132,18 @@ for seed=1,seeds do
   total_unsettled=total_unsettled+out.unsettled
   if out.invalid_faces>0 then failure_count=failure_count+1 end
   rounds=rounds+1
+  metrics.runs=metrics.runs+1
+  metrics.invalid=metrics.invalid+out.invalid_faces
   if not first_example then first_example={pairs=pairs,overlap=overlap} end
  end
 end
 print(string.format('HANDOFF runs=%d dice=%d transferMax=%.9f firstStepMax=%.5f fpsGripPeakFinalOverlap=%.5f',
  rounds,rounds*6,worst_snap,worst_first_step,worst_overlap))
+for _,mode in ipairs({'native','compatible'}) do
+ local m=by_mode[mode]
+ print(string.format('HANDOFF_MODE %s runs=%d dice=%d firstStepMax=%.5f envelopeDeficit=%.5f fpsOverlap=%.5f invalid=%d',
+ mode,m.runs,m.runs*6,m.first_step,m.envelope,m.max_overlap,m.invalid))
+end
 print(string.format('HANDOFF finalInvalid=%d/%d unsettled=%d failingRuns=%d/%d initialOverlapPairs=%d initialOverlap=%.5f',
  total_invalid,rounds*6,total_unsettled,failure_count,rounds,
  first_example.pairs,first_example.overlap))
