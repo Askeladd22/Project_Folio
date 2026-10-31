@@ -135,3 +135,18 @@ luajit experiments\physics_lab\run_grip.lua
 The experiment does **not** alter or replace the production physics,
 dice scoring, face classification, HUD, g3d or mouse pickup. It is a
 held-only trial; FPS still fails some official landing tests.
+
+## Lab 5 — transfer from FPS gripping to original dice physics
+
+[LAB5_HANDOFF.md](LAB5_HANDOFF.md) describes the experimental
+**world-space FPS -> local-space Manuscript D6** handoff. It preserves
+all eight physical vertices, numbered face identities, linear velocity
+and angular velocity, then reports 500 fixed steps of production
+physics after release.
+
+```bash
+bash experiments/physics_lab/build-linux.sh
+luajit experiments/physics_lab/run_handoff.lua 8
+```
+
+Not part of gameplay. FPS landing remains unqualified.
