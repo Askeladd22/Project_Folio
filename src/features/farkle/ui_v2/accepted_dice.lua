@@ -39,11 +39,14 @@ function M.draw(u)
   local used=s.used[i] and true or false
   local active=contributors[i] and true or false
   local high=UI.high_contrast()
-  if used then g.setColor(.32,.25,.17,.94)
-  else g.setColor(.88,.78,.57,.68) end
+  -- The register should read as six inset parchment tokens rather than
+  -- detached dark boxes; no geometry or 3D portrait logic changes.
+  if active then g.setColor(.99,.88,.59,.98)
+  elseif used then g.setColor(.93,.85,.71,.98)
+  else g.setColor(.78,.70,.55,high and .87 or .72) end
   g.rectangle('fill',rect.x,rect.y,rect.w,rect.h,5)
-  if active then g.setColor(.96,.80,.38,1)
-  else g.setColor(high and .18 or .43,.33,.23,.82) end
+  if active then g.setColor(.64,.38,.11,1)
+  else g.setColor(high and .20 or .45,.33,.20,.88) end
   g.setLineWidth(active and 2.4 or 1)
   g.rectangle('line',rect.x+.5,rect.y+.5,rect.w-1,rect.h-1,5)
   local entry=p and p.shelf and p.shelf[i]
@@ -62,8 +65,8 @@ function M.draw(u)
    end
   end
   g.setFont(font(17))
-  g.setColor(used and 1 or .35,used and .92 or .25,
-   used and .70 or .16,1)
+  g.setColor(used and .23 or .38,used and .16 or .30,
+   used and .10 or .22,1)
   local label=used and tostring(s.hand and s.hand[i] or i) or tostring(i)
   g.printf(label,rect.x+rect.w-45,rect.y+15,36,'center')
  end

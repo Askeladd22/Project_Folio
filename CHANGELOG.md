@@ -10,6 +10,34 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.12] - 2026-11-01
+
+**Tipo:** rifinitura esclusivamente grafica della composizione HUD UI 2.0.
+
+### Modificato
+- La colonna laterale di lavoro ora ha una cornice da legatura
+  con doppio filo, piccole tacche d'angolo e separatore
+  decorativo fra il folio e il pannello Strumenti.
+- Le due possibili righe di azioni contestuali usano rettangoli
+  esplicitamente dichiarati nel layout e identici alle precedenti
+  hitbox del controller; nessun comando aggiunto o rimosso.
+- Il titolo del registro dei sei dadi accantonati è stato spostato
+  nel margine superiore libero della pagina, prima dei riquadri,
+  così da non essere nascosto dalla presentazione di ogni dado.
+- I sei riquadri del registro hanno ora tinte da pergamena e
+  inchiostro, con evidenziazione ocra dei dadi contribuenti.
+  Portrait g3d, dimensioni slot e posizioni invariati.
+
+### Verifiche e limitazioni
+- Nuovo `tests/ui_v2_sidebar_composition_test.lua` per solitario
+  e Monaco a 720p, 1080p e 1440p: geometrie sidebar,
+  leggibilità intestazione, assenza di sovrapposizioni con il tray,
+  hitbox, bilanciamento dello stack grafico e immutabilità del Farkle.
+- CI Lua 5.4/LuaJIT e Python da verificare; screenshot grafici
+  Windows LÖVE e contrasto alto sono ancora da approvare.
+- Nessuna modifica a Farkle, g3d, dadi 3D, camera, fisica,
+  ricompense, salvataggi o splash rosa/azzurro del motore LÖVE.
+
 ## [0.1.0-dev.11] - 2026-10-31
 
 **Tipo:** leggibilità e gerarchia visiva dell'HUD Farkle, soltanto interfaccia.

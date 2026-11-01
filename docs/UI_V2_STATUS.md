@@ -1,5 +1,17 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.12 — composizione folio/sidebar:** cornice
+> da legatura solo grafica, separatore ornamentale,
+> azioni laterali con rettangoli nominati e stesso input,
+> titolo del registro spostato fuori dai suoi sei slot,
+> colori pergamena dei dadi accantonati.
+> Test headless solitario/Monaco a 720p/1080p/1440p.
+> Zero modifiche al tray 3D, alle regole, allo splash
+> LÖVE o al gameplay. CI e QA visiva Windows ancora
+> da completare prima di dichiarare la fase conclusa.
+>
+
+
 > **0.1.0-dev.11 — leggibilità HUD:** riquadri dati
 > commissione con geometrie pure, etichette
 > autoadattate a una sola riga usando misure del
