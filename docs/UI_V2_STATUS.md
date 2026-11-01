@@ -1,5 +1,18 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.20 — separazione drag/shake:**
+> corretto lo spin condiviso imposto ai sei corpi quando
+> si trascinava il gruppo senza scuoterlo. La rotazione
+> ora si attiva per gli eventi di shaking, mentre la
+> traslazione continua a usare il bersaglio elastico.
+> Verificata la fonte TTS nel rapporto statico
+> [TTS DLL mechanics](TTS_DLL_MECHANICS_STUDY.md);
+> [diagnosi e test](TTS_GRIP_DRAG_SHAKE_DIAGNOSIS.md).
+> Stessa Farkle, stessi sei D6, rilascio e presa singola
+> invariati. QA Windows ancora da ripetere.
+>
+
+
 > **0.1.0-dev.19 — shaker durante la presa:**
 > attivazione dopo due inversioni rapide del mouse,
 > riconosciute dal detector esistente. I veri dadi

@@ -48,6 +48,16 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+**Presa multipla (0.1.0-dev.20):** spostare i dadi afferrati
+non li fa più ruotare automaticamente nella direzione del mouse.
+La traslazione resta controllata dalla molla fisica;
+la rotazione nella presa di gruppo proviene dagli impulsi dello
+shaker attivati dalle inversioni rapide del puntatore.
+Il dado singolo conserva il suo precedente comportamento.
+Per il confronto tecnico con l'analisi del bytecode di
+Tabletop Simulator: [diagnosi del drag/shake](docs/TTS_GRIP_DRAG_SHAKE_DIAGNOSIS.md).
+
+
 **Presa multipla e scuotimento (0.1.0-dev.19):**
 seleziona i D6 con il rettangolo, afferrali con il tasto
 destro e scuoti il mouse avanti e indietro. Dopo due
