@@ -48,6 +48,15 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+Dalla `0.1.0-dev.14` anche le finestre di partita della UI V2
+(aiuto, combinazioni, medaglie, folio, menu run e ricompense)
+utilizzano etichette adattive, hover e separatori coerenti
+con la pergamena illuminata. Le ricompense sono presentate
+su due schede separate. ID delle azioni, hitbox, Farkle
+e dadi 3D rimangono invariati. QA grafica Windows
+ancora da verificare.
+
+
 Dalla `0.1.0-dev.13` la sfida opzionale al Monaco condivide
 i pannelli di pergamena e le etichette adattive della UI 2.0:
 scheda dell'avversario, punti e ultimo tiro, più il risultato
