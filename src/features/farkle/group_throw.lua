@@ -1,6 +1,8 @@
--- Tabletop-style group grip. Selected REAL die bodies converge toward
--- the pointer and tumble while held, then all enter normal physics on release.
--- This is one official Farkle roll; queued/kept dice remain excluded.
+-- FPS-inspired physical group grip: six REAL rigid bodies follow a shared
+-- hand attractor. While held (_manual_pending), the ordinary solver skips
+-- these bodies, so we apply bounded spring dynamics and soft pair contacts
+-- in the holding stage. No fixed two-level heap or rigid 3x2 hand formation.
+-- On release all bodies re-enter the existing production physics solver.
 local Single=require('src.features.farkle.mouse_throw')
 local G={}
 local function clamp(x,a,b)
@@ -10,73 +12,111 @@ end
 local function camera(view)
  return view or {yaw=0,pitch=.48,focus=5,distance=14.1}
 end
-local function spacing_for(held)
- local radius=0
- for _,g in ipairs(held) do
-  radius=math.max(radius,g.body.radius or .52)
- end
- -- The solver uses spherical collision separation. Never squeeze actual
- -- rigid bodies merely to create a visually convincing pile.
- return math.max(1.12,2*radius+.18)
+local function radius(member)
+ return math.max(.32,member.body.radius or .52)
+end
+local function bounds_for(g)
+ return g.bounds or {half_x=9.2,half_y=3.8,height=10}
+end
+local function clamp_body(g,member,p)
+ local bounds=bounds_for(g)
+ local pad=math.max(.42,radius(member)*.90)
+ p[1]=clamp(p[1],-bounds.half_x+pad,bounds.half_x-pad)
+ p[2]=clamp(p[2],-bounds.half_y+pad,bounds.half_y-pad)
+ p[3]=clamp(p[3],math.max(1.9,radius(member)+.7),
+  math.max(2.0,bounds.height-.85-radius(member)))
 end
 
--- OPEN grip formation: the previous 3+3 vertical heap made six physical
--- dice visually occupy the same place. During a group grab they now fan out
--- into staggered rows at a common hand height. Templates are expressed in
--- units of collision-safe spacing, not pixels or fixed texture dimensions.
--- Each die remains an actual independent rigid body, NEVER a fake mesh.
--- Keeping z equal also avoids depth-based occlusion in the pitched camera.
-local layouts={
- [2]={{-.95,0,0},{.95,0,0}},
- [3]={{-1.55,-.20,0},{0,.28,0},{1.55,-.20,0}},
- [4]={{-.95,-.95,0},{.95,-.95,0},
-      {-.95,.95,0},{.95,.95,0}},
- [5]={{-1.55,-.92,0},{0,-.95,0},{1.55,-.92,0},
-      {-.78,.96,0},{.78,.96,0}},
- [6]={{-1.65,-.91,0},{0,-1.09,0},{1.65,-.91,0},
-      {-1.65,.93,0},{0,1.04,0},{1.65,.93,0}}
-}
-function G.formation(count,spacing)
- assert(type(count)=='number' and count>=2 and count%1==0)
- spacing=spacing or 1.2
- local preset=layouts[count]
- -- Support future larger groups without modifying the six-die gameplay:
- -- keep a conservative, separated grid for unsupported counts.
- if not preset then
-  local cols=math.min(3,math.ceil(math.sqrt(count)))
-  local rows=math.ceil(count/cols)
-  preset={}
-  for n=1,count do
-   local row=math.floor((n-1)/cols)
-   local rowCount=math.min(cols,count-row*cols)
-   local col=(n-1)%cols
-   preset[n]={(col-(rowCount-1)*.5)*1.15,(row-(rows-1)*.5)*1.15,0}
-  end
+-- Deterministic contact normal when two initially stacked/identical dice
+-- have coincident centers. The small skew is a symmetry breaker, NOT RNG.
+local function normal(a,b,i,j)
+ local dx,dy,dz=b[1]-a[1],b[2]-a[2],b[3]-a[3]
+ local d=math.sqrt(dx*dx+dy*dy+dz*dz)
+ if d<1e-8 then
+  local theta=(i*2.3999632297+j*1.6180339887)
+  return math.cos(theta),math.sin(theta),.18,1
  end
- local meanX,meanY=0,0
- for _,p in ipairs(preset) do meanX=meanX+p[1];meanY=meanY+p[2] end
- meanX,meanY=meanX/#preset,meanY/#preset
- local offsets={}
- for i,p in ipairs(preset) do
-  offsets[i]={x=(p[1]-meanX)*spacing,
-              y=(p[2]-meanY)*spacing,
-              z=p[3]*spacing}
- end
- return offsets
+ return dx/d,dy/d,dz/d,d
 end
--- Exposed as a pure 3-D invariant for experiments; no engine or RNG access.
-function G.clearance(offsets)
+
+-- A measured 3-D separation invariant for tests and diagnostics.
+function G.clearance(poses)
  local minimum=math.huge
- for i=1,#offsets do for j=i+1,#offsets do
-  local a,b=offsets[i],offsets[j]
-  local dx,dy,dz=a.x-b.x,a.y-b.y,(a.z or 0)-(b.z or 0)
+ for i=1,#poses do for j=i+1,#poses do
+  local a,b=poses[i],poses[j]
+  local ax,ay,az=a.x or a[1],a.y or a[2],a.z or a[3] or 0
+  local bx,by,bz=b.x or b[1],b.y or b[2],b.z or b[3] or 0
+  local dx,dy,dz=ax-bx,ay-by,az-bz
   minimum=math.min(minimum,math.sqrt(dx*dx+dy*dy+dz*dz))
  end end
  return minimum
 end
 
--- anchor_index is the die right-clicked, not necessarily the smallest ID
--- in the selection. The cursor-to-picked-center offset avoids a hand jump.
+-- Physical bodies follow one attractor with damped springs (similar to
+-- FPS Lab 4) and receive pairwise contact impulses in the held phase
+-- (compatible with the Lab 5 clearance experiment). The contacts below
+-- are temporary and do NOT replace the production flight solver.
+function G.step(g,dt)
+ if not g or not g.group or not dt or dt<=0 then return false end
+ dt=math.min(dt,.04)
+ local hand=g.hand
+ if not hand then return false end
+ local n=#g.held
+ local vel=g.hold_velocity
+ local start={}
+ for i,member in ipairs(g.held) do
+  local p=member.body.position
+  start[i]={p[1],p[2],p[3]}
+  local v=vel[i]
+  local natural=hand.z+(i%2==0 and .04 or -.04)
+  local targets={hand.x,hand.y,natural}
+  local k=38
+  local damping=math.exp(-10*dt)
+  for axis=1,3 do
+   v[axis]=(v[axis]+(targets[axis]-p[axis])*k*dt)*damping
+   v[axis]=clamp(v[axis],-12,12)
+   p[axis]=p[axis]+v[axis]*dt
+  end
+  clamp_body(g,member,p)
+ end
+ -- During a held group the production box skips collision pairs. Solve
+ -- contact depth in short bounded iterations so the spring cannot collapse
+ -- six D6 into a single point (or force them apart at release).
+ for iteration=1,5 do
+  for i=1,n do for j=i+1,n do
+   local a,b=g.held[i].body.position,g.held[j].body.position
+   local nx,ny,nz,d=normal(a,b,i,j)
+   local minDist=radius(g.held[i])+radius(g.held[j])+.08
+   local depth=minDist-d
+   if depth>0 then
+    local correction=math.min(depth*.55,.34)
+    a[1]=a[1]-nx*correction
+    a[2]=a[2]-ny*correction
+    a[3]=a[3]-nz*correction
+    b[1]=b[1]+nx*correction
+    b[2]=b[2]+ny*correction
+    b[3]=b[3]+nz*correction
+    clamp_body(g,g.held[i],a)
+    clamp_body(g,g.held[j],b)
+   end
+  end end
+ end
+ -- Preserve soft contact response as part of the moving grip; without it
+ -- velocities would keep pushing toward the overlapping hand center.
+ for i,member in ipairs(g.held) do
+  local p=member.body.position
+  local v=vel[i]
+  for axis=1,3 do
+   local displacement=p[axis]-start[i][axis]
+   v[axis]=clamp(.62*v[axis]+.38*displacement/dt,-12,12)
+  end
+  Single.tick(member,dt) -- rotate the actual die mesh in the hand
+ end
+ return true
+end
+
+-- Anchor comes from the picked die and the actual hit point; no random
+-- starting formation and no instantaneous relocation of the six bodies.
 function G.begin(indices,dice,x,y,time,view,scale,bounds,anchor_index,hit_x,hit_y)
  if type(indices)~='table' or #indices<2 or type(dice)~='table' then return nil end
  local held={}
@@ -84,15 +124,15 @@ function G.begin(indices,dice,x,y,time,view,scale,bounds,anchor_index,hit_x,hit_
   local entry=dice[index]
   if not entry or not entry.body or entry.kept or entry.body._grabbed or
      not entry.body._manual_pending then
+   for _,member in ipairs(held) do Single.cancel(member) end
+   return nil
+  end
+  local member=Single.begin(index,entry.body,x,y,time)
+  if not member then
    for _,g in ipairs(held) do Single.cancel(g) end
    return nil
   end
-  local gesture=Single.begin(index,entry.body,x,y,time)
-  if not gesture then
-   for _,g in ipairs(held) do Single.cancel(g) end
-   return nil
-  end
-  held[#held+1]=gesture
+  held[#held+1]=member
  end
  local picked=dice[anchor_index or indices[1]] or dice[indices[1]]
  local ax,ay=picked.body.position[1],picked.body.position[2]
@@ -100,9 +140,11 @@ function G.begin(indices,dice,x,y,time,view,scale,bounds,anchor_index,hit_x,hit_
   local wx,wy=Single.world_motion(x-hit_x,y-hit_y,camera(view),scale)
   ax,ay=ax+wx,ay+wy
  end
+ local hold_velocity={}
+ for i=1,#held do hold_velocity[i]={0,0,0} end
  local g={group=true,index=indices[1],indices=indices,held=held,
   x0=x,y0=y,x=x,y=y,anchor_x=ax,anchor_y=ay,
-  offsets=G.formation(#held,spacing_for(held)),targets={}}
+  hold_velocity=hold_velocity,hand=nil,bounds=bounds}
  G.move(g,x,y,time,view,scale,bounds)
  return g
 end
@@ -111,51 +153,26 @@ function G.move(g,x,y,time,view,scale,bounds)
  if not g or not g.group then return false end
  local dx,dy=Single.world_motion(x-g.x0,y-g.y0,camera(view),scale)
  local cx,cy=g.anchor_x+dx,g.anchor_y+dy
- local limx=(bounds and bounds.half_x or 9.2)
- local limy=(bounds and bounds.half_y or 3.8)
- -- Clamp the *whole* constellation against the physical board, not each
- -- body separately. This preserves spacing and prevents stacked dice.
- local loX,hiX,loY,hiY=-math.huge,math.huge,-math.huge,math.huge
- for j,member in ipairs(g.held) do
-  local off=g.offsets[j]
-  local pad=math.max(.42,(member.body.radius or .52)*.90)
-  loX=math.max(loX,-limx+pad-off.x)
-  hiX=math.min(hiX,limx-pad-off.x)
-  loY=math.max(loY,-limy+pad-off.y)
-  hiY=math.min(hiY,limy-pad-off.y)
- end
- cx,cy=clamp(cx,loX,hiX),clamp(cy,loY,hiY)
- local targets={}
- for j,member in ipairs(g.held) do
+ local limit=bounds or bounds_for(g)
+ g.bounds=limit
+ local maxR=.52
+ for _,member in ipairs(g.held) do maxR=math.max(maxR,radius(member)) end
+ -- Keep the hand itself within the physical board, and use per-body
+ -- clamping/contact resolution rather than packing a hard formation.
+ local inset=math.max(.8,maxR+1)
+ cx=clamp(cx,-limit.half_x+inset,limit.half_x-inset)
+ cy=clamp(cy,-limit.half_y+inset,limit.half_y-inset)
+ local top=math.max(2.5,limit.height-.85-maxR)
+ g.hand={x=cx,y=cy,z=math.min(top,3.7)}
+ for _,member in ipairs(g.held) do
   if not Single.track(member,x,y,time) then return false end
-  local off=g.offsets[j]
-  -- Every die shares a hand-height plane: no hidden second tier piled
-  -- behind the others. Their per-body offsets stay separated in XY.
-  local top=(bounds and bounds.height or 10)-.85
-  local lift=math.max(2.35,math.min(4.0,member.original.position[3]+1.3))
-  targets[j]={x=cx+off.x,y=cy+off.y,
-   z=math.min(top,lift)}
  end
  g.x,g.y=x,y
- g.targets=targets
  return true
 end
 
 function G.tick(g,dt)
- if not g or not g.group or not dt or dt<=0 then return end
- -- Convergence runs even when the pointer is motionless after right-click.
- -- The held physics bodies, not merely their meshes, fly toward the hand.
- local alpha=1-math.exp(-math.min(dt,.05)*20)
- for i,member in ipairs(g.held) do
-  local pos=member.body.position
-  local target=g.targets[i]
-  if target then
-   pos[1]=pos[1]+(target.x-pos[1])*alpha
-   pos[2]=pos[2]+(target.y-pos[2])*alpha
-   pos[3]=pos[3]+(target.z-pos[3])*alpha
-  end
-  Single.tick(member,dt)
- end
+ return G.step(g,dt)
 end
 
 function G.cancel(g)
@@ -166,19 +183,19 @@ end
 function G.release(g,x,y,time,view,scale,bounds)
  if not g or not g.group then return nil end
  if not G.move(g,x,y,time,view,scale,bounds) then return nil end
- -- Release from the gathered formation even after a very fast click. Do not
- -- let Single.release teleport the body back to its original scattered spot.
- local poses=g.targets
  local results={}
- for i,member in ipairs(g.held) do
-  local released=Single.release(member,x,y,time,camera(view),scale,bounds)
-  if not released then return nil end
-  local target=poses[i]
-  member.body.position[1]=target.x
-  member.body.position[2]=target.y
-  member.body.position[3]=target.z
-  results[#results+1]=released
+ for _,member in ipairs(g.held) do
+  local b=member.body
+  -- The individual release helper updates momentum/spin and restores
+  -- dynamic collision integration, but it also moves to the *single-die*
+  -- pointer location. Restore the real spring/contact pose after calling.
+  local original={b.position[1],b.position[2],b.position[3]}
+  local result=Single.release(member,x,y,time,camera(view),scale,bounds)
+  if not result then return nil end
+  for axis=1,3 do b.position[axis]=original[axis] end
+  results[#results+1]=result
  end
  return results
 end
+
 return G
