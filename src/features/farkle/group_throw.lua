@@ -144,6 +144,13 @@ function G.begin(indices,dice,x,y,time,view,scale,bounds,anchor_index,hit_x,hit_
    for _,g in ipairs(held) do Single.cancel(g) end
    return nil
   end
+  -- The same Single.track samples position and shake on each die,
+  -- but group mouse dragging must not impose the single-die pointer-spin
+  -- formula. Actual group rotation now comes only from shake impulses
+  -- (or body contacts upon release). Begin the quiet hold without spin.
+  member.group_hold=true
+  member.angular={0,0,0}
+  for axis=1,3 do member.body.angular[axis]=0 end
   held[#held+1]=member
  end
  local picked=dice[anchor_index or indices[1]] or dice[indices[1]]
