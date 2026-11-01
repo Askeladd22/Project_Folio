@@ -10,6 +10,36 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.16] - 2026-11-01
+
+**Tipo:** leggibilità e contenimento del testo delle finestre UI V2, solo presentazione.
+
+### Modificato
+- Paragrafi di aiuto, condizioni del folio, descrizioni dei dadi
+  premio e medaglie adattati allo spazio disponibile usando le
+  misure reali di `Font:getWrap` e l'altezza delle righe.
+- Testi su più righe e a capo espliciti rispettati; la dimensione
+  si adatta al flag `big_text`, riducendosi se lo spazio è
+  insufficiente. Solo in ultima istanza è applicata un'ellissi
+  che non spezza i caratteri UTF-8.
+- La tabella delle combinazioni usa celle misurate per titoli e
+  valori invece di righe lasciate al wrapping automatico.
+- Le descrizioni del laboratorio delle medaglie e delle
+  condizioni di attivazione sono contenute in riquadri di
+  altezza nota, senza spostare pulsanti o cambiare le regole.
+
+### Test e limitazioni
+- Nuovi test puri `tests/ui_v2_paragraph_fit_test.lua` e
+  render test `tests/ui_v2_dialog_text_geometry_test.lua`:
+  UTF-8, righe esplicite, risoluzioni 720p/1080p/1440p,
+  testo grande, schede punteggio/ricompense/medaglie e
+  immutabilità dello stato Farkle.
+- Le hitbox e le callback delle modali rimangono invariate.
+- Nessuna modifica a g3d, sei dadi, Farkle, fisica, Monaco,
+  salvataggi, splash originale LÖVE.
+- Test CI da verificare; la QA grafica Windows e il controllo
+  di font reali rimangono da eseguire.
+
 ## [0.1.0-dev.15] - 2026-11-01
 
 **Tipo:** infrastruttura di revisione grafica riproducibile della UI V2 attiva (solo test e documentazione).
