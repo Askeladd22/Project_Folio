@@ -25,6 +25,12 @@ for _,needle in ipairs({
  "shot(prefix..'medal-fixture')",
  "shot(prefix..'monk-live')",
  "PASS current UI V2 visual review at both resolutions",
+ "write_review_hitboxes(name)",
+ "Res.to_screen(r.x,r.y)",
+ "Res.get_scale()",
+ "local active=U.modal and U.modalButtons or U.buttons",
+ ".hitboxes.tsv",
+ "source\\n",
 }) do assert(smoke:find(needle,1,true),'missing real capture path: '..needle) end
 assert(smoke:find("if os.getenv('MANUSCRIPT_UI_V2_REVIEW_CAPTURE')=='1' then",1,true))
 assert(smoke:find("else\n    scenario(1920,1080)",1,true),
@@ -36,6 +42,9 @@ assert(capture:find('fingerprint(path)',1,true))
 assert(capture:find('"manual_visual_qa_approved": False',1,true))
 assert(capture:find('report_html(frames, commit)',1,true))
 assert(capture:find('review_checklist(commit)',1,true))
+assert(capture:find('read_hitboxes(hud / hitbox_name, width, height)',1,true))
+assert(capture:find('class="overlay"',1,true))
+assert(capture:find('Mostra hitbox reali',1,true))
 assert(doc:find('python scripts/capture_ui_v2_review.py',1,true))
 assert(not capture:find('hud_minimal',1,true),
  'new review may not request the deleted fallback HUD')
