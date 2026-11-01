@@ -5,11 +5,34 @@ local Miniature=require('src.features.scriptorium.miniature_2d')
 local Model=require('src.features.farkle.bot_duel_presentation')
 local Res=require('src.core.resolution_manager')
 local RuntimeUI=require('src.core.runtime_ui')
+local MenuSurface=require('src.features.ui_v2.menu_surface')
+local LabelFit=require('src.features.farkle.ui_v2.label_fit')
+local Geometry=require('src.features.farkle.ui_v2.monk_layout')
 local M={}
 local monk=nil
 local status=Model.new()
-local titleFont=nil
-local bodyFont=nil
+local fonts={}
+local function draw_fit(value,rect,pt,min_pt,color,align)
+ local g=love.graphics
+ local scale=math.min(1.35,RuntimeUI.scale())*
+  (RuntimeUI.big_text() and 1.16 or 1)
+ local hi=math.max(8,math.floor(pt*scale+.5))
+ local lo=math.max(8,math.floor(min_pt*scale+.5))
+ local str,px=LabelFit.fit(value,function(text,n)
+  fonts[n]=fonts[n] or
+   g.newFont('resources/font/IMFeENsc28P.ttf',n)
+  return fonts[n]:getWidth(text),fonts[n]:getHeight()
+ end,hi,lo,rect.w,rect.h)
+ if str=='' then return end
+ g.setFont(fonts[px])
+ g.setColor(color[1],color[2],color[3],color[4] or 1)
+ g.printf(str,rect.x,rect.y+math.max(0,
+  (rect.h-fonts[px]:getHeight())*.5),rect.w,align or 'left')
+end
+local ink={.24,.15,.09,1}
+local muted={.43,.32,.22,1}
+local gold={.53,.34,.12,1}
+local warning={.52,.20,.15,1}
 
 -- Virtual 1920x1080 folio area: x=1512..1864, y=128..690.
 -- The portrait stays well outside the physical 3D tray.
@@ -80,44 +103,45 @@ function M.update(dt)
  if monk then monk:update(dt,RuntimeUI.reduced_animations()) end
 end
 
-local function panel(g)
- g.setColor(.12,.095,.065,.94)
- g.rectangle('fill',1510,122,350,177,8)
- g.setColor(.7,.51,.29,1)
- g.setLineWidth(1.7)
- g.rectangle('line',1511,123,348,175,8)
- g.setFont(titleFont)
- g.setColor(.94,.78,.43,1)
- g.print('SFIDA AL MONACO',1525,132)
- g.setFont(bodyFont)
- g.setColor(.96,.91,.79,1)
- g.print('TU: '..status.player..'    MONACO: '..status.bot,1525,172)
- g.print('MANO '..status.round..'/'..status.limit..
-  '  |  META '..status.target,1525,201)
- g.setColor(.86,.72,.48,1)
- g.print('Ultimo tiro: '..status.last_roll,1525,231)
- g.setColor(.95,.89,.76,1)
- g.printf(status.status,1525,261,316,'left')
+local function panel()
+ local high=RuntimeUI.high_contrast()
+ MenuSurface.panel(Geometry.status_panel,{high_contrast=high})
+ draw_fit('SFIDA AL MONACO',Geometry.title,22,15,gold,'center')
+ MenuSurface.rule(Geometry.status_rule.x,Geometry.status_rule.y,
+  Geometry.status_rule.w,high and 1 or .8)
+ draw_fit('TU: '..status.player..'     MONACO: '..status.bot,
+  Geometry.score,19,12,ink,'center')
+ draw_fit('MANO '..status.round..'/'..status.limit..
+  '   |   META '..status.target,Geometry.round,17,11,muted,'center')
+ draw_fit('Ultimo tiro: '..status.last_roll,
+  Geometry.last_roll,17,10,muted,'center')
+ MenuSurface.rule(Geometry.message_rule.x,Geometry.message_rule.y,
+  Geometry.message_rule.w,high and 1 or .75)
+ draw_fit(status.status,Geometry.status,16,10,
+  status.status:find('FARKLE',1,true) and warning or ink,'center')
 end
 
-local function final_panel(g)
+local function final_panel()
  local verdict=status.winner=='player' and 'HAI VINTO!' or
    status.winner=='bot' and 'IL MONACO HA VINTO' or 'PARITA'
- g.setColor(.12,.095,.065,.97)
- g.rectangle('fill',600,440,720,152,8)
- g.setColor(.7,.51,.29,1)
- g.setLineWidth(1.7)
- g.rectangle('line',601,441,718,150,8)
- g.setFont(titleFont)
- g.setColor(.94,.78,.43,1)
- g.print(verdict,618,450)
- g.setFont(bodyFont)
- g.setColor(.96,.91,.79,1)
- g.print('R: nuova sfida   |   ESC: menu principale',618,487)
- g.setColor(.8,.67,.45,1)
- g.rectangle('line',780,540,350,45,6)
- g.setFont(bodyFont)
- g.print('RIPROVA   /   CLICCA QUI',812,553)
+ MenuSurface.panel(Geometry.result_panel,
+  {high_contrast=RuntimeUI.high_contrast()})
+ draw_fit(verdict,Geometry.result_title,32,18,gold,'center')
+ draw_fit('R: nuova sfida   |   ESC: menu principale',
+  Geometry.result_help,20,13,muted,'center')
+ -- Draw ONLY the pre-existing mouse target, not a new action region.
+ -- Controller.lua owns the restart logic and Escape handling.
+ local hovered=false
+ if love.mouse and love.mouse.getPosition then
+  local mx,my=love.mouse.getPosition()
+  if type(mx)=='number' and type(my)=='number' then
+   local x,y=Res.to_virtual(mx,my)
+   hovered=MenuSurface.contains(Geometry.retry,x,y)
+  end
+ end
+ MenuSurface.item(Geometry.retry,{primary=true,active=hovered})
+ draw_fit('RIPROVA   /   CLICCA QUI',
+  Geometry.retry_label,21,13,ink,'center')
 end
 
 function M.draw(duel)
@@ -126,11 +150,9 @@ function M.draw(duel)
  g.push('all')
  Res.begin_ui()
  if not monk then monk=build_monk() end
- if not titleFont then titleFont=g.newFont('resources/font/IMFeENsc28P.ttf',22) end
- if not bodyFont then bodyFont=g.newFont('resources/font/IMFeENsc28P.ttf',18) end
- panel(g)
+ panel()
  monk:draw()
- if status.finished then final_panel(g) end
+ if status.finished then final_panel() end
  Res.end_ui()
  g.pop()
 end

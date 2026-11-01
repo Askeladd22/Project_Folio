@@ -48,6 +48,14 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+Dalla `0.1.0-dev.13` la sfida opzionale al Monaco condivide
+i pannelli di pergamena e le etichette adattive della UI 2.0:
+scheda dell'avversario, punti e ultimo tiro, più il risultato
+finale con lo stesso comando Riprova. L'animazione del Monaco,
+i dadi 3D e i comandi originali rimangono invariati.
+La verifica grafica Windows è ancora necessaria.
+
+
 Dalla `0.1.0-dev.12` il folio laterale e il pannello Strumenti
 formano una composizione coerente con cornice da legatura e
 separatore ornamentale. Il titolo del registro dei sei D6

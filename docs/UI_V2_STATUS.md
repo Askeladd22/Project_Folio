@@ -1,5 +1,17 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.13 — sfida al Monaco:** scheda e
+> pannello risultato su pergamena condivisa, separatori,
+> testi adattati al font (anche big-text), hover su
+> Riprova con hitbox controller x780–1130/y540–585
+> invariata. Test di vista headless per vincita,
+> sconfitta e pareggio a 720p/1080p/1440p.
+> Miniatura, logica bot, Farkle, g3d, fisica e
+> splash originale LÖVE invariati; QA visiva Windows
+> ancora da eseguire.
+>
+
+
 > **0.1.0-dev.12 — composizione folio/sidebar:** cornice
 > da legatura solo grafica, separatore ornamentale,
 > azioni laterali con rettangoli nominati e stesso input,
