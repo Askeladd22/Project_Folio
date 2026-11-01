@@ -1,5 +1,16 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.16 — tipografia delle modali:**
+> fitting con dimensioni reali del font e wrapping
+> limitato dall'altezza del pannello per aiuto,
+> punteggi, ricompense e medaglie. Testo grande
+> considerato; eventuale abbreviazione UTF-8 sicura.
+> Test Lua puri e di rendering a tre risoluzioni.
+> Nessuna variazione di gameplay, g3d, hitbox o
+> splash motore LÖVE. CI e QA Windows da verificare.
+>
+
+
 > **0.1.0-dev.15 — gate QA Windows riproducibile:**
 > `scripts/capture_ui_v2_review.py` acquisisce 32 screenshot
 > LÖVE reali della UI V2 a 720p/1080p con manifesto hash,
