@@ -10,6 +10,35 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.20] - 2026-11-01
+
+**Tipo:** fix rotazione indebita dei dadi durante trascinamento multiplo, dopo confronto con studio del bytecode Tabletop Simulator.
+
+### Corretto
+- Durante una presa di gruppo, `Single.track` non applica più
+  la formula di spin `dx/dt` e `dy/dt` ai singoli D6.
+  Il trascinamento muove i corpi verso il bersaglio della mano,
+  senza farli rotolare tutti nella sua stessa direzione.
+- I gesti del gruppo iniziano con velocità angolare nulla;
+  scuotimento e impulsi individuali rimangono attivi
+  soltanto quando il rilevatore riconosce rapidi cambi di direzione.
+- Lo spin residuo del gruppo si attenua più rapidamente
+  quando si ferma il mouse; comportamento della presa singola,
+  rilascio fisico e regole Farkle invariati.
+- Nuovo test `group_grip_drag_spin_decoupling_test.lua`
+  per 2–6 dadi, trascinamento unidirezionale, shake
+  autentico, quiete e regressione della presa singola.
+- Documentata la differenza fra `UpdateGrabbedNPO`,
+  `ShakeDetector.FixedUpdate` di TTS e le responsabilità
+  prima sovrapposte del codice Lua in
+  [TTS_GRIP_DRAG_SHAKE_DIAGNOSIS.md](docs/TTS_GRIP_DRAG_SHAKE_DIAGNOSIS.md).
+
+### Limiti
+- La DLL TTS non è stata ridisassemblata in questa modifica:
+  confronto con l'analisi statica verificata e già archiviata.
+- Non è una replica esatta della fisica di TTS;
+  il gate dinamico su Windows resta necessario.
+
 ## [0.1.0-dev.19] - 2026-11-01
 
 **Tipo:** scuotimento fisico dei dadi mentre sono afferrati insieme, ispirato a uno shaker/bossolo virtuale di Tabletop Simulator.
