@@ -78,7 +78,10 @@ local function hoverFill(r)
 end
 local function readableButton(r)
  for _,call in ipairs(paint) do
-  if call.mode=='text' and call.text==r.label and
+  local exact=call.text==r.label
+  local short=call.text and call.text:sub(-3)=='...' and
+   r.label:sub(1,#call.text-3)==call.text:sub(1,-4)
+  if call.mode=='text' and (exact or short) and
    math.abs(call.x-(r.x+14))<.01 and
    call.y>=r.y+6 and call.y+call.h<=r.y+r.h-5 and
    call.tw<=call.w+.5 then return true end
