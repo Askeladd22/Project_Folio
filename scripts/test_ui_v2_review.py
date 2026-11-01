@@ -46,9 +46,9 @@ class UiReviewManifestTests(unittest.TestCase):
                     name = f"hud-usability-{prefix}-{scene}"
                     stub_png(hud / f"{name}.png", w, h)
                     (hud / f"{name}.hitboxes.tsv").write_text(
-                        "id\\tx\\ty\\tw\\th\\tenabled\\tsource\\n"
-                        f"help\\t100\\t100\\t150\\t45\\t1\\tgame\\n"
-                        f"__tray__\\t50\\t200\\t{w - 100}\\t{h - 250}\\t0\\ttray\\n",
+                        "id\tx\ty\tw\th\tenabled\tsource\n"
+                        f"help\t100\t100\t150\t45\t1\tgame\n"
+                        f"__tray__\t50\t200\t{w - 100}\t{h - 250}\t0\ttray\n",
                         encoding="utf-8",
                     )
             frames = collect_frames(root)
@@ -75,18 +75,18 @@ class UiReviewManifestTests(unittest.TestCase):
     def test_rejects_offscreen_duplicate_and_missing_hitboxes(self):
         with tempfile.TemporaryDirectory() as directory:
             file = Path(directory) / "hitboxes.tsv"
-            header = "id\\tx\\ty\\tw\\th\\tenabled\\tsource\\n"
-            good = "roll\\t10\\t20\\t190\\t52\\t1\\tgame\\n"
+            header = "id\tx\ty\tw\th\tenabled\tsource\n"
+            good = "roll\t10\t20\t190\t52\t1\tgame\n"
             file.write_text(header + good, encoding="utf-8")
             self.assertEqual(read_hitboxes(file, 1280, 720)[0]["id"], "roll")
             file.write_text(header + good + good, encoding="utf-8")
             with self.assertRaises(ValueError):
                 read_hitboxes(file, 1280, 720)
-            file.write_text(header + "roll\\t1270\\t20\\t190\\t52\\t1\\tgame\\n",
+            file.write_text(header + "roll\t1270\t20\t190\t52\t1\tgame\n",
                             encoding="utf-8")
             with self.assertRaises(ValueError):
                 read_hitboxes(file, 1280, 720)
-            file.write_text(header + "roll\\tnan\\t20\\t190\\t52\\t1\\tgame\\n",
+            file.write_text(header + "roll\tnan\t20\t190\t52\t1\tgame\n",
                             encoding="utf-8")
             with self.assertRaises(ValueError):
                 read_hitboxes(file, 1280, 720)
