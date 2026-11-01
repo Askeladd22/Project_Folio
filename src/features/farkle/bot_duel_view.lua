@@ -12,13 +12,6 @@ local M={}
 local monk=nil
 local status=Model.new()
 local fonts={}
-local function font(n)
- local px=math.floor(n*math.min(1.35,RuntimeUI.scale())*
-  (RuntimeUI.big_text() and 1.16 or 1)+.5)
- fonts[px]=fonts[px] or
-  love.graphics.newFont('resources/font/IMFeENsc28P.ttf',px)
- return fonts[px]
-end
 local function draw_fit(value,rect,pt,min_pt,color,align)
  local g=love.graphics
  local scale=math.min(1.35,RuntimeUI.scale())*
