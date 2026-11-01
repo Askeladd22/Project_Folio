@@ -108,6 +108,11 @@ function G.step(g,dt)
  -- The virtual cup only constrains the active shake phase; actual
  -- flight, regular group holding and all game rules remain unchanged.
  Shaker.contain(g)
+ -- The virtual cup can approach the real tray walls. Apply the same
+ -- physical bounds after confinement, without altering normal flight.
+ for _,member in ipairs(g.held) do
+  clamp_body(g,member,member.body.position)
+ end
  -- Preserve soft contact response as part of the moving grip; without it
  -- velocities would keep pushing toward the overlapping hand center.
  for i,member in ipairs(g.held) do
