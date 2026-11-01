@@ -48,6 +48,16 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+La `0.1.0-dev.18` corregge la **presa fisica multipla**
+dei dadi osservata nell'audit Windows: la vecchia pila
+a due livelli è stata sostituita da una formazione aperta
+in piano, controllata rispetto alla proiezione della camera.
+Sono conservati i sei corpi fisici, i limiti del vassoio,
+le azioni di gruppo e il rilascio nel solver esistente.
+La verifica visiva del movimento reale su Windows
+rimane da eseguire.
+
+
 Dalla `0.1.0-dev.17` la
 [galleria per la revisione visiva Windows](docs/UI_V2_VISUAL_REVIEW.md)
 può mostrare **le vere hitbox del controller** sovrapposte
