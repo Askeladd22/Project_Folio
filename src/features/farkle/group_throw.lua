@@ -4,6 +4,7 @@
 -- in the holding stage. No fixed two-level heap or rigid 3x2 hand formation.
 -- On release all bodies re-enter the existing production physics solver.
 local Single=require('src.features.farkle.mouse_throw')
+local Shaker=require('src.features.farkle.group_shaker')
 local G={}
 local function clamp(x,a,b)
  if a>b then return (a+b)*.5 end
@@ -63,6 +64,9 @@ function G.step(g,dt)
  if not hand then return false end
  local n=#g.held
  local vel=g.hold_velocity
+ -- A certified alternating mouse gesture supplies temporary inertia.
+ -- A plain drag keeps the original quiet elastic-grip behavior.
+ Shaker.advance(g,dt)
  local start={}
  for i,member in ipairs(g.held) do
   local p=member.body.position
@@ -101,6 +105,9 @@ function G.step(g,dt)
    end
   end end
  end
+ -- The virtual cup only constrains the active shake phase; actual
+ -- flight, regular group holding and all game rules remain unchanged.
+ Shaker.contain(g)
  -- Preserve soft contact response as part of the moving grip; without it
  -- velocities would keep pushing toward the overlapping hand center.
  for i,member in ipairs(g.held) do
@@ -144,7 +151,8 @@ function G.begin(indices,dice,x,y,time,view,scale,bounds,anchor_index,hit_x,hit_
  for i=1,#held do hold_velocity[i]={0,0,0} end
  local g={group=true,index=indices[1],indices=indices,held=held,
   x0=x,y0=y,x=x,y=y,anchor_x=ax,anchor_y=ay,
-  hold_velocity=hold_velocity,hand=nil,bounds=bounds}
+  hold_velocity=hold_velocity,hand=nil,bounds=bounds,
+  shaker=Shaker.new(x,y,time)}
  G.move(g,x,y,time,view,scale,bounds)
  return g
 end
@@ -167,6 +175,7 @@ function G.move(g,x,y,time,view,scale,bounds)
  for _,member in ipairs(g.held) do
   if not Single.track(member,x,y,time) then return false end
  end
+ Shaker.sample(g.shaker,x,y,time,camera(view),scale)
  g.x,g.y=x,y
  return true
 end
@@ -184,7 +193,7 @@ function G.release(g,x,y,time,view,scale,bounds)
  if not g or not g.group then return nil end
  if not G.move(g,x,y,time,view,scale,bounds) then return nil end
  local results={}
- for _,member in ipairs(g.held) do
+ for i,member in ipairs(g.held) do
   local b=member.body
   -- The individual release helper updates momentum/spin and restores
   -- dynamic collision integration, but it also moves to the *single-die*
@@ -193,6 +202,18 @@ function G.release(g,x,y,time,view,scale,bounds)
   local result=Single.release(member,x,y,time,camera(view),scale,bounds)
   if not result then return nil end
   for axis=1,3 do b.position[axis]=original[axis] end
+  -- Some of the cup's relative motion survives a release while the
+  -- ordinary solver takes over. Preserve an explicit downward impulse.
+  local energy=g.shaker and g.shaker.energy or 0
+  if energy>.08 then
+   for axis=1,2 do
+    b.velocity[axis]=clamp(b.velocity[axis]+
+      g.hold_velocity[i][axis]*energy*.28,-18,18)
+   end
+   b.velocity[3]=math.min(-1,
+     b.velocity[3]+g.hold_velocity[i][3]*energy*.16)
+   result.velocity={b.velocity[1],b.velocity[2],b.velocity[3]}
+  end
   results[#results+1]=result
  end
  return results
