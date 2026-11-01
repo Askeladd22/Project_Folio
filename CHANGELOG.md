@@ -10,6 +10,32 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.17] - 2026-11-01
+
+**Tipo:** diagnostica visiva delle vere hitbox UI V2 (solo test/report), successiva al polish dei testi dev.16.
+
+### Modificato
+- Ogni screenshot Windows LÖVE della revisione V2 salva un TSV
+  con le hitbox **effettive** di pulsanti normali, modali e
+  ricompense, prelevate nello stesso frame di rendering.
+- Coordinate trasformate in pixel schermo dal resolution manager.
+  Il rettangolo fisico del tavolo dei sei D6 è incluso ma non
+  viene interpretato come pulsante.
+- La galleria HTML ha il controllo reversibile **Mostra hitbox reali**,
+  con oro per azioni abilitate, grigio per disabilitate e
+  azzurro per il tavolo g3d; i PNG non vengono alterati.
+- Manifest e test Python verificano TSV mancanti/malformati,
+  ID duplicati, numeri non finiti e controlli fuori schermo.
+  Test Lua aggiunti al wiring dell'acquisizione.
+- Aggiornata la documentazione Windows per il controllo
+  manuale della geometria delle interazioni.
+
+### Limiti
+- La QA grafica Windows richiede la reale esecuzione e revisione
+  degli screenshot; CI verde non equivale ad approvazione visiva.
+- Nessuna modifica a gameplay, Farkle, g3d, sei dadi, fisica,
+  camera, salvataggi, bot o splash originale LÖVE.
+
 ## [0.1.0-dev.16] - 2026-11-01
 
 **Tipo:** leggibilità e contenimento del testo delle finestre UI V2, solo presentazione.

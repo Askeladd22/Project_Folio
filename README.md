@@ -48,6 +48,16 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+Dalla `0.1.0-dev.17` la
+[galleria per la revisione visiva Windows](docs/UI_V2_VISUAL_REVIEW.md)
+può mostrare **le vere hitbox del controller** sovrapposte
+agli screenshot LÖVE: oro = azioni abilitate; grigio =
+azioni disabilitate; blu = regione fisica dei sei D6.
+La vista diagnostica è reversibile e non modifica i
+pulsanti, la fisica o i PNG acquisiti.
+La QA visiva sul PC Windows resta da completare.
+
+
 Dalla `0.1.0-dev.16` la tipografia delle modali Farkle V2
 misura anche **righe e altezza** di paragrafi e descrizioni,
 evitando la fuoriuscita del testo dalle schede del folio.

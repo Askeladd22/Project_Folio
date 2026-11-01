@@ -379,6 +379,42 @@ function M.install(U)
   end)
  end
  function love.update(dt) elapsed=elapsed+dt;assert(elapsed<180,'HUD smoke timeout');update(dt) end
+ -- Audit-only hitbox snapshot, taken during the SAME rendered frame
+ -- as the PNG. All coordinates below are real SCREEN pixels, calculated
+ -- through the authoritative resolution manager. No production input edits.
+ local function write_review_hitboxes(name)
+  if os.getenv('MANUSCRIPT_UI_V2_REVIEW_CAPTURE')~='1' then return end
+  local file=assert(io.open(root..name..'.hitboxes.tsv','wb'))
+  file:write('id\tx\ty\tw\th\tenabled\tsource\n')
+  local function emit(id,r,enabled,source)
+   if not r or type(r.x)~='number' or type(r.y)~='number'
+    or type(r.w)~='number' or type(r.h)~='number' then return end
+   local x,y=Res.to_screen(r.x,r.y)
+   local scale=Res.get_scale()
+   -- All screen-space coordinates are finite and within the output image.
+   assert(x==x and y==y and scale>0 and r.w>0 and r.h>0,
+    'invalid review click rectangle')
+   file:write(string.format('%s\t%.4f\t%.4f\t%.4f\t%.4f\t%s\t%s\n',
+    id,x,y,r.w*scale,r.h*scale,enabled and '1' or '0',source))
+  end
+  local active=U.modal and U.modalButtons or U.buttons
+  local ids={}
+  for id in pairs(active or {}) do ids[#ids+1]=id end
+  table.sort(ids)
+  for _,id in ipairs(ids) do
+   local b=active[id]
+   emit(id,b,b.enabled,U.modal and 'modal'
+    or H.reward_active(U.game) and 'reward' or 'game')
+  end
+  -- Physical tray bounds are already in screen pixels. It is drawn in
+  -- blue in the review gallery, never mistaken for a button hitbox.
+  local tray=Bridge.getDiceTrayRect()
+  if tray then
+   file:write(string.format('__tray__\t%.4f\t%.4f\t%.4f\t%.4f\t0\ttray\n',
+    tray.x,tray.y,tray.w,tray.h))
+  end
+  file:close()
+ end
  function love.draw()
   draw();frames=frames+1
   local p=U.trayProjection
@@ -392,7 +428,8 @@ function M.install(U)
   if pending then
    if pending.wait and U.game.phase=='rolling' then return end
    if pending.shot then
-    local name=pending.shot;love.graphics.captureScreenshot(function(data)
+    local name=pending.shot;write_review_hitboxes(name)
+    love.graphics.captureScreenshot(function(data)
      local f=assert(io.open(root..name..'.png','wb'));f:write(data:encode('png'):getString());f:close()
     end);record('SCREENSHOT '..name);pending=nil;return
    end
