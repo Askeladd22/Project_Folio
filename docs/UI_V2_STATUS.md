@@ -1,5 +1,18 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.15 — gate QA Windows riproducibile:**
+> `scripts/capture_ui_v2_review.py` acquisisce 32 screenshot
+> LÖVE reali della UI V2 a 720p/1080p con manifesto hash,
+> galleria e checklist non preapprovata. La nuova scena smoke
+> non usa più il vecchio HUD fallback ed esegue la presa
+> reale dei sei D6; gli stati punteggio/ricompense
+> sono fixture dichiarate. Test di wiring Lua, PNG Python
+> e pipeline CI. **QA visiva Windows ancora da eseguire
+> e approvare**, senza modifiche a gameplay/g3d.
+> [Istruzioni](UI_V2_VISUAL_REVIEW.md).
+>
+
+
 > **0.1.0-dev.14 — modali Farkle:** dialoghi già sulla
 > UI V2 migliorati con tipografia coerente, etichette
 > con larghezza misurata e abbreviazione UTF-8,

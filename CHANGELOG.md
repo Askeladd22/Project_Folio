@@ -10,6 +10,37 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.15] - 2026-11-01
+
+**Tipo:** infrastruttura di revisione grafica riproducibile della UI V2 attiva (solo test e documentazione).
+
+### Modificato
+- Percorso `--ui-v2-review` separato dalla vecchia smoke HUD:
+  acquisisce i pannelli realmente in produzione senza usare ID
+  o coordinate legacy ritirate nel cutover.
+- Script Windows `scripts/capture_ui_v2_review.py` per 32 frame LÖVE
+  a 1920×1080 e 1280×720, organizzati in cartelle datate
+  con hash SHA-256, controlli di integrità PNG e versione Git.
+- Report locale `gallery.html`, manifesto JSON e checklist manuale
+  da compilare per contrasto, clipping, input e g3d.
+- Distinzione esplicita tra la vera presa fisica dei sei D6
+  e i frame diagnostici dei punteggi/ricompense, basati
+  sulle regole Farkle ma senza simulare un rilascio fisico.
+- Sistemata la pulizia del test dopo l'annullamento
+  della presa manuale, senza cambiare il controller.
+- Unit test Python e test Lua del wiring; aggiunti in CI.
+- Guida `docs/UI_V2_VISUAL_REVIEW.md` per esecuzione Windows.
+
+### Invarianti e limitazioni
+- Nessuna modifica alle funzioni di gameplay, renderer g3d,
+  regole Farkle, dadi 3D, fisica, splash originale LÖVE
+  o alle hitbox di produzione.
+- Una CI verde prova solo integrità e wiring del percorso;
+  la QA GPU/Windows richiede di eseguire il nuovo script
+  e **valutare realmente** gli screenshot generati.
+- La vecchia procedura P0 resta disponibile come archivio
+  storico, ma non è il percorso indicato per l'interfaccia V2.
+
 ## [0.1.0-dev.14] - 2026-11-01
 
 **Tipo:** finitura visiva delle finestre Farkle UI V2, senza modifiche alle meccaniche.
