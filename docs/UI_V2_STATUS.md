@@ -1,5 +1,17 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.16 — confronto visivo delle hitbox:**
+> la diagnostica Windows esporta nello stesso frame PNG
+> le hitbox reali dal controller come TSV con coordinate
+> schermo, segnala ID duplicati e regioni fuori vista e
+> permette di mostrare/nascondere i contorni direttamente
+> nella galleria. Input di produzione e g3d immutati.
+> I test della procedura NON sostituiscono la QA visiva
+> Windows, ancora da eseguire.
+> [Istruzioni](UI_V2_VISUAL_REVIEW.md).
+>
+
+
 > **0.1.0-dev.15 — gate QA Windows riproducibile:**
 > `scripts/capture_ui_v2_review.py` acquisisce 32 screenshot
 > LÖVE reali della UI V2 a 720p/1080p con manifesto hash,
