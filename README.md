@@ -48,6 +48,15 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+Dalla `0.1.0-dev.16` la tipografia delle modali Farkle V2
+misura anche **righe e altezza** di paragrafi e descrizioni,
+evitando la fuoriuscita del testo dalle schede del folio.
+Sono compresi aiuto, tabella dei punteggi, ricompense e
+laboratorio medaglie; le hitbox e il gameplay sono invariati.
+La conferma della leggibilità con i font reali richiede
+ancora la QA LÖVE su Windows.
+
+
 **Revisione grafica Windows della UI V2 attiva (0.1.0-dev.15):**
 eseguire `python scripts/capture_ui_v2_review.py` per acquisire
 32 screenshot reali LÖVE a 720p/1080p e ottenere una galleria
