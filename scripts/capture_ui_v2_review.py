@@ -46,6 +46,12 @@ def png_dimensions(file: Path) -> tuple[int, int]:
     """Validate that screenshot data starts with a PNG IHDR."""
     with file.open("rb") as handle:
         header = handle.read(24)
+        if file.stat().st_size < 45:
+            raise ValueError(f"Incomplete PNG: {file}")
+        handle.seek(-12, 2)
+        footer = handle.read(12)
+    if footer[:8] != b"\x00\x00\x00\x00IEND":
+        raise ValueError(f"Missing PNG end marker: {file}")
     if len(header) != 24 or header[:8] != b"\x89PNG\r\n\x1a\n":
         raise ValueError(f"Not a PNG screenshot: {file}")
     if header[12:16] != b"IHDR":
