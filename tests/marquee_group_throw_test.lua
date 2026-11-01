@@ -100,7 +100,18 @@ for j,member in ipairs(grip.held) do
   'all held physical dice must converge under the cursor')
 end
 local compactX=math.abs(dice[6].body.position[1]-dice[1].body.position[1])
-assert(compactX<4,'selected six must be a compact group, not their original 5-unit spread')
+assert(compactX>3 and compactX<5,
+ 'six held dice must form an open, bounded grip rather than a heap')
+for i=1,#grip.targets do
+ for j=i+1,#grip.targets do
+  local a,b=grip.targets[i],grip.targets[j]
+  local dx,dy=a.x-b.x,a.y-b.y
+  assert(math.sqrt(dx*dx+dy*dy)>=1.55,
+   'real group targets must not collapse together in the hand')
+  assert(math.abs(a.z-b.z)<1e-9,
+   'group grab must not stack some D6 behind or on top of others')
+ end
+end
 -- Group boundaries clamp the constellation as a whole, never compress it.
 now=now+.02;U:mousemoved(centers[1].x+5000,centers[1].y+30)
 local t=U.mouseThrow.targets
