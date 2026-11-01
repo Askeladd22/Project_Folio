@@ -10,6 +10,34 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.16] - 2026-11-01
+
+**Tipo:** perfezionamento della diagnostica grafica della UI V2 attiva (solo test/report).
+
+### Modificato
+- Ogni screenshot di revisione Windows ora conserva anche un file
+  `.hitboxes.tsv`, esportato nello **stesso frame LÖVE** direttamente
+  dalla tabella dei pulsanti del controller o del modal attivo.
+- Coordinate trasformate in pixel reali attraverso
+  `resolution_manager.to_screen`, senza nuova logica di input.
+  Il rettangolo del tavolo dei dadi è annotato separatamente.
+- `gallery.html` ha un controllo reversibile **Mostra hitbox reali**:
+  bordo dorato per pulsanti attivi, grigio tratteggiato per
+  comandi disabilitati e azzurro per il tavolo g3d.
+- Il raccoglitore verifica ID duplicati, coordinate non finite,
+  box fuori dalla viewport, file TSV assenti e formato non valido.
+  Le immagini originali non vengono alterate.
+- Test Python estesi con fixture su geometria e integrità;
+  test di wiring Lua esteso alla sorgente dei dati del controller;
+  guida Windows aggiornata.
+
+### Limiti
+- Il confronto grafico visivo resta manuale e da eseguire su
+  Windows: la CI non vede screenshot di LÖVE e non valida i click
+  fisici né l'aspetto estetico.
+- Zero modifiche a regole Farkle, g3d, sei dadi, camera,
+  fisica, salvataggi, bot o splash originale di LÖVE.
+
 ## [0.1.0-dev.15] - 2026-11-01
 
 **Tipo:** infrastruttura di revisione grafica riproducibile della UI V2 attiva (solo test e documentazione).
