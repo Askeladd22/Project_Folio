@@ -76,7 +76,13 @@ function M.install(U)
   U:keypressed('escape')
   assert(not U.mouseThrow and U.manualRoll and U.manualRoll.count==6,
     'P0 Esc should cancel grip without fake Farkle release')
+  -- Esc releases the grip but intentionally leaves the manual throw
+  -- in flight. Only the SMOKE fixture forces a reset for its next
+  -- screenshot; the shipping controller is not changed.
+  U.state='waiting'
   U:reset('build')
+  assert(U.game.phase=='fresh' and not U.manualRoll,
+   'P0 smoke cleanup left a pending physical throw')
   record('PASS '..prefix..' physically grabbed 6 D6 and cancelled without scoring')
  end
  local function accessibility_baseline(prefix)
