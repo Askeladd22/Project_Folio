@@ -93,7 +93,12 @@ local function state(mode)
  if mode=='choices' or mode=='medaluse' then
   assert(R.start(s) and R.settle(s,{1,5,2,3,4,6}))
  end
- if mode=='medaluse' then s.medal='retry' end
+ if mode=='medaluse' then
+  -- The reference-medal modal uses Medals.by_id entries; the ordinary
+  -- built-in 'retry' medal is handled by separate rescue mechanics.
+  s.medal='reroll_tin'
+  require('src.gameplay.farkle.medals').reset(s)
+ end
  if mode=='upgrade' or mode=='reward-medal' then
   s.phase=mode=='upgrade' and 'upgrade' or 'medal'
  end
