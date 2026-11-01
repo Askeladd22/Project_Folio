@@ -45,7 +45,17 @@ function M.advance(g,dt)
  s.phase=s.phase+dt*16
  s.energy=s.energy*math.exp(-dt*2.9)
  local pulse=s.pending
+ local targetRadius=math.min(2.55,1.55+.17*#g.held)
  if pulse then
+  -- Cup walls gradually close from the current scattered distribution;
+  -- an instantaneous hard radius would teleport distant held bodies.
+  local outer=targetRadius
+  for _,member in ipairs(g.held) do
+   local p=member.body.position
+   local dx,dy=p[1]-g.hand.x,p[2]-g.hand.y
+   outer=math.max(outer,math.sqrt(dx*dx+dy*dy)+radius(member)*.45+.10)
+  end
+  s.cup_radius=math.max(s.cup_radius or 0,outer)
   s.pending=nil
   for i,member in ipairs(g.held) do
    local vel=g.hold_velocity[i]
@@ -66,6 +76,9 @@ function M.advance(g,dt)
  -- The existing grip spring/contact solver remains responsible for motion
  -- and real collision separation; this is agitation, not a teleport.
  local energy=s.energy
+ if s.cup_radius then
+  s.cup_radius=math.max(targetRadius,s.cup_radius-4.6*dt)
+ end
  if energy<.015 or dt<=0 then
   if energy<.015 then s.energy=0 end
   return s.energy
@@ -92,7 +105,7 @@ function M.contain(g)
  if not s or s.energy<.06 then return end
  local h=g.hand
  local count=#g.held
- local cupRadius=math.min(2.55,1.55+.17*count)
+ local cupRadius=s.cup_radius or math.min(2.55,1.55+.17*count)
  for i,member in ipairs(g.held) do
   local p=member.body.position
   local v=g.hold_velocity[i]
