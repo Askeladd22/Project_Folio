@@ -33,7 +33,15 @@ All'avvio normale di Project Folio non modifica HUD, logica, 3D o impostazioni.
 ## Output e attendibilità
 
 - `gallery.html` apre una galleria locale di tutte le immagini,
-  organizzate per stato e risoluzione.
+  organizzate per stato e risoluzione. La casella **«Mostra hitbox reali»**
+  sovrappone in modo reversibile i rettangoli acquisiti dal controller
+  **nello stesso frame** dello screenshot: oro per i comandi attivi,
+  grigio tratteggiato per quelli disabilitati, blu per il tavolo 3D.
+  La galleria non altera gli screenshot PNG originali.
+- `hud/hud-usability-<risoluzione>-<stato>.hitboxes.tsv`
+  conserva ID, coordinate *screen-space* e stato abilitato di ciascun
+  controllo. Il programma verifica duplicati, dimensioni e limiti
+  dello schermo e li include nel manifesto.
 - `review-manifest.json` contiene SHA del commit, flag working tree sporco,
   data UTC, dimensioni dei PNG, byte e SHA-256.
 - `review-checklist.md` raccoglie i controlli **da compilare
@@ -66,8 +74,14 @@ Le modifiche di accessibilità applicate durante il frame
 Aprire la galleria sul computer Windows e compilare
 `review-checklist.md`, annotando eventuali anomalie e i frame
 relativi. Verificare anche manualmente puntamento ai D6,
-corrispondenza delle hitbox ai pulsanti, testo grande, contrasto alto,
+corrispondenza fra hitbox esportate e pulsanti **attivando la casella
+«Mostra hitbox reali»** nella galleria, testo grande, contrasto alto,
 animazioni ridotte e prestazioni/FPS in partita reale.
+
+Le hitbox provengono dai dati dell'interfaccia realmente in esecuzione,
+non da geometrie ricostruite in Python. La sovrapposizione controlla
+allineamento geometrico, **non prova che un click sia stato realmente
+eseguito o accettato**.
 
 **Un run con stato PASS garantisce solo che siano state ottenute
 immagini vere e complete alle dimensioni attese. Non certifica
