@@ -1,5 +1,18 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.18 — presa fisica di gruppo:**
+> l'audit Windows evidenziava una vera pila di D6.
+> Isolata la causa nel template `group_throw.lua`:
+> sei dadi in formazione **3+3 su due altezze**.
+> Ora sono separati in piano, in due file sfalsate,
+> con spazio fra i corpi e distanza verificata anche
+> nella proiezione della camera. Nessuna alterazione
+> del Farkle, del tiro singolo o del renderer.
+> Restano da ripetere la cattura Windows e i
+> controlli dinamici dopo il merge.
+>
+
+
 > **0.1.0-dev.17 — geometrie di input nella QA Windows:**
 > per ogni PNG la cattura salva le hitbox originali del
 > controller/modale, già scalate nello spazio schermo.
