@@ -48,6 +48,16 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+**Revisione grafica Windows della UI V2 attiva (0.1.0-dev.15):**
+eseguire `python scripts/capture_ui_v2_review.py` per acquisire
+32 screenshot reali LÖVE a 720p/1080p e ottenere una galleria
+HTML, un manifesto verificabile e una checklist di QA.
+Vedere [la guida alla revisione visiva](docs/UI_V2_VISUAL_REVIEW.md).
+La cattura non approva automaticamente l'aspetto; le prove
+fisiche con sei D6 e gli stati di punteggio diagnostici sono
+documentati separatamente. Gameplay e renderer invariati.
+
+
 Dalla `0.1.0-dev.14` anche le finestre di partita della UI V2
 (aiuto, combinazioni, medaglie, folio, menu run e ricompense)
 utilizzano etichette adattive, hover e separatori coerenti
