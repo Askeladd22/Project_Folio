@@ -1,5 +1,17 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.14 — modali Farkle:** dialoghi già sulla
+> UI V2 migliorati con tipografia coerente, etichette
+> con larghezza misurata e abbreviazione UTF-8,
+> hover e riga decorativa in testata; ricompense su
+> due schede illuminate con rettangoli dei pulsanti
+> invariati. Test headless per otto percorsi a
+> 720p/1080p/1440p, testo grande e contrasto alto.
+> Farkle, g3d, input, salvataggi e splash LÖVE
+> preservati. CI e QA grafica Windows da verificare.
+>
+
+
 > **0.1.0-dev.13 — sfida al Monaco:** scheda e
 > pannello risultato su pergamena condivisa, separatori,
 > testi adattati al font (anche big-text), hover su

@@ -10,6 +10,37 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.14] - 2026-11-01
+
+**Tipo:** finitura visiva delle finestre Farkle UI V2, senza modifiche alle meccaniche.
+
+### Modificato
+- Dialoghi di aiuto, combinazioni, folio, menu partita e
+  medaglie: tipografia coerente con il manoscritto, sottile
+  separatore ornamentale sotto l'intestazione e stato hover
+  sensibile alla risoluzione e al letterboxing.
+- Etichette dei comandi misurate sui font, con riduzione
+  della dimensione e abbreviazione UTF-8 sicura quando necessario
+  (compresi testi grandi e pulsanti lunghi delle combinazioni).
+- Pannello ricompense: due schede illuminate indipendenti per
+  le due scelte di dado o medaglia e separatore decorativo.
+- Nessun cambio degli ID delle azioni, delle funzioni dei pulsanti,
+  degli stati delle opzioni disabilitate, della modalità di
+  selezione o delle geometrie cliccabili.
+- Geometrie statiche del dialogo e delle due ricompense
+  verificate in un nuovo modulo indipendente dal rendering.
+
+### Test e limiti
+- `tests/ui_v2_modal_polish_test.lua`: otto percorsi di
+  rendering (help, choices, folio, run, medals, medaluse,
+  upgrade e reward-medal), ciascuno a 720p/1080p/1440p
+  con testo normale/grande e contrasto alto; controllo
+  dell'immutabilità del Farkle e delle hitbox.
+- Nessuna modifica a scoring, sei D6, g3d, bot, fisica,
+  salvataggi o splash originale LÖVE.
+- CI e verifica in gioco su Windows LÖVE da completare;
+  test headless non equivalgono a screenshot GPU.
+
 ## [0.1.0-dev.13] - 2026-11-01
 
 **Tipo:** modernizzazione esclusivamente visiva della sfida al Monaco.

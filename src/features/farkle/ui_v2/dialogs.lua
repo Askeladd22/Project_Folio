@@ -8,42 +8,80 @@ local Presentation=require('src.features.farkle.presentation')
 local FolioView=require('src.features.farkle.folio_view')
 local MenuSurface=require('src.features.ui_v2.menu_surface')
 local RuntimeUI=require('src.core.runtime_ui')
+local ModalLayout=require('src.features.farkle.ui_v2.modal_layout')
+local LabelFit=require('src.features.farkle.ui_v2.label_fit')
 -- Dialog/reward presenter for the canonical UI v2. This module owns modal hitboxes
 -- but never draws the old work surface or implements a fallback HUD.
 local V={};local fonts={}
-local ink={.12,.075,.035,1};local cream={.96,.90,.76,1};local green={.18,.30,.23,1};local red={.56,.13,.10,1}
+local ink={.24,.15,.09,1}
+local muted={.47,.33,.22,1}
+local gold={.57,.37,.13,1}
+local green={.18,.30,.23,1}
+local function sized(n)
+ return math.max(8,math.floor(n*math.min(1.35,RuntimeUI.scale())*
+  (RuntimeUI.big_text() and 1.16 or 1)+.5))
+end
+local function face(px)
+ fonts[px]=fonts[px] or
+  love.graphics.newFont('resources/font/IMFeENsc28P.ttf',px)
+ return fonts[px]
+end
+-- Body paragraphs must preserve their existing wraps and deliberate line
+-- breaks. Action labels instead use the measured single-line fitter below.
 local function txt(s,x,y,w,size,c,align)
- local g=love.graphics;fonts[size]=fonts[size] or g.newFont(size);g.setFont(fonts[size]);g.setColor(unpack(c or ink));g.printf(tostring(s),x,y,w,align or 'left')
+ local g=love.graphics
+ g.setFont(face(size))
+ g.setColor(unpack(c or ink))
+ g.printf(tostring(s),x,y,w,align or 'left')
+end
+local function fitted(s,r,preferred,minimum,color,align)
+ local g=love.graphics
+ local label,px=LabelFit.fit(s,function(text,n)
+  local f=face(n)
+  return f:getWidth(text),f:getHeight()
+ end,sized(preferred),sized(minimum),r.w,r.h)
+ if label=='' then return end
+ local f=face(px)
+ g.setFont(f)
+ g.setColor(unpack(color or ink))
+ g.printf(label,r.x,r.y+math.max(0,(r.h-f:getHeight())*.5),
+  r.w,align or 'center')
 end
 local function panel(x,y,w,h)
  MenuSurface.panel({x=x,y=y,w=w,h=h},
   {high_contrast=RuntimeUI.high_contrast()})
 end
+local function pointer_over(rect)
+ if not love.mouse or not love.mouse.getPosition then return false end
+ local mx,my=love.mouse.getPosition()
+ if type(mx)~='number' or type(my)~='number' then return false end
+ local vx,vy=Res.to_virtual(mx,my)
+ return MenuSurface.contains(rect,vx,vy)
+end
 local function button(u,id,label,x,y,w,h,on,fn,primary)
- local g=love.graphics
- local dieIndicator=id:match('^die%d$')
- if not dieIndicator or primary then
-  MenuSurface.item({x=x,y=y,w=w,h=h},
-   {active=primary and on,primary=primary,disabled=not on})
- elseif id~='die1' then
-  g.setColor(.55,.39,.22,1)
-  g.line(x-5,y+12,x-5,y+h-12)
- end
- local size=w<215 and 22 or 24
- fonts[size]=fonts[size] or g.newFont(size)
- local _,lines=fonts[size]:getWrap(label,w-28)
- txt(label,x+14,y+(h-#lines*fonts[size]:getHeight())/2,
-  w-28,size,on and ink or {.49,.44,.36,1})
+ local rect={x=x,y=y,w=w,h=h}
+ -- Same authoritative hitboxes/callbacks as the previous UI V2.
+ -- Hover can never activate a disabled option.
+ MenuSurface.item(rect,{active=on and (primary or pointer_over(rect)),
+  primary=primary,disabled=not on})
+ fitted(label,{x=x+14,y=y+6,w=w-28,h=h-12},
+  w<215 and 22 or 24,13,on and ink or muted,'center')
  u.buttons[id]={x=x,y=y,w=w,h=h,enabled=on,fn=fn,label=label}
 end
 local function reward(u)
  local s=u.game;local g=love.graphics
  Res.begin_ui();g.setColor(.06,.035,.015,.78);g.rectangle('fill',0,0,1920,1080)
  u.buttons={};u.modalButtons={}
- panel(390,210,1140,650)
+ local area=ModalLayout.reward_frame
+ panel(area.x,area.y,area.w,area.h)
  txt('COMMISSION DELIVERED',440,245,1040,26,green)
  txt(s.phase=='upgrade' and 'Choose your die' or 'Choose your medal',440,295,1040,43)
  txt('Your choice carries into the next commission.',440,365,1040,25)
+ MenuSurface.rule(ModalLayout.reward_rule.x,ModalLayout.reward_rule.y,
+  ModalLayout.reward_rule.w,RuntimeUI.high_contrast() and 1 or .85)
+ for _,card in ipairs(ModalLayout.reward_cards) do
+  MenuSurface.panel(card,{high_contrast=RuntimeUI.high_contrast()})
+ end
  if s.phase=='upgrade' then
   txt('WEIGHTED DIE',450,465,470,29)
   txt('Die 1 favours rolling a 1.\nIts numbered faces stay unchanged.',450,520,470,26)
@@ -76,9 +114,14 @@ function V.overlay(u,hits)
 if H.reward_active(s) then reward(u);return end
  if not u.modal then return end
  Res.begin_ui();g.setColor(.05,.025,.01,.82);g.rectangle('fill',0,0,1920,1080)
- panel(390,145,1140,800);u.modalButtons={}
+ local area=ModalLayout.frame
+ panel(area.x,area.y,area.w,area.h);u.modalButtons={}
  local saved=u.buttons;u.buttons=u.modalButtons
- button(u,'close','Close [Esc]',1295,175,205,56,true,function() u.modal=nil end)
+ local close=ModalLayout.close
+ button(u,'close','Close [Esc]',close.x,close.y,close.w,close.h,
+  true,function() u.modal=nil end)
+ MenuSurface.rule(ModalLayout.header_rule.x,ModalLayout.header_rule.y,
+  ModalLayout.header_rule.w,RuntimeUI.high_contrast() and 1 or .8)
  if u.modal=='run' then
   txt('RUN MENU',425,180,800,30)
   txt('Starting a new run abandons the current one.',440,285,1040,26)
