@@ -34,7 +34,7 @@ local function normal(a,b,i,j)
  local d=math.sqrt(dx*dx+dy*dy+dz*dz)
  if d<1e-8 then
   local theta=(i*2.3999632297+j*1.6180339887)
-  return math.cos(theta),math.sin(theta),.18,1
+  return math.cos(theta),math.sin(theta),.18,0
  end
  return dx/d,dy/d,dz/d,d
 end
