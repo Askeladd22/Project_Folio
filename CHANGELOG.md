@@ -10,6 +10,40 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.18] - 2026-11-01
+
+**Tipo:** correzione della disposizione fisica dei dadi durante la presa multipla (segnalazione utente da audit Windows).
+
+### Corretto
+- `group_throw.lua`: eliminato il gruppo verticale su due livelli
+  (heap 3+3), che ammucchiava i sei dadi nello stesso punto
+  apparente quando venivano afferrati con la presa fisica.
+- La presa multipla guida i **sei corpi reali** verso una
+  formazione aperta, in due file leggermente sfalsate
+  e alla stessa altezza, centrata sotto il puntatore.
+- Anche le prese da 2 a 5 dadi adottano disposizioni
+  in piano, senza più strati nascosti dalla telecamera.
+- La distanza fra i corpi continua a derivare dal
+  raggio di collisione; i limiti del vassoio e l'intero
+  gruppo sono applicati senza compressioni locali.
+
+### Test e limiti
+- Nuovo `tests/group_grip_open_formation_test.lua`: per 2–6
+  dadi, diverse distanze e inclinazioni della camera
+  richiede separazione reale e **visibile in proiezione**,
+  evitando l'occlusione che i precedenti test 3D ignoravano.
+- Esteso `tests/marquee_group_throw_test.lua` con assert
+  sui target di ogni corpo afferrato e sull'assenza
+  di livelli impilati.
+- La correzione riguarda la cinematica temporanea della
+  **presa fisica multipla**, non il solver delle collisioni
+  in volo, lo scoring, la distribuzione delle facce,
+  la presa singola, le hot dice, il rendering g3d
+  o il menu/splash LÖVE.
+- Verifica dinamica Windows da ripetere dopo la CI:
+  la nuova disposizione non è ancora documentata con
+  screenshot del PC dell'utente.
+
 ## [0.1.0-dev.17] - 2026-11-01
 
 **Tipo:** diagnostica visiva delle vere hitbox UI V2 (solo test/report), successiva al polish dei testi dev.16.
