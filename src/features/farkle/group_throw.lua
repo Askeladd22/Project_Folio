@@ -20,18 +20,21 @@ local function spacing_for(held)
  return math.max(1.12,2*radius+.18)
 end
 
--- Deliberately irregular TWO-LEVEL heap, not an evenly spaced 3x2 grid.
--- The templates are in *collision spacing* units. All die centers remain
--- separated in 3D, so stacked dice neither interpenetrate while held nor
--- burst apart violently on release. D6 is a 3 + 3 triangular pile.
+-- OPEN grip formation: the previous 3+3 vertical heap made six physical
+-- dice visually occupy the same place. During a group grab they now fan out
+-- into staggered rows at a common hand height. Templates are expressed in
+-- units of collision-safe spacing, not pixels or fixed texture dimensions.
+-- Each die remains an actual independent rigid body, NEVER a fake mesh.
+-- Keeping z equal also avoids depth-based occlusion in the pitched camera.
 local layouts={
- [2]={{-.58,0,0},{.58,0,0}},
- [3]={{-.60,-.22,0},{.60,-.22,0},{0,.20,1.08}},
- [4]={{-.78,-.35,0},{.78,-.35,0},{0,.82,0},{0,-.07,1.15}},
- [5]={{-.78,-.35,0},{.78,-.35,0},{0,.82,0},
-       {-.55,-.05,1.15},{.55,-.05,1.15}},
- [6]={{-.78,-.35,0},{.78,-.35,0},{0,.82,0},
-       {-.66,.20,1.10},{.66,.20,1.10},{0,-.83,1.13}}
+ [2]={{-.95,0,0},{.95,0,0}},
+ [3]={{-1.55,-.20,0},{0,.28,0},{1.55,-.20,0}},
+ [4]={{-.95,-.95,0},{.95,-.95,0},
+      {-.95,.95,0},{.95,.95,0}},
+ [5]={{-1.55,-.92,0},{0,-.95,0},{1.55,-.92,0},
+      {-.78,.96,0},{.78,.96,0}},
+ [6]={{-1.65,-.91,0},{0,-1.09,0},{1.65,-.91,0},
+      {-1.65,.93,0},{0,1.04,0},{1.65,.93,0}}
 }
 function G.formation(count,spacing)
  assert(type(count)=='number' and count>=2 and count%1==0)
@@ -126,12 +129,12 @@ function G.move(g,x,y,time,view,scale,bounds)
  for j,member in ipairs(g.held) do
   if not Single.track(member,x,y,time) then return false end
   local off=g.offsets[j]
-  -- Layering is real 3D displacement. Preserve a high enough hand pose
-  -- that every upper die remains below the ceiling, even with large dice.
+  -- Every die shares a hand-height plane: no hidden second tier piled
+  -- behind the others. Their per-body offsets stay separated in XY.
   local top=(bounds and bounds.height or 10)-.85
   local lift=math.max(2.35,math.min(4.0,member.original.position[3]+1.3))
   targets[j]={x=cx+off.x,y=cy+off.y,
-   z=math.min(top,lift+(off.z or 0))}
+   z=math.min(top,lift)}
  end
  g.x,g.y=x,y
  g.targets=targets
