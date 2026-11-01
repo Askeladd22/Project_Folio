@@ -87,41 +87,38 @@ now=now+.05;U:mousemoved(centers[1].x+45,centers[1].y+30)
 U:update(.03)
 assert(dice[1].body.position[1]~=originalX,'group bodies must physically move')
 assert(dice[2].body._grabbed and dice[6].body._grabbed,'entire group must be in hand')
--- Dice converge toward the right-clicked anchor, not their old
--- scattered positions; merely holding without moving keeps gathering them.
+-- A single elastic hand target, not a fixed 3+3 stack or 3x2 grid.
+-- Actual rigid bodies gradually converge, while held-stage contacts
+-- maintain separation in the production physics coordinate system.
 local grip=U.mouseThrow
-assert(grip.targets and #grip.targets==6)
+assert(grip.hand and #grip.hold_velocity==6)
 assert(math.abs(grip.anchor_x-dice[1].body.position[1])<5,
- 'anchor should be derived from the clicked physical die')
-for i=1,30 do U:update(.03) end
-for j,member in ipairs(grip.held) do
- local pos,target=member.body.position,grip.targets[j]
- assert(math.abs(pos[1]-target.x)<.01 and math.abs(pos[2]-target.y)<.01,
-  'all held physical dice must converge under the cursor')
+ 'hand anchor must be derived from the clicked physical die')
+for i=1,70 do U:update(.03) end
+local meanDistance=0
+for _,member in ipairs(grip.held) do
+ local pos=member.body.position
+ local dx,dy=pos[1]-grip.hand.x,pos[2]-grip.hand.y
+ meanDistance=meanDistance+math.sqrt(dx*dx+dy*dy)
 end
-local compactX=math.abs(dice[6].body.position[1]-dice[1].body.position[1])
-assert(compactX>3 and compactX<5,
- 'six held dice must form an open, bounded grip rather than a heap')
-for i=1,#grip.targets do
- for j=i+1,#grip.targets do
-  local a,b=grip.targets[i],grip.targets[j]
-  local dx,dy=a.x-b.x,a.y-b.y
-  assert(math.sqrt(dx*dx+dy*dy)>=1.55,
-   'real group targets must not collapse together in the hand')
-  assert(math.abs(a.z-b.z)<1e-9,
-   'group grab must not stack some D6 behind or on top of others')
- end
+assert(meanDistance/#grip.held<3.2,
+ 'elastic hand must gather real dice toward the same point')
+local heldPositions={}
+for _,member in ipairs(grip.held) do
+ local p=member.body.position
+ heldPositions[#heldPositions]={x=p[1],y=p[2],z=p[3]}
 end
--- Group boundaries clamp the constellation as a whole, never compress it.
+assert(Group.clearance(heldPositions)>.42,
+ 'held-stage contacts must not collapse the D6 into one point')
+
+-- Hand motion toward a wall is bounded, but no rigid formation is imposed.
 now=now+.02;U:mousemoved(centers[1].x+5000,centers[1].y+30)
-local t=U.mouseThrow.targets
-local step=U.mouseThrow.offsets
-assert(math.abs((t[6].x-t[1].x)-(step[6].x-step[1].x))<1e-9,
- 'clamped group motion must preserve non-overlapping formation offsets')
-for _,target in ipairs(t) do
- assert(target.x<=9.2 and target.x>=-9.2 and
-        target.y<=3.8 and target.y>=-3.8,
-  'all grouped dice targets must stay inside the physical board')
+for i=1,45 do U:update(.03) end
+for _,member in ipairs(grip.held) do
+ local p=member.body.position
+ assert(p[1]<=9.2 and p[1]>=-9.2 and
+        p[2]<=3.8 and p[2]>=-3.8,
+  'all physical group bodies must remain inside the tray')
 end
 now=now+.02;U:mousemoved(centers[1].x+45,centers[1].y+30)
 now=now+.06;U:mousereleased(centers[1].x+90,centers[1].y+35,2)
@@ -157,13 +154,15 @@ now=now+.1
 U:mousepressed(110,205,2)
 assert(U.mouseThrow and U.mouseThrow.group and #U.mouseThrow.held==6,
  'right-clicking empty board must gather all previously selected dice')
-for j=1,30 do U:update(.03) end
-for j,member in ipairs(U.mouseThrow.held) do
- local target=U.mouseThrow.targets[j]
- assert(math.abs(member.body.position[1]-target.x)<.02 and
-        math.abs(member.body.position[2]-target.y)<.02,
-  'all selected dice must converge even if the pointer stays motionless')
+for j=1,70 do U:update(.03) end
+local hand=assert(U.mouseThrow.hand)
+local sum=0
+for _,member in ipairs(U.mouseThrow.held) do
+ local p=member.body.position
+ sum=sum+math.sqrt((p[1]-hand.x)^2+(p[2]-hand.y)^2)
 end
+assert(sum/6<3.2,
+ 'all selected dice must elastically converge with a motionless hand')
 now=now+.08
 U:mousereleased(110,205,2)
 assert(#ends==6 and starts==1,'blank-area group grip is one official throw')
