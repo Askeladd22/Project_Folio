@@ -1,5 +1,17 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.17 — geometrie di input nella QA Windows:**
+> per ogni PNG la cattura salva le hitbox originali del
+> controller/modale, già scalate nello spazio schermo.
+> La galleria mostra/nasconde i rettangoli con colori
+> separati per azioni abilitate, disabilitate e tavolo g3d.
+> I test controllano ID duplicati e aree fuori finestra,
+> ma la **QA grafica Windows rimane da svolgere**.
+> Nessun cambio a input, gameplay, g3d o splash LÖVE.
+> [Guida](UI_V2_VISUAL_REVIEW.md).
+>
+
+
 > **0.1.0-dev.16 — tipografia delle modali:**
 > fitting con dimensioni reali del font e wrapping
 > limitato dall'altezza del pannello per aiuto,
