@@ -1,5 +1,21 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.18 — presa fisica ispirata a FPS:**
+> dal feedback dell'audit Windows si è individuata
+> la formazione 3+3 in `group_throw.lua` come causa
+> dell'ammucchiamento. La correzione usa un
+> punto di presa condiviso, attrazione elastica
+> smorzata e separazione fra i corpi durante la presa,
+> anziché un mucchio o una griglia fissa.
+> Il rilascio conserva le pose effettivamente raggiunte
+> e prosegue nel solver di gioco esistente.
+> Test di movimento e integrità, senza sostituire
+> il motore con la versione nativa FPS sperimentale.
+> QA grafica e dinamica Windows ancora da effettuare.
+>
+
+
+
 > **0.1.0-dev.17 — geometrie di input nella QA Windows:**
 > per ogni PNG la cattura salva le hitbox originali del
 > controller/modale, già scalate nello spazio schermo.

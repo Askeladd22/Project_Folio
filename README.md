@@ -48,6 +48,19 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+La `0.1.0-dev.18` migliora la **presa fisica multipla**
+dei dadi ispirandosi a Free Physics Solver: invece di formare
+una pila 3+3 o una griglia rigida, i sei corpi reali
+inseguono con un moto elastico smorzato un punto di presa
+comune. I contatti temporanei della mano evitano il
+collasso in un unico punto; il rilascio preserva le
+posizioni dei singoli D6 e torna al solver esistente.
+La presa singola, Farkle, g3d, il bot e lo splash LÖVE
+rimangono invariati. Occorre ancora una prova di movimento
+reale su Windows.
+
+
+
 Dalla `0.1.0-dev.17` la
 [galleria per la revisione visiva Windows](docs/UI_V2_VISUAL_REVIEW.md)
 può mostrare **le vere hitbox del controller** sovrapposte
