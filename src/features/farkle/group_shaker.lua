@@ -92,6 +92,13 @@ function M.advance(g,dt)
   v[1]=clamp(v[1]+(-dy*.65+math.cos(phase))*swirl,-12,12)
   v[2]=clamp(v[2]+(dx*.65+math.sin(phase))*swirl,-12,12)
   v[3]=clamp(v[3]+math.sin(phase*1.25)*energy*13*dt,-12,12)
+  -- Single.track updates the ordinary per-die spin at each mouse sample.
+  -- Keep the cup's distinct tumble active throughout the energy window,
+  -- not only at the instant of a reversing gesture.
+  local a=member.angular
+  a[1]=clamp(a[1]+math.sin(phase)*energy*32*dt,-14,14)
+  a[2]=clamp(a[2]+math.cos(phase*.87)*energy*32*dt,-14,14)
+  a[3]=clamp(a[3]+math.sin(phase*1.13)*energy*22*dt,-10,10)
  end
  return energy
 end
