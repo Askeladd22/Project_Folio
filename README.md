@@ -48,6 +48,15 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+Dalla `0.1.0-dev.16` la [galleria di revisione visiva Windows](docs/UI_V2_VISUAL_REVIEW.md)
+consente di sovrapporre agli screenshot **le vere hitbox del
+controller**, esportate durante ogni frame LÖVE. Oro = pulsante
+abilitato, grigio = disabilitato, blu = area dei sei D6.
+La vista diagnostica è reversibile e non modifica le immagini o
+i controlli di gioco. Gli screenshot vanno ancora acquisiti e
+approvati sul PC Windows.
+
+
 **Revisione grafica Windows della UI V2 attiva (0.1.0-dev.15):**
 eseguire `python scripts/capture_ui_v2_review.py` per acquisire
 32 screenshot reali LÖVE a 720p/1080p e ottenere una galleria
