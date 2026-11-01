@@ -1,16 +1,19 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
-> **0.1.0-dev.18 — presa fisica di gruppo:**
-> l'audit Windows evidenziava una vera pila di D6.
-> Isolata la causa nel template `group_throw.lua`:
-> sei dadi in formazione **3+3 su due altezze**.
-> Ora sono separati in piano, in due file sfalsate,
-> con spazio fra i corpi e distanza verificata anche
-> nella proiezione della camera. Nessuna alterazione
-> del Farkle, del tiro singolo o del renderer.
-> Restano da ripetere la cattura Windows e i
-> controlli dinamici dopo il merge.
+> **0.1.0-dev.18 — presa fisica ispirata a FPS:**
+> dal feedback dell'audit Windows si è individuata
+> la formazione 3+3 in `group_throw.lua` come causa
+> dell'ammucchiamento. La correzione usa un
+> punto di presa condiviso, attrazione elastica
+> smorzata e separazione fra i corpi durante la presa,
+> anziché un mucchio o una griglia fissa.
+> Il rilascio conserva le pose effettivamente raggiunte
+> e prosegue nel solver di gioco esistente.
+> Test di movimento e integrità, senza sostituire
+> il motore con la versione nativa FPS sperimentale.
+> QA grafica e dinamica Windows ancora da effettuare.
 >
+
 
 
 > **0.1.0-dev.17 — geometrie di input nella QA Windows:**
