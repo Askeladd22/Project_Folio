@@ -10,6 +10,33 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.13] - 2026-11-01
+
+**Tipo:** modernizzazione esclusivamente visiva della sfida al Monaco.
+
+### Modificato
+- Scheda della sfida al Monaco allineata alle superfici
+  pergamena e inchiostro della UI 2.0, con separatori
+  illuminati, dati punteggio/mano/meta e ultimo tiro leggibili.
+- Testi misurati sulle dimensioni del font, con riduzione
+  controllata e troncamento UTF-8 sicuro anche in
+  modalità testo grande.
+- Pannello di vittoria/sconfitta/pareggio con pergamena,
+  gerarchia tipografica coerente e pulsante Riprova con hover.
+  La sua hitbox resta **esattamente** x=780..1130, y=540..585.
+- Geometrie della scheda e del pannello finale isolate in un
+  modulo di sola presentazione, con verifica degli ingombri.
+
+### Verifiche e limiti
+- `tests/bot_duel_parchment_view_test.lua`: stato live e finale,
+  vittoria/Monaco/pareggio, 720p/1080p/1440p,
+  testo grande, contrasto, bilanciamento grafico,
+  richiamo dell'animazione e hitbox Riprova invariata.
+- Nessuna modifica al modello dei duelli, bot, scoring, dadi g3d,
+  fisica, camera, salvataggi, movimento della miniatura o
+  splash rosa/azzurro con cuore del motore LÖVE.
+- CI e screenshot in-game Windows LÖVE ancora da verificare.
+
 ## [0.1.0-dev.12] - 2026-11-01
 
 **Tipo:** rifinitura esclusivamente grafica della composizione HUD UI 2.0.
