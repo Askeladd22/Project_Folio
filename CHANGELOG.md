@@ -12,37 +12,42 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 
 ## [0.1.0-dev.18] - 2026-11-01
 
-**Tipo:** correzione della disposizione fisica dei dadi durante la presa multipla (segnalazione utente da audit Windows).
+**Tipo:** correzione del raggruppamento fisico dei dadi durante la presa multipla, ispirata al comportamento di Free Physics Solver.
 
 ### Corretto
-- `group_throw.lua`: eliminato il gruppo verticale su due livelli
-  (heap 3+3), che ammucchiava i sei dadi nello stesso punto
-  apparente quando venivano afferrati con la presa fisica.
-- La presa multipla guida i **sei corpi reali** verso una
-  formazione aperta, in due file leggermente sfalsate
-  e alla stessa altezza, centrata sotto il puntatore.
-- Anche le prese da 2 a 5 dadi adottano disposizioni
-  in piano, senza più strati nascosti dalla telecamera.
-- La distanza fra i corpi continua a derivare dal
-  raggio di collisione; i limiti del vassoio e l'intero
-  gruppo sono applicati senza compressioni locali.
+- Rimossa la formazione artificiale dei sei dadi in pila 3+3
+  e abbandonata la successiva griglia rigida come soluzione finale.
+- Tutti i corpi fisici reali inseguono lo **stesso punto mano**
+  con un'attrazione elastica smorzata; durante la presa
+  ricevono separazione di contatto temporanea a coppie,
+  così non collassano in un unico punto.
+- Anche senza spostare il puntatore la presa si raccoglie
+  dinamicamente; muovendo la mano, i dadi la inseguono
+  senza essere incollati ad una formazione predefinita.
+- Il rilascio restituisce ciascun corpo al solver di volo
+  **dalla sua posizione effettiva**; non lo teletrasporta
+  nella disposizione del tiro singolo o su una griglia.
+- Conservati selezione multipla, inclusione/esclusione
+  dei D6, parametri della fisica libera e tiro ufficiale
+  con valori Farkle calcolati dopo l'assestamento.
 
 ### Test e limiti
-- Nuovo `tests/group_grip_open_formation_test.lua`: per 2–6
-  dadi, diverse distanze e inclinazioni della camera
-  richiede separazione reale e **visibile in proiezione**,
-  evitando l'occlusione che i precedenti test 3D ignoravano.
-- Esteso `tests/marquee_group_throw_test.lua` con assert
-  sui target di ogni corpo afferrato e sull'assenza
-  di livelli impilati.
-- La correzione riguarda la cinematica temporanea della
-  **presa fisica multipla**, non il solver delle collisioni
-  in volo, lo scoring, la distribuzione delle facce,
-  la presa singola, le hot dice, il rendering g3d
-  o il menu/splash LÖVE.
-- Verifica dinamica Windows da ripetere dopo la CI:
-  la nuova disposizione non è ancora documentata con
-  screenshot del PC dell'utente.
+- Test `tests/group_grip_open_formation_test.lua` aggiornato
+  per movimento elastico, contatti fra 2–6 corpi,
+  limiti del vassoio, Esc, rilascio senza scatti
+  e centri inizialmente coincidenti.
+- Test `tests/marquee_group_throw_test.lua` aggiornato
+  dal vecchio target fisso ai corpi realmente in movimento.
+- Test storico `tests/tabletop_pile_zoom_test.lua`
+  non impone più la pila 3+3 e verifica invece
+  l'integrazione della nuova presa con lo zoom.
+- I risultati di `experiments/physics_lab/` restano un
+  riferimento, **senza importare il solver nativo FPS**
+  sperimentale in produzione. Il movimento di presa è
+  una dinamica compatibile in Lua, non una sostituzione
+  integrale della fisica del gioco.
+- La prova visiva/dinamica su Windows deve essere ripetuta:
+  CI/headless non possono confermare ancora la resa finale.
 
 ## [0.1.0-dev.17] - 2026-11-01
 
