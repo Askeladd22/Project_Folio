@@ -46,7 +46,13 @@ function T.track(g,x,y,time)
  g.x,g.y,g.t=x,y,math.max(g.t,time)
  -- A group release may request the SAME pointer sample twice in one frame.
  -- Preserve the last actual flick spin rather than resetting it to idle.
- if elapsed>.0001 and (math.abs(dx)+math.abs(dy))>.01 then
+ -- Multi-die grab is driven by one elastic hand target. Ordinary
+ -- mouse movement MUST NOT also impose a shared angular velocity on each
+ -- die: that made all six visibly roll with the direction of the drag,
+ -- drowning out the independent contact/shaker tumble. Single-die
+ -- handling retains its existing gesture-driven rotation.
+ if not g.group_hold and elapsed>.0001 and
+    (math.abs(dx)+math.abs(dy))>.01 then
   local dt=math.max(.001,math.min(.05,elapsed))
   g.angular[1]=clamp(2.0+dy*.050/dt,-13,13)
   g.angular[2]=clamp(1.4+dx*.050/dt,-13,13)
@@ -92,9 +98,13 @@ function T.tick(g,dt)
  b.velocity[1],b.velocity[2],b.velocity[3]=0,0,0
  b.angular[1],b.angular[2],b.angular[3]=g.angular[1],g.angular[2],g.angular[3]
  b:update(dt) -- physically rotate the true mesh vertices, no translation
- g.angular[1]=g.angular[1]*(.99^ (dt*60))
- g.angular[2]=g.angular[2]*(.99^ (dt*60))
- g.angular[3]=g.angular[3]*(.99^ (dt*60))
+ -- After an actual shake the held-group spin must settle promptly
+ -- when the player stops. This changes only the group hold; the
+ -- established single-die handling is intentionally unchanged.
+ local decay=g.group_hold and .92 or .99
+ g.angular[1]=g.angular[1]*(decay^ (dt*60))
+ g.angular[2]=g.angular[2]*(decay^ (dt*60))
+ g.angular[3]=g.angular[3]*(decay^ (dt*60))
 end
 
 function T.cancel(g)
