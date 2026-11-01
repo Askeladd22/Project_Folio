@@ -5,6 +5,7 @@ Screenshots prove frames were captured, NOT that visual QA has passed.
 """
 from __future__ import annotations
 import argparse
+import csv
 from datetime import datetime, timezone
 import hashlib
 import html
@@ -62,6 +63,50 @@ def png_dimensions(file: Path) -> tuple[int, int]:
     return width, height
 
 
+def read_hitboxes(path: Path, width: int, height: int) -> list[dict]:
+    """Verify the REAL controller rectangles exported for this PNG frame.
+
+    This file is a companion screenshot audit, not a second gameplay
+    hit-test implementation. Values are already mapped to screen pixels
+    by the running LÖVE resolution manager.
+    """
+    if not path.is_file():
+        raise FileNotFoundError(f"Missing controller hitbox snapshot: {path.name}")
+    required = {"id", "x", "y", "w", "h", "enabled", "source"}
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        if set(reader.fieldnames or ()) != required:
+            raise ValueError(f"Invalid hitbox TSV schema: {path.name}")
+        result = []
+        seen = set()
+        for row in reader:
+            name = row["id"]
+            if not name or name in seen or any(c in name for c in "<>&"):
+                raise ValueError(f"Duplicate/invalid control ID in {path.name}: {name}")
+            seen.add(name)
+            if row["enabled"] not in ("0", "1") or row["source"] not in (
+                "game", "modal", "reward", "tray"
+            ):
+                raise ValueError(f"Bad hitbox role for {name}")
+            coords = [float(row[key]) for key in ("x", "y", "w", "h")]
+            x, y, w, h = coords
+            if not all(__import__("math").isfinite(v) for v in coords):
+                raise ValueError(f"Non-finite hitbox for {name}")
+            if w <= 0 or h <= 0 or x < -0.05 or y < -0.05 or (
+                x + w > width + 0.05 or y + h > height + 0.05
+            ):
+                raise ValueError(f"Off-screen control {name} in {path.name}")
+            if (name == "__tray__") != (row["source"] == "tray"):
+                raise ValueError(f"Tray metadata incorrectly classified: {name}")
+            result.append({
+                "id": name, "x": x, "y": y, "w": w, "h": h,
+                "enabled": row["enabled"] == "1", "source": row["source"],
+            })
+    if not any(r["source"] != "tray" for r in result):
+        raise ValueError(f"Missing controller actions in {path.name}")
+    return result
+
+
 def collect_frames(root: Path) -> list[dict]:
     hud = root / "hud"
     result = []
@@ -76,8 +121,12 @@ def collect_frames(root: Path) -> list[dict]:
                 raise ValueError(
                     f"{name}: expected {width}x{height}, got {dimensions}"
                 )
+            hitbox_name = name[:-4] + ".hitboxes.tsv"
+            boxes = read_hitboxes(hud / hitbox_name, width, height)
             result.append({
                 "path": f"hud/{name}",
+                "hitbox_path": f"hud/{hitbox_name}",
+                "hitboxes": boxes,
                 "resolution": f"{width}x{height}",
                 "scene": scene,
                 "bytes": path.stat().st_size,
@@ -92,9 +141,28 @@ def report_html(frames: list[dict], commit: str) -> str:
         src = html.escape(frame["path"], quote=True)
         caption = html.escape(frame["scene"].replace("-", " ").title())
         resolution = html.escape(frame["resolution"])
+        width, height = (int(n) for n in frame["resolution"].split("x"))
+        overlays = []
+        for box in frame["hitboxes"]:
+            role = box["source"]
+            state = " enabled" if box["enabled"] else " disabled"
+            label = html.escape(box["id"])
+            x, y, w, h = (box[k] for k in ("x", "y", "w", "h"))
+            overlays.append(
+                f'<g class="hitbox {role}{state}">'
+                f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" />'
+                f'<text x="{x + 5:g}" y="{y + 19:g}">{label}</text></g>'
+            )
+        overlay = (
+            f'<svg class="overlay" viewBox="0 0 {width} {height}" '
+            f'preserveAspectRatio="none" aria-hidden="true">'
+            + "".join(overlays) + "</svg>"
+        )
         cells.append(
-            f'<figure><a href="{src}"><img loading="lazy" src="{src}" '
+            f'<figure><div class="image-stage">'
+            f'<a href="{src}"><img loading="lazy" src="{src}" '
             f'alt="{caption} at {resolution}"></a>'
+            f'{overlay}</div>'
             f'<figcaption><strong>{caption}</strong> · {resolution}</figcaption></figure>'
         )
     return (
@@ -105,13 +173,26 @@ def report_html(frames: list[dict], commit: str) -> str:
         "main{max-width:1600px;margin:auto}section{display:grid;"
         "grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1.25rem}"
         "figure{margin:0;background:#3b3024;padding:12px;border-radius:8px}"
-        "img{max-width:100%;height:auto;border:1px solid #ad9162}"
-        "figcaption{padding-top:8px}p{line-height:1.5}</style>"
+        ".image-stage{position:relative;outline:1px solid #ad9162}"
+        "img{display:block;width:100%;height:auto}"
+        ".overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}"
+        "#toggle-hitboxes:not(:checked)~section .overlay{display:none}"
+        ".hitbox rect{fill:#ffd04c16;stroke:#ffca47;stroke-width:3}"
+        ".hitbox text{fill:#fff9e8;font:bold 19px system-ui;paint-order:stroke;"
+        "stroke:#211a12;stroke-width:4;stroke-linejoin:round}"
+        ".hitbox.disabled rect{stroke:#aea08b;stroke-dasharray:12 7}"
+        ".hitbox.tray rect{stroke:#53b9ff;fill:#53b9ff16;stroke-width:4}"
+        ".hitbox.tray text{fill:#d4edff}"
+        "figcaption{padding-top:8px}p{line-height:1.5}"
+        "label{cursor:pointer;display:inline-block;margin-bottom:1.25rem}</style>"
         "<main><h1>Project Folio — UI V2</h1>"
         f"<p>Commit: <code>{html.escape(commit)}</code>. "
         "Acquisizioni reali LÖVE, <b>non ancora approvate visivamente</b>. "
         "Le immagini *fixture* simulano solo la risposta dei dadi per "
         "mostrare una schermata del gioco; non certificano la fisica.</p>"
+        '<input type="checkbox" id="toggle-hitboxes"> '
+        '<label for="toggle-hitboxes">Mostra hitbox reali (oro: attive; '
+        'grigio: disabilitate; blu: tavolo 3D)</label>'
         "<section>" + "\n".join(cells) + "</section></main></html>"
     )
 
@@ -132,7 +213,7 @@ Annota PASS / FAIL / N/A, screenshot e osservazioni per ciascun punto:
 - [ ] Ricompense: due schede visibili e pulsanti con buon contrasto
 - [ ] Menu partita, catalogo medaglie e pannello Monaco senza sovrapposizioni
 - [ ] Accessibilità: big text, high contrast, reduced animations realmente percepibili
-- [ ] Puntatore/click: hitbox e hover corrispondenti alle regioni visive
+- [ ] Puntatore/click: attivare `Mostra hitbox reali` nella galleria e verificare allineamento oro/grigio/blu
 - [ ] Nessuna regressione di g3d, input fisico, scoring, Farkle e rendering
 - [ ] FPS e tempi di rendering rilevati sul PC Windows (se disponibili)
 
@@ -190,6 +271,8 @@ def main() -> None:
         "notes": [
             "Physical group screenshots use the real production controller and g3d.",
             "The *-fixture phases use injected scoring outcomes with real Farkle rules.",
+            "Action rectangles are exported by the active LÖVE controller in screen pixels for each shot.",
+            "The gallery can overlay these rectangles; they do not prove a physical click happened.",
             "A successful capture does not prove appearance, pointer accuracy or FPS.",
         ],
     }
