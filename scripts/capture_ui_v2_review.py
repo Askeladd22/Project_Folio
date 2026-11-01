@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 import hashlib
 import html
 import json
+import math
 from pathlib import Path
 import struct
 import subprocess
@@ -90,7 +91,7 @@ def read_hitboxes(path: Path, width: int, height: int) -> list[dict]:
                 raise ValueError(f"Bad hitbox role for {name}")
             coords = [float(row[key]) for key in ("x", "y", "w", "h")]
             x, y, w, h = coords
-            if not all(__import__("math").isfinite(v) for v in coords):
+            if not all(math.isfinite(v) for v in coords):
                 raise ValueError(f"Non-finite hitbox for {name}")
             if w <= 0 or h <= 0 or x < -0.05 or y < -0.05 or (
                 x + w > width + 0.05 or y + h > height + 0.05
