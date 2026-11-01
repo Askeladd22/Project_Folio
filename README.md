@@ -48,6 +48,18 @@ sostituisce la sfida beta al Monaco.
 
 ## Interfaccia di gioco — UI 2.0 unica
 
+**Presa multipla e scuotimento (0.1.0-dev.19):**
+seleziona i D6 con il rettangolo, afferrali con il tasto
+destro e scuoti il mouse avanti e indietro. Dopo due
+inversioni rapide si attiva un **bossolo fisico virtuale**:
+i dadi acquistano turbolenza, rotazione individuale e
+si urtano mentre la mano li trattiene. L'effetto sfuma
+quando smetti di scuotere. Rilasciando il tasto destro,
+i corpi passano al solver originale e si lanciano
+fisicamente. Nessuna modifica al punteggio Farkle;
+il bossolo è invisibile, non un modello grafico aggiunto.
+
+
 La `0.1.0-dev.18` migliora la **presa fisica multipla**
 dei dadi ispirandosi a Free Physics Solver: invece di formare
 una pila 3+3 o una griglia rigida, i sei corpi reali

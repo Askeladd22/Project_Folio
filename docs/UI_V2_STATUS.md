@@ -1,5 +1,19 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+> **0.1.0-dev.19 — shaker durante la presa:**
+> attivazione dopo due inversioni rapide del mouse,
+> riconosciute dal detector esistente. I veri dadi
+> afferrati subiscono spin individuale e impulsi
+> di agitazione dentro un bossolo virtuale con
+> contenimento progressivo, senza teleport e senza
+> introdurre un nuovo solver o RNG di gameplay.
+> Energia a decadimento, rilascio dalla posa reale;
+> test automatici per shake/no-shake, limiti e
+> mantenimento del lancio Farkle. La resa dinamica
+> va verificata ancora su LÖVE Windows.
+>
+
+
 > **0.1.0-dev.18 — presa fisica ispirata a FPS:**
 > dal feedback dell'audit Windows si è individuata
 > la formazione 3+3 in `group_throw.lua` come causa

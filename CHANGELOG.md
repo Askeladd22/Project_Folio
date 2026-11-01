@@ -10,6 +10,42 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.19] - 2026-11-01
+
+**Tipo:** scuotimento fisico dei dadi mentre sono afferrati insieme, ispirato a uno shaker/bossolo virtuale di Tabletop Simulator.
+
+### Nuove funzioni
+- Durante la presa multipla con tasto destro, **due rapide inversioni**
+  della direzione del mouse attivano il nuovo comportamento dello shaker;
+  un lancio in un'unica direzione o piccoli movimenti non lo attivano.
+- `group_shaker.lua` applica energia temporanea, impulsi inerziali,
+  turbolenza e rotazioni individuali ai **veri corpi fisici**
+  afferrati; i dadi continuano a scontrarsi in una zona di presa.
+- Contenimento temporaneo in un **bossolo virtuale invisibile**:
+  bordo laterale e limiti verticali elastici, con raggio che si
+  restringe progressivamente per evitare teletrasporti
+  durante la raccolta; collisioni originali durante il volo.
+- L'energia dello shaker si spegne gradualmente quando la mano
+  smette di scuotere. Al rilascio si conservano le pose reali
+  di ogni dado e parte della velocità relativa accumulata,
+  mantenendo il lancio fisico normale.
+
+### Compatibilità e test
+- Riutilizzato `shake_detector.lua` già presente:
+  gli impulsi avvengono solo dopo inversioni confermate;
+  nessuna nuova dipendenza, RNG di gameplay o dado fittizio.
+- Nuovo `tests/group_grip_shaker_test.lua` per attivazione,
+  movimento unidirezionale, jitter, rotazione individuale,
+  contatti e limiti, arresto e rilascio dal punto reale.
+- `GroupThrow` conserva le regole di selezione, tiro
+  parziale, annullamento Esc e identità del lancio Farkle.
+- Lo shaker è un effetto fisico della fase **presa multipla**,
+  non il rendering di un oggetto bossolo 3D, né una
+  sostituzione di g3d, del solver di volo o delle regole.
+- QA dinamica Windows necessaria per regolare il realismo
+  di accelerazione, collisioni e inerzia; la CI non
+  sostituisce l'osservazione del movimento reale.
+
 ## [0.1.0-dev.18] - 2026-11-01
 
 **Tipo:** correzione del raggruppamento fisico dei dadi durante la presa multipla, ispirata al comportamento di Free Physics Solver.
