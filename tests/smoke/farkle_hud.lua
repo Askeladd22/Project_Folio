@@ -98,6 +98,90 @@ function M.install(U)
          'P0 accessibility settings not restored')
   record('PASS '..prefix..' accessibility flags exercised and restored')
  end
+ -- P7 visual review of the ACTUAL current UI V2, independent of the
+ -- retired legacy HUD button IDs/coordinates still present in old P0 smoke.
+ -- The six-die grip is performed through the production mouse controller.
+ -- Explicitly named *fixture frames* use the real Farkle rules/presenter but
+ -- programmatic dice results: they are NOT evidence of physical roll fidelity.
+ local function review_scenario(w,h)
+  love.window.setMode(w,h,{resizable=true})
+  love.resize(w,h)
+  U.duelActive=false
+  U:reset('build')
+  local prefix='hud-usability-'..w..'-'
+  shot(prefix..'fresh')
+  physical_grip_baseline(prefix)
+  shot(prefix..'fresh-after-cancel')
+  -- Isolate settings changes; this capture must not permanently alter
+  -- accessibility options or pretend their GPU result was already reviewed.
+  local settingsState=require('src.core.runtime_state')
+  local original=settingsState.get_game_settings() or {}
+  local copy={}
+  for k,v in pairs(original) do copy[k]=v end
+  copy.accessibility={
+   big_text=true,high_contrast=true,reduced_animations=true
+  }
+  settingsState.apply_settings(copy)
+  local ui=require('src.core.runtime_ui')
+  assert(ui.big_text() and ui.high_contrast() and ui.reduced_animations(),
+   'UI V2 review accessibility flags did not apply')
+  shot(prefix..'accessibility-on')
+  settingsState.apply_settings(original)
+  record('PASS '..prefix..' UI V2 accessibility flags restored')
+  U:keypressed('?')
+  assert(U.modal=='help')
+  shot(prefix..'help')
+  U:keypressed('right')
+  assert(U.helpTab==2)
+  shot(prefix..'help-scores')
+  U:keypressed('escape')
+  U:keypressed('f')
+  assert(U.modal=='folio')
+  shot(prefix..'folio')
+  U:keypressed('escape')
+  click('runmenu')
+  assert(U.modal=='run')
+  shot(prefix..'run-menu')
+  click('close')
+  assert(not U.modal)
+  -- UI-only fixture; no fake physical release is generated.
+  feed({1,1,1,1,1,1})
+  assert(U.game.phase=='ready','review score fixture not ready')
+  shot(prefix..'ready-fixture')
+  click('choices')
+  assert(U.modal=='choices')
+  shot(prefix..'choices-fixture')
+  click('close')
+  U:keypressed('1')
+  assert(R.selection(U.game),'score selection fixture not valid')
+  shot(prefix..'selected-fixture')
+  U:reset('build')
+  feed({1,1,1,1,1,1})
+  for i=1,6 do U:keypressed(tostring(i)) end
+  click('bank')
+  assert(U.game.phase=='upgrade','real rules did not reach first reward')
+  shot(prefix..'upgrade-fixture')
+  click('engraved')
+  assert(U.game.stage==2,'reward did not advance stage')
+  feed({1,1,1,1,1,1})
+  for i=1,6 do U:keypressed(tostring(i)) end
+  click('bank')
+  assert(U.game.phase=='medal','real rules did not reach second reward')
+  shot(prefix..'medal-fixture')
+  click('medal')
+  click('runmenu')
+  click('medals')
+  assert(U.modal=='medals')
+  shot(prefix..'reference-catalog')
+  click('close')
+  U.duelActive=true
+  U:reset('control')
+  assert(U.botDuel,'Monk visual review must use optional real duel')
+  shot(prefix..'monk-live')
+  U.duelActive=false
+  U:reset('build')
+  record('PASS '..prefix..' current V2 layout/modals, real grip and rule-based reward paths')
+ end
  local function scenario(w,h)
   love.window.setMode(w,h,{resizable=true});love.resize(w,h);U.hud_variant='standard';U:reset('build')
   local prefix='hud-usability-'..w..'-'
@@ -273,7 +357,20 @@ function M.install(U)
   record('PASS '..w..' reference catalog, blocked entry, equipment, real selective roll and multiplier bank')
  end
  function love.load()
-  load();co=coroutine.create(function() scenario(1920,1080);scenario(1280,720);record('PASS all HUD scenarios at both resolutions');log:close();love.event.quit(0) end)
+  load()
+  co=coroutine.create(function()
+   if os.getenv('MANUSCRIPT_UI_V2_REVIEW_CAPTURE')=='1' then
+    review_scenario(1920,1080)
+    review_scenario(1280,720)
+    record('PASS current UI V2 visual review at both resolutions')
+   else
+    scenario(1920,1080)
+    scenario(1280,720)
+    record('PASS all HUD scenarios at both resolutions')
+   end
+   log:close()
+   love.event.quit(0)
+  end)
  end
  function love.update(dt) elapsed=elapsed+dt;assert(elapsed<180,'HUD smoke timeout');update(dt) end
  function love.draw()
