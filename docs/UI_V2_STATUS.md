@@ -1,5 +1,22 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+## Evidenze del 3 novembre 2026 — commit di acquisizione
+
+Il commit `main@c2b2f74a` ha aggiunto una selezione di screenshot
+del collaudo UI: 18 PNG + 18 TSV, con 16/16 scene a 1920×1080
+ma soltanto 2/16 a 1280×720. Le coordinate dei controlli nelle
+18 mappe sono interne al viewport e non sovrapposte fra comandi
+abilitati. Mancano nel tree manifesto, checklist, gallery e log;
+il collaudo visivo manuale e i 50 lanci non sono certificati.
+Il primo push ha fallito CI solo per l'assenza di
+`version.txt` e `CHANGELOG.md`; questa PR `0.1.2` aggiorna
+entrambi i file e avvia nuovamente i test.
+
+**Stato P5: PARZIALE / NON APPROVATO.**
+[Inventario dettagliato e prove mancanti](WINDOWS_QA_CAPTURE_REVIEW_20261103.md).
+La sezione seguente conserva come baseline il commit precedente
+alle acquisizioni per riferimento storico.
+
 ## Stato verificato sul repository — 3 novembre 2026
 
 **Versione di riferimento:** `main@dddd6b5e54dae2aa0df69c33d0b040a5f5de5bff`

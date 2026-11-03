@@ -6,6 +6,30 @@
 **Scope:** collaudo operativo, osservazione e raccolta prove; non modificare regole
 Farkle, fisica, RNG, g3d o assets per “far passare” un test.
 
+## Evidenze caricate su GitHub — verifica parziale del 3 novembre 2026
+
+Il commit [`c2b2f74a`](https://github.com/Askeladd22/Project_Folio/commit/c2b2f74aaf1eec31ec21aeeaf31439632e59441d)
+contiene **18 PNG + 18 TSV** nell'ultima cartella
+`audits/ui-v2-review/20261103-084723-1e3761ce/`: tutte le
+16 scene previste a 1920×1080, ma solo `fresh` e `marquee-six`
+a 1280×720. Mancano nel repository i 14 PNG/TSV rimanenti a 1280,
+`review-manifest.json`, `review-checklist.md`, `gallery.html`
+e i log smoke. **Non è noto se i file mancanti non siano stati
+generati oppure non siano stati inclusi nell'upload.**
+
+Le **18 mappe TSV** sono state controllate: nessun hitbox fuori schermo
+o overlap fra comandi attivi; i due scenari presenti a entrambe le
+risoluzioni hanno coordinate proporzionali (fattore 2/3).
+Il controllo non equivale a esaminare pixel/qualità grafica né a
+provare l'effettiva attivazione dei click.
+
+Rapporto e inventario preciso:
+[WINDOWS_QA_CAPTURE_REVIEW_20261103.md](WINDOWS_QA_CAPTURE_REVIEW_20261103.md).
+La CI `main` dell'upload [41606048617](https://github.com/Askeladd22/Project_Folio/actions/runs/41606048617)
+era **FAIL** per mancato bump versione/changelog, non per errori nei
+test Lua (saltati per il gate iniziale). La v0.1.2 registra queste
+evidenze e ripristina il versionamento; la QA P5 **rimane aperta**.
+
 ## 0. Che cosa è già verificato (e che cosa no)
 
 Il commit di riferimento precedente a questo piano è

@@ -10,6 +10,35 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.2] - 2026-11-03
+
+**Tipo:** ripristino del gate CI per upload di screenshot e inventario del primo
+collaudo Windows allegato al repository. Nessuna modifica a gameplay,
+fisica, renderer, suoni, test o file PNG/TSV già caricati.
+
+### Documentazione e QA
+- Aggiunto `docs/WINDOWS_QA_CAPTURE_REVIEW_20261103.md` con inventario
+  del commit `c2b2f74a`: 18 screenshot e 18 file hitbox (16 scenari a
+  1920×1080, due a 1280×720), 14 scenari 1280 mancanti, assenza nel tree
+  di manifest, checklist compilata e log smoke.
+- Controllate tutte le 18 mappe TSV: nessuna hitbox fuori dal viewport
+  e nessuna sovrapposizione fra controlli abilitati; nelle due scene
+  comuni le coordinate 1280 sono esattamente 2/3 delle 1920.
+  **Non** si dichiara approvata la qualità visiva dei PNG, né il
+  comportamento del mouse, né la fisica o gli FPS reali.
+- Aggiornato lo stato del gate P5 e il collegamento al report.
+- Versione incrementata da `0.1.1` a `0.1.2`, con changelog,
+  per sanare l'errore CI del commit di sola acquisizione
+  (`main` run 41606048617: missing `version.txt` e
+  `CHANGELOG.md`). La suite CI verrà rieseguita dalla PR.
+
+### Limiti
+- Non è dimostrato che il generatore non abbia prodotto i 14 PNG mancanti:
+  potrebbero non essere stati inclusi nel commit. Nessun dato viene
+  inventato o rigenerato da fixture.
+- Gate Windows P5 ancora **APERTO** fino alla verifica di 32 PNG,
+  manifesto, checklist, smoke e test manuali dei 50 lanci.
+
 ## [0.1.1] - 2026-11-03
 
 **Tipo:** audit del repository, preparazione del collaudo tecnico Windows e
