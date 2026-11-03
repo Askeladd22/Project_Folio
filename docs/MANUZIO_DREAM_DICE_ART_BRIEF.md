@@ -86,14 +86,17 @@ particelle, nebulose, portali o effetti neon.
 | Zona orizzontale | Ruolo visivo | Contenuto |
 |---|---|---|
 | **0–32,5%** (0–624 px) | Zona sicura UI | parete calda, ombra morbida, nessun dado, mano, volto, testo o particolare indispensabile |
-| **32,5–58%** (624–1114 px) | Tentazione / primo piano | bordo del tavolo, **sei dadi**, mano sospesa, foglio di prova che quasi diventa tray |
-| **58–81%** (1114–1555 px) | Lavoro editoriale | correttore/compositore e cassa dei tipi, leggibilità dei gesti |
-| **81–100%** (1555–1920 px) | Architettura e stampa | torchio, figura al lavoro, finestra; parti secondarie possono essere tagliate dal crop 4:3 |
+| **32,5–55%** (624–1056 px) | Tentazione / primo piano | bordo del tavolo, **sei dadi**, mano sospesa, foglio di prova che quasi diventa tray |
+| **55–64%** (1056–1229 px) | Lavoro editoriale | correttore/compositore e cassa dei tipi, gesti comprensibili |
+| **64–75%** (1229–1440 px) | Struttura di stampa | torchio a vite riconoscibile e figura al lavoro, dentro la porzione visibile in 4:3 |
+| **75–100%** (1440–1920 px) | Estensione ambientale | finestre, venezianità e accessori non essenziali, tagliabili in 4:3 |
 
-**Attenzione al 4:3:** il loader ancora a sinistra il cover
-e può tagliare l'estrema destra. Il **torchio deve
-essere ancora riconoscibile nella zona 68–88%**, per quanto
-possibile, non soltanto come dettaglio al 95–100%.
+**Attenzione al 4:3:** con crop *cover* ancorato a sinistra
+un asset 1920×1080 visto in un viewport 4:3 espone circa
+**il primo 75%** dell'immagine. Il **torchio deve perciò essere
+riconoscibile entro x = 1440 px**, non confinato alla destra
+che verrà tagliata. Riservare la fascia finale a finestre,
+pareti e dettagli ambientali non indispensabili.
 Queste fasce sono vincoli di progettazione della nuova
 immagine, non coordinate dell'interfaccia o delle hitbox.
 
@@ -152,9 +155,10 @@ fotografici, bagliori e sfondi troppo scuri.
 > una coincidenza visiva. Il primo **32,5% del quadro
 > a sinistra è vuoto, quieto, chiaro**, destinato
 > interamente ai pulsanti LÖVE del menu. Concentrare
-> mano, dadi e fogli entro il 32,5–58%; lavoro dei
-> compositori nella parte centrale; torchio in
-> centro-destra, ben visibile anche con crop 4:3.
+> mano, dadi e fogli entro il 32,5–55%; correttore e compositore
+> nella fascia centrale 55–64%; torchio nella fascia 64–75%,
+> riconoscibile nel crop 4:3; nella porzione finale
+> finestre e architettura non essenziali.
 > Stile di tavola narrativa rinascimentale con
 > contorni a inchiostro, pigmenti opachi, luci
 > naturali, toni pergamena/salvia/coccio/ardesia.
