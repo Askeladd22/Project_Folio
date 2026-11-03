@@ -5,6 +5,7 @@ local R=require('src.gameplay.farkle.rules')
 local P=require('src.features.farkle.presentation')
 local Layout=require('src.features.farkle.ui_v2.layout_candidates')
 local Surface=require('src.features.ui_v2.menu_surface')
+local Art=require('src.data.art_palette')
 local Res=require('src.core.resolution_manager')
 unpack=unpack or table.unpack
 
@@ -38,13 +39,18 @@ love={graphics=gfx,mouse={getPosition=function()return mouseX,mouseY end}}
 local Hud=require('src.features.farkle.ui_v2.hud')
 local layout=Layout.build('single_folio')
 assert(Layout.validate(layout))
+local function sameRgb(color,name)
+ local expected=Art.rgb(name)
+ for i=1,3 do
+  if math.abs((color[i] or 0)-expected[i])>=.001 then return false end
+ end
+ return true
+end
 local function activeFill(rect)
  for _,call in ipairs(drawCalls) do
   if call.mode=='fill' and call.x==rect.x and call.y==rect.y
    and call.w==rect.w and call.h==rect.h
-   and math.abs((call.c[1] or 0)-.97)<.001
-   and math.abs((call.c[2] or 0)-.88)<.001
-   and math.abs((call.c[3] or 0)-.65)<.001 then
+   and sameRgb(call.c,'sage_light') then
    return true
   end
  end
@@ -54,9 +60,7 @@ local function matchingFill(rect)
  for _,call in ipairs(drawCalls) do
   if call.mode=='fill' and call.x==rect.x and call.y==rect.y
     and call.w==rect.w and call.h==rect.h
-    and math.abs((call.c[1] or 0)-.89)<.001
-    and math.abs((call.c[2] or 0)-.81)<.001
-    and math.abs((call.c[3] or 0)-.65)<.001 then
+    and sameRgb(call.c,'surface') then
    return true
   end
  end
