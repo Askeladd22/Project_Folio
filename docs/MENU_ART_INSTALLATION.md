@@ -1,26 +1,31 @@
 # Project Folio — installazione e revisione dei fondali
 
-## Nuovo fondale: bottega alla Manuzio (v0.1.8)
+## Fondale incluso: bottega alla Manuzio (dalla v0.1.9)
 
-La scena **tipografica veneziana**, distinta dal vecchio
-`menu_illustrated.png`, si trova nel pacchetto della conversazione
-`ProjectFolio_Bottega_Manuzio.zip` (1920×1080).
-Si installa con l'opzione **`--manuzio`**, che salva soltanto
-`resources/ui/menu_manuzio.png` e **non sovrascrive** né il precedente
-`menu_illustrated.png` già versionato né `menu.png`.
+La scena **tipografica veneziana 1920×1080** è ora inclusa
+direttamente nel repository nel percorso
+`resources/ui/menu_manuzio.png`. Un precedente caricamento GitHub
+aveva conservato l'immagine con un nome non riconosciuto dal loader.
+La 0.1.9 ha corretto il percorso usando gli stessi byte originali.
 
 ```powershell
 git pull --ff-only
-python scripts/install_menu_art.py "$env:USERPROFILE\Downloads\ProjectFolio_Bottega_Manuzio.zip" --manuzio
 python scripts/install_menu_art.py --verify-installed --manuzio
 .\Avvia.cmd
 ```
 
+**Non occorre più scaricare il pacchetto ZIP.** L'installatore
+`--manuzio` resta disponibile solo per future versioni artistiche
+o per installare manualmente un file alternativo.
+`resources/ui/menu.png` resta il fallback incluso.
+`menu_illustrated.png` è stato rimosso dal repository dopo
+l'abbandono della scena monastica, ma resta supportato
+opzionalmente per installazioni locali già esistenti.
+
 **SHA-256 del nuovo PNG:**
 `65e6748253a54dc58486b73cd3cea1a772e8a033509baaf1243240bcaa858d15`.
 
-Ordine di caricamento da `main`: **Manuzio → precedente illustrazione
-→ vecchio sfondo**. I controlli e i pulsanti restano disegnati in Lua.
+Ordine di caricamento del codice: **Manuzio → illustrazione precedente, se presente localmente → vecchio sfondo**. I controlli e i pulsanti restano disegnati in Lua.
 I controlli visivi reali su Windows sono ancora da completare.
 
 [Specifiche artistiche della bottega](MANUZIO_PRINTSHOP_ART_DIRECTION.md).
@@ -28,6 +33,11 @@ I controlli visivi reali su Windows sono ancora da completare.
 ---
 
 ## Archivio: primo fondale illustrato (0.1.6–0.1.7)
+
+> **Documento storico.** L'immagine monastica non fa più parte del
+> repository corrente. I comandi qui sotto servivano per l'asset
+> precedente, non per la bottega rinascimentale ora distribuita
+> direttamente via Git.
 
 **Versione minima del gioco:** `0.1.7` · **Asset opzionale:** `resources/ui/menu_illustrated.png`
 
@@ -84,8 +94,8 @@ nel gioco: eventuali revisioni originali possono avere altri hash.
 
 - [ ] Menu e tooltip leggibili a **1280×720** e **1920×1080**.
 - [ ] Titolo, sei azioni e pulsante mute dentro il pannello.
-- [ ] Il pannello non copre il volto del miniatore, la mano o
-      il manoscritto; il soggetto rimane visibile.
+- [ ] Il pannello non copre il correttore, il compositore o
+      lo stampatore al torchio; i protagonisti rimangono leggibili.
 - [ ] 4:3 e ultrawide non tagliano la zona di navigazione.
 - [ ] **New Game**, **Sfida il Monaco**, **Settings**, **Wishlist**
       e **Quit** reagiscono correttamente; Continue resta disabilitato.

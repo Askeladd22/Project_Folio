@@ -325,54 +325,37 @@ luajit .\experiments\physics_lab\run.lua 64 450 lab2
 
 The lab saves a reproducible comparison to `experiments/physics_lab/build/results-lab2.csv`. The FPS 1.2.5 code remains a **work in progress**; smaller time steps improve its face-validity metrics but it has not met the production acceptance criteria. See [experimental methodology and results](experiments/physics_lab/LAB2_RESULTS.md). **Do not ship the lab DLL or substitute FPS into Farkle without separate engineering and visual QA.**
 
-## Bottega tipografica alla Manuzio — nuova direzione (0.1.8)
+## Bottega tipografica alla Manuzio — inclusa dalla v0.1.9
 
-Il nuovo fondale è un'officina editoriale rinascimentale veneziana,
-non uno scriptorium monastico. Vengono rappresentati correttore,
-compositore di caratteri e stampatore al torchio. Il pacchetto
-`ProjectFolio_Bottega_Manuzio.zip` distribuito nella conversazione
-contiene `resources/ui/menu_manuzio.png` (1920×1080).
-Non sovrascrive il precedente `menu_illustrated.png` già presente
-nel repository. Il loader privilegia **Manuzio → illustrazione precedente
-→ sfondo legacy**, con fallback sicuro.
+La scena principale rappresenta una bottega editoriale rinascimentale
+veneziana ispirata ad Aldo Manuzio: correttore, compositore di
+caratteri mobili e stampatore al torchio. Il fondale illustrato
+**1920×1080 è già versionato** in
+`resources/ui/menu_manuzio.png`: non occorre scaricare uno ZIP
+separato o utilizzare l'installatore.
 
 ```powershell
 git pull --ff-only
-python scripts/install_menu_art.py "$env:USERPROFILE\Downloads\ProjectFolio_Bottega_Manuzio.zip" --manuzio
-python scripts/install_menu_art.py --verify-installed --manuzio
 .\Avvia.cmd
 ```
+
+Il titolo, le sei azioni, la selezione e il volume sono disegnati
+da LÖVE, non incorporati nel PNG. Menu, Settings e scelta
+commissioni usano lo stesso fondale. L'unico fallback incluso nel
+clone è `resources/ui/menu.png`; il loader riconosce inoltre
+`menu_illustrated.png` se rimasto su una vecchia installazione,
+ma la precedente illustrazione monastica è stata rimossa da `main`
+in seguito al cambio di direzione artistica.
 
 [Specifiche storiche e artistiche](docs/MANUZIO_PRINTSHOP_ART_DIRECTION.md) ·
-[Guida all'installazione](docs/MENU_ART_INSTALLATION.md).
-Il PNG non è ancora su GitHub: va installato dal pacchetto, senza
-modificare i file precedenti tracciati da Git.
+[Guida alla verifica del fondale](docs/MENU_ART_INSTALLATION.md).
 
-## Fondale illustrato precedente (0.1.6–0.1.7, conservato)
+## Archivio — primi fondali illustrati (v0.1.6–0.1.7)
 
-Dalla **v0.1.6** Main Menu, Settings e scelta commissione cercano prima
-`resources/ui/menu_illustrated.png`; se l'illustrazione non è ancora
-installata usano lo sfondo `resources/ui/menu.png` già incluso.
-I testi, le hitbox e i pulsanti sono sempre renderizzati in Lua:
-**non devono essere dipinti nell'immagine**.
-
-Per installare il PNG della bottega controllandone dimensioni e hash,
-scaricare il pacchetto ZIP della conversazione e, dalla root del
-repository, eseguire:
-
-```powershell
-python scripts/install_menu_art.py "$env:USERPROFILE\Downloads\ProjectFolio_Illustrated_Menu_Asset.zip"
-python scripts/install_menu_art.py --verify-installed
-.\Avvia.cmd
-```
-
-Da **0.1.7** il pannello resta nello spazio libero a sinistra
-anche a 720p; su rapporti 4:3 la scena viene ritagliata dal lato
-destro, preservando l'area dell'interfaccia.
-L'asset rimane distribuito separatamente, non incluso nel clone GitHub.
-Per verifica e sostituzione intenzionale dell'asset leggere
-[MENU_ART_INSTALLATION.md](docs/MENU_ART_INSTALLATION.md)
-e per i criteri pittorici [ART_DIRECTION.md](docs/ART_DIRECTION.md).
+I primi esperimenti usavano `menu_illustrated.png`. Questo asset non
+è più incluso nel repository; il percorso rimane un fallback
+facoltativo soltanto per compatibilità con installazioni locali
+precedenti. Non ripristinare lo scriptorium come art direction.
 
 ## Collaudo tecnico — Windows
 

@@ -7,8 +7,11 @@
 >
 > Il documento vincolante per la composizione della nuova scena è
 > [MANUZIO_PRINTSHOP_ART_DIRECTION.md](MANUZIO_PRINTSHOP_ART_DIRECTION.md).
-> L'asset separato `resources/ui/menu_manuzio.png` precede
-> `menu_illustrated.png` e `menu.png` nel caricamento.
+> Dalla **v0.1.9** `resources/ui/menu_manuzio.png` è incluso
+> nel repository. Il percorso `menu_illustrated.png` resta
+> opzionale per vecchie installazioni, mentre `menu.png`
+> è il fallback incluso. Non ripristinare lo scriptorium
+> come scena principale.
 > Il testo seguente conserva anche i riferimenti alle fasi precedenti.
 
 **Stato:** palette tecnica implementata nella v0.1.5. La direzione
@@ -73,9 +76,10 @@ LÖVE riesce a caricarla, la preferisce allo sfondo legacy
 `resources/ui/menu.png`. Se manca o è corrotta, mantiene l'immagine
 precedente e non interrompe il gioco.
 
-La prima illustrazione 1920×1080 della bottega è stata preparata
-come **asset separato**; per motivi di trasferimento di file binari
-non è inclusa in questa PR GitHub. Il pacchetto ZIP fornito nella
+La prima illustrazione 1920×1080 era distribuita come **asset
+separato** durante la sperimentazione 0.1.6–0.1.7.
+È stata rimossa da `main` dopo la scelta della bottega
+alla Manuzio, ora incorporata in `menu_manuzio.png`. Il pacchetto ZIP fornito nella
 conversazione contiene già il path `resources/ui/menu_illustrated.png`.
 Installare lo ZIP dalla root del repository con
 `python scripts/install_menu_art.py PERCORSO_ZIP`, poi verificare
