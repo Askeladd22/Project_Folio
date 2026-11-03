@@ -24,12 +24,51 @@ M.reward_buttons={
  rect(440,685,490,85),
  rect(990,685,490,85),
 }
+
+-- Compact in-game pause/navigation leaf; unrelated dialog geometry is unchanged.
+M.pause_frame=rect(615,226,690,620)
+M.pause_close=rect(1165,252,100,44)
+M.pause_title=rect(670,277,440,48)
+M.pause_intro=rect(670,326,490,34)
+M.pause_items={
+ rect(674,378,572,62),rect(674,450,572,62),
+ rect(674,522,572,62),rect(674,594,572,62),
+}
+M.pause_confirm_frame=rect(635,292,650,440)
+M.pause_confirm_close=rect(1137,316,107,44)
+M.pause_confirm_title=rect(688,370,425,50)
+M.pause_confirm_actions={
+ rect(690,568,540,62),rect(690,644,540,62),
+}
 function M.validate()
  local bounds=rect(0,0,1920,1080)
  for _,r in ipairs({M.frame,M.reward_frame,M.close,
    M.reward_cards[1],M.reward_cards[2],
    M.reward_buttons[1],M.reward_buttons[2]}) do
   if not contains(bounds,r) then return false,'dialog outside viewport' end
+ end
+ for _,pair in ipairs({
+  {M.pause_frame,M.pause_close},
+  {M.pause_frame,M.pause_title},
+  {M.pause_frame,M.pause_intro},
+  {M.pause_confirm_frame,M.pause_confirm_close},
+  {M.pause_confirm_frame,M.pause_confirm_title},
+ }) do
+  if not contains(pair[1],pair[2]) then return false,'pause item outside frame' end
+ end
+ for _,r in ipairs(M.pause_items) do
+  if not contains(M.pause_frame,r) then return false,'pause action outside frame' end
+ end
+ for _,r in ipairs(M.pause_confirm_actions) do
+  if not contains(M.pause_confirm_frame,r) then return false,'confirm action outside frame' end
+ end
+ for i=2,#M.pause_items do
+  if overlap(M.pause_items[i-1],M.pause_items[i]) then
+   return false,'pause actions overlap'
+  end
+ end
+ if overlap(M.pause_confirm_actions[1],M.pause_confirm_actions[2]) then
+  return false,'confirm actions overlap'
  end
  if not contains(M.frame,M.close) then
   return false,'close outside standard dialog'
