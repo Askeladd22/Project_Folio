@@ -29,7 +29,8 @@ local buttons={
       "'bank'","'next'","'rescue'","'fail'","'retryphysical'",
       "'choices'","'medaluse'"},
  modals={"'weighted'","'engraved'","'medal'","'none'","'close'",
-         "'restart'","'control'","'medals'","'prev'",
+         "'resume'","'settings'","'restart'","'mainmenu'","'cancel'",
+         "'confirmrestart'","'confirmexit'","'prev'",
          "'nextpage'","'helpTab'..i","'option'..row"},
  medal={"'inspect'..n","'equip'","'medalprev'","'medalnext'",
         "'target'..i","'activate'"}
@@ -63,9 +64,12 @@ local function pos(s) return assert(c:find(s,1,true),s..' missing') end
 local escape_hold=pos("if k=='escape' and self.mouseThrow then")
 local escape_marquee=pos("if k=='escape' and self.marquee then")
 local escape_selection=pos("if k=='escape' and self.dragSelected")
-local escape_modal=pos("if k=='escape' then if self.modal")
+local escape_modal=pos("if k=='escape' then")
 assert(escape_hold<escape_marquee and escape_marquee<escape_selection
- and escape_selection<escape_modal,'Esc priority changed from the P0 baseline')
+ and escape_selection<escape_modal,'Esc must cancel a grip before opening pause')
+assert(c:find("self.modal='run'",1,true),'Esc must open pause')
+assert(not c:find("love.event.quit()",1,true),
+ 'Escape from a run must not quit the application')
 local space=pos("if k=='space' then")
 local take=pos("if self.buttons['take']")
 local roll=pos("if self.buttons['roll']")
@@ -73,7 +77,7 @@ local next_turn=pos("if self.buttons['next']")
 local rescue=pos("if self.buttons['rescue']")
 assert(space<take and take<roll and roll<next_turn and next_turn<rescue,
  'Space must prioritize take/roll/next/rescue')
-for _,key in ipairs({"if k=='f8'","if k=='tab'","if k=='f'",
+for _,key in ipairs({"if k=='f7'","if k=='f8'","if k=='tab'","if k=='f'",
                       "if k=='space'","if k=='return'",
                       "or k=='kpenter'","space='roll'","a='take'",
                       "n='next'","m='rescue'"}) do
