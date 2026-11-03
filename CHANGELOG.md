@@ -10,6 +10,38 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.1] - 2026-11-03
+
+**Tipo:** audit del repository, preparazione del collaudo tecnico Windows e
+allineamento documentale; **nessuna modifica al gameplay, alla fisica,
+al renderer o agli asset del gioco.**
+
+### Aggiunto
+- `docs/WINDOWS_TECHNICAL_QA.md`: procedura Windows riproducibile,
+  preflight, comandi di test esistenti, 32 frame LÖVE UI V2,
+  prova fisica di almeno 50 lanci, hitbox, score, g3d, accessibilità,
+  audio, prestazioni e checklist PASS/FAIL con manifest, screenshot e log.
+- Inventario dell'esito CI main `41603525911`: test Lua 5.4/LuaJIT,
+  benchmark Segni e FPS isolati, test Python **superati su Ubuntu**.
+  Nessuna attestazione di esecuzione dei test manuali Windows.
+
+### Corretto nei documenti
+- README: URL e directory corretti `Askeladd22/Project_Folio`
+  per il clone; aggiunto percorso di QA corrente, senza modificare
+  identificatori compatibili del runtime.
+- `UI_V2_STATUS.md`: stato verificato corrente separato dagli snapshot
+  storici del 31 ottobre, cutover V2 già eseguito e QA Windows P5 aperta.
+- `UI_V2_ROADMAP.md`: marcata come roadmap di migrazione storica,
+  non istruzioni per ripristinare vecchi flag, F6 o renderer CPU.
+- `UI_V2_VISUAL_REVIEW.md`, `RENDERER_RETIREMENT.md` e
+  `GAME_DESIGN.md`: corretta terminologia corrente e collegati i
+  documenti di collaudo, senza riscrivere la ricerca precedente.
+
+### Verifiche e limiti
+- Gate CI e versionamento richiesti alla presente PR.
+- Screenshot, ascolto audio, movimenti del mouse, hitbox su GPU e
+  FPS su Windows **ancora da eseguire manualmente**.
+
 ## [0.1.0] - 2026-11-03
 
 **Tipo:** bilanciamento musica principale e passaggio al versionamento senza suffisso `-dev`.

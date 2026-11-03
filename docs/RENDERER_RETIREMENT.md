@@ -1,7 +1,9 @@
 # Project Folio — dismissione definitiva del painter CPU
 
-**Stato: 31 ottobre 2026 — PR #38.** Il renderer 3D è esclusivamente
-**g3d**. Questo documento sostituisce il precedente audit del
+**Stato: dismissione PR #38 (31 ottobre 2026), verificata sul tree
+del 3 novembre 2026.** Il renderer 3D è esclusivamente **g3d**;
+non esistono né `src/engine3d/render.lua` né il vecchio HUD di fallback.
+Questo documento sostituisce il precedente audit del
 30 ottobre, nel quale il painter era mantenuto come fallback.
 
 ## Eliminato
@@ -33,8 +35,9 @@
 - Interfaccia e miniature del manoscritto in **2D**; solo tray e dadi
   in **3D**.
 - Laboratori FPS in `experiments/physics_lab`, non produzione.
-- UI v2 sperimentale con F6: è una scelta di layout e composizione 2D,
-  **non** un renderer fisico di fallback.
+- La UI V2 è ora **l'unico HUD**. Il precedente interruttore F6
+  dell'UI sperimentale è stato ritirato dopo il cutover; non va
+  verificato come fallback. L'interfaccia resta 2D sopra g3d.
 
 ## Error handling
 
@@ -55,7 +58,7 @@ laboratorio FPS. **Non prova la compilazione dello shader OpenGL né
 l'assenza di artefatti sulle GPU reali.** Su Windows LÖVE controllare:
 1280×720 e 1920×1080, tutte le varianti F8, F10/F11, lancio fisico
 manuale e automatico, Farkle, dadi accantonati e loro ritratti g3d,
-HUD precedente e UI v2 con F6, schermate di ricompensa, sfida al Monaco
+UI V2 attiva (senza F6), schermate di ricompensa, sfida al Monaco
 e notifiche Lovely Toasts. Se fallisce un pass 3D, annotare
 errore, driver, LÖVE e impostazioni; non riattivare il painter.
 
