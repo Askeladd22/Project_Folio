@@ -1,7 +1,8 @@
 return {
     assets = {
-        -- Optional authored image. If absent or unreadable, keep the
-        -- shipping background without interrupting navigation.
+        -- Manuzio printshop ships in the repository (from 0.1.9).
+        -- The former illustration is an optional local compatibility
+        -- fallback; menu.png remains the final shipping fallback.
         manuzio_background_path = "resources/ui/menu_manuzio.png",
         illustrated_background_path = "resources/ui/menu_illustrated.png",
         background_path = "resources/ui/menu.png",

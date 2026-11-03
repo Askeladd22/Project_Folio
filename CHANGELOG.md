@@ -10,6 +10,38 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.9] - 2026-11-03
+
+**Tipo:** correzione del caricamento del nuovo fondale approvato
+e ripristino del gate CI dopo l'upload manuale.
+
+### Fondale Manuzio effettivamente distribuito
+- Il file approvato `ProjectFolio_Manuzio_Bottega_1920x1080.png`
+  era stato committato sotto un **nome non usato dal runtime**:
+  il gioco continuava a visualizzare il fallback.
+- Riutilizzato lo **stesso blob Git** (stesso SHA-256 e pixel),
+  collocandolo finalmente in
+  `resources/ui/menu_manuzio.png` ed eliminando il nome
+  di esportazione ridondante, senza conversione o ricompressione.
+- Nessun pacchetto ZIP o installazione separata è più necessario:
+  `git pull` include il fondale principale. La vecchia immagine
+  monastica era già stata rimossa dall'ultimo upload del team e
+  non viene ripristinata. `menu.png` resta fallback e il
+  codice tollera `menu_illustrated.png` solo se presente in una
+  precedente installazione locale.
+- Nuovo test Python di regressione: richiede il PNG sul percorso
+  realmente letto dal loader e valida firma, chunk, dimensioni
+  **1920×1080** e hash dell'illustrazione approvata.
+- README e guide allineate alla distribuzione reale; preservati
+  pulsanti, hitbox, scene, gameplay, audio, g3d e fisica.
+
+### CI e QA
+- Aggiornati `version.txt` e changelog come richiesto dalla CI:
+  il commit diretto precedente falliva perché non li modificava.
+- La CI Linux verifica esistenza/integrità dell'asset e regressioni
+  Lua/Python; **la resa visiva e il click test su Windows restano
+  da certificare sul client LÖVE**.
+
 ## [0.1.8] - 2026-11-03
 
 **Tipo:** nuova direzione artistica per il fondale principale:

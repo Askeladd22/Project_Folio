@@ -42,6 +42,26 @@ def write_zip(path: Path, data: bytes, sha: str | None = None,
 
 
 class MenuArtInstallTests(unittest.TestCase):
+    def test_shipping_manuzio_image_is_checked_in_at_the_runtime_path(self):
+        root = Path(__file__).resolve().parents[1]
+        image = root / MANUZIO_ASSET
+        self.assertTrue(image.is_file(),
+                        "Shipping Manuzio image missing from loader path")
+        # Detect the exact regression caused by placing an otherwise
+        # correct PNG under its descriptive export filename.
+        self.assertFalse(
+            (root / "resources/ui/ProjectFolio_Manuzio_Bottega_1920x1080.png").exists(),
+            "Illustration exported under the wrong runtime filename",
+        )
+        data = image.read_bytes()
+        self.assertEqual(inspect_png(data), (WIDTH, HEIGHT))
+        self.assertEqual(
+            hashlib.sha256(data).hexdigest(),
+            "65e6748253a54dc58486b73cd3cea1a772e8a033509baaf1243240bcaa858d15",
+            "Shipping PNG is not the approved Aldine printshop illustration",
+        )
+
+
     def test_installs_exactly_one_validated_png_without_modifying_legacy(self):
         with tempfile.TemporaryDirectory() as name:
             root = Path(name)

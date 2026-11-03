@@ -50,14 +50,21 @@ Main Menu, Settings e commissioni caricano nell'ordine:
 2. `resources/ui/menu_illustrated.png` — precedente illustrazione
 3. `resources/ui/menu.png` — fallback storico
 
-Il nuovo PNG è distribuito separatamente dal repository: non
-sovrascrivere le immagini già versionate. Dopo `git pull`:
+**Aggiornamento 0.1.9:** il PNG è ora **incluso in GitHub**
+nel percorso corretto `resources/ui/menu_manuzio.png`, usando
+l'identico file approvato (SHA-256 invariato). Il precedente upload,
+salvato con il nome lungo `ProjectFolio_Manuzio_Bottega_1920x1080.png`,
+è stato rinominato senza ricodificare i pixel.
 
 ```powershell
-python scripts/install_menu_art.py "$env:USERPROFILE\Downloads\ProjectFolio_Bottega_Manuzio.zip" --manuzio
-python scripts/install_menu_art.py --verify-installed --manuzio
+git pull --ff-only
 .\Avvia.cmd
 ```
+
+`resources/ui/menu_illustrated.png` non è più incluso in
+`main`, per scelta artistica; il loader continua a tollerarlo
+come fallback locale. `resources/ui/menu.png` è il fallback
+effettivamente incluso nel repository.
 
 Il codice LÖVE continua a rendere titolo, pulsanti, hover e footer
 separatamente. Nessuna modifica a Farkle, dadi 3D/g3d, fisica,
