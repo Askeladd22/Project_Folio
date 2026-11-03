@@ -22,6 +22,18 @@ la visita attestata di Manuzio e Grolier fu a Milano nel 1511.
 **Documento di produzione con prompt, layout e checklist:**
 [MANUZIO_REFERENCE_SYNTHESIS.md](MANUZIO_REFERENCE_SYNTHESIS.md).
 
+## Sogno e azzardo — aggiornamento della direzione
+
+La bottega deve essere riconoscibile come **Project Folio**,
+non soltanto come ricostruzione tipografica: il primo piano
+mostra **sei dadi** e una mano nell'istante prima della decisione
+di rilanciare. Una quasi-impossibile continuità fra bozza
+stampata, inchiostro e vassoio suggerisce il sogno del
+lavoratore. Non aggiungere casinò, denaro come valuta di
+gioco, effetti magici evidenti o nuove meccaniche.
+
+[Brief definitivo V2 — Bottega, azzardo e sogno](MANUZIO_DREAM_DICE_ART_BRIEF.md).
+
 ## Scena
 
 Officina del libro urbana: correttore umanista al tavolo delle bozze,

@@ -10,6 +10,35 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.11] - 2026-11-03
+
+**Tipo:** formalizzazione narrativa e visiva del prossimo fondale:
+**officina alla Manuzio + pulsione del gioco dei dadi + sogno**.
+Modifiche di sola documentazione, senza nuovo PNG o codice runtime.
+
+### Nuovo brief di produzione
+- `docs/MANUZIO_DREAM_DICE_ART_BRIEF.md`: la componente
+  ludica viene resa leggibile con **sei D6** e la tensione
+  della mano prima del rilancio; l'onirico nasce
+  dalla continuità quasi impercettibile di carta,
+  caratteri mobili, inchiostro e piano da gioco.
+- Definiti tre strati (storico, rischio, sogno),
+  composizione 1920×1080 in zone, priorità del
+  primo piano, palette e un'unica anomalia
+  onirica principale, più al massimo un indizio.
+- Distinto l'azzardo come **metafora narrativa** da
+  ogni pretesa storica su Manuzio o sul Farkle
+  moderno: nessuna valuta, meccanica o casino
+  aggiunti al gameplay.
+- Aggiunta checklist di collaudo dell'artwork e
+  requisiti anti-`AI slop`, leggibilità a 25%,
+  safe area sinistra 32,5% e crop 4:3.
+- Collegamenti aggiornati a `MANUZIO_REFERENCE_SYNTHESIS.md`,
+  `MANUZIO_PRINTSHOP_ART_DIRECTION.md`, `ART_DIRECTION.md`
+  e README. Il file
+  `resources/ui/menu_manuzio.png` **non cambia**:
+  servirà revisione visiva separata della futura V2.
+
 ## [0.1.10] - 2026-11-03
 
 **Tipo:** sintesi delle nuove reference e precisazione storica

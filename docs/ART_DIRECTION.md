@@ -7,6 +7,9 @@
 >
 > Il documento vincolante per la composizione della nuova scena è
 > [MANUZIO_PRINTSHOP_ART_DIRECTION.md](MANUZIO_PRINTSHOP_ART_DIRECTION.md).
+> L'identità centrale unisce **officina rinascimentale, dadi e
+> onirismo sottile**. Il brief operativo è
+> [MANUZIO_DREAM_DICE_ART_BRIEF.md](MANUZIO_DREAM_DICE_ART_BRIEF.md).
 > Le nuove reference per torchio, lavoro e luce veneziana, con
 > note sulla licenza artistica di Flameng, sono raccolte in
 > [MANUZIO_REFERENCE_SYNTHESIS.md](MANUZIO_REFERENCE_SYNTHESIS.md).
