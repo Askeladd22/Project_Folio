@@ -2,7 +2,7 @@
 
 # PROJECT FOLIO
 
-**A dice-driven roguelite set in a fifteenth-century scriptorium.**
+**A dice-driven roguelite set in a Renaissance Italian workshop of books and print.**
 
 Risk every throw. Build your manuscript. Decide when to stop.
 
@@ -325,7 +325,30 @@ luajit .\experiments\physics_lab\run.lua 64 450 lab2
 
 The lab saves a reproducible comparison to `experiments/physics_lab/build/results-lab2.csv`. The FPS 1.2.5 code remains a **work in progress**; smaller time steps improve its face-validity metrics but it has not met the production acceptance criteria. See [experimental methodology and results](experiments/physics_lab/LAB2_RESULTS.md). **Do not ship the lab DLL or substitute FPS into Farkle without separate engineering and visual QA.**
 
-## Fondale illustrato del menu
+## Bottega tipografica alla Manuzio — nuova direzione (0.1.8)
+
+Il nuovo fondale è un'officina editoriale rinascimentale veneziana,
+non uno scriptorium monastico. Vengono rappresentati correttore,
+compositore di caratteri e stampatore al torchio. Il pacchetto
+`ProjectFolio_Bottega_Manuzio.zip` distribuito nella conversazione
+contiene `resources/ui/menu_manuzio.png` (1920×1080).
+Non sovrascrive il precedente `menu_illustrated.png` già presente
+nel repository. Il loader privilegia **Manuzio → illustrazione precedente
+→ sfondo legacy**, con fallback sicuro.
+
+```powershell
+git pull --ff-only
+python scripts/install_menu_art.py "$env:USERPROFILE\Downloads\ProjectFolio_Bottega_Manuzio.zip" --manuzio
+python scripts/install_menu_art.py --verify-installed --manuzio
+.\Avvia.cmd
+```
+
+[Specifiche storiche e artistiche](docs/MANUZIO_PRINTSHOP_ART_DIRECTION.md) ·
+[Guida all'installazione](docs/MENU_ART_INSTALLATION.md).
+Il PNG non è ancora su GitHub: va installato dal pacchetto, senza
+modificare i file precedenti tracciati da Git.
+
+## Fondale illustrato precedente (0.1.6–0.1.7, conservato)
 
 Dalla **v0.1.6** Main Menu, Settings e scelta commissione cercano prima
 `resources/ui/menu_illustrated.png`; se l'illustrazione non è ancora

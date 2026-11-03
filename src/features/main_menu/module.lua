@@ -26,6 +26,7 @@ local expect_entry = Schema.expect_entry
 
 local MENU_BG_PATH = expect_string(ASSET_SCHEMA.background_path, "assets.background_path")
 local ILLUSTRATED_BG_PATH = expect_string(ASSET_SCHEMA.illustrated_background_path, "assets.illustrated_background_path")
+local MANUZIO_BG_PATH = expect_string(ASSET_SCHEMA.manuzio_background_path, "assets.manuzio_background_path")
 local MENU_MUSIC_PATH = expect_string(ASSET_SCHEMA.music_path, "assets.music_path")
 local FONT_TEXT = expect_string(ASSET_SCHEMA.font_text, "assets.font_text")
 local FONT_UPPERCASE = expect_string(ASSET_SCHEMA.font_uppercase, "assets.font_uppercase")
@@ -118,6 +119,9 @@ local fonts = {
 
 local menu_bg = nil
 local menu_bg_path = nil
+local function has_illustrated_background()
+    return menu_bg_path == MANUZIO_BG_PATH or menu_bg_path == ILLUSTRATED_BG_PATH
+end
 local music = nil
 local music_play_attempted = false
 local has_save_data = false
@@ -267,7 +271,7 @@ local function get_background_rect(window_w, window_h)
         return nil
     end
     return MenuBackground.cover_rect(menu_bg,window_w,window_h,
-        menu_bg_path == ILLUSTRATED_BG_PATH)
+        has_illustrated_background())
 end
 
 local function reset_particles()
@@ -369,7 +373,7 @@ local function compute_layout(w, h)
     local width_cap = RuntimeUI.sized(610) *
         (h > 1080 and math.min(1.2, h / 1080) or 1)
     local panel_w = math.min(math.floor(w * .45), math.floor(width_cap), w - left - border)
-    if menu_bg_path == ILLUSTRATED_BG_PATH then
+    if has_illustrated_background() then
         local safe=MenuBackground.left_panel_limit(menu_bg,w,h,left)
         if safe then panel_w=math.min(panel_w,safe) end
     end
@@ -510,7 +514,7 @@ function MainMenu:enter()
     if not menu_bg then
         -- Draw only background pixels here: logo, buttons and version are
         -- still rendered by LÖVE as independent interactive controls.
-        menu_bg, menu_bg_path = MenuBackground.load(ILLUSTRATED_BG_PATH, MENU_BG_PATH)
+        menu_bg, menu_bg_path = MenuBackground.load(MANUZIO_BG_PATH, ILLUSTRATED_BG_PATH, MENU_BG_PATH)
     end
 
     ensure_fonts()
@@ -575,7 +579,7 @@ function MainMenu:draw()
 
     if menu_bg then
         local bg_x, bg_y, scale = get_background_rect(w, h)
-        if menu_bg_path == ILLUSTRATED_BG_PATH then
+        if has_illustrated_background() then
             -- Keep original illustration pigments; the legacy photo still
             -- receives its deliberate stone-coloured tint.
             set_color(1,1,1,1,scene_alpha)
@@ -589,7 +593,7 @@ function MainMenu:draw()
     end
 
     MenuSurface.backdrop(w,h,high_contrast,scene_alpha,{
-        quiet=true,illustrated=menu_bg_path == ILLUSTRATED_BG_PATH
+        quiet=true,illustrated=has_illustrated_background()
     })
     MenuSurface.panel(cached_layout.frame,{high_contrast=high_contrast,alpha=scene_alpha,style="editorial"})
 

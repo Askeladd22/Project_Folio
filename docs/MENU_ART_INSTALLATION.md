@@ -1,4 +1,33 @@
-# Project Folio — installazione e revisione del fondale illustrato
+# Project Folio — installazione e revisione dei fondali
+
+## Nuovo fondale: bottega alla Manuzio (v0.1.8)
+
+La scena **tipografica veneziana**, distinta dal vecchio
+`menu_illustrated.png`, si trova nel pacchetto della conversazione
+`ProjectFolio_Bottega_Manuzio.zip` (1920×1080).
+Si installa con l'opzione **`--manuzio`**, che salva soltanto
+`resources/ui/menu_manuzio.png` e **non sovrascrive** né il precedente
+`menu_illustrated.png` già versionato né `menu.png`.
+
+```powershell
+git pull --ff-only
+python scripts/install_menu_art.py "$env:USERPROFILE\Downloads\ProjectFolio_Bottega_Manuzio.zip" --manuzio
+python scripts/install_menu_art.py --verify-installed --manuzio
+.\Avvia.cmd
+```
+
+**SHA-256 del nuovo PNG:**
+`65e6748253a54dc58486b73cd3cea1a772e8a033509baaf1243240bcaa858d15`.
+
+Ordine di caricamento da `main`: **Manuzio → precedente illustrazione
+→ vecchio sfondo**. I controlli e i pulsanti restano disegnati in Lua.
+I controlli visivi reali su Windows sono ancora da completare.
+
+[Specifiche artistiche della bottega](MANUZIO_PRINTSHOP_ART_DIRECTION.md).
+
+---
+
+## Archivio: primo fondale illustrato (0.1.6–0.1.7)
 
 **Versione minima del gioco:** `0.1.7` · **Asset opzionale:** `resources/ui/menu_illustrated.png`
 

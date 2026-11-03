@@ -1,4 +1,15 @@
-# Project Folio — direzione artistica 1.0
+# Project Folio — direzione artistica 2.0
+
+> **Aggiornamento 3 novembre 2026:** il fondale principale è ora una
+> **bottega editoriale-tipografica veneziana ispirata ad Aldo Manuzio**
+> (circa 1495–1510), non uno scriptorium monastico. La palette
+> dei pigmenti e il tratto illustrato restano validi.
+>
+> Il documento vincolante per la composizione della nuova scena è
+> [MANUZIO_PRINTSHOP_ART_DIRECTION.md](MANUZIO_PRINTSHOP_ART_DIRECTION.md).
+> L'asset separato `resources/ui/menu_manuzio.png` precede
+> `menu_illustrated.png` e `menu.png` nel caricamento.
+> Il testo seguente conserva anche i riferimenti alle fasi precedenti.
 
 **Stato:** palette tecnica implementata nella v0.1.5. La direzione
 nasce dalle quattro reference pittoriche condivise dal team:
