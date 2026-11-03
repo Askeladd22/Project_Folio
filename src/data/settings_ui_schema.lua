@@ -1,5 +1,8 @@
 return {
     assets = {
+        -- Optional authored image. If absent or unreadable, keep the
+        -- shipping background without interrupting navigation.
+        illustrated_background_path = "resources/ui/menu_illustrated.png",
         background_path = "resources/ui/menu.png",
         font_text = "resources/font/ManuskriptGothischUNZ1A.ttf",
         font_uppercase = "resources/font/IMFeENsc28P.ttf",

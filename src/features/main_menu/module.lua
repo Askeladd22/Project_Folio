@@ -9,6 +9,7 @@ local MenuSurface = require("src.features.ui_v2.menu_surface")
 local Schema = require("src.core.schema")
 local SettingsState = require("src.core.settings_state")
 local MainMenuSchema = require("src.data.main_menu_schema")
+local MenuBackground = require("src.core.menu_background")
 local Art = require("src.data.art_palette")
 
 local ASSET_SCHEMA = MainMenuSchema.assets or {}
@@ -24,6 +25,7 @@ local expect_number = Schema.expect_number
 local expect_entry = Schema.expect_entry
 
 local MENU_BG_PATH = expect_string(ASSET_SCHEMA.background_path, "assets.background_path")
+local ILLUSTRATED_BG_PATH = expect_string(ASSET_SCHEMA.illustrated_background_path, "assets.illustrated_background_path")
 local MENU_MUSIC_PATH = expect_string(ASSET_SCHEMA.music_path, "assets.music_path")
 local FONT_TEXT = expect_string(ASSET_SCHEMA.font_text, "assets.font_text")
 local FONT_UPPERCASE = expect_string(ASSET_SCHEMA.font_uppercase, "assets.font_uppercase")
@@ -505,8 +507,10 @@ function MainMenu:enter()
     cached_layout = nil
     music_play_attempted = false
 
-    if not menu_bg and love.filesystem and love.filesystem.getInfo and love.filesystem.getInfo(MENU_BG_PATH) then
-        pcall(function() menu_bg = love.graphics.newImage(MENU_BG_PATH) end)
+    if not menu_bg then
+        -- Draw only background pixels here: logo, buttons and version are
+        -- still rendered by LÖVE as independent interactive controls.
+        menu_bg = MenuBackground.load(ILLUSTRATED_BG_PATH, MENU_BG_PATH)
     end
 
     ensure_fonts()

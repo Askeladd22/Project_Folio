@@ -10,6 +10,43 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.6] - 2026-11-03
+
+**Tipo:** integrazione tecnica dello sfondo illustrato, senza intervenire
+su gameplay, fisica, navigazione, input o materiali 3D.
+
+### Fondale editoriale
+- Nuovo `src/core/menu_background.lua`: scelta ordinata dell'asset
+  `resources/ui/menu_illustrated.png`, se presente e leggibile,
+  con fallback sicuro al precedente `resources/ui/menu.png`.
+  Nessun crash se un file manca o `newImage` fallisce.
+- Main Menu, scelta commissione e Settings usano la stessa logica:
+  evitando il salto stilistico fra schermate, senza duplicare il
+  nuovo fondale o sostituire elementi della UI interattiva.
+- `src/data/*_schema.lua` distingue esplicitamente sfondo
+  illustrato opzionale e sfondo shipping. La UI, il titolo,
+  la versione e i pulsanti restano disegnati in Lua: **vietato
+  incorporare testo o bottoni nel nuovo PNG**.
+- Nuova regressione headless `tests/menu_background_loader_test.lua`
+  per precedenza, fallback su file corrotto, assenza API e
+  consistenza dei tre schemi.
+
+### Distribuzione dell'illustrazione
+- Preparato a parte un asset originale `1920×1080` (senza testo UI),
+  con relativo ZIP `resources/ui/menu_illustrated.png` da estrarre
+  localmente nella root del repository. **Il binario non viene
+  committato con questa PR**, poiché il connettore GitHub di questa
+  sessione gestisce i contenuti testuali, non i PNG locali.
+- Il gioco su GitHub continua quindi a funzionare con `menu.png`
+  fino alla presenza del nuovo PNG. Nessun falso cambio grafico
+  dichiarato per gli utenti che clonano `main`.
+
+### Verifiche
+- CI Linux Lua 5.4, LuaJIT, test Python e laboratorio FPS.
+- Da collaudare su Windows in LÖVE con l'illustrazione installata:
+  1280×720, 1920×1080, big text, high contrast e continuità
+  Menu → Settings → Commissioni → Menu.
+
 ## [0.1.5] - 2026-11-03
 
 **Tipo:** prima integrazione della direzione artistica pittorica di Project Folio.
