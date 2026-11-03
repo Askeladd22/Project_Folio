@@ -103,7 +103,8 @@ Nota: `hud_minimal.draw()` aggiorna `u.buttons` ogni frame; `hud.overlay()` usa 
 | F | Apre il dettaglio folio, quando lo stato lo consente |
 | ← / → | Paginazione delle schede aiuto quando `u.modal='help'`; altrimenti nessuna azione principale |
 | Tab | Termina l'animazione di presentazione in corso |
-| F7 | Apre il laboratorio tecnico delle medaglie fuori dalle modali, senza mostrarlo nella pausa |\n| F8 | Ciclo dei layout workshop; nel controller è elaborato anche prima del blocco modal/ricompensa |
+| F7 | Apre il laboratorio tecnico delle medaglie fuori dalle modali, senza mostrarlo nella pausa |
+| F8 | Ciclo dei layout workshop; nel controller è elaborato anche prima del blocco modal/ricompensa |
 | F9 | Toggle renderer g3d/painter a livello `dice_runtime.lua` |
 | F10 | Ciclo materiali/diagnostica dei dadi g3d a livello `dice_runtime.lua` |
 | F11 | Toggle smussatura visiva dei D6 g3d a livello `dice_runtime.lua` |
