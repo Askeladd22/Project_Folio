@@ -437,8 +437,22 @@ function U:keypressed(k)
  if k=='f8' then require('src.features.farkle.tray_workshop').cycle();return end
  if k=='tab' and self.presentation then Presentation.finish(self.presentation);return end
  if H.reward_active(self.game) then return end
- if k=='escape' then if self.modal then self.modal=nil else love.event.quit() end;return end
+ -- Esc never quits the application from an active run. A physical throw
+ -- must settle before pause can open; no half-resolved roll is interrupted.
+ if k=='escape' then
+  if self.modal=='run_restart_confirm' or self.modal=='run_exit_confirm' then
+   self.modal='run'
+  elseif self.modal then self.modal=nil
+  elseif self.state~='rolling' then self.modal='run' end
+  return
+ end
  if self.state=='rolling' then return end
+ -- Keep the experimental medal laboratory for developers, but not in the
+ -- normal pause menu. It remains separate from the selected game's mode.
+ if k=='f7' and not self.modal then
+  self.modal='medals';self.medalPage=1;self.medalPreview=nil
+  return
+ end
  if self.modal then
   if self.modal=='help' and (k=='left' or k=='right') then self.helpTab=((self.helpTab or 1)-1+(k=='right' and 1 or -1))%3+1 end
   return
