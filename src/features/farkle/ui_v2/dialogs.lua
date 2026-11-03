@@ -12,6 +12,7 @@ local ModalLayout=require('src.features.farkle.ui_v2.modal_layout')
 local LabelFit=require('src.features.farkle.ui_v2.label_fit')
 local ParagraphFit=require('src.features.farkle.ui_v2.paragraph_fit')
 local Art=require('src.data.art_palette')
+local Navigation=require('src.core.navigation')
 -- Dialog/reward presenter for the canonical UI v2. This module owns modal hitboxes
 -- but never draws the old work surface or implements a fallback HUD.
 local V={};local fonts={}
@@ -86,6 +87,85 @@ local function button(u,id,label,x,y,w,h,on,fn,primary)
   w<215 and 22 or 24,13,on and ink or muted,'center')
  u.buttons[id]={x=x,y=y,w=w,h=h,enabled=on,fn=fn,label=label}
 end
+
+-- The normal pause menu never exposes balancing/comparison developer tools.
+local function pause_button(u,id,label,r,fn,primary)
+  local g=love.graphics
+  if primary then
+    g.setColor(unpack(Art.rgba('surface_alt',.92)))
+    g.rectangle('fill',r.x,r.y,r.w,r.h)
+  end
+  MenuSurface.item(r,{style='editorial',active=pointer_over(r)})
+  fitted(label,{x=r.x+14,y=r.y+6,w=r.w-28,h=r.h-12},
+    id=='close' and 17 or 25,14,ink,'center')
+  u.buttons[id]={x=r.x,y=r.y,w=r.w,h=r.h,enabled=true,fn=fn,label=label}
+end
+local function draw_pause(u)
+  local g=love.graphics
+  local saved=u.buttons
+  u.modalButtons={}
+  u.buttons=u.modalButtons
+  g.push('all')
+  Res.begin_ui()
+  g.setColor(unpack(Art.rgba('ink',.68)))
+  g.rectangle('fill',0,0,1920,1080)
+  local confirming=u.modal=='run_restart_confirm' or u.modal=='run_exit_confirm'
+  local frame=confirming and ModalLayout.pause_confirm_frame
+    or ModalLayout.pause_frame
+  MenuSurface.panel(frame,{style='editorial',
+    high_contrast=RuntimeUI.high_contrast()})
+  local closeRect=confirming and ModalLayout.pause_confirm_close
+    or ModalLayout.pause_close
+  pause_button(u,'close','Chiudi [Esc]',closeRect,
+    function() u.modal=confirming and 'run' or nil end)
+  if not confirming then
+    fitted('PARTITA IN PAUSA',ModalLayout.pause_title,33,22,ink,'left')
+    fitted('Scegli come proseguire.',ModalLayout.pause_intro,
+      21,15,muted,'left')
+    local items=ModalLayout.pause_items
+    pause_button(u,'resume','Riprendi la partita',items[1],
+      function() u.modal=nil end,true)
+    pause_button(u,'settings','Impostazioni',items[2],
+      function()
+        u.modal=nil
+        Navigation.go('settings',{return_to='scriptorium'})
+      end)
+    pause_button(u,'restart','Ricomincia la partita',items[3],
+      function() u.modal='run_restart_confirm' end)
+    pause_button(u,'mainmenu','Torna al menu principale',items[4],
+      function() u.modal='run_exit_confirm' end)
+    paragraph('La partita non dispone ancora di un salvataggio automatico.',
+      frame.x+54,frame.y+508,frame.w-108,64,19,14,muted,'center')
+  else
+    local restarting=u.modal=='run_restart_confirm'
+    fitted(restarting and 'RICOMINCIARE?' or 'TORNARE AL MENU?',
+      ModalLayout.pause_confirm_title,31,19,ink,'left')
+    paragraph(restarting
+      and 'I progressi della partita corrente andranno perduti. La modalità di gioco resterà invariata.'
+      or 'I progressi non salvati andranno perduti. Potrai iniziare una nuova partita dal menu principale.',
+      frame.x+55,frame.y+132,frame.w-110,126,24,16,muted,'left')
+    pause_button(u,'cancel','Annulla',ModalLayout.pause_confirm_actions[1],
+      function() u.modal='run' end,true)
+    if restarting then
+      pause_button(u,'confirmrestart','Conferma riavvio',
+        ModalLayout.pause_confirm_actions[2],function()
+          local mode=(u.duelActive or u.botDuel) and 'control'
+            or (u.game and u.game.mode) or 'build'
+          u:reset(mode)
+        end)
+    else
+      pause_button(u,'confirmexit','Conferma uscita',
+        ModalLayout.pause_confirm_actions[2],function()
+          u.modal=nil
+          Navigation.go('main_menu')
+        end)
+    end
+  end
+  Res.end_ui()
+  g.pop()
+  u.buttons=saved
+end
+
 local function reward(u)
  local s=u.game;local g=love.graphics
  Res.begin_ui();g.setColor(unpack(Art.rgba('ink',.78)));g.rectangle('fill',0,0,1920,1080)
@@ -134,6 +214,11 @@ function V.overlay(u,hits)
  g.setLineWidth(1)
 if H.reward_active(s) then reward(u);return end
  if not u.modal then return end
+ if u.modal=='run' or u.modal=='run_restart_confirm'
+  or u.modal=='run_exit_confirm' then
+  draw_pause(u)
+  return
+ end
  Res.begin_ui();g.setColor(unpack(Art.rgba('ink',.82)));g.rectangle('fill',0,0,1920,1080)
  local area=ModalLayout.frame
  panel(area.x,area.y,area.w,area.h);u.modalButtons={}
@@ -143,14 +228,7 @@ if H.reward_active(s) then reward(u);return end
   true,function() u.modal=nil end)
  MenuSurface.rule(ModalLayout.header_rule.x,ModalLayout.header_rule.y,
   ModalLayout.header_rule.w,RuntimeUI.high_contrast() and 1 or .8)
- if u.modal=='run' then
-  txt('RUN MENU',425,180,800,30)
-  paragraph('Starting a new run abandons the current one.',440,280,1040,70,26,17)
-  button(u,'restart','New run with modifiers',440,390,1040,70,true,function() u:reset('build') end)
-  button(u,'control','Without modifiers: new comparison run',440,490,1040,70,true,function() u:reset('control') end)
-  button(u,'medals','Medal laboratory',440,590,1040,70,not u.physicalFailure,function() u.modal='medals';u.medalPage=1;u.medalPreview=nil end)
-  paragraph('Close to return to the game without making changes.',440,703,1040,68,24,16)
- elseif u.modal=='medals' or u.modal=='medaluse' then
+ if u.modal=='medals' or u.modal=='medaluse' then
   MedalPanel.draw(u,txt,button,paragraph)
  elseif u.modal=='folio' then
     txt('THE MANUSCRIPT',425,180,750,30)

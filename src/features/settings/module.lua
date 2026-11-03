@@ -107,6 +107,7 @@ local layout_cache = nil
 local cached_scale = nil
 local view_anim_clock = 0
 local particles = {}
+local return_module = EXIT_MODULE
 
 local function clamp(v, min_v, max_v)
     if v < min_v then return min_v end
@@ -148,7 +149,7 @@ end
 
 local function leave_to_main_menu()
     AudioManager.apply_audio_settings()
-    Navigation.go(EXIT_MODULE)
+    Navigation.go(return_module)
 end
 
 local function load_font(candidates, size)
@@ -748,7 +749,10 @@ local function draw_content(layout)
     end
 end
 
-function Settings:enter()
+function Settings:enter(params)
+    -- Return to the same active Farkle run after editing settings.
+    return_module = params and params.return_to == 'scriptorium'
+      and 'scriptorium' or EXIT_MODULE
     ensure_assets()
     refresh_localized_labels()
     local loaded = SettingsState.get()
@@ -784,7 +788,15 @@ function Settings:draw()
     end
 end
 
-function Settings:keypressed(_key)
+function Settings:keypressed(key)
+    if key ~= 'escape' then return end
+    if view_mode == VIEW_MODE_CONTENT then
+        view_mode = VIEW_MODE_SECTIONS
+        reset_view_animation()
+    else
+        leave_to_main_menu()
+    end
+    AudioManager.play_ui(AUDIO_BACK_SFX)
 end
 
 function Settings:mousepressed(x, y, button)

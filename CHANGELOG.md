@@ -10,6 +10,36 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.12] - 2026-11-03
+
+**Tipo:** semplificazione del menu in partita e navigazione sicura.
+Le regole Farkle, la fisica dei sei D6, g3d, l'interazione fisica e
+la modalità Sfida il Monaco non sono stati modificati.
+
+### Pausa per il giocatore
+- Il vecchio `RUN MENU` sperimentale viene sostituito da un pannello
+  compatto con **Riprendi**, **Impostazioni**, **Ricomincia la partita**
+  e **Torna al menu principale**.
+- Riavvio e ritorno al menu richiedono conferma esplicita e avvisano
+  dell'assenza di salvataggi automatici. Il riavvio conserva la modalità
+  originaria: build normale o sfida al Monaco (control).
+- La pagina Impostazioni raggiunta dal gioco ritorna alla stessa
+  sessione attiva e `Esc` funziona per tornare indietro.
+- `Esc` dentro la partita apre/chiude la pausa invece di chiamare
+  `love.event.quit()`: mantiene prima la precedenza per annullare
+  la presa fisica e la selezione di gruppo. Durante il lancio in
+  assestamento non interrompe la fisica né apre la pausa.
+- Il laboratorio delle medaglie non è più nel menu del giocatore;
+  rimane richiamabile con **F7** come strumento di sviluppo.
+
+### Test e limiti
+- Aggiornato l'inventario delle interazioni e il test delle modali
+  a 720p, 1080p e 1440p; aggiunta una regressione headless per
+  i callback di ripresa/impostazioni/riavvio/uscita e la modalità Monaco.
+- Verifica grafica e percorso di ritorno su LÖVE Windows ancora
+  da confermare con un'esecuzione reale; non si dichiara completato
+  il gate visivo P5.
+
 ## [0.1.11] - 2026-11-03
 
 **Tipo:** formalizzazione narrativa e visiva del prossimo fondale:

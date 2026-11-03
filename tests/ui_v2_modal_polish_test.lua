@@ -80,6 +80,19 @@ local function hoverFill(r)
  end
  return false
 end
+local function editorialHover(r)
+ for _,call in ipairs(paint) do
+  if call.mode=='fill' and call.x==r.x and call.y==r.y
+    and call.w==r.w and call.h==r.h then
+   local c=call.color
+   local selected=Art.rgb('selection')
+   if math.abs((c[1] or 0)-selected[1])<.001
+    and math.abs((c[2] or 0)-selected[2])<.001
+    and math.abs((c[3] or 0)-selected[3])<.001 then return true end
+  end
+ end
+ return false
+end
 local function readableButton(r)
  for _,call in ipairs(paint) do
   local exact=call.text==r.label
@@ -113,7 +126,8 @@ for _,screen in ipairs{{1280,720},{1920,1080},{2560,1440}} do
  Res.init(1920,1080);Res.refresh(sw,sh)
  for _,access in ipairs{{false,false},{true,true}} do
   big,high=access[1],access[2]
-  for _,mode in ipairs{'help','choices','folio','run','medals',
+  for _,mode in ipairs{'help','choices','folio','run',
+                      'run_restart_confirm','run_exit_confirm','medals',
                       'medaluse','upgrade','reward-medal'} do
    local s=state(mode)
    local reward=mode=='upgrade' or mode=='reward-medal'
@@ -124,7 +138,16 @@ for _,screen in ipairs{{1280,720},{1920,1080},{2560,1440}} do
     medalPage=1}
    local bank,pot,phase,turn=s.bank,s.pot,s.phase,s.turn
    paint={}
-   mouseX,mouseY=Res.to_screen(1380,202)
+   local isPause=mode=='run' or mode=='run_restart_confirm'
+     or mode=='run_exit_confirm'
+   local pauseClose=mode=='run' and Layout.pause_close
+     or Layout.pause_confirm_close
+   if isPause then
+     mouseX,mouseY=Res.to_screen(pauseClose.x+pauseClose.w/2,
+       pauseClose.y+pauseClose.h/2)
+   else
+     mouseX,mouseY=Res.to_screen(1380,202)
+   end
    Dialogs.overlay(u,{})
    assert(push==pop,'dialog leaked graphics stack')
    if reward then
@@ -141,18 +164,26 @@ for _,screen in ipairs{{1280,720},{1920,1080},{2560,1440}} do
     end
     assert(u.buttons.saved==nil,'reward must mask normal-game buttons')
    else
-    assert(hasFill(Layout.frame),'missing parchment modal frame')
+    local isPause=mode=='run' or mode=='run_restart_confirm'
+      or mode=='run_exit_confirm'
+    local frame=isPause and (mode=='run' and Layout.pause_frame
+      or Layout.pause_confirm_frame) or Layout.frame
+    assert(hasFill(frame),'missing modal frame: '..mode)
     assert(u.buttons==buttons,'modals must restore controller buttons')
     assert(u.modalButtons.close and u.modalButtons.close.enabled)
     local close=u.modalButtons.close
-    assert(close.x==Layout.close.x and close.y==Layout.close.y and
-     close.w==Layout.close.w and close.h==Layout.close.h)
-    assert(hoverFill(Layout.close),'close hover must use scaled pointer')
+    local expectedClose=isPause and (mode=='run' and Layout.pause_close
+      or Layout.pause_confirm_close) or Layout.close
+    assert(close.x==expectedClose.x and close.y==expectedClose.y and
+     close.w==expectedClose.w and close.h==expectedClose.h)
+    assert(isPause and editorialHover(expectedClose) or
+      not isPause and hoverFill(expectedClose),
+      'close hover must use scaled pointer')
     for id,a in pairs(u.modalButtons) do
      assert(readableButton(a),'button label escapes modal: '..id)
-     assert(a.x>=Layout.frame.x and a.y>=Layout.frame.y and
-      a.x+a.w<=Layout.frame.x+Layout.frame.w and
-      a.y+a.h<=Layout.frame.y+Layout.frame.h,
+     assert(a.x>=frame.x and a.y>=frame.y and
+      a.x+a.w<=frame.x+frame.w and
+      a.y+a.h<=frame.y+frame.h,
       'modal button outside manuscript page: '..id)
     end
     if mode=='choices' then
@@ -164,7 +195,15 @@ for _,screen in ipairs{{1280,720},{1920,1080},{2560,1440}} do
      assert(u.modalButtons.helpTab1 and u.modalButtons.helpTab2
       and u.modalButtons.helpTab3)
     elseif mode=='run' then
-     assert(u.modalButtons.restart and u.modalButtons.control)
+     assert(u.modalButtons.resume and u.modalButtons.settings
+      and u.modalButtons.restart and u.modalButtons.mainmenu)
+     assert(not u.modalButtons.control and not u.modalButtons.medals)
+    elseif mode=='run_restart_confirm' then
+     assert(u.modalButtons.cancel and u.modalButtons.confirmrestart)
+     assert(not u.modalButtons.confirmexit)
+    elseif mode=='run_exit_confirm' then
+     assert(u.modalButtons.cancel and u.modalButtons.confirmexit)
+     assert(not u.modalButtons.confirmrestart)
     elseif mode=='medals' then
      assert(u.modalButtons.equip and u.modalButtons.inspect1)
     elseif mode=='medaluse' then
