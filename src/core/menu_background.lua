@@ -2,7 +2,7 @@
 -- Pure loader: no asset data, no text, no changes to input/layout.
 -- A missing/corrupt optional PNG can never make a menu fail to start.
 local M = {}
-function M.load(preferred, fallback)
+function M.load(preferred, fallback, legacy)
     if not love or not love.filesystem or not love.graphics then
         return nil, nil
     end
@@ -12,7 +12,7 @@ function M.load(preferred, fallback)
         return nil, nil
     end
     local seen = {}
-    for _,path in ipairs({preferred, fallback}) do
+    for _,path in ipairs({preferred, fallback, legacy}) do
         if type(path) == 'string' and path ~= '' and not seen[path] then
             seen[path] = true
             local exists, info = pcall(getInfo, path)
@@ -37,9 +37,9 @@ function M.cover_rect(image,w,h,keep_left)
     return x,(h-dh)*.5,scale
 end
 
--- 32.5% of this illustration was composed as intentional negative
--- space. Reserve a physical gap so a parchment panel cannot hide the
--- monk, manuscript, pigments or the illustrated border at 720p.
+-- Reserve the leftmost ~32.5% of the illustrated print shop as quiet
+-- space for the parchment navigation. Keep press, workers and typecases
+-- visible without disturbing the layout or mouse hitboxes.
 function M.left_panel_limit(image,w,h,left)
     if not image then return nil end
     local x,_,scale=M.cover_rect(image,w,h,true)
