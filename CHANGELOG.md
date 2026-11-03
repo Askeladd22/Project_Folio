@@ -10,6 +10,43 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.7] - 2026-11-03
+
+**Tipo:** correzione compositiva del fondale illustrato e installazione
+locale verificata. Nessuna modifica al sistema di dadi, Farkle,
+fisica, audio, salvataggi o renderer g3d.
+
+### Composizione e leggibilità
+- `src/core/menu_background.lua` centralizza il ritaglio *cover*:
+  con l'illustrazione opzionale, i viewport 4:3 e 5:4 sono ancorati
+  a sinistra e non eliminano lo spazio riservato al pannello.
+- Il pannello del Main Menu si restringe **solo se**
+  `menu_illustrated.png` è realmente caricata, rispettando il
+  primo 32,5% della composizione. Il layout del fondo legacy non
+  viene cambiato. Nuove verifiche pure Lua a 720p/1080p/1440p,
+  4:3 e ultrawide.
+- Rimossa la tinta grigio-pietra che scuriva i pigmenti del
+  nuovo fondale. La vignettatura viene ridotta soltanto per
+  la nuova illustrazione; alto contrasto rimane intatto.
+- Menù, Settings e commissioni condividono la stessa logica
+  di composizione, senza cambiare click, hitbox o navigazione.
+
+### Installazione e distribuzione
+- `scripts/install_menu_art.py` valida lo ZIP o PNG
+  originale, CRC dei chunk, dimensioni native 1920×1080,
+  SHA-256 dell'archivio e scrive atomicamente soltanto il
+  file `resources/ui/menu_illustrated.png`.
+- Nessuna sovrascrittura implicita di una variante già
+  installata; test Python aggiunti e integrati nella CI.
+- Nuova guida `docs/MENU_ART_INSTALLATION.md` con checklist
+  di leggibilità per Windows, comando di installazione
+  e hash del pacchetto fornito in conversazione.
+- **Il PNG resta separato dal repository** fino al
+  caricamento esplicito del file binario da parte del team:
+  il fallback a `resources/ui/menu.png` rimane attivo.
+- La CI non certifica la qualità visiva reale: il controllo
+  LÖVE su Windows resta da completare.
+
 ## [0.1.6] - 2026-11-03
 
 **Tipo:** integrazione tecnica dello sfondo illustrato, senza intervenire
