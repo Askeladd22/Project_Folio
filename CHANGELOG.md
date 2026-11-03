@@ -10,6 +10,37 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.8] - 2026-11-03
+
+**Tipo:** nuova direzione artistica per il fondale principale:
+**bottega tipografica veneziana ispirata ad Aldo Manuzio**, non
+scriptorium monastico.
+
+### Fondale e integrazione
+- Preparata un'illustrazione originale 1920×1080 senza elementi UI:
+  compositore di caratteri mobili, correttore umanista, stampatore
+  al torchio e bozze in asciugatura. Disponibile separatamente come
+  `ProjectFolio_Bottega_Manuzio.zip`.
+- Introdotto il percorso opzionale `resources/ui/menu_manuzio.png`,
+  con fallback ordinato su `menu_illustrated.png` già caricato sul
+  repository e quindi su `menu.png`.
+- Main Menu, Settings e scelta commissioni usano la stessa precedenza
+  e mantengono il crop responsivo e la UI interattiva separata.
+- Esteso `scripts/install_menu_art.py` con `--manuzio`: verifica
+  ZIP/PNG e installazione atomica del nuovo asset senza sovrascrivere
+  i due fondali precedenti. Aggiornati test Lua/Python per la
+  precedenza, il fallback e la conservazione degli originali.
+- Nuova specifica `docs/MANUZIO_PRINTSHOP_ART_DIRECTION.md`,
+  README, guida artistica e istruzioni di installazione aggiornati.
+- **Il nuovo PNG non è ancora nel repository GitHub**: va installato
+  localmente dal pacchetto allegato; il gioco resta funzionante
+  con i due fondali esistenti.
+
+### Limiti
+- Nessuna modifica a gameplay, dadi, fisica, g3d, audio o salvataggi.
+- L'esito dei test CI non certifica la resa su GPU Windows né la
+  qualità finale dell'illustrazione; collaudo visuale ancora aperto.
+
 ## [0.1.7] - 2026-11-03
 
 **Tipo:** correzione compositiva del fondale illustrato e installazione
