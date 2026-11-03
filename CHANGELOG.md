@@ -10,6 +10,25 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0-dev.21] - 2026-11-03
+
+**Tipo:** integrazione dei nuovi effetti OGG di interazione fisica dei dadi.
+
+### Aggiunto
+- Riproduzione dei suoni `dice-grab-1/2.ogg` all'avvio effettivo di una presa.
+- Riproduzione di `dice-shake-1/2/3.ogg` esclusivamente quando il rilevatore fisico conferma un nuovo scuotimento, con intensità proporzionale alla forza del gesto.
+- Suoni `die-throw-1..4.ogg` per il lancio di un singolo dado e `dice-throw-1..3.ogg` per il lancio multiplo, riprodotti una sola volta per gesto; i lanci automatici/da tastiera usano gli stessi OGG.
+
+### Integrazione
+- Gli asset esistenti sono caricati in modo lazy da `src/core/audio_manager.lua`, con sorgenti prototipo in cache e voci clonate in un pool limitato a 16 per garantire il completamento del playback.
+- Varianti in rotazione deterministica senza consumare lo stato random delle combinazioni Farkle. Volume, master e mute SFX già presenti nelle impostazioni vengono rispettati.
+- Quando il file OGG non è disponibile, l'auto-throw mantiene il precedente cue UI come fallback; la presa e lo shake rimangono silenziosi senza bloccare la fisica.
+- Nessuna modifica alle traiettorie 3D, al rilevatore di shake, alla risoluzione dei risultati o al rendering g3d.
+
+### Verifiche
+- Nuovo test headless `tests/dice_interaction_audio_test.lua` su varianti, file, mute, moltiplicatore di volume, isolamento RNG e limite polifonico.
+- Da verificare la resa uditiva, bilanciamento e latenza con LÖVE su Windows e un dispositivo audio reale; la CI Lua è richiesta prima del merge.
+
 ## [0.1.0-dev.20] - 2026-11-01
 
 **Tipo:** fix rotazione indebita dei dadi durante trascinamento multiplo, dopo confronto con studio del bytecode Tabletop Simulator.
