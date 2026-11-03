@@ -1,8 +1,11 @@
 # Project Folio — revisione visiva della UI V2 (Windows)
 
-**Ambito:** interfaccia attiva del gioco, dalla versione `0.1.0-dev.15`.
+**Ambito:** interfaccia V2 attualmente attiva in Project Folio; script
+introdotto con `0.1.0-dev.15`, confermato per la serie `0.1.x`.
 La precedente procedura [P0 legacy](UI_V2_BASELINE_CAPTURE.md) è
-documentazione storica: per la UI attualmente distribuita usa **questa**.
+documentazione storica. Questa cattura automatica è **un passaggio**
+della [checklist tecnica Windows](WINDOWS_TECHNICAL_QA.md), che comprende
+anche controlli manuali di input, OpenGL, audio, 50 lanci e FPS.
 
 ## Avvio
 

@@ -1,8 +1,22 @@
-# MANUSCRIPT / SCRIPTORIUM — UI 2.0
-## Roadmap esecutiva e contratto operativo per ChatGPT
+# Project Folio — UI 2.0
+## Roadmap storica di migrazione e criteri di prodotto
 
-**Stato attuale (v0.1.0-dev.7):** percorso di partita UI 2.0 unico, senza fallback; P5/QA Windows ancora aperta. Il piano di migrazione sottostante è storico.  
-**Baseline:** `main` al commit `929e377fafde2b76a0d40681bf3c1e42ff655914` (31/10/2026).  
+> **AGGIORNAMENTO 3 novembre 2026 — documento storico.**
+> La UI V2 è già l'unico HUD attivo e il cutover del vecchio HUD/F6
+> e del renderer painter/F9 è concluso. La roadmap sottostante descrive
+> le decisioni e le fasi di migrazione dal 31 ottobre: NON usare le
+> istruzioni relative a flag UI sperimentali, F6/F9, `hud_minimal.lua`,
+> `hud.lua` o `render.lua` come se fossero ancora presenti.
+> Per lo stato reale consultare [UI_V2_STATUS.md](UI_V2_STATUS.md);
+> per il **gate P5 ancora aperto** usare
+> [WINDOWS_TECHNICAL_QA.md](WINDOWS_TECHNICAL_QA.md).
+> Le scelte architetturali della roadmap (Farkle autoritativo,
+> dadi g3d, fisica separata, accessibilità) restano valide.
+
+**Snapshot storico della migrazione (v0.1.0-dev.7):** UI 2.0 resa unica
+in quell'aggiornamento; QA Windows P5 ancora da effettuare.
+**Baseline storica:** `main` al commit
+`929e377fafde2b76a0d40681bf3c1e42ff655914` (31/10/2026).  
 **Tracker obbligatorio:** [UI_V2_STATUS.md](UI_V2_STATUS.md).  
 **Documento di design vincolante:** [GAME_DESIGN.md](GAME_DESIGN.md).  
 **Regole e rischi:** [FARKLE_RULES.md](FARKLE_RULES.md), [RENDERER_RETIREMENT.md](RENDERER_RETIREMENT.md).

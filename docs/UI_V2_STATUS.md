@@ -1,5 +1,49 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+## Stato verificato sul repository — 3 novembre 2026
+
+**Versione di riferimento:** `main@dddd6b5e54dae2aa0df69c33d0b040a5f5de5bff`
+(`0.1.0` prima della presente PR documentale). **Repository:**
+`Askeladd22/Project_Folio`. Project Folio rimane un titolo provvisorio.
+
+**Stato effettivo:** la **UI V2 è l'unica interfaccia giocabile**, con
+`src/features/farkle/ui_v2/hud.lua`, `ui_v2/dialogs.lua` e
+l'interfaccia frontend condivisa. I file `hud_minimal.lua`,
+`src/features/farkle/hud.lua` e `src/engine3d/render.lua` non fanno
+più parte del tree di produzione; **F6 non commuta più verso la vecchia UI**,
+**F9 non riattiva il painter CPU**. g3d resta l'unico renderer 3D,
+mentre miniatura, HUD e testo possono rimanere 2D.
+
+| Ambito | Stato reale | Evidenza / vincolo |
+|---|---|---|
+| Baseline P0 e studio P1 | Documenti e prove storiche disponibili | Non sono il workflow di QA dell'interfaccia attuale |
+| P2/P3/P4 — UI V2, input e modali | **Implementazione attiva** | Test headless CI; verifica percettiva Windows ancora aperta |
+| P6 — cutover dalla UI legacy | **Eseguito** | Unico HUD attivo, nessun F6 o painter di fallback |
+| P5 — QA visuale, fisica, accessibilità e FPS Windows | **NON APPROVATA** | Mancano prova manuale, checklist firmata ed evidenze GPU |
+| P7 — finitura | **Parziale / aperta** | Non sostituisce un playtest con dadi reali |
+| Nuovi avversari asimmetrici / Segni | **Esperimento di design** | Non integrati nella partita solitaria |
+
+**Verifica automatica già effettuata:** GitHub Actions
+[main #41603525911](https://github.com/Askeladd22/Project_Folio/actions/runs/41603525911):
+**success** (gate versione/changelog, sintassi Lua 5.4, **85 suite**
+`*_test.lua` su Lua 5.4 e LuaJIT, benchmark Segni di ricerca,
+laboratorio FPS isolato, test Python). L'esecuzione è su Linux e
+**non certifica Windows, grafica g3d su GPU reale o correttezza uditiva**.
+
+**Prossimo gate attivo:**
+[collaudo tecnico Windows 0.1.1](WINDOWS_TECHNICAL_QA.md), a partire da
+`python scripts/capture_ui_v2_review.py`, seguito da smoke reali,
+controllo delle hitbox e almeno 50 tiri documentati. Fino a prove
+raccolte, **P5 resta aperta**; non riscrivere la storia come già approvata.
+
+## Archivio cronologico — snapshot delle PR e delle fasi precedenti
+
+**Le sezioni seguenti descrivono lo stato del momento in cui furono
+scritte.** Le citazioni di `manuscript`, HUD precedente, flag opt-in,
+F6, F9 e fasi «NON INIZIATA» **non sono istruzioni operative correnti**.
+Per la versione attiva fanno fede lo stato sopra e la checklist Windows.
+
+
 > **0.1.0-dev.20 — separazione drag/shake:**
 > corretto lo spin condiviso imposto ai sei corpi quando
 > si trascinava il gruppo senza scuoterlo. La rotazione
@@ -204,7 +248,7 @@
 
 ## Aggiornamento operativo — 31 ottobre 2026, Project Folio
 
-**Questo aggiornamento prevale sullo snapshot storico P0 riportato più sotto.**
+**Snapshot storico del 31 ottobre: non prevale sullo stato operativo del 3 novembre riportato in apertura.**
 Repository attuale: `Askeladd22/Project_Folio`; `Project Folio` è un
 **titolo pubblico provvisorio**, non il nome commerciale definitivo.
 
@@ -241,7 +285,7 @@ scoring valida/non valida e modali; solo poi decidere la promozione P3.
 > Non dedurre «DONE» dal fatto che esiste una PR: servono gate e test.
 > Roadmap completa e prompt: [UI_V2_ROADMAP.md](UI_V2_ROADMAP.md).
 
-## Stato corrente — 31 ottobre 2026
+## Stato storico P0 — 31 ottobre 2026 (archivio, non attuale)
 
 - **FASE ATTIVA:** `P0 — baseline e audit completo`.
 - **CONDIZIONE:** `IN CORSO` (matrice completa e test automatico di inventario aggiunti; resta QA grafica e manuale della baseline).

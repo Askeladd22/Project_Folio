@@ -10,7 +10,7 @@ Risk every throw. Build your manuscript. Decide when to stop.
 ![LÖVE](https://img.shields.io/badge/L%C3%96VE-11.x-ec5d94)
 ![Status](https://img.shields.io/badge/status-active%20prototype-cc9955)
 
-[Game design](docs/GAME_DESIGN.md) · [Farkle rules](docs/FARKLE_RULES.md) · [Technical notes](docs/TECHNICAL.md) · [UI 2.0 roadmap](docs/UI_V2_ROADMAP.md) · **[Versione](version.txt) · [Registro aggiornamenti](CHANGELOG.md)**
+[Game design](docs/GAME_DESIGN.md) · [Farkle rules](docs/FARKLE_RULES.md) · [Technical notes](docs/TECHNICAL.md) · [UI 2.0 roadmap](docs/UI_V2_ROADMAP.md) · [Collaudo Windows](docs/WINDOWS_TECHNICAL_QA.md) · **[Versione](version.txt) · [Registro aggiornamenti](CHANGELOG.md)**
 
 </div>
 
@@ -206,7 +206,7 @@ di salto originali.
 
 ## Overview
 
-The display name is temporary. The `manuscript` repository, internal `scriptorium` scene IDs and existing save identity stay unchanged for compatibility; they are not the public-facing game title.
+The display name **Project Folio** is temporary. The current repository is `Askeladd22/Project_Folio`; historical references to the `manuscript` repository, internal `scriptorium` scene IDs and the LÖVE save identity remain for compatibility. Those internal names are not the public game title.
 
 **Project Folio** (temporary working title; formerly presented as *Scriptorium*) is a single-player, dice-driven roguelite built with **Lua/LuaJIT and LÖVE 11.x**. Six physical three-dimensional dice are the heart of the experience. Each throw creates a decision: bank a promising result, set dice aside, or push your luck with another roll.
 
@@ -230,8 +230,8 @@ All F8 tray variants and existing D8 geometry use g3d; the CPU painter and F9 sw
 **Requirements:** Windows or Linux; [LÖVE 11.x](https://love2d.org/) installed and accessible (or its executable configured). No compilation or Python installation is necessary for ordinary play.
 
 ```bash
-git clone https://github.com/Askeladd22/manuscript.git
-cd manuscript
+git clone https://github.com/Askeladd22/Project_Folio.git
+cd Project_Folio
 love .
 ```
 
@@ -324,6 +324,26 @@ luajit .\experiments\physics_lab\run.lua 64 450 lab2
 ```
 
 The lab saves a reproducible comparison to `experiments/physics_lab/build/results-lab2.csv`. The FPS 1.2.5 code remains a **work in progress**; smaller time steps improve its face-validity metrics but it has not met the production acceptance criteria. See [experimental methodology and results](experiments/physics_lab/LAB2_RESULTS.md). **Do not ship the lab DLL or substitute FPS into Farkle without separate engineering and visual QA.**
+
+## Collaudo tecnico — Windows
+
+La pipeline GitHub Actions verifica **85 suite Lua `*_test.lua`** in Lua 5.4 e
+LuaJIT, sintassi, versionamento, benchmark di ricerca, laboratorio FPS isolato
+e test Python su **Ubuntu**. Non equivale alla verifica di LÖVE, OpenGL,
+driver, controller, prestazioni o audio sul computer Windows.
+
+Per acquisire le immagini dell'interfaccia **attuale** (non la baseline
+legacy), eseguire dalla radice:
+
+```powershell
+python scripts/capture_ui_v2_review.py
+```
+
+La procedura produce **32 schermate** e una galleria con le hitbox reali.
+La [checklist Windows completa](docs/WINDOWS_TECHNICAL_QA.md) guida smoke test
+Farkle, 50 lanci, presa/gruppo/shake, QA UI/accessibilità, g3d, audio, FPS e
+raccolta di prove riproducibili. Non dichiarare superato il collaudo visivo
+solo perché la cattura produce PNG.
 
 ## Roadmap
 

@@ -1,6 +1,10 @@
-# Manuscript — Game Design
+# Project Folio — Game Design
 
-**Versione 0.7 · 30 ottobre 2026.** Documento canonico. Manuscript è il titolo di lavoro; Scriptorium è il nome storico. Le etichette distinguono **attuale**, **approvato**, **proposta** e **aperto**. Per il comportamento effettivo prevalgono sorgenti e test; un'intenzione non è una funzionalità implementata.
+**Revisione del documento 0.7 · 30 ottobre 2026.** Il nome di lavoro
+attuale è **Project Folio**, non un titolo commerciale definitivo.
+`Manuscript` è il nome usato nello snapshot storico del design,
+`Scriptorium` quello precedente. I riferimenti storici presenti
+nel corpo sono conservati per tracciabilità. Le etichette distinguono **attuale**, **approvato**, **proposta** e **aperto**. Per il comportamento effettivo prevalgono sorgenti e test; un'intenzione non è una funzionalità implementata.
 
 > **Stato prototipi al 31 ottobre 2026:** nel laboratorio
 > [`experiments/signs_lab`](../experiments/signs_lab/README.md)
