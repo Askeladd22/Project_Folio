@@ -3,7 +3,8 @@ local Version=require('src.core.version')
 local f=assert(io.open('version.txt','rb'))
 local raw=f:read('*a');f:close()
 local value=assert(Version.parse(raw))
-assert(value:match('^%d+%.%d+%.%d+'), 'version.txt must be valid SemVer')
+assert(value:match('^%d+%.%d+%.%d+$'),
+ 'canonical game version must be X.Y.Z without a -dev/prerelease suffix')
 assert(Version.current()==value,'game version must come from version.txt')
 assert(Version.parse('1.2.3')=='1.2.3')
 assert(Version.parse('0.2.0-dev.42')=='0.2.0-dev.42')
@@ -14,6 +15,8 @@ local menu=assert(io.open('src/features/main_menu/module.lua','rb'))
 local source=menu:read('*a');menu:close()
 assert(source:find('Version.current()',1,true),
  'menu footer must display canonical version')
+assert(not source:find('get_menu_music_volume',1,true),
+ 'menu must not bypass the central audio manager volume policy')
 local schema=assert(io.open('src/data/main_menu_schema.lua','rb'))
 local data=schema:read('*a');schema:close()
 assert(not data:find('v0.1',1,true),

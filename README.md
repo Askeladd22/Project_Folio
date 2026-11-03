@@ -18,7 +18,10 @@ Risk every throw. Build your manuscript. Decide when to stop.
 
 La versione attuale del prototipo è definita **esclusivamente**
 in [`version.txt`](version.txt) ed è mostrata automaticamente nel
-menu principale. Ogni update deve aumentare la versione e aggiungere
+menu principale. Dal 3 novembre 2026 il formato canonico è **`v0.1.0`**
+(senza `-dev`); le prossime versioni saranno `0.1.1`, `0.1.2` ecc.
+Il gioco rimane un prototipo: la numerazione non implica una release
+commerciale. Ogni update deve aumentare la versione e aggiungere
 una sezione datata al [`CHANGELOG.md`](CHANGELOG.md), indicando
 funzioni aggiunte/modificate/rimosse, test e limitazioni.
 
@@ -34,6 +37,14 @@ Il [registro storico](CHANGELOG.md) documenta anche l'evoluzione
 alla prima IA e allo scoring Farkle del luglio 2026, fino alle
 **39 PR integrate** fra il 16 e il 31 ottobre, con date e link originali.
 Non si confondono esperimenti rimossi, funzionalità attive o release.
+
+## Bilanciamento dell'audio
+
+Il brano del menu `maintitle.ogg` utilizza il 25% del volume
+selezionato in **Music volume**, per lasciare spazio agli effetti sonori.
+Uscendo dal menu, la musica viene messa in pausa: grab, shake e throw dei
+dadi restano udibili senza la sovrapposizione del tema. I controlli
+**Master**, **SFX** e **Music** continuano a funzionare normalmente.
 
 ## Prototipi di gameplay isolati
 
