@@ -24,10 +24,13 @@ end
 
 -- No full-width legacy letterbox/header/footer strips: keep the original
 -- illuminated workshop illustration visible beyond one bounded leaf.
-function M.backdrop(w,h,high_contrast,opacity)
+function M.backdrop(w,h,high_contrast,opacity,opts)
  local g=love.graphics
  g.push('all')
- g.setColor(.055,.039,.027,(high_contrast and .32 or .16)*(opacity or 1))
+ local quiet=opts and opts.quiet
+ g.setColor(.055,.047,.042,
+  (quiet and (high_contrast and .41 or .28)
+   or (high_contrast and .32 or .16))*(opacity or 1))
  g.rectangle('fill',0,0,w,h)
  g.pop()
 end
@@ -38,6 +41,20 @@ function M.panel(r,opts)
  local alpha=opts.alpha or 1
  local high=opts.high_contrast
  local g=love.graphics
+ if opts.style=="editorial" then
+  g.push('all')
+  -- A restrained paper leaf: straight edges, one hairline border and
+  -- restrained paper warmth instead of faux embossed gold ornament.
+  g.setColor(.015,.013,.012,.44*alpha)
+  g.rectangle('fill',r.x+5,r.y+7,r.w,r.h)
+  g.setColor(.915,.878,.797,(high and 1 or .98)*alpha)
+  g.rectangle('fill',r.x,r.y,r.w,r.h)
+  g.setColor(.27,.22,.17,(high and .70 or .42)*alpha)
+  g.setLineWidth(1)
+  g.rectangle('line',r.x+.5,r.y+.5,r.w-1,r.h-1)
+  g.pop()
+  return
+ end
  g.push('all')
  g.setColor(.028,.018,.011,.45*alpha)
  g.rectangle('fill',r.x+8,r.y+11,r.w,r.h,8,8)
@@ -61,8 +78,16 @@ function M.panel(r,opts)
  g.pop()
 end
 
-function M.rule(x,y,w,alpha)
+function M.rule(x,y,w,alpha,opts)
  local g=love.graphics
+ if opts and opts.quiet then
+  g.push('all')
+  g.setColor(.34,.28,.22,.34*(alpha or 1))
+  g.setLineWidth(1)
+  g.line(x,y,x+w,y)
+  g.pop()
+  return
+ end
  g.push('all')
  color(M.palette.border,.50*(alpha or 1))
  g.setLineWidth(1)
@@ -81,6 +106,21 @@ function M.item(rect,opts)
  local active=opts.active and true or false
  local disabled=opts.disabled and true or false
  local primary=opts.primary and true or false
+ if opts.style=="editorial" then
+  g.push('all')
+  -- Index-like navigation rather than six embossed parchment buttons.
+  if active and not disabled then
+   g.setColor(.30,.25,.20,.095*alpha)
+   g.rectangle('fill',rect.x,rect.y,rect.w,rect.h)
+   g.setColor(.27,.22,.17,.88*alpha)
+   g.rectangle('fill',rect.x+1,rect.y+6,3,math.max(1,rect.h-12))
+  end
+  g.setColor(.35,.30,.25,(disabled and .10 or .19)*alpha)
+  g.setLineWidth(1)
+  g.line(rect.x+1,rect.y+rect.h-.5,rect.x+rect.w-1,rect.y+rect.h-.5)
+  g.pop()
+  return
+ end
  g.push('all')
  local fill=active and {.97,.88,.65} or primary and {.94,.87,.70}
   or {.94,.88,.75}

@@ -8,7 +8,7 @@ return {
     ["main_menu.item.continue"] = "Continue",
     ["main_menu.item.new_game"] = "New Game",
     ["main_menu.item.settings"] = "Settings",
-    ["main_menu.item.wishlist"] = "Wishlist Now!",
+    ["main_menu.item.wishlist"] = "Wishlist",
     ["main_menu.item.quit"] = "Quit",
 
     ["main_menu.modal.no_save"] = "No saved game found. Start a New Game instead.",
