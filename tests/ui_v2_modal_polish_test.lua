@@ -80,6 +80,19 @@ local function hoverFill(r)
  end
  return false
 end
+local function editorialHover(r)
+ for _,call in ipairs(paint) do
+  if call.mode=='fill' and call.x==r.x and call.y==r.y
+    and call.w==r.w and call.h==r.h then
+   local c=call.color
+   local selected=Art.rgb('selection')
+   if math.abs((c[1] or 0)-selected[1])<.001
+    and math.abs((c[2] or 0)-selected[2])<.001
+    and math.abs((c[3] or 0)-selected[3])<.001 then return true end
+  end
+ end
+ return false
+end
 local function readableButton(r)
  for _,call in ipairs(paint) do
   local exact=call.text==r.label
@@ -163,7 +176,9 @@ for _,screen in ipairs{{1280,720},{1920,1080},{2560,1440}} do
       or Layout.pause_confirm_close) or Layout.close
     assert(close.x==expectedClose.x and close.y==expectedClose.y and
      close.w==expectedClose.w and close.h==expectedClose.h)
-    assert(hoverFill(expectedClose),'close hover must use scaled pointer')
+    assert(isPause and editorialHover(expectedClose) or
+      not isPause and hoverFill(expectedClose),
+      'close hover must use scaled pointer')
     for id,a in pairs(u.modalButtons) do
      assert(readableButton(a),'button label escapes modal: '..id)
      assert(a.x>=frame.x and a.y>=frame.y and
