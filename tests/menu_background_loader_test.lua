@@ -40,6 +40,26 @@ img,path=Background.load(expect,old)
 assert(img==nil and path==nil,'no assets should return nil')
 love={}
 assert(Background.load(expect,old)==nil,'no LÖVE API must be safe')
+-- Validate exact responsive cover framing without a GPU dependency.
+local image={getWidth=function()return 1920 end,
+             getHeight=function()return 1080 end}
+for _,size in ipairs{{1280,720},{1920,1080},{2560,1440},{3440,1440}} do
+ local w,h=size[1],size[2]
+ local x,y,scale=Background.cover_rect(image,w,h,true)
+ assert(x==0,'16:9 and ultrawide preserve left blank area')
+ assert(scale*1920>=w and scale*1080>=h)
+ local left=math.max(math.max(12,math.floor(h*.038)),math.floor(w*.045))
+ local width=Background.left_panel_limit(image,w,h,left)
+ assert(width>275,'illustration leaves insufficient UI width')
+ assert(left+width < image:getWidth()*.325*scale,
+  'interactive page intrudes on scriptorium focal point')
+end
+local centered=Background.cover_rect(image,1024,768,false)
+local anchored=Background.cover_rect(image,1024,768,true)
+assert(centered < -100 and anchored==0,
+ '4:3 crop must preserve the illustrated UI zone')
+assert(Background.left_panel_limit(image,1024,768,46)>275)
+assert(Background.cover_rect(nil,1920,1080,true)==nil)
 love=previousLove
 for _,p in ipairs({
  'src/features/main_menu/module.lua',

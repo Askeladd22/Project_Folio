@@ -33,7 +33,8 @@ end
 local code=read("src/features/main_menu/module.lua")
 assert(code:find('style="editorial"',1,true),
        "main menu must opt in to editorial surface")
-assert(code:find('MenuSurface.backdrop(w,h,high_contrast,scene_alpha,{quiet=true})',1,true))
+assert(code:find('illustrated=menu_bg_path == ILLUSTRATED_BG_PATH',1,true),
+       'only authored illustration should use lighter vignette')
 assert(code:find("local emphasized = item.primary and item.enabled",1,true),
        "disabled Continue must not compete with the enabled New Game")
 assert(not code:find("get_footer_alpha_label",1,true))

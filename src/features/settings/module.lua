@@ -91,6 +91,7 @@ local MENU_TITLE_GOLD = expect_color3(UI_COLOR_SCHEMA.title_gold, "colors.title_
 local MENU_TEXT_SECONDARY = expect_color3(UI_COLOR_SCHEMA.text_secondary, "colors.text_secondary")
 
 local bg_image = nil
+local bg_image_path = nil
 local title_font = nil
 local subtitle_font = nil
 local section_font = nil
@@ -186,7 +187,7 @@ local function ensure_assets()
     end
 
     if not bg_image then
-        bg_image = MenuBackground.load(ILLUSTRATED_BG_PATH, MENU_BG_PATH)
+        bg_image, bg_image_path = MenuBackground.load(ILLUSTRATED_BG_PATH, MENU_BG_PATH)
     end
 
     if not title_font then
@@ -625,11 +626,10 @@ local function draw_background(layout)
     local high_contrast = RuntimeUI.high_contrast()
 
     if bg_image then
-        local bw, bh = bg_image:getWidth(), bg_image:getHeight()
-        local scale = math.max(w / bw, h / bh)
-        local dw, dh = bw * scale, bh * scale
+        local x,y,scale=MenuBackground.cover_rect(bg_image,w,h,
+            bg_image_path == ILLUSTRATED_BG_PATH)
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(bg_image, (w - dw) * 0.5, (h - dh) * 0.5, 0, scale, scale)
+        love.graphics.draw(bg_image,x,y,0,scale,scale)
     else
         love.graphics.setColor(0.05, 0.04, 0.03, 1)
         love.graphics.rectangle("fill", 0, 0, w, h)

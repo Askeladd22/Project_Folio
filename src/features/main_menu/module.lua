@@ -117,6 +117,7 @@ local fonts = {
 }
 
 local menu_bg = nil
+local menu_bg_path = nil
 local music = nil
 local music_play_attempted = false
 local has_save_data = false
@@ -265,13 +266,8 @@ local function get_background_rect(window_w, window_h)
     if not menu_bg then
         return nil
     end
-    local bw, bh = menu_bg:getWidth(), menu_bg:getHeight()
-    local scale = math.max(window_w / bw, window_h / bh)
-    local draw_w = bw * scale
-    local draw_h = bh * scale
-    local draw_x = window_w * 0.5 - draw_w * 0.5
-    local draw_y = window_h * 0.5 - draw_h * 0.5
-    return draw_x, draw_y, scale
+    return MenuBackground.cover_rect(menu_bg,window_w,window_h,
+        menu_bg_path == ILLUSTRATED_BG_PATH)
 end
 
 local function reset_particles()
@@ -373,6 +369,10 @@ local function compute_layout(w, h)
     local width_cap = RuntimeUI.sized(610) *
         (h > 1080 and math.min(1.2, h / 1080) or 1)
     local panel_w = math.min(math.floor(w * .45), math.floor(width_cap), w - left - border)
+    if menu_bg_path == ILLUSTRATED_BG_PATH then
+        local safe=MenuBackground.left_panel_limit(menu_bg,w,h,left)
+        if safe then panel_w=math.min(panel_w,safe) end
+    end
     local menu_x = left + math.max(21, math.floor(panel_w * .065))
     local menu_w = panel_w - (menu_x - left) * 2
     local title_text = tr_entry(BRANDING_TITLE_ENTRY)
@@ -510,7 +510,7 @@ function MainMenu:enter()
     if not menu_bg then
         -- Draw only background pixels here: logo, buttons and version are
         -- still rendered by LÖVE as independent interactive controls.
-        menu_bg = MenuBackground.load(ILLUSTRATED_BG_PATH, MENU_BG_PATH)
+        menu_bg, menu_bg_path = MenuBackground.load(ILLUSTRATED_BG_PATH, MENU_BG_PATH)
     end
 
     ensure_fonts()
@@ -575,16 +575,22 @@ function MainMenu:draw()
 
     if menu_bg then
         local bg_x, bg_y, scale = get_background_rect(w, h)
-        -- Keep the workshop as atmosphere rather than the centre of
-        -- attention: reduce its hyper-saturated photographic contrast.
-        set_art_color('stone',1,scene_alpha)
+        if menu_bg_path == ILLUSTRATED_BG_PATH then
+            -- Keep original illustration pigments; the legacy photo still
+            -- receives its deliberate stone-coloured tint.
+            set_color(1,1,1,1,scene_alpha)
+        else
+            set_art_color('stone',1,scene_alpha)
+        end
         love.graphics.draw(menu_bg, bg_x, bg_y, 0, scale, scale)
     else
         set_art_color('ink',1,scene_alpha)
         love.graphics.rectangle("fill", 0, 0, w, h)
     end
 
-    MenuSurface.backdrop(w,h,high_contrast,scene_alpha,{quiet=true})
+    MenuSurface.backdrop(w,h,high_contrast,scene_alpha,{
+        quiet=true,illustrated=menu_bg_path == ILLUSTRATED_BG_PATH
+    })
     MenuSurface.panel(cached_layout.frame,{high_contrast=high_contrast,alpha=scene_alpha,style="editorial"})
 
     -- Nearly imperceptible ambient dust; no floating fantasy sparkles.

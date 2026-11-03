@@ -66,8 +66,17 @@ La prima illustrazione 1920×1080 della bottega è stata preparata
 come **asset separato**; per motivi di trasferimento di file binari
 non è inclusa in questa PR GitHub. Il pacchetto ZIP fornito nella
 conversazione contiene già il path `resources/ui/menu_illustrated.png`.
-Estrarlo nella radice `Project_Folio` e riavviare LÖVE. Non
-sostituire `menu.png` e non incorporare pulsanti o lettering
+Installare lo ZIP dalla root del repository con
+`python scripts/install_menu_art.py PERCORSO_ZIP`, poi verificare
+con `python scripts/install_menu_art.py --verify-installed` e
+riavviare LÖVE. Il controllo dell'immagine è documentato in
+[MENU_ART_INSTALLATION.md](MENU_ART_INSTALLATION.md).
+
+Da **0.1.7** il pannello si restringe automaticamente nel margine
+illustrato (~32,5% a sinistra) e a 4:3 il ritaglio preserva il lato
+riservato all'UI. La nuova illustrazione mantiene il proprio colore,
+mentre lo sfondo precedente conserva la sua color correction.
+Non sostituire `menu.png` e non incorporare pulsanti o lettering
 nell'immagine: il software li disegna dinamicamente, anche a 720p.
 
 I passaggi di QA prima di committare l'asset sono descritti in
