@@ -9,34 +9,34 @@ Farkle, fisica, RNG, g3d o assets per “far passare” un test.
 ## 0. Che cosa è già verificato (e che cosa no)
 
 Il commit di riferimento precedente a questo piano è
-\`main@dddd6b5e54dae2aa0df69c33d0b040a5f5de5bff\` (v0.1.0).
+`main@dddd6b5e54dae2aa0df69c33d0b040a5f5de5bff` (v0.1.0).
 GitHub Actions [run 41603525911](https://github.com/Askeladd22/Project_Folio/actions/runs/41603525911)
 è **SUCCESS** su Ubuntu: gate versione/changelog, sintassi Lua 5.4,
-**85 file \`tests/*_test.lua\`** eseguiti sia con Lua 5.4 sia con LuaJIT,
+**85 file `tests/*_test.lua`** eseguiti sia con Lua 5.4 sia con LuaJIT,
 benchmark deterministico di ricerca Incontri/Segni, laboratorio FPS
 *isolato* compilato e provato, e test Python. Non significa che siano stati
 eseguiti test GPU LÖVE, audio, input o FPS su Windows.
 Il solver FPS nativo dei laboratori **non** è integrato nel gioco.
 
-Il repository include \`scripts/run_smoke.py\` e
-\`scripts/capture_ui_v2_review.py\`. Quest'ultimo acquisisce
+Il repository include `scripts/run_smoke.py` e
+`scripts/capture_ui_v2_review.py`. Quest'ultimo acquisisce
 **32 PNG reali LÖVE** (16 scenari × 2 risoluzioni: 1280×720 e
 1920×1080) con coordinate hitbox esportate dal controller,
-\`gallery.html\`, \`review-manifest.json\`, \`review-checklist.md\`
-e log. Le schermate \`*-fixture\` usano stati artificiali per la
+`gallery.html`, `review-manifest.json`, `review-checklist.md`
+e log. Le schermate `*-fixture` usano stati artificiali per la
 presentazione e **non provano la correttezza di 50 tiri fisici reali**.
 
 ## 1. Preflight (PowerShell, nella radice del repository)
 
 Requisiti: **Windows 10/11**, LÖVE 11.x funzionante, Git, Python 3.9+
 nel PATH e driver GPU aggiornato. Per i soli test Lua, usare il runtime
-disponibile; \`scripts/test_luajit.py\` cerca per default
-\`C:\Program Files (x86)\LOVE\lua51.dll\`. Se la DLL è altrove,
-impostare \`LOVE_LUA_DLL\` esplicitamente.
+disponibile; `scripts/test_luajit.py` cerca per default
+`C:\Program Files (x86)\LOVE\lua51.dll`. Se la DLL è altrove,
+impostare `LOVE_LUA_DLL` esplicitamente.
 
-Eseguire dalla root di **Project_Folio**, non dalla directory \`scripts\`:
+Eseguire dalla root di **Project_Folio**, non dalla directory `scripts`:
 
-\`\`\`powershell
+```powershell
 git fetch origin
 git switch main
 git pull --ff-only
@@ -47,18 +47,18 @@ Get-Command git, python
 # Solo se love.exe non è nel PATH o nelle directory Program Files:
 $env:LOVE_EXE = 'C:\Program Files\LOVE\love.exe'
 .\Avvia.cmd
-\`\`\`
+```
 
 **PASS:** lo splash LÖVE (rosa/azzurro con cuore) appare, poi il menu
-principale; il footer riporta \`v0.1.1\`. Nessun traceback, finestra nera
+principale; il footer riporta `v0.1.1`. Nessun traceback, finestra nera
 persistente o errore shader. Lo splash con cuore è **del motore LÖVE**,
 non un residuo legacy. Se fallisce: registrare messaggio esatto,
-Windows/GPU/driver, \`love --version\` dove disponibile e SHA del commit.
-Annotare \`git status --short\`: le modifiche locali devono essere note.
+Windows/GPU/driver, `love --version` dove disponibile e SHA del commit.
+Annotare `git status --short`: le modifiche locali devono essere note.
 
 ## 2. Test automatici locali (se l'ambiente li supporta)
 
-\`\`\`powershell
+```powershell
 # Richiede LuaJIT/lua51.dll fornita da LÖVE oppure LOVE_LUA_DLL.
 python scripts/test_luajit.py
 
@@ -68,34 +68,34 @@ python scripts/test_ui_v2_review.py
 
 # Smoke di gameplay con LÖVE reale e profili di salvataggio isolati.
 python scripts/run_smoke.py all --out audits/windows-qa/smoke
-\`\`\`
+```
 
-\`run_smoke.py all\` esegue \`partial\`, \`face-gate\`, \`integration\`,
-\`hud\`, \`frontend\`; il controllo \`tray\` è separato:
+`run_smoke.py all` esegue `partial`, `face-gate`, `integration`,
+`hud`, `frontend`; il controllo `tray` è separato:
 
-\`\`\`powershell
+```powershell
 python scripts/run_smoke.py tray --out audits/windows-qa/tray
-\`\`\`
+```
 
-**PASS:** terminazione senza errori, marcatori \`PASS\` nei log generati;
+**PASS:** terminazione senza errori, marcatori `PASS` nei log generati;
 lo smoke non sostituisce una partita interattiva. Registrare anche eventuali
 test **NON ESEGUITI** (per esempio DLL LuaJIT assente) senza segnarli PASS.
 I comandi Python sono le entrypoint presenti nel repository, non nuovi test.
 
 ## 3. Cattura della UI V2 attiva — obbligatoria
 
-\`\`\`powershell
+```powershell
 python scripts/capture_ui_v2_review.py
-\`\`\`
+```
 
 L'output è creato in una directory con data e SHA sotto
-\`audits/ui-v2-review/\`. Aprire \`gallery.html\` e attivare
-**«Mostra hitbox reali»**; compilare \`review-checklist.md\`, non lasciarla
+`audits/ui-v2-review/`. Aprire `gallery.html` e attivare
+**«Mostra hitbox reali»**; compilare `review-checklist.md`, non lasciarla
 implicitamente approvata. Esaminare soprattutto:
 
 - [ ] **1280×720 e 1920×1080:** sei facce leggibili, scena g3d e HUD
   non tagliati, pulsanti dentro il viewport, nessun testo oltre i bordi.
-- [ ] Marquee dei sei dadi, frame \`physical-group-held\`, overlays non
+- [ ] Marquee dei sei dadi, frame `physical-group-held`, overlays non
   invasivi e nessuna confusione fra selezione fisica e Farkle.
 - [ ] Modali Aiuto, Scelte/Combinazioni, Ricompense, Folio, Medaglie e
   Monaco: tutte le righe leggibili e controlli raggiungibili.
@@ -111,7 +111,7 @@ Non sostituire l'uno all'altro. Fare ulteriori controlli manuali a
 
 ## 4. Sessione manuale reale — minimo 50 lanci
 
-Avviare normalmente con \`.\Avvia.cmd\` dopo gli smoke. La sessione
+Avviare normalmente con `.\Avvia.cmd` dopo gli smoke. La sessione
 deve usare le vere mesh/facce/risoluzioni: **non** forzare un seed di
 scoring o un risultato tramite test fixture. Registrare i progressivi
 dei lanci e un log essenziale PASS/FAIL:
@@ -143,10 +143,10 @@ Un evento osservato non giustifica da solo la sostituzione del solver.
   diagnostica dello smusso. F9 **non** è un'opzione di renderer.
   Nessun fallback CPU, profondità/ombre corrette, texture e facce
   distinguibili, nessuno shader error su GPU reale.
-- [ ] **Audio:** dal menu, \`maintitle.ogg\` resta sotto gli SFX
+- [ ] **Audio:** dal menu, `maintitle.ogg` resta sotto gli SFX
   (mix relativo 0,25 del livello Music); lasciando il menu il brano
-  deve fermarsi. \`grab\` una volta per presa, \`shake\` solo per
-  inversioni reali, \`throw\` una volta per lancio singolo/multiplo.
+  deve fermarsi. `grab` una volta per presa, `shake` solo per
+  inversioni reali, `throw` una volta per lancio singolo/multiplo.
   Verificare mute e slider Master/Music/SFX, senza tagli o clipping.
 - [ ] **Accessibilità:** scala UI, big text, contrasto elevato,
   reduced animations, mouse/tastiera e Alt-Tab; verificare che
@@ -167,7 +167,7 @@ Per ogni anomalia registrare:
 
 | Campo | Cosa inserire |
 |---|---|
-| Versione | Commit SHA e \`git status --short\` |
+| Versione | Commit SHA e `git status --short` |
 | Ambiente | Windows, LÖVE, GPU, driver, risoluzione, DPI |
 | Test | ID/serie del tiro, azione e stato Farkle |
 | Evidenza | PNG/video, nome file/log e percorso; risultato atteso/reale |
@@ -175,10 +175,10 @@ Per ogni anomalia registrare:
 | Prestazioni | FPS/frametime misurati, tool usato, scenario |
 | Riproduzione | Passaggi minimi, frequenza, eventuale seed registrato |
 
-Da conservare localmente: \`review-manifest.json\`,
-\`review-checklist.md\` **compilata**, \`gallery.html\`, PNG
-problematici, \`hud-smoke.log\`, log smoke, resoconto dei 50 tiri
-e misurazioni FPS. **Non caricare l'intero \`APPDATA\`**: può contenere
+Da conservare localmente: `review-manifest.json`,
+`review-checklist.md` **compilata**, `gallery.html`, PNG
+problematici, `hud-smoke.log`, log smoke, resoconto dei 50 tiri
+e misurazioni FPS. **Non caricare l'intero `APPDATA`**: può contenere
 preferenze personali e percorsi locali; oscurare informazioni sensibili
 prima di condividere log o screenshot.
 
