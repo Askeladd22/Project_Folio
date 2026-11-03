@@ -64,7 +64,7 @@ local function pos(s) return assert(c:find(s,1,true),s..' missing') end
 local escape_hold=pos("if k=='escape' and self.mouseThrow then")
 local escape_marquee=pos("if k=='escape' and self.marquee then")
 local escape_selection=pos("if k=='escape' and self.dragSelected")
-local escape_modal=pos("if k=='escape' then")
+local escape_modal=pos(" if k=='escape' then\n")
 assert(escape_hold<escape_marquee and escape_marquee<escape_selection
  and escape_selection<escape_modal,'Esc must cancel a grip before opening pause')
 assert(c:find("self.modal='run'",1,true),'Esc must open pause')
