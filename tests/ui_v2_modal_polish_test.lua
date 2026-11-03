@@ -5,6 +5,7 @@ local R=require('src.gameplay.farkle.rules')
 local P=require('src.features.farkle.presentation')
 local Res=require('src.core.resolution_manager')
 local Layout=require('src.features.farkle.ui_v2.modal_layout')
+local Art=require('src.data.art_palette')
 local RuntimeUI=require('src.core.runtime_ui')
 local valid,reason=Layout.validate()
 assert(valid,reason)
@@ -69,9 +70,12 @@ local function hoverFill(r)
   if call.mode=='fill' and call.x==r.x and call.y==r.y and
    call.w==r.w and call.h==r.h then
    local c=call.color
-   if math.abs((c[1] or 0)-.97)<.001 and
-    math.abs((c[2] or 0)-.88)<.001 and
-    math.abs((c[3] or 0)-.65)<.001 then return true end
+   -- Follow the canonical art palette instead of the retired yellow
+   -- hover swatch; preserve the pointer geometry and disabled-state test.
+   local active=Art.rgb('sage_light')
+   if math.abs((c[1] or 0)-active[1])<.001 and
+    math.abs((c[2] or 0)-active[2])<.001 and
+    math.abs((c[3] or 0)-active[3])<.001 then return true end
   end
  end
  return false
