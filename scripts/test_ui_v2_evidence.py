@@ -11,7 +11,7 @@ from capture_ui_v2_review import SCENES, SIZES, collect_frames, report_html
 from package_ui_v2_review import (
     IncompleteCapture, package_capture, required_capture_files, verify_capture
 )
-from test_ui_v2_review import stub_png
+from test_ui_v2_review import png_chunk, stub_png
 
 
 def fixture(root: Path) -> None:
@@ -95,7 +95,9 @@ class EvidenceBundleTests(unittest.TestCase):
             root.mkdir()
             fixture(root)
             file = root / "hud" / "hud-usability-1920-fresh.png"
-            file.write_bytes(file.read_bytes() + b"tamper")
+            original = file.read_bytes()
+            # A valid additional PNG tEXt chunk changes only the checksum.
+            file.write_bytes(original[:-12] + png_chunk(b"tEXt", b"qa=tamper") + original[-12:])
             with self.assertRaisesRegex(IncompleteCapture, "differs from manifest"):
                 verify_capture(root)
 
