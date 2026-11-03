@@ -287,9 +287,14 @@ def main() -> None:
     (output / "review-checklist.md").write_text(
         review_checklist(commit), encoding="utf-8",
     )
+    # Package every original file in one atomic ZIP, so uploading only some
+    # of the 1280 screenshots cannot silently pass as a complete review.
+    from package_ui_v2_review import package_capture
+    bundle = package_capture(output)
     print(
         f"PASS: {len(frames)} captured LÖVE frames, manifest, gallery and "
-        f"unapproved visual QA checklist at {output}",
+        f"unapproved visual QA checklist at {output}. "
+        f"Complete evidence bundle: {bundle}",
         flush=True,
     )
 

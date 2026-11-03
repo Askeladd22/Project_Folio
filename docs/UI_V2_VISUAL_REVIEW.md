@@ -35,6 +35,13 @@ All'avvio normale di Project Folio non modifica HUD, logica, 3D o impostazioni.
 
 ## Output e attendibilità
 
+- Da `0.1.3` viene prodotto anche `<nome-cattura>-evidence.zip`
+  **all'esterno** della directory acquisita, contenente tutti i
+  32 PNG, i 32 TSV, manifesto, galleria, checklist, log e un indice
+  SHA-256. La creazione del pacchetto fallisce se mancano file:
+  [procedura e comandi](WINDOWS_TECHNICAL_QA.md). Il bundle non
+  include `appdata`, non sostituisce la revisione manuale e non
+  modifica la simulazione fisica.
 - `gallery.html` apre una galleria locale di tutte le immagini,
   organizzate per stato e risoluzione. La casella **«Mostra hitbox reali»**
   sovrappone in modo reversibile i rettangoli acquisiti dal controller

@@ -1,5 +1,20 @@
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
+## Miglioria infrastruttura di collaudo — versione 0.1.3
+
+Dalla 0.1.3 `scripts/capture_ui_v2_review.py` crea automaticamente un
+pacchetto ZIP verificato **solo dopo** la cattura LÖVE completa:
+32 PNG, 32 mappe TSV e quattro documenti di evidenza originali.
+`scripts/package_ui_v2_review.py` valida anche acquisizioni
+già presenti senza inventare file assenti; produce un indice SHA-256
+e non include APPDATA. La CI esercita l'intero flusso di validazione
+e confezionamento con fixture testuali/PNG sintetici **dichiarati
+come test**, mai sostituti delle acquisizioni Windows reali.
+
+**P5 ancora APERTA**: il pacchetto delle prove non dimostra da solo
+la qualità visiva, gli FPS, i 50 lanci o l'audio. Il set caricato al
+3 novembre resta parziale (18/32); non è stato alterato.
+
 ## Evidenze del 3 novembre 2026 — commit di acquisizione
 
 Il commit `main@c2b2f74a` ha aggiunto una selezione di screenshot

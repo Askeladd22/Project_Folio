@@ -10,6 +10,30 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.3] - 2026-11-03
+
+**Tipo:** affidabilità della raccolta prove UI Windows, nessuna
+modifica al gameplay, fisica 3D, audio o renderer g3d.
+
+### Acquisizioni QA
+- Nuovo `scripts/package_ui_v2_review.py`: controlla la presenza
+  dei 32 PNG reali, 32 TSV delle hitbox, manifesto, gallery, checklist
+  e log; confronta gli SHA-256, dimensioni e stato dei frame con il
+  manifest di origine. Rifiuta pacchetti incompleti o modificati.
+- `scripts/capture_ui_v2_review.py` crea automaticamente uno ZIP
+  portabile, **esterno** alla cartella della cattura, dopo avere
+  superato i controlli; l'archivio include soltanto i file di
+  evidenza e un indice SHA-256. Non vengono impacchettati APPDATA
+  o dati di salvataggio.
+- `--check-only` verifica acquisizioni già esistenti senza
+  generare file; il comando senza opzioni confeziona lo ZIP,
+  impedendo una selezione manuale parziale su GitHub.
+- Nuovi test Python per pacchetti completi, acquisizioni 18/32,
+  mancanza di log, mancata corrispondenza manifesto e integrità
+  dell'archivio; integrati in GitHub Actions.
+- Guida Windows e tracker UI aggiornati. **La QA visuale
+  Windows non viene marcata PASS dai test sintetici.**
+
 ## [0.1.2] - 2026-11-03
 
 **Tipo:** ripristino del gate CI per upload di screenshot e inventario del primo
