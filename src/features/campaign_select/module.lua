@@ -7,6 +7,7 @@ local MenuSurface = require("src.features.ui_v2.menu_surface")
 local Schema = require("src.core.schema")
 local CommissionMenu = require("src.data.commission_menu")
 local CampaignSelectSchema = require("src.data.campaign_select_schema")
+local MenuBackground = require("src.core.menu_background")
 
 local CampaignSelect = {}
 
@@ -19,6 +20,7 @@ local expect_number = Schema.expect_number
 local expect_entry = Schema.expect_entry
 
 local MENU_BG_PATH = expect_string(ASSET_SCHEMA.background_path, "assets.background_path")
+local ILLUSTRATED_BG_PATH = expect_string(ASSET_SCHEMA.illustrated_background_path, "assets.illustrated_background_path")
 local FONT_TEXT = expect_string(ASSET_SCHEMA.font_text, "assets.font_text")
 local FONT_UPPERCASE = expect_string(ASSET_SCHEMA.font_uppercase, "assets.font_uppercase")
 local FONT_FALLBACK = expect_string(ASSET_SCHEMA.font_fallback, "assets.font_fallback")
@@ -121,10 +123,8 @@ local function ensure_assets()
         cached_scale = scale
     end
 
-    if not bg_image and love.filesystem and love.filesystem.getInfo and love.filesystem.getInfo(MENU_BG_PATH) then
-        pcall(function()
-            bg_image = love.graphics.newImage(MENU_BG_PATH)
-        end)
+    if not bg_image then
+        bg_image = MenuBackground.load(ILLUSTRATED_BG_PATH, MENU_BG_PATH)
     end
 
     if not title_font then

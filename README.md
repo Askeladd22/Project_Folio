@@ -325,6 +325,21 @@ luajit .\experiments\physics_lab\run.lua 64 450 lab2
 
 The lab saves a reproducible comparison to `experiments/physics_lab/build/results-lab2.csv`. The FPS 1.2.5 code remains a **work in progress**; smaller time steps improve its face-validity metrics but it has not met the production acceptance criteria. See [experimental methodology and results](experiments/physics_lab/LAB2_RESULTS.md). **Do not ship the lab DLL or substitute FPS into Farkle without separate engineering and visual QA.**
 
+## Fondale illustrato del menu
+
+Dalla **v0.1.6** Main Menu, Settings e scelta commissione cercano prima
+`resources/ui/menu_illustrated.png`; se l'illustrazione non è ancora
+installata usano lo sfondo `resources/ui/menu.png` già incluso.
+I testi, le hitbox e i pulsanti sono sempre renderizzati in Lua:
+**non devono essere dipinti nell'immagine**.
+
+Per testare il primo asset illustrato, estrarre il pacchetto
+`ProjectFolio_Illustrated_Menu_Asset.zip` ricevuto nella conversazione
+nella radice del repository e riavviare `love .` o `Avvia.cmd`.
+L'asset è distribuito separatamente e non è incluso nel clone GitHub.
+Per la direzione artistica vedere
+[docs/ART_DIRECTION.md](docs/ART_DIRECTION.md).
+
 ## Collaudo tecnico — Windows
 
 La pipeline GitHub Actions verifica **85 suite Lua `*_test.lua`** in Lua 5.4 e

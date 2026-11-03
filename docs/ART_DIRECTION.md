@@ -54,7 +54,27 @@ soprattutto in modalità alto contrasto. Gli elementi fisici
 g3d, gli asset esistenti, la fisica, i salvataggi, l'audio
 e la leggibilità delle facce dei dadi **non vengono modificati**.
 
-### Seconda fase — asset authored
+### Seconda fase — fondale illustrato (integrazione 0.1.6)
+
+Il loader condiviso supporta **`resources/ui/menu_illustrated.png`** su
+Main Menu, Settings e selezione commissioni: se l'immagine è presente e
+LÖVE riesce a caricarla, la preferisce allo sfondo legacy
+`resources/ui/menu.png`. Se manca o è corrotta, mantiene l'immagine
+precedente e non interrompe il gioco.
+
+La prima illustrazione 1920×1080 della bottega è stata preparata
+come **asset separato**; per motivi di trasferimento di file binari
+non è inclusa in questa PR GitHub. Il pacchetto ZIP fornito nella
+conversazione contiene già il path `resources/ui/menu_illustrated.png`.
+Estrarlo nella radice `Project_Folio` e riavviare LÖVE. Non
+sostituire `menu.png` e non incorporare pulsanti o lettering
+nell'immagine: il software li disegna dinamicamente, anche a 720p.
+
+I passaggi di QA prima di committare l'asset sono descritti in
+[WINDOWS_TECHNICAL_QA.md](WINDOWS_TECHNICAL_QA.md). Non confondere la
+**preparazione del supporto** con la presenza dell'asset nel repository.
+
+### Terza fase — asset definitivi
 
 1. Definire l'immagine guida della bottega con **bozzetto di
    composizione**, focal point, spazio negativo per il pannello
