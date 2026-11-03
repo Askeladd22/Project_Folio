@@ -10,7 +10,7 @@ import zipfile
 import zlib
 
 from install_menu_art import (
-    HEIGHT, WIDTH, InvalidMenuArt, RELATIVE_ASSET,
+    HEIGHT, WIDTH, InvalidMenuArt, RELATIVE_ASSET, MANUZIO_ASSET,
     inspect_png, install, read_asset,
 )
 
@@ -32,11 +32,12 @@ def sample_png(width: int = WIDTH, height: int = HEIGHT, value: int = 0) -> byte
     )
 
 
-def write_zip(path: Path, data: bytes, sha: str | None = None) -> None:
+def write_zip(path: Path, data: bytes, sha: str | None = None,
+              asset: Path = RELATIVE_ASSET) -> None:
     if sha is None:
         sha = hashlib.sha256(data).hexdigest()
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as archive:
-        archive.writestr(RELATIVE_ASSET.as_posix(), data)
+        archive.writestr(asset.as_posix(), data)
         archive.writestr("MENU_ASSET_README.txt", f"SHA-256: {sha}\n")
 
 
@@ -99,6 +100,28 @@ class MenuArtInstallTests(unittest.TestCase):
             with self.assertRaisesRegex(InvalidMenuArt, "SHA-256"):
                 read_asset(wrong_hash)
             self.assertFalse((root / RELATIVE_ASSET).exists())
+
+    def test_manuzio_installs_separately_and_preserves_both_older_backgrounds(self):
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name)
+            original = root / "resources/ui/menu.png"
+            original.parent.mkdir(parents=True)
+            original.write_bytes(b"original")
+            earlier = root / RELATIVE_ASSET
+            earlier.write_bytes(b"old illustrated image")
+            archive_path = root / "manuzio.zip"
+            image = sample_png(value=77)
+            write_zip(archive_path, image, asset=MANUZIO_ASSET)
+            status, _ = install(archive_path, root, relative_asset=MANUZIO_ASSET)
+            self.assertEqual(status, "installed")
+            self.assertEqual((root / MANUZIO_ASSET).read_bytes(), image)
+            self.assertEqual(earlier.read_bytes(), b"old illustrated image")
+            self.assertEqual(original.read_bytes(), b"original")
+            self.assertEqual(install(archive_path,root,
+                                     relative_asset=MANUZIO_ASSET)[0],
+                             "already-installed")
+            with self.assertRaisesRegex(InvalidMenuArt, "exactly one"):
+                read_asset(archive_path, RELATIVE_ASSET)
 
     def test_reads_unchanged_png_and_rejects_invalid_trailing_bytes(self):
         data = sample_png()

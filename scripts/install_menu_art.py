@@ -20,6 +20,7 @@ import zipfile
 import zlib
 
 RELATIVE_ASSET = Path("resources/ui/menu_illustrated.png")
+MANUZIO_ASSET = Path("resources/ui/menu_manuzio.png")
 MAX_BYTES = 16 * 1024 * 1024
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 WIDTH, HEIGHT = 1920, 1080
@@ -74,14 +75,14 @@ def inspect_png(data: bytes) -> tuple[int, int]:
     return width, height
 
 
-def read_asset(source: Path) -> bytes:
+def read_asset(source: Path, relative_asset: Path = RELATIVE_ASSET) -> bytes:
     if not source.is_file():
         raise FileNotFoundError(f"Illustration archive not found: {source}")
     if source.suffix.lower() == ".png":
         data = source.read_bytes()
     elif source.suffix.lower() == ".zip":
         with zipfile.ZipFile(source) as archive:
-            name = RELATIVE_ASSET.as_posix()
+            name = relative_asset.as_posix()
             if archive.namelist().count(name) != 1:
                 raise InvalidMenuArt(f"ZIP must contain exactly one {name}")
             info = archive.getinfo(name)
@@ -100,11 +101,12 @@ def read_asset(source: Path) -> bytes:
     return data
 
 
-def install(source: Path, root: Path, force: bool = False) -> tuple[str, str]:
+def install(source: Path, root: Path, force: bool = False,
+            relative_asset: Path = RELATIVE_ASSET) -> tuple[str, str]:
     """Install a single validated file, atomically, under the known path."""
-    data = read_asset(source)
+    data = read_asset(source, relative_asset)
     sha = hashlib.sha256(data).hexdigest()
-    dest = root / RELATIVE_ASSET
+    dest = root / relative_asset
     dest.parent.mkdir(parents=True, exist_ok=True)
     if dest.is_symlink():
         raise InvalidMenuArt("Refusing to replace a symlink")
@@ -139,12 +141,15 @@ def main() -> int:
                         help="Downloaded ZIP or illustrated PNG")
     parser.add_argument("--verify-installed", action="store_true",
                         help="Check the currently installed optional background")
+    parser.add_argument("--manuzio", action="store_true",
+                        help="Install/read the Venetian Renaissance workshop asset, not the legacy illustration")
     parser.add_argument("--force", action="store_true",
                         help="Replace an existing different optional PNG")
     parser.add_argument("--repo-root", type=Path,
                         default=Path(__file__).resolve().parents[1])
     args = parser.parse_args()
-    dest = args.repo_root / RELATIVE_ASSET
+    target = MANUZIO_ASSET if args.manuzio else RELATIVE_ASSET
+    dest = args.repo_root / target
     try:
         if args.verify_installed:
             if args.source:
@@ -154,10 +159,10 @@ def main() -> int:
             print(f"PASS {dest}: {size[0]}x{size[1]}, SHA-256 "
                   f"{hashlib.sha256(data).hexdigest()}")
         elif args.source:
-            status, sha = install(args.source, args.repo_root, args.force)
+            status, sha = install(args.source, args.repo_root, args.force, target)
             print(f"PASS {status}: {dest} (SHA-256 {sha})")
         else:
-            parser.error("Provide the downloaded ProjectFolio_Illustrated_Menu_Asset.zip")
+            parser.error("Provide the corresponding ProjectFolio_Bottega_Manuzio.zip (--manuzio) or legacy illustrated ZIP")
         return 0
     except (OSError, ValueError, zipfile.BadZipFile) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)

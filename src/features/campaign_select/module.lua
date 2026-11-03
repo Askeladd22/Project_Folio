@@ -21,6 +21,7 @@ local expect_entry = Schema.expect_entry
 
 local MENU_BG_PATH = expect_string(ASSET_SCHEMA.background_path, "assets.background_path")
 local ILLUSTRATED_BG_PATH = expect_string(ASSET_SCHEMA.illustrated_background_path, "assets.illustrated_background_path")
+local MANUZIO_BG_PATH = expect_string(ASSET_SCHEMA.manuzio_background_path, "assets.manuzio_background_path")
 local FONT_TEXT = expect_string(ASSET_SCHEMA.font_text, "assets.font_text")
 local FONT_UPPERCASE = expect_string(ASSET_SCHEMA.font_uppercase, "assets.font_uppercase")
 local FONT_FALLBACK = expect_string(ASSET_SCHEMA.font_fallback, "assets.font_fallback")
@@ -125,7 +126,7 @@ local function ensure_assets()
     end
 
     if not bg_image then
-        bg_image, bg_image_path = MenuBackground.load(ILLUSTRATED_BG_PATH, MENU_BG_PATH)
+        bg_image, bg_image_path = MenuBackground.load(MANUZIO_BG_PATH, ILLUSTRATED_BG_PATH, MENU_BG_PATH)
     end
 
     if not title_font then
@@ -208,7 +209,7 @@ local function draw_background(layout)
 
     if bg_image then
         local x,y,scale=MenuBackground.cover_rect(bg_image,w,h,
-            bg_image_path == ILLUSTRATED_BG_PATH)
+            (bg_image_path == MANUZIO_BG_PATH or bg_image_path == ILLUSTRATED_BG_PATH))
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(bg_image,x,y,0,scale,scale)
     else
