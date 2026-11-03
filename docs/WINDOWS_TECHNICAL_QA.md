@@ -113,7 +113,29 @@ python scripts/capture_ui_v2_review.py
 ```
 
 L'output è creato in una directory con data e SHA sotto
-`audits/ui-v2-review/`. Aprire `gallery.html` e attivare
+`audits/ui-v2-review/`. Dalla versione **0.1.3** lo script genera
+in automatico anche **`<cartella>-evidence.zip` nella cartella
+`audits/ui-v2-review/`**, dopo aver verificato **32 PNG, 32
+hitboxes TSV, manifesto, galleria, checklist e log**. Lo ZIP
+contiene un `evidence-index.json` con gli hash SHA-256 di ogni file
+originale. Se manca anche un solo file, non viene generato uno ZIP
+falsamente completo: lo script indica ogni elemento assente.
+
+Per validare manualmente una cattura già esistente (o per rigenerare
+solo il suo pacchetto, senza riavviare LÖVE):
+
+```powershell
+python scripts/package_ui_v2_review.py audits/ui-v2-review/NOME_CARTELLA --check-only
+python scripts/package_ui_v2_review.py audits/ui-v2-review/NOME_CARTELLA
+```
+
+**Condividere lo ZIP completo** anziché selezionare singolarmente
+le immagini nel browser di GitHub. Conservare inalterati i file originali,
+in particolare il log e gli hash del manifesto. Il pacchetto **non
+include APPDATA**, non approva automaticamente l'estetica e non
+sostituisce la checklist compilata o i 50 lanci manuali.
+
+Aprire `gallery.html` e attivare
 **«Mostra hitbox reali»**; compilare `review-checklist.md`, non lasciarla
 implicitamente approvata. Esaminare soprattutto:
 
