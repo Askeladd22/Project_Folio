@@ -9,6 +9,7 @@ local MenuSurface = require("src.features.ui_v2.menu_surface")
 local Schema = require("src.core.schema")
 local SettingsState = require("src.core.settings_state")
 local MainMenuSchema = require("src.data.main_menu_schema")
+local Art = require("src.data.art_palette")
 
 local ASSET_SCHEMA = MainMenuSchema.assets or {}
 local LABEL_SCHEMA = MainMenuSchema.labels or {}
@@ -153,6 +154,11 @@ end
 
 local function set_color(r, g, b, a, scene_alpha)
     love.graphics.setColor(r, g, b, (a or 1) * (scene_alpha or 1))
+end
+
+local function set_art_color(role, alpha, scene_alpha)
+    local c=Art.rgb(role)
+    set_color(c[1],c[2],c[3],alpha,scene_alpha)
 end
 
 local function is_uppercase_text(text)
@@ -454,7 +460,7 @@ local function draw_mute_icon(rect, is_muted, scene_alpha)
     local size = rect.h * 0.65
     local line_w = math.max(1.0, RuntimeUI.scale() * 1.2)
 
-    set_color(0.35, 0.24, 0.13, 0.92, scene_alpha)
+    set_art_color('text_muted',0.92,scene_alpha)
     love.graphics.setLineWidth(line_w)
     love.graphics.polygon("line",
         cx - size * 0.58, cy - size * 0.30,
@@ -465,11 +471,11 @@ local function draw_mute_icon(rect, is_muted, scene_alpha)
         cx - size * 0.58, cy + size * 0.30
     )
     if is_muted then
-        set_color(0.90, 0.64, 0.56, 0.92, scene_alpha)
+        set_art_color('cinnabar',0.92,scene_alpha)
         love.graphics.line(cx + size * 0.16, cy - size * 0.48, cx + size * 0.58, cy - size * 0.06)
         love.graphics.line(cx + size * 0.16, cy - size * 0.06, cx + size * 0.58, cy - size * 0.48)
     else
-        set_color(0.44, 0.31, 0.17, 0.90, scene_alpha)
+        set_art_color('border',0.90,scene_alpha)
         love.graphics.arc("line", "open", cx + size * 0.10, cy, size * 0.34, -0.75, 0.75)
         love.graphics.arc("line", "open", cx + size * 0.10, cy, size * 0.52, -0.75, 0.75)
     end
@@ -567,10 +573,10 @@ function MainMenu:draw()
         local bg_x, bg_y, scale = get_background_rect(w, h)
         -- Keep the workshop as atmosphere rather than the centre of
         -- attention: reduce its hyper-saturated photographic contrast.
-        set_color(0.77, 0.74, 0.69, 1, scene_alpha)
+        set_art_color('stone',1,scene_alpha)
         love.graphics.draw(menu_bg, bg_x, bg_y, 0, scale, scale)
     else
-        set_color(0.05, 0.04, 0.03, 1, scene_alpha)
+        set_art_color('ink',1,scene_alpha)
         love.graphics.rectangle("fill", 0, 0, w, h)
     end
 
@@ -586,7 +592,7 @@ function MainMenu:draw()
     local title_label = tr_entry(BRANDING_TITLE_ENTRY)
     local title_font = pick_font_for_text(title_label, fonts.title, fonts.title_upper) or love.graphics.getFont()
     love.graphics.setFont(title_font)
-    set_color(0.20, 0.15, 0.12, title_p, scene_alpha)
+    set_art_color('text',title_p,scene_alpha)
     local title_fit = math.min(1, cached_layout.menu_w /
         math.max(1, title_font:getWidth(title_label)))
     love.graphics.print(title_label, title_x, title_y, 0, title_fit, 1)
@@ -598,7 +604,7 @@ function MainMenu:draw()
     -- second ornamental masthead.
     local subtitle_x = cached_layout.menu_x + RuntimeUI.sized(2)
     love.graphics.setFont(subtitle_font)
-    set_color(0.42, 0.35, 0.29, title_p * 0.90, scene_alpha)
+    set_art_color('text_muted',title_p*0.90,scene_alpha)
     love.graphics.print(subtitle_label, subtitle_x, subtitle_y)
 
     for i, item in ipairs(menu_items) do
@@ -622,13 +628,13 @@ function MainMenu:draw()
         local ty = rect.y + (rect.h - th) * 0.5
 
         if not item.enabled then
-            set_color(.52,.49,.45,.68*item_p,scene_alpha)
+            set_art_color('quiet',.68*item_p,scene_alpha)
         elseif selected_item or hovered_item then
-            set_color(.16,.13,.11,item_p,scene_alpha)
+            set_art_color('text',item_p,scene_alpha)
         elseif emphasized then
-            set_color(.21,.18,.14,.98*item_p,scene_alpha)
+            set_art_color('text',.98*item_p,scene_alpha)
         else
-            set_color(.29,.25,.21,.95*item_p,scene_alpha)
+            set_art_color('text_muted',.95*item_p,scene_alpha)
         end
         love.graphics.print(item.label, tx, ty)
     end
@@ -644,12 +650,12 @@ function MainMenu:draw()
     local footer_version_font = fonts.footer or love.graphics.getFont()
     local fy = cached_layout.footer_y + RuntimeUI.sized(2)
     love.graphics.setFont(footer_version_font)
-    set_color(0.42, 0.39, 0.35, 0.88 * footer_p, scene_alpha)
+    set_art_color('text_muted',0.88*footer_p,scene_alpha)
     love.graphics.print(footer_version_label, cached_layout.menu_x, fy)
 
     if hovered_mute then
         local r = cached_layout.mute_rect
-        set_color(0.30, 0.26, 0.21, 0.08 * footer_p, scene_alpha)
+        set_art_color('selection',0.16*footer_p,scene_alpha)
         love.graphics.rectangle("fill", r.x, r.y, r.w, r.h, 3, 3)
     end
     draw_mute_icon(cached_layout.mute_rect, muted, scene_alpha * (hovered_mute and 0.85 or 0.60) * footer_p)
@@ -661,7 +667,7 @@ function MainMenu:draw()
         local my = (h - bh) * 0.5
         MenuSurface.panel({x=mx,y=my,w=bw,h=bh},
             {alpha=scene_alpha,high_contrast=high_contrast})
-        set_color(.27, .17, .09, .98, scene_alpha)
+        set_art_color('text',.98,scene_alpha)
         local modal_font = pick_font_for_text(modal_message, fonts.modal, fonts.modal_upper) or love.graphics.getFont()
         love.graphics.setFont(modal_font)
         love.graphics.printf(modal_message, mx + RuntimeUI.sized(18), my + RuntimeUI.sized(24), bw - RuntimeUI.sized(36), "center")

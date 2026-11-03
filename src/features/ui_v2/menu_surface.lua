@@ -1,13 +1,16 @@
 -- Shared manuscript surfaces for Project Folio frontend and UI V2.
 -- Lightweight LÖVE drawing primitives. No old HUD, CPU painter or fallback.
 -- Pure geometry functions are usable in headless Lua tests.
+local Art=require('src.data.art_palette')
 local M={}
+-- Retain the legacy public palette keys for callers. All colour sources
+-- now resolve through one explicit, versioned art-direction vocabulary.
 M.palette={
- ink={.24,.15,.09},
- muted={.47,.33,.22},
- gold={.57,.37,.13},
- parchment={.89,.81,.65},
- border={.48,.32,.16},
+ ink=Art.rgb('text'),
+ muted=Art.rgb('text_muted'),
+ gold=Art.rgb('reward'),
+ parchment=Art.rgb('surface'),
+ border=Art.rgb('border'),
 }
 local function color(c,a)
  love.graphics.setColor(c[1],c[2],c[3],a or 1)
@@ -28,7 +31,7 @@ function M.backdrop(w,h,high_contrast,opacity,opts)
  local g=love.graphics
  g.push('all')
  local quiet=opts and opts.quiet
- g.setColor(.055,.047,.042,
+ color(Art.rgb('ink'),
   (quiet and (high_contrast and .41 or .28)
    or (high_contrast and .32 or .16))*(opacity or 1))
  g.rectangle('fill',0,0,w,h)
@@ -45,27 +48,27 @@ function M.panel(r,opts)
   g.push('all')
   -- A restrained paper leaf: straight edges, one hairline border and
   -- restrained paper warmth instead of faux embossed gold ornament.
-  g.setColor(.015,.013,.012,.44*alpha)
+  color(Art.rgb('ink'),.44*alpha)
   g.rectangle('fill',r.x+5,r.y+7,r.w,r.h)
-  g.setColor(.915,.878,.797,(high and 1 or .98)*alpha)
+  color(Art.rgb('surface'),(high and 1 or .98)*alpha)
   g.rectangle('fill',r.x,r.y,r.w,r.h)
-  g.setColor(.27,.22,.17,(high and .70 or .42)*alpha)
+  color(Art.rgb('border'),(high and .81 or .60)*alpha)
   g.setLineWidth(1)
   g.rectangle('line',r.x+.5,r.y+.5,r.w-1,r.h-1)
   g.pop()
   return
  end
  g.push('all')
- g.setColor(.028,.018,.011,.45*alpha)
+ color(Art.rgb('ink'),.45*alpha)
  g.rectangle('fill',r.x+8,r.y+11,r.w,r.h,8,8)
- g.setColor(.88,.79,.61,(high and .98 or .94)*alpha)
+ color(Art.rgb('surface'),(high and .98 or .94)*alpha)
  g.rectangle('fill',r.x,r.y,r.w,r.h,7,7)
- g.setColor(.99,.94,.82,.49*alpha)
+ color(Art.rgb('plaster'),.49*alpha)
  g.rectangle('fill',r.x+8,r.y+8,r.w-16,r.h-16,3,3)
  color(M.palette.border,.82*alpha)
  g.setLineWidth(2)
  g.rectangle('line',r.x+1,r.y+1,r.w-2,r.h-2,7,7)
- g.setColor(.50,.32,.16,.60*alpha)
+ color(Art.rgb('border'),.60*alpha)
  g.setLineWidth(1)
  g.rectangle('line',r.x+11,r.y+11,r.w-22,r.h-22,3,3)
  for _,dx in ipairs({1,-1}) do
@@ -82,7 +85,7 @@ function M.rule(x,y,w,alpha,opts)
  local g=love.graphics
  if opts and opts.quiet then
   g.push('all')
-  g.setColor(.34,.28,.22,.34*(alpha or 1))
+  color(Art.rgb('border'),.34*(alpha or 1))
   g.setLineWidth(1)
   g.line(x,y,x+w,y)
   g.pop()
@@ -110,20 +113,21 @@ function M.item(rect,opts)
   g.push('all')
   -- Index-like navigation rather than six embossed parchment buttons.
   if active and not disabled then
-   g.setColor(.30,.25,.20,.095*alpha)
+   color(Art.rgb('selection'),.21*alpha)
    g.rectangle('fill',rect.x,rect.y,rect.w,rect.h)
-   g.setColor(.27,.22,.17,.88*alpha)
+   color(Art.rgb('focus'),.88*alpha)
    g.rectangle('fill',rect.x+1,rect.y+6,3,math.max(1,rect.h-12))
   end
-  g.setColor(.35,.30,.25,(disabled and .10 or .19)*alpha)
+  color(Art.rgb('border'),(disabled and .10 or .25)*alpha)
   g.setLineWidth(1)
   g.line(rect.x+1,rect.y+rect.h-.5,rect.x+rect.w-1,rect.y+rect.h-.5)
   g.pop()
   return
  end
  g.push('all')
- local fill=active and {.97,.88,.65} or primary and {.94,.87,.70}
-  or {.94,.88,.75}
+ local fill=active and Art.rgb('sage_light')
+  or primary and Art.rgb('surface_alt')
+  or Art.rgb('surface')
  color(fill,(disabled and .38 or active and .95 or .68)*alpha)
  g.rectangle('fill',rect.x,rect.y,rect.w,rect.h,5,5)
  color(M.palette.border,(active and .93 or .36)*alpha)
