@@ -1,5 +1,13 @@
 # UI 2.0 — P0 / Inventario degli stati e delle interazioni esistenti
 
+> **Aggiornamento 0.1.12 (3 novembre 2026):** `run` è una pausa
+> compatta con Riprendi, Impostazioni, Ricomincia e Menu principale.
+> Il laboratorio delle medaglie rimane accessibile tramite **F7**
+> come strumento tecnico, ma non è più una voce della pausa.
+> Riavvio e uscita richiedono una conferma; Impostazioni ritorna
+> alla sessione corrente. `Esc` apre/chiude la pausa solo quando
+> il tiro non è in assestamento e non termina più l'applicazione.
+
 > **Aggiornamento 0.1.0-dev.7:** il seguente è l'inventario
 > storico del precedente HUD, ora **rimosso**. Il percorso
 > attivo è `ui_v2/hud.lua` + `ui_v2/actions.lua`,
@@ -70,7 +78,9 @@ I modelli della UI devono **derivare** abilità e numeri dalle regole (`R.can_ro
 | Ricompensa dado | `weighted`, `engraved` | `R.choose_build` e installazione modificatore |
 | Ricompensa medaglia | `medal`, `none` | `R.choose_medal` |
 | Dialog comune | `close` | Chiusura modale, non della partita |
-| Menu run | `restart`, `control`, `medals` | Riavvio build/controllo, accesso laboratorio medaglie |
+| Pausa di gioco | `resume`, `settings`, `restart`, `mainmenu` | Riprendi, Impostazioni, riavvio o ritorno al menu |
+| Conferme pausa | `cancel`, `confirmrestart`, `confirmexit` | Annulla; conferma il reset della stessa modalità oppure l'uscita senza salvataggio |
+| Laboratorio tecnico F7 | `medals` come modale; `inspect1`–`inspect6`, `equip` | Strumento di sviluppo, non voce del menu giocatore |
 | Scelte punteggio | `option1` … `option7`, `prev`, `nextpage` | `u:select_option`, paginazione |
 | Aiuto | `helpTab1` … `helpTab3` | Cambia sezione del regolamento |
 | Laboratorio medaglie | `inspect1` … `inspect6`, `equip`, `medalprev`, `medalnext` | Anteprima e equipaggiamento **con restart della commissione** |
@@ -82,7 +92,7 @@ Nota: `hud_minimal.draw()` aggiorna `u.buttons` ogni frame; `hud.overlay()` usa 
 
 | Tasto | Azione attuale / priorità |
 |---|---|
-| Esc | Prima annulla `mouseThrow`, poi marquee, poi `dragSelected`; quindi chiude il modal oppure chiama `love.event.quit()`. **Non è attualmente una voce «torna al menu»** |
+| Esc | Prima annulla `mouseThrow`, marquee o `dragSelected`; poi torna dalla conferma alla pausa, chiude una modale o apre la pausa. Non chiude l'app e non interrompe i dadi durante l'assestamento. |
 | Spazio | Prima `take` (se presente e abilitato), poi `roll`, `next`, `rescue`; non sempre significa lanciare |
 | A | `take`, solo se registrato e abilitato |
 | Invio / tastierino Invio | `bank` (se disponibile), altrimenti `next` |
@@ -93,7 +103,7 @@ Nota: `hud_minimal.draw()` aggiorna `u.buttons` ogni frame; `hud.overlay()` usa 
 | F | Apre il dettaglio folio, quando lo stato lo consente |
 | ← / → | Paginazione delle schede aiuto quando `u.modal='help'`; altrimenti nessuna azione principale |
 | Tab | Termina l'animazione di presentazione in corso |
-| F8 | Ciclo dei layout workshop; nel controller è elaborato anche prima del blocco modal/ricompensa |
+| F7 | Apre il laboratorio tecnico delle medaglie fuori dalle modali, senza mostrarlo nella pausa |\n| F8 | Ciclo dei layout workshop; nel controller è elaborato anche prima del blocco modal/ricompensa |
 | F9 | Toggle renderer g3d/painter a livello `dice_runtime.lua` |
 | F10 | Ciclo materiali/diagnostica dei dadi g3d a livello `dice_runtime.lua` |
 | F11 | Toggle smussatura visiva dei D6 g3d a livello `dice_runtime.lua` |
