@@ -316,6 +316,10 @@ function U:mousepressed(x,y,b)
   else
    self.mouseThrow=MouseThrow.begin(i,dice[i].body,x,y,love.timer.getTime())
   end
+  -- One audible grab per successful gesture, even when 2–6 bodies are held.
+  if self.mouseThrow then
+   Audio.play_dice('grab',{count=self.mouseThrow.group and #self.mouseThrow.held or 1})
+  end
   return
  end
 
@@ -343,10 +347,22 @@ end
 function U:mousemoved(x,y)
  if self.marquee then Marquee.move(self.marquee,x,y) end
  if self.mouseThrow then
-  local move=self.mouseThrow.group and GroupThrow.move or MouseThrow.move
-  move(self.mouseThrow,x,y,love.timer.getTime(),
+  local held=self.mouseThrow
+  local detector=held.group and held.shaker or held.shake
+  local before=detector and detector.events or 0
+  local move=held.group and GroupThrow.move or MouseThrow.move
+  local moved=move(held,x,y,love.timer.getTime(),
     require('src.engine3d.view'),self.trayScale or 1,
     require('src.data.dice_scene_schema').box)
+  -- Trigger only when the existing real shake detector certifies a
+  -- new reversal event. Dragging, pointer jitter and physics ticks are silent.
+  if moved and detector and detector.events>before then
+   local strength=held.group and detector.detector.strength or detector.strength
+   Audio.play_dice('shake',{
+     count=held.group and #held.held or 1,
+     strength=strength
+   })
+  end
  end
 end
 function U:mousereleased(x,y,b)
@@ -386,9 +402,11 @@ function U:mousereleased(x,y,b)
   local one=MouseThrow.release(held,x,y,love.timer.getTime(),view,scale,bounds)
   if one then releases={one} end
  end
+ local valid_releases=0
  for _,released in ipairs(releases) do
   local i=released.index
   if self.manualRoll and self.manualRoll.pending[i] then
+   valid_releases=valid_releases+1
    self.manualRoll.pending[i]=nil
    self.manualRoll.count=self.manualRoll.count-1
    assert(self.onManualRollRelease and self.onManualRollRelease(i),
@@ -398,6 +416,8 @@ function U:mousereleased(x,y,b)
    if self.manualRoll.count==0 then self.manualRoll=nil;self.dragSelected=nil end
   end
  end
+ -- A multi-die throw is ONE real gesture: no stacking a sound per die.
+ if valid_releases>0 then Audio.play_dice('throw',{count=valid_releases}) end
 end
 function U:keypressed(k)
  if self.botDuel and self.botDuel.finished then

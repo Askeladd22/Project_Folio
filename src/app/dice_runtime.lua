@@ -1322,7 +1322,11 @@ function rollAllDice(max_dice, roll_indices, recovery, technical, gesture)
         end
     end
     
-    AudioManager.play_ui(DICE_ROLL_CONFIRM_SFX)
+    -- Automatic/keyboard throws use the same physical OGG cues as manual
+    -- drops. Retain the original UI confirmation as a fallback only.
+    if not AudioManager.play_dice("throw", {count = #to_roll}) then
+        AudioManager.play_ui(DICE_ROLL_CONFIRM_SFX)
+    end
     Logger.debug("[Dice] Rolled " .. #to_roll .. " dice")
 end
 

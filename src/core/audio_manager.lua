@@ -138,6 +138,89 @@ function AudioManager.play_farkle(event)
     return AudioManager.play(key)
 end
 
+
+-- Physical dice recordings shipped with Project Folio. These are ordinary
+-- SFX and obey the same persisted master/SFX volume and mute settings.
+-- The round-robin variant cursor deliberately never consumes gameplay RNG.
+local dice_sample_paths = {
+    grab = {
+        "resources/sounds/dice-grab-1.ogg",
+        "resources/sounds/dice-grab-2.ogg",
+    },
+    shake = {
+        "resources/sounds/dice-shake-1.ogg",
+        "resources/sounds/dice-shake-2.ogg",
+        "resources/sounds/dice-shake-3.ogg",
+    },
+    throw_group = {
+        "resources/sounds/dice-throw-1.ogg",
+        "resources/sounds/dice-throw-2.ogg",
+        "resources/sounds/dice-throw-3.ogg",
+    },
+    throw_single = {
+        "resources/sounds/die-throw-1.ogg",
+        "resources/sounds/die-throw-2.ogg",
+        "resources/sounds/die-throw-3.ogg",
+        "resources/sounds/die-throw-4.ogg",
+    },
+}
+local dice_variant_cursor = {}
+local dice_active_voices = {}
+local DICE_MAX_VOICES = 16
+
+local function prune_dice_voices()
+    for i = #dice_active_voices, 1, -1 do
+        local voice = dice_active_voices[i]
+        if type(voice.isPlaying) == "function" and not voice:isPlaying() then
+            table.remove(dice_active_voices, i)
+        end
+    end
+end
+
+function AudioManager.play_dice(event, opts)
+    local count = tonumber(opts and opts.count) or 1
+    local category = event == "throw" and
+        (count > 1 and "throw_group" or "throw_single") or event
+    local paths = dice_sample_paths[category]
+    if not paths or not (love and love.audio and love.audio.newSource) then
+        return false
+    end
+    local gain = get_sfx_gain()
+    if gain <= 0 then return false end
+
+    local index = (dice_variant_cursor[category] or 0) % #paths + 1
+    local path = paths[index]
+    local base = sources[path]
+    if not base then
+        local ok, loaded = pcall(love.audio.newSource, path, "static")
+        if not ok or not loaded then return false end
+        sources[path] = loaded
+        base = loaded
+    end
+    local ok, voice = pcall(function() return base:clone() end)
+    if not ok or not voice then return false end
+
+    local loudness = category == "shake" and 0.58 or
+        category == "grab" and 0.72 or 0.85
+    if category == "shake" then
+        local strength = clamp(tonumber(opts and opts.strength) or 0.7, 0, 1)
+        loudness = loudness * (0.65 + 0.35 * strength)
+    end
+    local volume = clamp(gain * loudness, 0, 1)
+    voice:setVolume(volume)
+    local played = pcall(function() voice:play() end)
+    if not played then return false end
+
+    prune_dice_voices()
+    if #dice_active_voices >= DICE_MAX_VOICES then
+        local oldest = table.remove(dice_active_voices, 1)
+        if type(oldest.stop) == "function" then oldest:stop() end
+    end
+    dice_active_voices[#dice_active_voices + 1] = voice
+    dice_variant_cursor[category] = index
+    return true
+end
+
 function AudioManager.register_music_source(id, source, opts)
     if not source then return nil end
     local key = id or tostring(source)
