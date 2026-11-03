@@ -333,12 +333,23 @@ installata usano lo sfondo `resources/ui/menu.png` già incluso.
 I testi, le hitbox e i pulsanti sono sempre renderizzati in Lua:
 **non devono essere dipinti nell'immagine**.
 
-Per testare il primo asset illustrato, estrarre il pacchetto
-`ProjectFolio_Illustrated_Menu_Asset.zip` ricevuto nella conversazione
-nella radice del repository e riavviare `love .` o `Avvia.cmd`.
-L'asset è distribuito separatamente e non è incluso nel clone GitHub.
-Per la direzione artistica vedere
-[docs/ART_DIRECTION.md](docs/ART_DIRECTION.md).
+Per installare il PNG della bottega controllandone dimensioni e hash,
+scaricare il pacchetto ZIP della conversazione e, dalla root del
+repository, eseguire:
+
+```powershell
+python scripts/install_menu_art.py "$env:USERPROFILE\Downloads\ProjectFolio_Illustrated_Menu_Asset.zip"
+python scripts/install_menu_art.py --verify-installed
+.\Avvia.cmd
+```
+
+Da **0.1.7** il pannello resta nello spazio libero a sinistra
+anche a 720p; su rapporti 4:3 la scena viene ritagliata dal lato
+destro, preservando l'area dell'interfaccia.
+L'asset rimane distribuito separatamente, non incluso nel clone GitHub.
+Per verifica e sostituzione intenzionale dell'asset leggere
+[MENU_ART_INSTALLATION.md](docs/MENU_ART_INSTALLATION.md)
+e per i criteri pittorici [ART_DIRECTION.md](docs/ART_DIRECTION.md).
 
 ## Collaudo tecnico — Windows
 
