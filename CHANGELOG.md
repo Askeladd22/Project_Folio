@@ -10,6 +10,36 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.5] - 2026-11-03
+
+**Tipo:** prima integrazione della direzione artistica pittorica di Project Folio.
+
+### Palette unificata
+- Aggiunto `src/data/art_palette.lua`: vocabolario HEX di 26 pigmenti
+  coerenti con le reference (pergamena, calce, salvia, oliva, coccio,
+  cinabro, ardesia, ocra e inchiostro), ruoli UI semantici e conversione
+  RGB/RGBA in puro Lua. Non richiede un renderer o un asset.
+- Applicata la palette alle superfici condivise del frontend
+  (`menu_surface.lua`) mantenendo le varianti di stile esistenti:
+  impaginazione/editorial del menu, pulsanti, stati, bordi, fondi,
+  selezioni e pannelli.
+- Applicata al testo e agli accenti del menu principale e agli
+  elementi bidimensionali di HUD Farkle e dialoghi/ricompense.
+  Indicatori ad alto contrasto e materiali/mesh dei dadi 3D intatti;
+  **nessuna modifica alle regole, shader, luci o fisica**.
+- In `docs/ART_DIRECTION.md` codificati i valori, le gerarchie
+  percettive, gli usi dei pigmenti e la prossima fase dedicata
+  agli asset originali: non viene applicato un filtro indiscriminato
+  alle texture o sostituito il fondale con arte automatica.
+
+### Verifiche
+- Nuovi test Lua `tests/art_palette_test.lua` per HEX e ruoli,
+  valori normalizzati, copie indipendenti, contrasto del testo,
+  gestione delle opacità e presenza del wiring nelle schermate.
+- CI e changelog incrementati; **la resa percettiva Windows
+  deve essere verificata con screenshot reali** prima di una revisione
+  degli asset pittorici.
+
 ## [0.1.4] - 2026-11-03
 
 **Tipo:** rifinitura visiva del menu principale, meno ornamenti

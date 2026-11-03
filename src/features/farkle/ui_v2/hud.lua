@@ -13,21 +13,23 @@ local Dialogs=require('src.features.farkle.ui_v2.dialogs')
 local Indicators=require('src.features.farkle.ui_v2.overlay')
 local MenuSurface=require('src.features.ui_v2.menu_surface')
 local LabelFit=require('src.features.farkle.ui_v2.label_fit')
+local Art=require('src.data.art_palette')
 local V={}
 local fonts={}
 local unpack=table.unpack or unpack
 local function rgba(r,g,b,a) return {r,g,b,a or 1} end
-local ink=rgba(.16,.13,.10)
-local pale=rgba(.94,.89,.78)
-local muted=rgba(.70,.65,.53)
-local highlight=rgba(.95,.77,.36)
--- Match the frontend's illuminated folio, without covering the 3D dice field.
-local parchment=rgba(.89,.81,.65,.98)
-local border_ink=rgba(.48,.32,.16,.92)
-local paper_ink=rgba(.24,.15,.09)
-local paper_muted=rgba(.43,.32,.22)
-local paper_gold=rgba(.53,.34,.12)
-local paper_warning=rgba(.52,.20,.15)
+local ink=Art.rgba('text')
+local pale=Art.rgba('surface')
+local muted=Art.rgba('quiet')
+local highlight=Art.rgba('ochre_light')
+-- UI surfaces use the same palette as the menu; the physical 3D dice
+-- and their underlying renderer/materials remain untouched.
+local parchment=Art.rgba('surface',.98)
+local border_ink=Art.rgba('border',.92)
+local paper_ink=Art.rgba('text')
+local paper_muted=Art.rgba('text_muted')
+local paper_gold=Art.rgba('reward')
+local paper_warning=Art.rgba('risk')
 local function size(n)
  return math.floor(n*math.min(1.35,UI.scale())*
      (UI.big_text() and 1.16 or 1)+.5)
@@ -140,9 +142,9 @@ local function work_surface(layout)
  g.rectangle('fill',0,0,1920,1080)
  -- A broad opened working leaf; the actual 3D tray floor and dice are
  -- rendered over this by the unchanged engine with the same projection.
- panel(layout.book,rgba(.64,.55,.40,1),rgba(.20,.13,.09,1),10)
- panel(layout.page_main,rgba(.87,.79,.63,.88),rgba(.48,.32,.19,.7),5)
- g.setColor(.41,.29,.18,.42)
+ panel(layout.book,Art.rgba('earth'),Art.rgba('ink'),10)
+ panel(layout.page_main,Art.rgba('surface_alt',.88),Art.rgba('border',.70),5)
+ g.setColor(unpack(Art.rgba('border',.42)))
  g.setLineWidth(2)
  g.line(layout.page_main.x+15,layout.page_main.y+15,
         layout.page_main.x+15,layout.page_main.y+layout.page_main.h-15)
@@ -151,10 +153,10 @@ local function work_surface(layout)
  if layout.shelf_caption then
   -- A narrow illuminated rubric stays legible across the leather/paper
   -- seam at the top of the leaf, above every accepted-die rectangle.
-  panel(layout.shelf_caption,rgba(.93,.85,.69,.98),nil,4)
+  panel(layout.shelf_caption,Art.rgba('surface',.98),nil,4)
   write_fitted('REGISTRO DEI DADI ACCANTONATI',layout.shelf_caption,
    14,11,paper_ink,'center')
-  g.setColor(.39,.27,.16,UI.high_contrast() and .90 or .52)
+  g.setColor(unpack(Art.rgba('border',UI.high_contrast() and .90 or .52)))
   g.setLineWidth(1)
   g.line(layout.shelf_divider.x,layout.shelf_divider.y,
    layout.shelf_divider.x+layout.shelf_divider.w,
@@ -164,8 +166,8 @@ local function work_surface(layout)
  -- without changing the folio's actual geometry or interaction.
  if layout.sidebar_frame then
   local side=layout.sidebar_frame
-  panel(side,rgba(.25,.18,.12,1),rgba(.68,.49,.26,.97),9)
-  g.setColor(.86,.68,.39,UI.high_contrast() and .86 or .40)
+  panel(side,Art.rgba('earth_dark'),Art.rgba('timber',.97),9)
+  g.setColor(unpack(Art.rgba('ochre_light',UI.high_contrast() and .86 or .40)))
   g.setLineWidth(1)
   g.rectangle('line',side.x+7,side.y+7,side.w-14,side.h-14,6)
   for _,y in ipairs({side.y+22,side.y+side.h-22}) do
@@ -192,7 +194,7 @@ function V.draw(u)
  header(u,s,layout,actions)
  if not u.botDuel and layout.sidebar_caption then
   write_fitted('MANOSCRITTO',layout.sidebar_caption,17,13,
-   rgba(.97,.85,.61), 'center')
+   Art.rgba('ochre_light'), 'center')
  end
  Folio.draw(s,u.presentation,layout.folio.x,layout.folio.y,
             layout.folio.w,layout.folio.h,write,R.contracts[s.stage].target)
@@ -228,7 +230,7 @@ function V.draw(u)
  end
  -- Treat the actual state message as a manuscript status strip,
  -- not free-floating small text on the dark desk.
- panel(layout.message,rgba(.89,.81,.65,.98),border_ink,5)
+ panel(layout.message,Art.rgba('surface',.98),border_ink,5)
  write_fitted(Actions.state(u),
    {x=layout.message.x+12,y=layout.message.y+2,
     w=layout.message.w-24,h=layout.message.h-4},18,12,

@@ -11,13 +11,14 @@ local RuntimeUI=require('src.core.runtime_ui')
 local ModalLayout=require('src.features.farkle.ui_v2.modal_layout')
 local LabelFit=require('src.features.farkle.ui_v2.label_fit')
 local ParagraphFit=require('src.features.farkle.ui_v2.paragraph_fit')
+local Art=require('src.data.art_palette')
 -- Dialog/reward presenter for the canonical UI v2. This module owns modal hitboxes
 -- but never draws the old work surface or implements a fallback HUD.
 local V={};local fonts={}
-local ink={.24,.15,.09,1}
-local muted={.47,.33,.22,1}
-local gold={.57,.37,.13,1}
-local green={.18,.30,.23,1}
+local ink=Art.rgba('text')
+local muted=Art.rgba('text_muted')
+local gold=Art.rgba('reward')
+local green=Art.rgba('forest')
 local function sized(n)
  return math.max(8,math.floor(n*math.min(1.35,RuntimeUI.scale())*
   (RuntimeUI.big_text() and 1.16 or 1)+.5))
@@ -87,7 +88,7 @@ local function button(u,id,label,x,y,w,h,on,fn,primary)
 end
 local function reward(u)
  local s=u.game;local g=love.graphics
- Res.begin_ui();g.setColor(.06,.035,.015,.78);g.rectangle('fill',0,0,1920,1080)
+ Res.begin_ui();g.setColor(unpack(Art.rgba('ink',.78)));g.rectangle('fill',0,0,1920,1080)
  u.buttons={};u.modalButtons={}
  local area=ModalLayout.reward_frame
  panel(area.x,area.y,area.w,area.h)
@@ -123,14 +124,17 @@ function V.overlay(u,hits)
  -- Only unobtrusive outlines on the 3D dice; all text stays outside the tray.
  for _,h in ipairs(hits or {}) do local i=h.index or h.roll_index
   if i and (s.selected[i] or s.used[i] or eligible[i]) then
-   g.setColor(unpack(s.selected[i] and {1,.79,.30,1} or s.used[i] and {.65,.8,.63,.85} or {.95,.84,.56,.48}));g.setLineWidth(s.selected[i] and 3 or 1)
+   g.setColor(unpack(s.selected[i] and Art.rgba('ochre_light',1)
+     or s.used[i] and Art.rgba('sage_light',.85)
+     or Art.rgba('ochre_light',.55)))
+   g.setLineWidth(s.selected[i] and 3 or 1)
    g.circle('line',h.x,h.y,(h.r or 25)+4)
   end
  end
  g.setLineWidth(1)
 if H.reward_active(s) then reward(u);return end
  if not u.modal then return end
- Res.begin_ui();g.setColor(.05,.025,.01,.82);g.rectangle('fill',0,0,1920,1080)
+ Res.begin_ui();g.setColor(unpack(Art.rgba('ink',.82)));g.rectangle('fill',0,0,1920,1080)
  local area=ModalLayout.frame
  panel(area.x,area.y,area.w,area.h);u.modalButtons={}
  local saved=u.buttons;u.buttons=u.modalButtons
@@ -179,7 +183,7 @@ if H.reward_active(s) then reward(u);return end
      25,13,gold,'left')
    end
    for i,row in ipairs(section.rows) do
-    g.setColor(i%2==0 and .88 or .94,.82,.66,1)
+    g.setColor(unpack(Art.rgba(i%2==0 and 'surface_alt' or 'surface')))
     g.rectangle('fill',435,432+(i-1)*47,1060,47)
     for j,value in ipairs(row) do
      fitted(value,{x=445+(j-1)*210,y=436+(i-1)*47,w=200,h=39},
