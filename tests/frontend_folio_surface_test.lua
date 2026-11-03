@@ -77,13 +77,18 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  -- quiet editorial styling, so campaign/settings preserve their art.
  Surface.panel(m.frame,{high_contrast=false,style="editorial"})
  Surface.panel(c.frame,{high_contrast=true})
+ local old_diamonds=drawings.diamond
  Surface.rule(m.menu_x,m.divider_y,m.menu_w,1,{quiet=true})
+ assert(drawings.diamond==old_diamonds,'editorial menu reintroduced gold lozenges')
+ Surface.rule(c.frame.x+20,c.frame.y+90,c.frame.w-40,1)
+ assert(drawings.diamond==old_diamonds+1,
+  'campaign/settings still need their original optional ornamental rule')
  Surface.item(m.item_rects[2],{active=true,primary=true,style="editorial"})
  Surface.item(m.item_rects[1],{disabled=true,style="editorial"})
  Surface.item(c.items[1],{disabled=true})
 end
 assert(drawings.push==drawings.pop,'shared menu surfaces leaked graphics state')
-assert(drawings.fill>20 and drawings.line>15 and drawings.diamond>0)
+assert(drawings.fill>20 and drawings.line>=12 and drawings.diamond>0)
 local module_paths={
  'src/features/main_menu/module.lua',
  'src/features/campaign_select/module.lua',
