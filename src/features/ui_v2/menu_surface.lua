@@ -31,9 +31,14 @@ function M.backdrop(w,h,high_contrast,opacity,opts)
  local g=love.graphics
  g.push('all')
  local quiet=opts and opts.quiet
- color(Art.rgb('ink'),
-  (quiet and (high_contrast and .41 or .28)
-   or (high_contrast and .32 or .16))*(opacity or 1))
+ local darkness
+ if quiet then
+  darkness=high_contrast and .41 or
+   (opts and opts.illustrated and .10 or .28)
+ else
+  darkness=high_contrast and .32 or .16
+ end
+ color(Art.rgb('ink'),darkness*(opacity or 1))
  g.rectangle('fill',0,0,w,h)
  g.pop()
 end
