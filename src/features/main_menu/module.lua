@@ -41,6 +41,7 @@ local NAVIGATION_NEW_GAME = expect_string(FLOW_SCHEMA.navigation_new_game, "flow
 local NAVIGATION_CONTINUE = expect_string(FLOW_SCHEMA.navigation_continue, "flow.navigation_continue")
 local NAVIGATION_SETTINGS = expect_string(FLOW_SCHEMA.navigation_settings, "flow.navigation_settings")
 local MUSIC_TRACK_ID = expect_string(FLOW_SCHEMA.music_track_id, "flow.music_track_id")
+local MAIN_THEME_MIX_GAIN = expect_number(FLOW_SCHEMA.main_theme_mix_gain, "flow.main_theme_mix_gain")
 
 local function tr(key, fallback, params)
     return I18n.t(key, fallback, params)
@@ -237,13 +238,6 @@ local function get_audio_settings()
     return state and state.audio or nil
 end
 
-local function get_menu_music_volume()
-    local audio = get_audio_settings()
-    if not audio then return 0.2 end
-    if audio.mute_music then return 0 end
-    return clamp(tonumber(audio.music_volume) or 0.6, 0, 1)
-end
-
 local function sync_mute_state()
     local audio = get_audio_settings()
     muted = audio and audio.mute_music and true or false
@@ -319,14 +313,16 @@ local function ensure_music()
     end
 
     if music then
+        -- Register gain BEFORE playback: the main theme was originally
+        -- started at full Music-slider level, overwhelming dice/UI SFX.
+        -- This track-only attenuation leaves the user's sliders intact.
+        pcall(function() music:setLooping(true) end)
+        AudioManager.register_music_source(MUSIC_TRACK_ID, music, {
+            volume_mul = MAIN_THEME_MIX_GAIN,
+        })
         pcall(function()
-            music:setLooping(true)
-            music:setVolume(get_menu_music_volume())
-            if not music:isPlaying() then
-                music:play()
-            end
+            if not music:isPlaying() then music:play() end
         end)
-        AudioManager.register_music_source(MUSIC_TRACK_ID, music)
     end
 end
 
@@ -518,6 +514,15 @@ function MainMenu:enter()
 end
 
 function MainMenu:exit()
+    -- maintitle.ogg belongs to the menu, not to the game's Farkle scene.
+    -- Preserve playback position when returning via the menu, but never
+    -- leave the theme running over grabbing, shaking or throwing dice.
+    if music then
+        pcall(function()
+            if music:isPlaying() then music:pause() end
+        end)
+    end
+    AudioManager.unregister_music_source(MUSIC_TRACK_ID)
 end
 
 function MainMenu:update(dt)

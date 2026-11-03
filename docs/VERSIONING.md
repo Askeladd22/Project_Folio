@@ -7,7 +7,8 @@
 - **`CHANGELOG.md` (radice):** registro cronologico **dalla voce più
   recente alla più vecchia**, sempre aggiornato nello stesso PR.
 - **`src/core/version.lua`:** legge la versione dal file, senza
-  duplicarla nell'applicazione. Il menu principale mostra `vX.Y.Z-dev.N`.
+  duplicarla nell'applicazione. Il menu principale mostra `vX.Y.Z`
+  senza un suffisso di sviluppo.
 - **`docs/GAME_DESIGN.md`:** la sua versione interna misura la revisione
   del documento; **non** equivale alla versione del gioco.
 - **`docs/UI_V2_STATUS.md`:** tracker delle milestone UI, utile ma
@@ -21,7 +22,7 @@ documentazione, librerie, test, grafica e cleanup, deve:**
 1. Aggiornare `version.txt` con una versione **strettamente maggiore**
    di quella presente nel branch di destinazione.
 2. Inserire in testa a `CHANGELOG.md` la sezione
-   `## [X.Y.Z-dev.N] - YYYY-MM-DD`, corrispondente alla versione.
+   `## [X.Y.Z] - YYYY-MM-DD`, corrispondente alla versione.
 3. Registrare cosa è stato **aggiunto, modificato, corretto, rimosso**,
    quali test sono stati eseguiti e quali gate rimangono aperti.
    Non dichiarare superati test che non sono stati eseguiti.
@@ -42,11 +43,16 @@ il footer del menu era **`v0.1` hardcoded**, un'etichetta alpha, non
 una catena di release certificata. La prima baseline è
 **`0.1.0-dev.1`** (31 ottobre 2026), senza inventare release passate.
 
-Durante lo sviluppo usare `0.1.0-dev.2`,
-`0.1.0-dev.3`, ... per ogni PR. Quando si deciderà una milestone
-pubblica, adottare versioni SemVer stabili e/o prerelease standard.
-Si può aumentare minor/major per cambi incompatibili o nuove tappe
-di prodotto: la CI richiede solo l'ordine SemVer corretto.
+**Dal 3 novembre 2026 il progetto utilizza versioni senza `-dev`.**
+Dopo `0.1.0-dev.21`, la versione canonica è `0.1.0`; questa
+transizione è valida secondo la precedenza SemVer. I prossimi
+aggiornamenti useranno `0.1.1`, `0.1.2`, ecc., con una nuova voce
+di changelog obbligatoria a ogni PR. Il prototipo non viene dichiarato
+finito o commercialmente rilasciato dal cambio di numerazione.
+
+I vecchi numeri `0.1.0-dev.N` sono mantenuti nello storico
+senza riscrivere i commit precedenti. La CI mantiene il confronto SemVer
+e richiede che ciascuna nuova versione sia maggiore di quella di base.
 
 ### Cronologia retrospettiva già ricostruita
 
@@ -71,7 +77,7 @@ alla nuova sezione, salvo rettifica esplicitamente documentata.
 ## Template di una nuova sezione
 
 ```markdown
-## [0.1.0-dev.2] - YYYY-MM-DD
+## [0.1.1] - YYYY-MM-DD
 
 **Stato:** ...
 

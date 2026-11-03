@@ -22,6 +22,9 @@ return {
         navigation_continue = "scriptorium",
         navigation_settings = "settings",
         music_track_id = "main_menu",
+        -- 0.25 = -12 dB relative to the Music volume slider. Applies only
+        -- to maintitle.ogg; dice, UI and gameplay SFX are not attenuated.
+        main_theme_mix_gain = 0.25,
     },
     labels = {
         branding_title = {

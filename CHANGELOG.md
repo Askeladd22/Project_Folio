@@ -10,6 +10,25 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.0] - 2026-11-03
+
+**Tipo:** bilanciamento musica principale e passaggio al versionamento senza suffisso `-dev`.
+
+### Audio
+- Il tema `maintitle.ogg` ha ora un livello di mix dedicato del **25% rispetto al volume Musica selezionato** (circa -12 dB), tramite `main_theme_mix_gain` nel file di schema del menu. I volumi master/SFX e quelli dei suoni dei dadi restano indipendenti e invariati.
+- Registrazione del volume nel manager Audio prima dell'avvio della musica, evitando picchi iniziali alla precedente intensità.
+- All'uscita dal menu principale, il brano viene messo in pausa e rimosso dalle sorgenti musica attive; tornando al menu può riprendere, senza accompagnare il gameplay dei dadi.
+
+### Versionamento
+- Eliminato il suffisso di sviluppo dalla versione corrente: `0.1.0-dev.21` → **`0.1.0`** (menu: `v0.1.0`).
+- I nuovi aggiornamenti useranno numeri semplici `0.1.1`, `0.1.2`, ecc.; README, guida di versionamento e regressioni aggiornati.
+- La cronologia originaria `0.1.0-dev.1`–`0.1.0-dev.21` rimane invariata e verificabile. Il gioco resta un prototipo e questo non certifica una release commerciale.
+
+### Verifiche
+- Nuovo test `tests/menu_music_mix_test.lua` sul livello relativo del tema, music mute, volume master separato e sicurezza della transizione di menu.
+- Esteso il test della versione canonica per il formato X.Y.Z e la precedenza SemVer rispetto alla vecchia prerelease.
+- CI Lua/LuaJIT, laboratorio fisico e test Python da verificare prima del merge; ascolto reale LÖVE su Windows ancora necessario.
+
 ## [0.1.0-dev.21] - 2026-11-03
 
 **Tipo:** integrazione dei nuovi effetti OGG di interazione fisica dei dadi.

@@ -10,6 +10,8 @@ class VersioningTests(unittest.TestCase):
         self.assertLess(compare_versions("0.1.0-dev.1", "0.1.0-dev.2"), 0)
         self.assertLess(compare_versions("0.1.0-dev.9", "0.1.0-dev.10"), 0)
         self.assertLess(compare_versions("0.1.0-dev.10", "0.1.0"), 0)
+        self.assertLess(compare_versions("0.1.0-dev.21", "0.1.0"), 0)
+        self.assertLess(compare_versions("0.1.0", "0.1.1"), 0)
         self.assertLess(compare_versions("0.1.0", "0.2.0-dev.1"), 0)
         self.assertEqual(compare_versions("1.2.3+abc", "1.2.3+def"), 0)
 
