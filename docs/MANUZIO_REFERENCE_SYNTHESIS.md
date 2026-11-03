@@ -2,6 +2,13 @@
 
 **Revisione artistica: 3 novembre 2026** · **Versione documentale: 0.1.10**
 
+**Nuova priorità narrativa (brief V2):** la bottega tipografica è
+lo spazio reale, ma la scena deve comunicare anche il **rischio
+del rilancio** e il **sogno della carta che diventa tavolo da dadi**.
+I vincoli concreti per sei dadi, gesto sospeso e anomalie
+minime sono in
+[MANUZIO_DREAM_DICE_ART_BRIEF.md](MANUZIO_DREAM_DICE_ART_BRIEF.md).
+
 **Stato:** specifica di produzione per la **prossima iterazione
 dell'illustrazione**. Non equivale a una nuova immagine già integrata.
 Il fondale correntemente distribuito resta
