@@ -5,6 +5,23 @@ menu diventa quello di una **bottega editoriale-tipografica veneziana
 fra la fine del Quattrocento e l'inizio del Cinquecento**, ispirata ad
 Aldo Manuzio, non uno *scriptorium* monastico.
 
+## Nuove reference di produzione — miniatura + Flameng
+
+La direzione visiva è stata affinata usando una miniatura con
+torchio e collaboratori e un dipinto storico di François Flameng
+come **reference per luce e spazio**. La miniatura guida i
+gesti del lavoro e la gerarchia cromatica; Flameng guida la
+finestratura, l'aria e la disposizione ambientale.
+**Non copiare le opere come layout finito**.
+
+**Nota storica:** il dipinto di Flameng non risale al 1840.
+Il Grolier Club cataloga uno studio attorno al 1894 e avverte
+che l'incontro veneziano raffigurato è una licenza artistica:
+la visita attestata di Manuzio e Grolier fu a Milano nel 1511.
+
+**Documento di produzione con prompt, layout e checklist:**
+[MANUZIO_REFERENCE_SYNTHESIS.md](MANUZIO_REFERENCE_SYNTHESIS.md).
+
 ## Scena
 
 Officina del libro urbana: correttore umanista al tavolo delle bozze,

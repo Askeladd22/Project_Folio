@@ -348,6 +348,7 @@ ma la precedente illustrazione monastica è stata rimossa da `main`
 in seguito al cambio di direzione artistica.
 
 [Specifiche storiche e artistiche](docs/MANUZIO_PRINTSHOP_ART_DIRECTION.md) ·
+[Reference e brief del nuovo fondale](docs/MANUZIO_REFERENCE_SYNTHESIS.md) ·
 [Guida alla verifica del fondale](docs/MENU_ART_INSTALLATION.md).
 
 ## Archivio — primi fondali illustrati (v0.1.6–0.1.7)

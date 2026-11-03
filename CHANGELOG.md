@@ -10,6 +10,32 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.10] - 2026-11-03
+
+**Tipo:** sintesi delle nuove reference e precisazione storica
+della direzione artistica della bottega alla Manuzio. **Solo
+documentazione e versionamento**, nessuna modifica agli asset,
+al rendering o al gameplay.
+
+### Direzione artistica
+- `docs/MANUZIO_REFERENCE_SYNTHESIS.md`: due reference distinte;
+  miniatura tipografica per gesti/strumenti/colori, Flameng
+  per luce/finestra/spazio; prompt di produzione definitivo,
+  distribuzione del frame e checklist visiva 720p/1080p/4:3.
+- Precisato l'anacronismo nella datazione «1840» di François
+  Flameng (nato nel 1856); il Grolier Club attribuisce uno
+  studio a circa 1894 e documenta la licenza artistica
+  dell'incontro Grolier–Manuzio a Venezia.
+- Conservata la bottega reale del gioco come scena anonima
+  ispirata all'officina editoriale, non rappresentazione
+  dell'incontro storico: nessuna copia di opere terze.
+- Aggiornate le guide `ART_DIRECTION.md`,
+  `MANUZIO_PRINTSHOP_ART_DIRECTION.md` e i link README.
+- Rimane **`resources/ui/menu_manuzio.png` della 0.1.9**:
+  nessun nuovo PNG è dichiarato installato. Il prossimo
+  aggiornamento dell'immagine richiederà revisione visiva
+  separata e test LÖVE su Windows.
+
 ## [0.1.9] - 2026-11-03
 
 **Tipo:** correzione del caricamento del nuovo fondale approvato

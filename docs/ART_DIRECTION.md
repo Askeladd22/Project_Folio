@@ -7,6 +7,9 @@
 >
 > Il documento vincolante per la composizione della nuova scena è
 > [MANUZIO_PRINTSHOP_ART_DIRECTION.md](MANUZIO_PRINTSHOP_ART_DIRECTION.md).
+> Le nuove reference per torchio, lavoro e luce veneziana, con
+> note sulla licenza artistica di Flameng, sono raccolte in
+> [MANUZIO_REFERENCE_SYNTHESIS.md](MANUZIO_REFERENCE_SYNTHESIS.md).
 > Dalla **v0.1.9** `resources/ui/menu_manuzio.png` è incluso
 > nel repository. Il percorso `menu_illustrated.png` resta
 > opzionale per vecchie installazioni, mentre `menu.png`
