@@ -73,10 +73,13 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
   end
  end
  Surface.backdrop(w,h,false,1)
- Surface.panel(m.frame,{high_contrast=false})
+ -- Both visual vocabularies remain available; only the main menu uses
+ -- quiet editorial styling, so campaign/settings preserve their art.
+ Surface.panel(m.frame,{high_contrast=false,style="editorial"})
  Surface.panel(c.frame,{high_contrast=true})
- Surface.rule(m.menu_x,m.divider_y,m.menu_w,1)
- Surface.item(m.item_rects[1],{active=true,primary=true})
+ Surface.rule(m.menu_x,m.divider_y,m.menu_w,1,{quiet=true})
+ Surface.item(m.item_rects[2],{active=true,primary=true,style="editorial"})
+ Surface.item(m.item_rects[1],{disabled=true,style="editorial"})
  Surface.item(c.items[1],{disabled=true})
 end
 assert(drawings.push==drawings.pop,'shared menu surfaces leaked graphics state')
@@ -97,6 +100,15 @@ local function read(path)
  local f=assert(io.open(path,'rb'));local s=f:read('*a');f:close();return s
 end
 local a=read('src/features/main_menu/module.lua')
+local schema=read('src/data/main_menu_schema.lua')
+assert(a:find('style="editorial"',1,true),
+ 'live main menu must use its understated native visual language')
+assert(not a:find('get_footer_alpha_label',1,true),
+ 'do not display alpha/development copy beside the release number')
+assert(a:find('title_x = cached_layout.menu_x',1,true),
+ 'blackletter title must have a real paper margin')
+assert(schema:find('default = "Wishlist"',1,true),
+ 'remove the generic sales CTA wording while preserving the action')
 local c=read('src/features/campaign_select/module.lua')
 for _,obsolete in ipairs{"w * 0.52","w * 0.24","h * 0.16","h * 0.84"} do
  assert(not a:find(obsolete,1,true) and not c:find(obsolete,1,true),

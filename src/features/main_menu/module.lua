@@ -29,7 +29,6 @@ local FONT_UPPERCASE = expect_string(ASSET_SCHEMA.font_uppercase, "assets.font_u
 local FONT_FALLBACK = expect_string(ASSET_SCHEMA.font_fallback, "assets.font_fallback")
 local WISHLIST_URL = expect_string(LINKS_SCHEMA.wishlist_url, "links.wishlist_url")
 local SUBTITLE_ENTRY = expect_entry(LABEL_SCHEMA.subtitle, "labels.subtitle")
-local FOOTER_ALPHA_ENTRY = expect_entry(LABEL_SCHEMA.footer_alpha, "labels.footer_alpha")
 local BRANDING_TITLE_ENTRY = expect_entry(LABEL_SCHEMA.branding_title, "labels.branding_title")
 local MODAL_NO_SAVE_ENTRY = expect_entry(MODAL_SCHEMA.no_save, "modals.no_save")
 local MODAL_WISHLIST_FALLBACK_ENTRY = expect_entry(MODAL_SCHEMA.wishlist_fallback, "modals.wishlist_fallback")
@@ -53,10 +52,6 @@ end
 
 local function get_footer_version_label()
     return 'v' .. Version.current()
-end
-
-local function get_footer_alpha_label()
-    return tr(FOOTER_ALPHA_ENTRY.key, FOOTER_ALPHA_ENTRY.default)
 end
 
 local function tr_entry(entry, params)
@@ -197,12 +192,14 @@ end
 local function ensure_fonts(view_h)
     local res_scale = get_resolution_text_scale(view_h)
     local sizes = {
-        title = RuntimeUI.sized((RuntimeUI.big_text() and 108 or 92) * res_scale),
-        subtitle = RuntimeUI.sized((RuntimeUI.big_text() and 26 or 22) * res_scale),
-        primary = RuntimeUI.sized((RuntimeUI.big_text() and 56 or 48) * res_scale),
-        secondary = RuntimeUI.sized((RuntimeUI.big_text() and 40 or 34) * res_scale),
+        -- The blackletter title is the sole decorative typographic accent.
+        -- Navigation uses readable late-medieval roman small capitals.
+        title = RuntimeUI.sized((RuntimeUI.big_text() and 90 or 76) * res_scale),
+        subtitle = RuntimeUI.sized((RuntimeUI.big_text() and 25 or 21) * res_scale),
+        primary = RuntimeUI.sized((RuntimeUI.big_text() and 42 or 36) * res_scale),
+        secondary = RuntimeUI.sized((RuntimeUI.big_text() and 35 or 29) * res_scale),
         footer = RuntimeUI.sized((RuntimeUI.big_text() and 22 or 18) * res_scale),
-        modal = RuntimeUI.sized((RuntimeUI.big_text() and 30 or 24) * res_scale),
+        modal = RuntimeUI.sized((RuntimeUI.big_text() and 30 or 25) * res_scale),
     }
 
     local dirty = not fonts.sizes
@@ -220,16 +217,17 @@ local function ensure_fonts(view_h)
 
     fonts.title = load_font({FONT_TEXT, FONT_FALLBACK, FONT_UPPERCASE}, sizes.title)
     fonts.title_upper = load_font({FONT_UPPERCASE, FONT_TEXT, FONT_FALLBACK}, sizes.title)
-    fonts.subtitle = load_font({FONT_TEXT, FONT_FALLBACK, FONT_UPPERCASE}, sizes.subtitle)
-    fonts.subtitle_upper = load_font({FONT_UPPERCASE, FONT_TEXT, FONT_FALLBACK}, sizes.subtitle)
-    fonts.primary = load_font({FONT_TEXT, FONT_FALLBACK, FONT_UPPERCASE}, sizes.primary)
-    fonts.primary_upper = load_font({FONT_UPPERCASE, FONT_TEXT, FONT_FALLBACK}, sizes.primary)
-    fonts.secondary = load_font({FONT_TEXT, FONT_FALLBACK, FONT_UPPERCASE}, sizes.secondary)
-    fonts.secondary_upper = load_font({FONT_UPPERCASE, FONT_TEXT, FONT_FALLBACK}, sizes.secondary)
-    fonts.footer = load_font({FONT_TEXT, FONT_FALLBACK, FONT_UPPERCASE}, sizes.footer)
-    fonts.footer_upper = load_font({FONT_UPPERCASE, FONT_TEXT, FONT_FALLBACK}, sizes.footer)
-    fonts.modal = load_font({FONT_TEXT, FONT_FALLBACK, FONT_UPPERCASE}, sizes.modal)
-    fonts.modal_upper = load_font({FONT_UPPERCASE, FONT_TEXT, FONT_FALLBACK}, sizes.modal)
+    fonts.subtitle = load_font({FONT_FALLBACK, FONT_UPPERCASE}, sizes.subtitle)
+    fonts.subtitle_upper = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.subtitle)
+    fonts.primary = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.primary)
+    fonts.primary_upper = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.primary)
+    fonts.secondary = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.secondary)
+    fonts.secondary_upper = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.secondary)
+    -- Plain small print is easier to read than miniature blackletter.
+    fonts.footer = load_font({}, sizes.footer)
+    fonts.footer_upper = fonts.footer
+    fonts.modal = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.modal)
+    fonts.modal_upper = fonts.modal
     fonts.sizes = sizes
 end
 
@@ -364,8 +362,10 @@ local function compute_layout(w, h)
     ensure_fonts(h)
     local border = math.max(12, math.floor(h * .038))
     local left = math.max(border, math.floor(w * .045))
-    local panel_w = math.min(math.floor(w * .48), RuntimeUI.sized(670), w - left - border)
-    local menu_x = left + math.max(18, math.floor(panel_w * .060))
+    local width_cap = RuntimeUI.sized(610) *
+        (h > 1080 and math.min(1.2, h / 1080) or 1)
+    local panel_w = math.min(math.floor(w * .45), math.floor(width_cap), w - left - border)
+    local menu_x = left + math.max(21, math.floor(panel_w * .065))
     local menu_w = panel_w - (menu_x - left) * 2
     local title_text = tr_entry(BRANDING_TITLE_ENTRY)
     local title_font = pick_font_for_text(title_text, fonts.title, fonts.title_upper)
@@ -377,17 +377,18 @@ local function compute_layout(w, h)
     local item_heights = {}
     local total_rows = 0
     for i, item in ipairs(menu_items) do
+        local emphasized = item.primary and item.enabled
         local face = pick_font_for_text(item.label,
-            item.primary and fonts.primary or fonts.secondary,
-            item.primary and fonts.primary_upper or fonts.secondary_upper)
-        local nominal = item.primary and h * .061 or h * .052
+            emphasized and fonts.primary or fonts.secondary,
+            emphasized and fonts.primary_upper or fonts.secondary_upper)
+        local nominal = emphasized and h * .059 or h * .049
         item_heights[i] = math.max(face:getHeight() + 8, math.floor(nominal))
         total_rows = total_rows + item_heights[i]
     end
-    local title_gap = math.max(7, math.floor(h * .010))
-    local header_gap = math.max(13, math.floor(h * .020))
-    local divider_space = math.max(14, math.floor(h * .023))
-    local footer_gap = math.max(16, math.floor(h * .027))
+    local title_gap = math.max(9, math.floor(h * .012))
+    local header_gap = math.max(20, math.floor(h * .028))
+    local divider_space = math.max(17, math.floor(h * .023))
+    local footer_gap = math.max(21, math.floor(h * .035))
     local footer_h = fonts.footer:getHeight() + 7
     local content_h = title_h + title_gap + subtitle_h +
         header_gap + divider_space + total_rows +
@@ -423,18 +424,15 @@ local function compute_layout(w, h)
         y = y + item_heights[i] + row_gap
     end
     layout.footer_y = y - row_gap + footer_gap
-    local version_label = get_footer_version_label()
-    local alpha_label = get_footer_alpha_label()
-    local face=pick_font_for_text(version_label,fonts.footer,fonts.footer_upper)
-    local alpha_face=pick_font_for_text(alpha_label,fonts.footer,fonts.footer_upper)
-    local text_w=face:getWidth(version_label)+alpha_face:getWidth(alpha_label)+20
+    -- Quiet colophon: canonical version on the left, sound toggle on
+    -- the right. No duplicate "alpha"/development tag in the game UI.
     layout.mute_rect={
-        x=math.min(menu_x+menu_w-32,menu_x+text_w+18),
+        x=menu_x+menu_w-34,
         y=layout.footer_y-4,w=32,h=28,
     }
     layout.frame={
-        x=left, y=math.max(border,start_y-26), w=panel_w,
-        h=math.min(h-border,start_y+content_h+25)-math.max(border,start_y-26)
+        x=left, y=math.max(border,start_y-27), w=panel_w,
+        h=math.min(h-border,start_y+content_h+28)-math.max(border,start_y-27)
     }
     return layout
 end
@@ -567,35 +565,40 @@ function MainMenu:draw()
 
     if menu_bg then
         local bg_x, bg_y, scale = get_background_rect(w, h)
-        set_color(1, 1, 1, 1, scene_alpha)
+        -- Keep the workshop as atmosphere rather than the centre of
+        -- attention: reduce its hyper-saturated photographic contrast.
+        set_color(0.77, 0.74, 0.69, 1, scene_alpha)
         love.graphics.draw(menu_bg, bg_x, bg_y, 0, scale, scale)
     else
         set_color(0.05, 0.04, 0.03, 1, scene_alpha)
         love.graphics.rectangle("fill", 0, 0, w, h)
     end
 
-    MenuSurface.backdrop(w,h,high_contrast,scene_alpha)
-    MenuSurface.panel(cached_layout.frame,{high_contrast=high_contrast,alpha=scene_alpha})
+    MenuSurface.backdrop(w,h,high_contrast,scene_alpha,{quiet=true})
+    MenuSurface.panel(cached_layout.frame,{high_contrast=high_contrast,alpha=scene_alpha,style="editorial"})
 
-    MenuParticles.draw(particles, w, h, RuntimeUI.scale(), high_contrast, scene_alpha)
+    -- Nearly imperceptible ambient dust; no floating fantasy sparkles.
+    MenuParticles.draw(particles, w, h, RuntimeUI.scale(), high_contrast, scene_alpha * .18)
 
     local title_p = ease_out_cubic(get_entrance_progress(0.10, 0.80))
-    local title_x = cached_layout.panel_x
+    local title_x = cached_layout.menu_x
     local title_y = cached_layout.title_y + RuntimeUI.sized(20) * (1 - title_p)
     local title_label = tr_entry(BRANDING_TITLE_ENTRY)
     local title_font = pick_font_for_text(title_label, fonts.title, fonts.title_upper) or love.graphics.getFont()
     love.graphics.setFont(title_font)
-    set_color(0.30, 0.17, 0.08, title_p, scene_alpha)
-    love.graphics.print(title_label, title_x, title_y)
+    set_color(0.20, 0.15, 0.12, title_p, scene_alpha)
+    local title_fit = math.min(1, cached_layout.menu_w /
+        math.max(1, title_font:getWidth(title_label)))
+    love.graphics.print(title_label, title_x, title_y, 0, title_fit, 1)
 
     local subtitle_label = get_subtitle_label()
     local subtitle_font = pick_font_for_text(subtitle_label, fonts.subtitle, fonts.subtitle_upper) or love.graphics.getFont()
     local subtitle_y = cached_layout.subtitle_y + RuntimeUI.sized(18) * (1 - title_p)
-    local title_w = title_font:getWidth(title_label)
-    local subtitle_w = subtitle_font:getWidth(subtitle_label)
-    local subtitle_x = title_x + (title_w - subtitle_w) * 0.5
+    -- A calm left-aligned subtitle reads like a colophon rather than a
+    -- second ornamental masthead.
+    local subtitle_x = cached_layout.menu_x + RuntimeUI.sized(2)
     love.graphics.setFont(subtitle_font)
-    set_color(0.42, 0.28, 0.15, title_p * 0.88, scene_alpha)
+    set_color(0.42, 0.35, 0.29, title_p * 0.90, scene_alpha)
     love.graphics.print(subtitle_label, subtitle_x, subtitle_y)
 
     for i, item in ipairs(menu_items) do
@@ -604,27 +607,28 @@ function MainMenu:draw()
         local selected_item = selected == i
 
         MenuSurface.item(rect,{active=hovered_item or selected_item,
-            primary=item.primary,disabled=not item.enabled,
-            alpha=item_p*scene_alpha})
+            primary=item.primary and item.enabled,disabled=not item.enabled,
+            alpha=item_p*scene_alpha,style="editorial"})
 
+        local emphasized = item.primary and item.enabled
         local font = pick_font_for_text(
             item.label,
-            item.primary and fonts.primary or fonts.secondary,
-            item.primary and fonts.primary_upper or fonts.secondary_upper
+            emphasized and fonts.primary or fonts.secondary,
+            emphasized and fonts.primary_upper or fonts.secondary_upper
         ) or love.graphics.getFont()
         love.graphics.setFont(font or love.graphics.getFont())
         local th = (font and font:getHeight()) or love.graphics.getFont():getHeight()
-        local tx = rect.x + RuntimeUI.sized(12)
+        local tx = rect.x + RuntimeUI.sized(18)
         local ty = rect.y + (rect.h - th) * 0.5
 
         if not item.enabled then
-            set_color(.49,.43,.34,.75*item_p,scene_alpha)
+            set_color(.52,.49,.45,.68*item_p,scene_alpha)
         elseif selected_item or hovered_item then
-            set_color(.30,.18,.07,item_p,scene_alpha)
-        elseif item.primary then
-            set_color(.25,.15,.09,.97*item_p,scene_alpha)
+            set_color(.16,.13,.11,item_p,scene_alpha)
+        elseif emphasized then
+            set_color(.21,.18,.14,.98*item_p,scene_alpha)
         else
-            set_color(.38,.26,.15,.92*item_p,scene_alpha)
+            set_color(.29,.25,.21,.95*item_p,scene_alpha)
         end
         love.graphics.print(item.label, tx, ty)
     end
@@ -633,33 +637,19 @@ function MainMenu:draw()
     local dy = cached_layout.divider_y + RuntimeUI.sized(12) * (1 - divider_p)
     local dx = cached_layout.menu_x
     local dw = cached_layout.menu_w
-    local cx = dx + dw * 0.5
-    MenuSurface.rule(dx+RuntimeUI.sized(12),dy,dw-RuntimeUI.sized(24),
-        divider_p*scene_alpha)
+    MenuSurface.rule(dx,dy,dw,divider_p*scene_alpha,{quiet=true})
 
     local footer_p = ease_out_cubic(get_entrance_progress(0.70, 0.60))
     local footer_version_label = get_footer_version_label()
-    local footer_alpha_label = get_footer_alpha_label()
-    local footer_version_font = pick_font_for_text(footer_version_label, fonts.footer, fonts.footer_upper) or love.graphics.getFont()
-    local footer_alpha_font = pick_font_for_text(footer_alpha_label, fonts.footer, fonts.footer_upper) or love.graphics.getFont()
+    local footer_version_font = fonts.footer or love.graphics.getFont()
     local fy = cached_layout.footer_y + RuntimeUI.sized(2)
-    local footer_sep_gap = RuntimeUI.sized(8)
-    local version_w = footer_version_font:getWidth(footer_version_label)
-    local divider_x = cached_layout.menu_x + version_w + footer_sep_gap
-    local alpha_x = divider_x + footer_sep_gap + 1
-
     love.graphics.setFont(footer_version_font)
-    set_color(0.38, 0.27, 0.17, 0.88 * footer_p, scene_alpha)
+    set_color(0.42, 0.39, 0.35, 0.88 * footer_p, scene_alpha)
     love.graphics.print(footer_version_label, cached_layout.menu_x, fy)
-    set_color(0.46, 0.34, 0.21, 0.5 * footer_p, scene_alpha)
-    love.graphics.rectangle("fill", divider_x, fy + RuntimeUI.sized(1), 1, RuntimeUI.sized(12))
-    love.graphics.setFont(footer_alpha_font)
-    set_color(0.38, 0.27, 0.17, 0.88 * footer_p, scene_alpha)
-    love.graphics.print(footer_alpha_label, alpha_x, fy)
 
     if hovered_mute then
         local r = cached_layout.mute_rect
-        set_color(0.92, 0.78, 0.38, 0.08 * footer_p, scene_alpha)
+        set_color(0.30, 0.26, 0.21, 0.08 * footer_p, scene_alpha)
         love.graphics.rectangle("fill", r.x, r.y, r.w, r.h, 3, 3)
     end
     draw_mute_icon(cached_layout.mute_rect, muted, scene_alpha * (hovered_mute and 0.85 or 0.60) * footer_p)

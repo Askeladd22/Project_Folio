@@ -95,7 +95,7 @@ return {
             id = "wishlist",
             label = {
                 key = "main_menu.item.wishlist",
-                default = "Wishlist Now!",
+                default = "Wishlist",
             },
             primary = false,
             enabled = true,

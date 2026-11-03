@@ -10,6 +10,41 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.4] - 2026-11-03
+
+**Tipo:** rifinitura visiva del menu principale, meno ornamenti
+generici e migliore leggibilità. Nessuna modifica a Farkle, dadi 3D,
+fisica, audio, menu di gioco, salvataggi o navigazione.
+
+### Design del menu principale
+- Titolo gotico conservato come **unico accento** tipografico e
+  spostato all'interno del margine del folio; sottotitolo
+  allineato a sinistra, più contenuto.
+- Azioni in IM Fell English SC più leggibile, con gerarchia
+  tipografica chiara: `New Game` prevale; `Continue` disabilitato
+  non si presenta come pulsante principale operativo.
+- Riquadri beige ripetuti, doppie cornici arrotondate e
+  piccoli rombi dorati sostituiti da un **indice editoriale**:
+  righe sottili e segno laterale di selezione, carta naturale
+  squadrata. Le schermate Settings, commissioni e le finestre
+  condivise conservano il proprio stile attuale.
+- Sfondo della bottega meno saturo, copertura cromatica
+  più quieta e pulviscolo decorativo ridotto; non vengono
+  sostituiti gli asset originali.
+- Footer compatto con sola versione canonica (`v0.1.4`) e
+  icona audio; rimossa la dicitura `alpha` dal menu, senza
+  alterare il sistema di versionamento.
+- Etichetta commerciale `Wishlist Now!` semplificata in
+  `Wishlist` nelle stringhe inglesi; azione e URL invariati.
+
+### Verifica
+- Estesi test headless dei margini di menu, dei sei pulsanti,
+  dello stile opt-in senza ornamenti e del mantenimento
+  delle altre schermate.
+- CI Lua 5.4/LuaJIT e test Python richiesti prima del merge.
+  **QA visiva Windows ancora necessaria** per proporzioni,
+  resa dei font e gusto estetico.
+
 ## [0.1.3] - 2026-11-03
 
 **Tipo:** affidabilità della raccolta prove UI Windows, nessuna
