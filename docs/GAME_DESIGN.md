@@ -1,3 +1,10 @@
+> **Direzione aggiornata al 4 novembre 2026:** il brainstorming corrente e
+> i tre pilastri vincolanti sono in [PROJECT_VISION.md](PROJECT_VISION.md).
+> Questo documento conserva la ricerca e le ipotesi precedenti
+> (incluso il copista medievale): **non** sovrascrive il nuovo setting
+> veneziano, il protagonista incisore muto o il tono non horror.
+> Per le feature effettive prevalgono codice, test e regole Farkle.
+>
 # Project Folio — Game Design
 
 **Revisione del documento 0.7 · 30 ottobre 2026.** Il nome di lavoro
