@@ -36,8 +36,31 @@ local function common()
 end
 
 function M.build(which)
- assert(which=='single_folio' or which=='open_codex',
-  'unknown UI 2.0 layout candidate')
+ assert(which=='single_folio' or which=='open_codex' or
+        which=='table_minimal','unknown UI 2.0 layout candidate')
+ if which=='table_minimal' then
+  -- Production Farkle table: preserve a large 3D viewport, without the
+  -- legacy commission/folio/tools sidebar. Beta Monk keeps single_folio.
+  return {
+   name=which,
+   header=rect(44,20,1832,72),
+   secured_caption=rect(88,33,230,20),
+   secured_value=rect(88,53,230,30),
+   risk_caption=rect(368,33,230,20),
+   risk_value=rect(368,53,230,30),
+   help=rect(1510,32,145,46),
+   runmenu=rect(1682,32,158,46),
+   book=rect(44,107,1832,788),
+   page_main=rect(56,119,1808,762),
+   shelf=rect(510,130,1080,56),
+   shelf_label=rect(118,144,336,30),
+   tray=rect(75,197,1770,680),
+   message=rect(280,898,1360,28),
+   context_actions={rect(594,930,340,46),rect(986,930,340,46)},
+   primary=rect(422,983,510,72),
+   secondary=rect(988,983,510,72),
+  }
+ end
  local a=common()
  if which=='single_folio' then
   -- A broad physical playing folio and a narrower on-desk work ledger.
@@ -112,6 +135,47 @@ end
 
 function M.validate(layout)
  local bounds=rect(0,0,M.virtual_w,M.virtual_h)
+ if layout.name=='table_minimal' then
+  local required={'header','book','page_main','shelf','tray','message',
+   'primary','secondary','help','runmenu','secured_caption','secured_value',
+   'risk_caption','risk_value','shelf_label'}
+  for _,name in ipairs(required) do
+   local r=layout[name]
+   if not r or r.w<=0 or r.h<=0 or not M.contains(bounds,r) then
+    return false,'off-screen minimal table element '..name
+   end
+  end
+  if not M.contains(layout.book,layout.page_main) or
+     not M.contains(layout.page_main,layout.tray) or
+     not M.contains(layout.page_main,layout.shelf) or
+     not M.contains(layout.header,layout.help) or
+     not M.contains(layout.header,layout.runmenu) then
+   return false,'invalid table containment'
+  end
+  for _,r in ipairs{layout.shelf,layout.header,layout.message,
+    layout.primary,layout.secondary,layout.help,layout.runmenu} do
+   if M.overlap(r,layout.tray)>0 then
+    return false,'minimal controls overlap the physical D6 field'
+   end
+  end
+  if M.overlap(layout.primary,layout.secondary)>0 or
+     M.overlap(layout.help,layout.runmenu)>0 then
+   return false,'overlapping minimal table actions'
+  end
+  for _,r in ipairs(layout.context_actions) do
+   if not M.contains(bounds,r) or M.overlap(r,layout.tray)>0 or
+     M.overlap(r,layout.primary)>0 or M.overlap(r,layout.secondary)>0 then
+    return false,'invalid minimal contextual action'
+   end
+  end
+  if layout.tray.w<1600 or layout.tray.h<640 then
+   return false,'physical table viewport too small'
+  end
+  if layout.primary.h<66 or layout.secondary.h<66 then
+   return false,'main table actions too short'
+  end
+  return true
+ end
  local required={'header','book','page_main','tray','shelf','folio',
                  'context','message','primary','secondary'}
  for _,name in ipairs(required) do

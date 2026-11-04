@@ -20,7 +20,11 @@ function M.build(u)
  if H.reward_active(s) then return a end
  add('help','Regole [?]',not block,function() u.modal='help' end,'header')
  add('runmenu','Pausa [Esc]',not block,function() u.modal='run' end,'header')
- add('folio','Apri folio [F]',not block,function() u.modal='folio' end,'folio')
+ -- The page remains accessible via F; the large always-clickable folio
+ -- card is not part of the normal table. Keep it in the isolated Monk beta.
+ if not u.minimalHud then
+  add('folio','Apri folio [F]',not block,function() u.modal='folio' end,'folio')
+ end
  if s.phase=='ready' then
   local choices=R.options(s)
   if #choices>0 then add('choices','Combinazioni ('..#choices..')',true,

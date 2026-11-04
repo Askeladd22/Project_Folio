@@ -10,6 +10,34 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.14] - 2026-11-04
+
+**Tipo:** primo passaggio verso il tavolo Farkle essenziale, senza nuove
+meccaniche di scommessa o encounter.
+
+### Interfaccia
+- La nuova partita normale utilizza il layout `table_minimal`: superficie
+  fisica più larga e senza pannelli permanenti di commissione,
+  folio e strumenti. I punteggi assicurati e a rischio rimangono
+  visibili; il folio è ancora accessibile con **F** e le regole con **?**.
+- I sei riquadri vuoti dei dadi accantonati non sono più disegnati
+  permanentemente nella partita normale; compaiono soltanto i
+  dadi effettivamente accantonati.
+- Lancia/Accantona e Incassa occupano controlli inferiori più
+  compatti; messaggi contestuali in italiano senza una grande barra.
+- I pulsanti di combinazioni e medaglie mantengono hitbox e callback
+  effettivi in una riga contestuale, senza un pannello `Strumenti`.
+- Il duello separato **Sfida il Monaco (beta)** conserva temporaneamente
+  il proprio layout precedente, la visualizzazione della miniatura e
+  i controlli. Non è ancora un encounter asimmetrico.
+
+### Test e limiti
+- Aggiunto controllo headless dei nuovi confini del tavolo,
+  dei pulsanti, del registro dinamico e dei viewport 720p/1080p/1440p.
+- Farkle, RNG, commissioni sottostanti, fisica e g3d non sono cambiati.
+  Lo spazio del tray è cambiato: occorre verificare su LÖVE Windows
+  proiezione, selezione fisica, ridimensionamento e resa visiva.
+
 ## [0.1.13] - 2026-11-04
 
 **Tipo:** repository housekeeping conservativo, senza modifiche al gioco.

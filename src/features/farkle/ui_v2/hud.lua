@@ -176,7 +176,79 @@ local function work_surface(layout)
   end
  end
 end
+-- Player-facing table; the Monk beta keeps its separate historical
+-- comparison layout until its game design is revisited. No 3D backend or
+-- Farkle rules are selected here: the controller owns the table viewport.
+local function compact_status(u)
+ local s=u.game
+ if u.mouseThrow or u.manualRoll then return Actions.state(u) end
+ if u.physicalFailure then return 'Tiro non valido: usa Riprova tiro fisico.' end
+ if s.phase=='rolling' then return 'I dadi stanno rotolando…' end
+ if s.phase=='fresh' then return 'Lancia i sei dadi.' end
+ if s.phase=='rescue' then return 'FARKLE · Usa il Correttore o accetta la perdita.' end
+ if s.phase=='ended' then return 'Turno concluso · Continua con [N].' end
+ if s.phase=='lost' then return 'Partita terminata · Nessun turno rimasto.' end
+ if s.phase=='won' then return 'Partita completata.' end
+ if s.phase=='advance' then return 'Obiettivo raggiunto · Prosegui con [N].' end
+ if s.phase=='upgrade' or s.phase=='medal' then
+  return 'Obiettivo raggiunto · Scegli una ricompensa.'
+ end
+ if s.hot then return 'Dadi caldi · Rilancia tutti e sei oppure incassa.' end
+ if next(s.selected) then
+  return R.selection(s) and 'Accantona la combinazione [A] o incassa.'
+   or 'Selezione non valida: scegli dadi che danno punti.'
+ end
+ if s.scored then return 'Rilancia oppure incassa il bottino.' end
+ return 'Seleziona i dadi che danno punti.'
+end
+local function draw_minimal(u)
+ local s=u.game
+ local layout=Layout.build('table_minimal')
+ local actions=Actions.build(u)
+ local g=love.graphics
+ u.buttons={}
+ g.push('all')
+ Res.begin_ui()
+ g.setColor(.077,.060,.047,1)
+ g.rectangle('fill',0,0,1920,1080)
+ -- Dark timber surround makes the actual 3D playing tray the focal point.
+ panel(layout.book,Art.rgba('earth_dark'),Art.rgba('border'),9)
+ panel(layout.page_main,Art.rgba('earth'),Art.rgba('timber',.85),6)
+ panel(layout.header,parchment,border_ink,7)
+ write_fitted('ASSICURATI',layout.secured_caption,14,11,paper_muted)
+ write_fitted(s.bank..' pt',layout.secured_value,25,16,paper_ink)
+ write_fitted('A RISCHIO',layout.risk_caption,14,11,paper_muted)
+ write_fitted(s.pot..' pt',layout.risk_value,25,16,paper_warning)
+ for _,a in ipairs(actions) do
+  if a.slot=='header' then
+   action_button(u,a,a.id=='help' and layout.help or layout.runmenu)
+  end
+ end
+ -- Only real accepted dice are painted on this unobtrusive register.
+ write_fitted('DADI ACCANTONATI',layout.shelf_label,17,12,
+   Art.rgba('ochre_light'))
+ write_fitted(compact_status(u),layout.message,18,12,
+   (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
+   'center')
+ local context=0
+ for _,a in ipairs(actions) do
+  if a.slot=='context' then
+   context=context+1
+   local rect=assert(layout.context_actions[context],
+    'missing minimal table context slot')
+   action_button(u,a,rect)
+  elseif a.slot=='primary' then
+   action_button(u,a,layout.primary)
+  elseif a.slot=='secondary' then
+   action_button(u,a,layout.secondary)
+  end
+ end
+ Res.end_ui()
+ g.pop()
+end
+
 function V.draw(u)
+ if u.minimalHud then return draw_minimal(u) end
  local s=u.game
  if not s then return end
  local layout=Layout.build('single_folio')
