@@ -10,6 +10,31 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.13] - 2026-11-04
+
+**Tipo:** repository housekeeping conservativo, senza modifiche al gioco.
+
+### Pulizia e manutenzione
+- Rimossi 36 vecchi file di acquisizione UI del 1 novembre (18 PNG e 18
+  TSV; 2.047.031 byte), superati da una cattura più recente e mai
+  richiamati dai sorgenti attivi. Recuperabili dalla storia Git.
+- Gli output QA futuri, le build locali dei laboratori e i bundle di
+  distribuzione non vengono più aggiunti accidentalmente al repository.
+- README sintetizzato: stato della build, avvio, controlli, test e licenze.
+  Le note di sviluppo pregresse rimangono in questo changelog.
+- Nuova visione del brainstorming con setting veneziano, protagonista
+  muto, tre pilastri di design e distinzione fra feature esistenti
+  e incontri ancora da definire; vecchie proposte etichettate come tali.
+- Aggiunto un test di regressione per proteggere g3d, fisica, dadi e
+  risorse attive da successive cancellazioni accidentali.
+
+### Verifiche e limitazioni
+- Nessuna modifica a gameplay, scoring, RNG, fisica, renderer, input,
+  UI runtime o medaglie. Conservato lo snapshot QA del 3 novembre e
+  l'asset `walnut.png` ancora in uso.
+- Le verifiche CI sono headless e non equivalgono al collaudo grafico
+  e fisico su Windows. La storia Git non è stata riscritta.
+
 ## [0.1.12] - 2026-11-03
 
 **Tipo:** semplificazione del menu in partita e navigazione sicura.

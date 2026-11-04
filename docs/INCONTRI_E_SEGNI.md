@@ -1,3 +1,9 @@
+> **Nota di stato — 4 novembre 2026:** le regole degli encounter
+> sono nuovamente in fase di brainstorming. Questo documento conserva
+> proposte e simulazioni del 30–31 ottobre, non un sistema approvato.
+> La visione narrativa e i vincoli attuali sono in
+> [PROJECT_VISION.md](PROJECT_VISION.md).
+>
 # Manuscript — Incontri con le miniature e sacchetti di Segni
 
 **Stato: proposta di game design, 30 ottobre 2026. Nessuna delle meccaniche di incontro descritte qui è dichiarata implementata.** Questo documento sviluppa la direzione discussa dopo il prototipo di folio progressivo. Riferimenti canonici: [GAME_DESIGN.md](GAME_DESIGN.md) per visione e priorità, [FARKLE_RULES.md](FARKLE_RULES.md) per le regole effettive del Farkle.

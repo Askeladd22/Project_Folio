@@ -6,6 +6,13 @@
 **Scope:** collaudo operativo, osservazione e raccolta prove; non modificare regole
 Farkle, fisica, RNG, g3d o assets per “far passare” un test.
 
+> **Gestione delle evidenze (4 novembre 2026):** le nuove catture in
+> `audits/ui-v2-review/` sono ignorate da Git; conserva sul PC il
+> bundle ZIP verificato e condividilo separatamente quando necessario.
+> Lo snapshot incompleto del 3 novembre, già tracciato, è mantenuto
+> per il rapporto storico. Vedere
+> [repository housekeeping](REPOSITORY_HOUSEKEEPING_2026_11_04.md).
+>
 ## Evidenze caricate su GitHub — verifica parziale del 3 novembre 2026
 
 Il commit [`c2b2f74a`](https://github.com/Askeladd22/Project_Folio/commit/c2b2f74aaf1eec31ec21aeeaf31439632e59441d)
