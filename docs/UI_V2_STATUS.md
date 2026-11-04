@@ -1,3 +1,22 @@
+## Tavolo Farkle essenziale — 0.1.14 (4 novembre 2026)
+
+Il gameplay principale usa ora un layout privo di sidebar
+`Commissione / Folio / Strumenti`, con superficie 3D allargata,
+indicatori di rischio, pulsanti contestuali e registro dei dadi
+accantonati che si popola solo al bisogno. **F** apre ancora
+il folio e mantiene accessibili obiettivi e progresso della
+commissione prototipale; **?** apre le regole.
+
+Il Monaco beta rimane isolato nella presentazione precedente,
+con gli stessi callback e condizioni di vittoria, finché non
+verrà progettato il nuovo sistema competitivo degli encounter.
+La modifica è soltanto grafica e di layout: non introduce
+scommesse, avversari Azar o un nuovo regolamento.
+
+**QA Windows non ancora eseguita:** verificare 1280×720, 1920×1080,
+presa singola/gruppo, 50 lanci, combinazioni valide, pause, folio e
+modalità Monaco. La CI headless non prova il rendering g3d.
+
 # UI 2.0 — Registro operativo / unica fonte di avanzamento
 
 ## Miglioria infrastruttura di collaudo — versione 0.1.3

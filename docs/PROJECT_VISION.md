@@ -96,3 +96,13 @@ strategie prudenti e aggressive prima di lavorare su UI e arte.
 > Di giorno imprime le immagini. Di notte, le immagini lo sfidano a dadi.
 >
 > **W la ludo.**
+
+## Stato della presentazione — 0.1.14
+
+Il tavolo Farkle della partita normale è stato semplificato: nessuna
+sidebar di commissione/folio/strumenti, sei dadi fisici in uno spazio
+più ampio, punteggi assicurati/a rischio e azioni essenziali.
+**È una revisione UI, non la nuova meccanica di encounter.**
+Gli obiettivi delle vecchie commissioni rimangono nel gameplay
+provvisorio e nel folio accessibile con **F**.
+La Sfida il Monaco beta resta temporaneamente separata.

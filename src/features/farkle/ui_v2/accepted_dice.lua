@@ -30,13 +30,16 @@ function M.draw(u)
  local s=u and u.game
  if not s or not s.used then return end
  local g=love.graphics
- local slots=M.slots()
+ local minimal=u.minimalHud==true
+ local slots=M.slots(Layout.build(minimal and 'table_minimal' or 'single_folio'))
  local p=u.presentation
  local contributors=p and Presentation.contributing_dice(p) or {}
  g.push('all')
  Res.begin_ui()
  for i,rect in ipairs(slots) do
   local used=s.used[i] and true or false
+  -- No permanent row of six blank boxes on the minimal player table.
+  if not minimal or used then
   local active=contributors[i] and true or false
   local high=UI.high_contrast()
   -- The register should read as six inset parchment tokens rather than
@@ -69,6 +72,7 @@ function M.draw(u)
    used and .10 or .22,1)
   local label=used and tostring(s.hand and s.hand[i] or i) or tostring(i)
   g.printf(label,rect.x+rect.w-45,rect.y+15,36,'center')
+  end
  end
  Res.end_ui()
  g.pop()

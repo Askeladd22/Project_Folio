@@ -17,7 +17,7 @@ local Toasts=require('src.features.farkle.toast_messages')
 local U={state='waiting',buttons={},dice_results={}}
 function U:getTrayRect()
  local t=require('src.features.farkle.ui_v2.layout_candidates')
-    .build('single_folio').tray
+    .build(self.minimalHud and 'table_minimal' or 'single_folio').tray
  local x,y=Res.to_screen(t.x,t.y);return {x=x,y=y,w=t.w*Res.get_scale(),h=t.h*Res.get_scale()}
 end
 function U:getTrayProjection(tray,view,extents)
@@ -60,6 +60,9 @@ function U:reset(mode)
  else
   self.botDuel=nil
  end
+ -- Keep the optional symmetric beta Monk in its existing presentation,
+ -- while the normal game uses the uncluttered physical Farkle table.
+ self.minimalHud=not self.duelActive
  self.mouseThrow=nil
  self.manualRoll=nil
  self.marquee=nil
