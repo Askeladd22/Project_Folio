@@ -792,6 +792,11 @@ local function spawn_initial_dice()
                 value = nil,
             }
 
+            local entry = dice[die_index]
+            entry.restPose = {}
+            for index, vertex in ipairs(entry.body) do
+                entry.restPose[index] = {vertex[1], vertex[2], vertex[3]}
+            end
             materials.apply(dice[die_index].body, materials.get("bone"))
             box[die_index] = dice[die_index].body
         end

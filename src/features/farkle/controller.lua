@@ -57,7 +57,9 @@ function U:reset(mode)
  self.modal=nil;self.lastLoss=nil;self.lastBank=nil;self.physicalFailure=nil;self.physicalNotice=nil
  self.id=os.date('%Y%m%d-%H%M%S')..'-'..math.floor(love.timer.getTime()*1000)
  self.logicalRollId=0;self.physicalAttemptId=0
- D.install(self.game.build);self:sync();self:log('new')
+ D.install(self.game.build)
+ D.stage_opening(dice)
+ self:sync();self:log('new')
  self:log('session_seed',self.sessionSeed or 'unknown')
 end
 function U:act(name,fn)

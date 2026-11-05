@@ -10,6 +10,14 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.22] - 2026-11-05
+
+- La partita apre con sei dadi raccolti sul lato del giocatore. Il comando
+  di lancio iniziale è centrato; Incassa compare quando consentito.
+- Comandi avvicinati al tavolo; intaglio sul frontale 3D, venatura sui
+  listelli e ombra di contatto più marcata per i dadi a riposo.
+- Verifiche headless del pannello e del renderer; collaudo visivo Windows aperto.
+
 ## [0.1.21] - 2026-11-05
 
 - README abbreviato con presentazione del gioco, avvio e comandi essenziali.

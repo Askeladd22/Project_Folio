@@ -55,11 +55,13 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  textDrawn,rectangles={},{}
  Hud.draw(u)
  assert(push==pop,'compact table leaks graphics state')
- assert(u.buttons.roll and u.buttons.bank and u.buttons.help
+ assert(u.buttons.roll and not u.buttons.bank and u.buttons.help
   and u.buttons.runmenu and not u.buttons.folio)
- assert(u.buttons.roll.x==layout.primary.x and
-        u.buttons.roll.y==layout.primary.y)
- assert(u.buttons.bank.x==layout.secondary.x)
+ assert(u.buttons.roll.x==layout.single_action.x and
+        u.buttons.roll.y==layout.single_action.y)
+ local launchCount=0
+ for _,label in ipairs(textDrawn) do if label=='Lancia i sei dadi' then launchCount=launchCount+1 end end
+ assert(launchCount==1,'opening instruction should appear once')
  for _,a in pairs(u.buttons) do
   assert(Layout.overlap(a,layout.tray)==0,
    'active minimal button obstructs real 3D dice: '..a.label)
@@ -106,6 +108,7 @@ local function check_selection(points)
  assert(table.concat(textDrawn,' '):find('Selezione: '..points..' pt',1,true))
 end
 check_selection(50)
+assert(u.buttons.bank and u.buttons.bank.enabled)
 assert(R.toggle(hand,1) and R.toggle(hand,2))
 check_selection(30)
 assert(Layout.overlap(layout.host,layout.tray)==0)

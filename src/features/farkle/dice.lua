@@ -27,6 +27,24 @@ function D.risk(build,indices)
  end
  visit(1,1);risks[key]=sum;return sum
 end
+-- Stage the real bodies only when opening a run. A settled hand is never
+-- rearranged, and the next roll still goes through the physical launcher.
+function D.stage_opening(entries)
+ for i,entry in ipairs(entries) do
+  local b=entry.body
+  local lowest=math.huge
+  for index,v in ipairs(b) do
+   local rest=entry.restPose[index]
+   v[1],v[2],v[3]=rest[1],rest[2],rest[3]
+   lowest=math.min(lowest,v[3])
+  end
+  b.position[1]=((i-1)%3-1)*1.85
+  b.position[2]=2.55+math.floor((i-1)/3)*1.85
+  b.position[3]=-lowest
+  for axis=1,3 do b.velocity[axis]=0;b.angular[axis]=0 end
+  b.asleep=true;b._grabbed=nil;b._manual_pending=nil
+ end
+end
 function D.install(build)
  for i,entry in ipairs(dice) do
   local die=entry.die;die.faceValueMap=D.values(build,i);die.pipMap=die.faceValueMap

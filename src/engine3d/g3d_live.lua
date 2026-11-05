@@ -106,10 +106,10 @@ local function shadow_vertices(body,offset)
  local clearance=math.max(0,(p[3] or 0)+bottom)
  local radius=math.max(.42,(body.radius or .65)*1.11)*
   (1+math.min(clearance,8)*.09)
- local alpha=.42/(1+clearance*.55)
+ local alpha=.42/(1+clearance*.55)+.10*math.exp(-clearance*8)
  -- Small warm-light cast to make the footprint readable without adding
  -- an exaggerated opaque black blob under the entire cube.
- local cx=p[1]-(offset or 0)+.035+clearance*.20
+ local cx=p[1]-(offset or 0)+.035+.065*math.exp(-clearance*8)+clearance*.20
  local cy=p[2]+.025+clearance*.14
  local vertices={}
  local function vertex(x,y,a)
@@ -213,6 +213,7 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
   -- The single opaque GPU floor replaces the historical overlaid 2D book
   -- ornaments. It participates in the SAME depth buffer as walls and dice.
+  if self.carving then self.carving.mesh:release();self.carving=nil end
   local floor_texture=self.white
   if style=='merchant' then
    if not self.merchantWood then
@@ -221,11 +222,13 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
     self.merchantWood:setMipmapFilter('linear')
    end
    floor_texture=self.merchantWood
+   self.carvingImage=self.carvingImage or g.newImage('resources/merchant/carving.jpg')
+   self.carving=self.g3d.newModel(Scenery.merchant_carving(extents,border),self.carvingImage)
   end
   self.floor_model=self.g3d.newModel(
    Scenery.floor_vertices(self.mesh,extents,style),floor_texture)
   self.walls=self.g3d.newModel(
-   Scenery.style_vertices(self.mesh,extents,border,style),self.white)
+   Scenery.style_vertices(self.mesh,extents,border,style),floor_texture)
   -- Do not overlay ruling lines across the play surface in the clean mode.
   self.lines=nil
   local divider_vertices=Scenery.divider_vertices(divider)
@@ -337,6 +340,7 @@ function M:_draw_scene(args)
    end
    g.setDepthMode('lequal',true)
    self.walls:draw()
+   if self.carving then self.carving:draw() end
    if self.divider_model then self.divider_model:draw() end
    for _,item in ipairs(args.entries) do
     local models=self.models[item.index]

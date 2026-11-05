@@ -64,6 +64,14 @@ function S.style_vertices(mesh,extents,height,style)
    local rise=math.max(0,math.min(1,(point[2]-y1)/1.4))
    point[2]=math.max(y1,point[2])
    point[3]=point[3]*rise
+   -- U follows each timber's length (front across X, side rails along Y).
+   local front=i>2*8*18 and i<=3*8*18
+   point[4]=front and (point[1]-x1+width)/(x2-x1+2*width)
+    or (point[2]-y1)/(y2-y1+width)
+   point[5]=.4+.20*(1-point[3]/height)
+   if point[3]>height*.98 then
+    for channel=9,11 do point[channel]=math.min(1,point[channel]+.09) end
+   end
    sides[#sides+1]=point
   end
   return sides
@@ -82,6 +90,19 @@ function S.style_vertices(mesh,extents,height,style)
   end
  end
  return v
+end
+function S.merchant_carving(extents,height)
+ -- Mount the relief on the outward-facing plank, just clear of its surface.
+ local y=extents[4]+.40+.003
+ local x=(extents[1]+extents[2])*.5
+ local half=height*1.2
+ local lower,upper=height*.04,height*.96
+ local function point(dx,z,u,v)
+  return {x+dx,y,z,u,v,0,1,0,1,1,1,1}
+ end
+ local a,b=point(-half,upper,0,0),point(half,upper,1,0)
+ local c,d=point(half,lower,1,1),point(-half,lower,0,1)
+ return {a,b,c,a,c,d}
 end
 function S.divider_vertices(info)
  if not info then return nil end
