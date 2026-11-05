@@ -10,6 +10,15 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.19] - 2026-11-05
+
+- Prospettiva fissa del Mercante: il piano si allarga verso il giocatore,
+  e la dimensione apparente dei dadi segue la distanza. Presa e rilascio
+  usano la stessa inquadratura del tavolo. I segni dei dadi validi lungo
+  il bordo anteriore si spostano sopra al dado.
+- Test geometrici di proiezione, trascinamento e stabilità della presa.
+  Collaudo visivo su Windows da effettuare.
+
 ## [0.1.18] - 2026-11-05
 
 - Corretta la presa di gruppo sul Tavolo del Mercante: inquadratura e

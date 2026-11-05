@@ -1,9 +1,10 @@
 -- Presentation only: fit the unchanged tray and physical vertices into the HUD.
 local T={}
 function T.fit(owner,tray,view,extents)
- view.projection='orthographic'
  local merchant=owner.minimalHud
+ view.projection=merchant and 'perspective' or 'orthographic'
  local scene=require('src.data.dice_scene_schema')
+ if merchant then view.distance=scene.tray_camera.distance end
  view.pitch=merchant and scene.tray_camera.pitch or .48;view.cos_pitch=math.cos(view.pitch);view.sin_pitch=math.sin(view.pitch)
  local minx,miny,maxx,maxy=math.huge,math.huge,-math.huge,-math.huge
  local points={}
@@ -26,6 +27,12 @@ function T.fit(owner,tray,view,extents)
  local target=math.min((tray.w-2*margin)/(maxx-minx),(tray.h-2*margin)/(maxy-miny))
  -- The merchant backdrop is fixed in screen space. Its tabletop must
  -- keep the same projection throughout pickup, hold and release.
+ if merchant then
+  local layout=require('src.features.farkle.ui_v2.layout_candidates').build('table_minimal')
+  local left=view.project(extents[1]-rim,extents[3],0)
+  local right=view.project(extents[2]+rim,extents[3],0)
+  target=math.min(target,tray.w*(layout.host.w/layout.tray.w)/(right-left))
+ end
  local scale=target
  if not merchant then
   local Zoom=require('src.features.farkle.group_hold_projection')
@@ -50,6 +57,8 @@ function T.fit(owner,tray,view,extents)
   if y>best then best=y;edge={a,b} end
  end
  if edge[1].x>edge[2].x then edge={edge[2],edge[1]} end
+ local _,frontFloor=view.project(0,extents[4],0)
+ owner.trayProjection.floorEnd=cy+frontFloor*scale
  owner.trayProjection.front=edge
  owner.trayProjection.yaw=view.yaw
  return cx,cy,scale

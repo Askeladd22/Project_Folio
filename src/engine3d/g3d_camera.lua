@@ -20,15 +20,25 @@ function C.screen(view,w,h,scale,x,y,z)
  local sx=m[1]*x+m[2]*y+m[3]*z+m[4]
  local sy=m[5]*x+m[6]*y+m[7]*z+m[8]
  local sz=m[9]*x+m[10]*y+m[11]*z+m[12]
- local zoom=view.focus/view.distance
+ local zoom=view.focus/(view.projection=='perspective' and -sz or view.distance)
  return w/2+sx*scale*zoom,h/2-sy*scale*zoom,sz
 end
-function C.apply(view,camera,w,h,scale)
+function C.apply(view,camera,w,h,scale,dx,dy)
  assert(w>0 and h>0 and scale>0,'valid viewport and zoom required')
  local m=C.matrix(view)
  for i=1,16 do camera.viewMatrix[i]=m[i] end
  camera.fov=math.pi/2
  camera.aspectRatio=w/h
- camera.updateOrthographicMatrix(h/(2*scale*(view.focus/view.distance)))
+ if view.projection=='perspective' then
+  camera.fov=2*math.atan(h/(2*scale*view.focus))
+  camera.updateProjectionMatrix()
+  -- With clip.w = -eye.z the principal point shift belongs in column 3.
+  camera.projectionMatrix[3]=-2*(dx or 0)/w
+  camera.projectionMatrix[7]=2*(dy or 0)/h
+ else
+  camera.updateOrthographicMatrix(h/(2*scale*(view.focus/view.distance)))
+  if dx then camera.projectionMatrix[4]=camera.projectionMatrix[4]+2*dx/w end
+  if dy then camera.projectionMatrix[8]=camera.projectionMatrix[8]-2*dy/h end
+ end
 end
 return C
