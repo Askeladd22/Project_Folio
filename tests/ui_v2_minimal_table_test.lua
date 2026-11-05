@@ -35,6 +35,7 @@ love={graphics=setmetatable({
  getDimensions=function()return width,height end,
  getWidth=function()return width end,
  getHeight=function()return height end,
+ newImage=function()return {getWidth=function()return 944 end,getHeight=function()return 229 end}end,
  newFont=function(a,b)return mock_font(b or a) end,
  getFont=function()return mock_font(18)end,
  setFont=function(f)currentFont=f end,
@@ -95,5 +96,19 @@ Accepted.draw(u)
 assert(#rectangles>0,'accepted die needs a visible register token')
 assert(game.pot==10 and game.used[1],
  'minimal presentation must preserve authoritative Farkle decisions')
+local hand=R.new()
+assert(R.start(hand) and R.settle(hand,{1,1,3,3,3,6}))
+u.game=hand
+for i=1,5 do assert(R.toggle(hand,i)) end
+local function check_selection(points)
+ textDrawn={}
+ Hud.draw(u)
+ assert(table.concat(textDrawn,' '):find('Selezione: '..points..' pt',1,true))
+end
+check_selection(50)
+assert(R.toggle(hand,1) and R.toggle(hand,2))
+check_selection(30)
+assert(Layout.overlap(layout.host,layout.tray)==0)
+assert(Layout.overlap(layout.host,layout.shelf)==0)
 love=savedLove
 print('PASS compact player table: real hitboxes, statuses, contextual actions, accepted dice and three viewport sizes')

@@ -588,6 +588,7 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
         local x1, x2, y1, y2 = world_extents[1], world_extents[2], world_extents[3], world_extents[4]
         local gpu_candidates = {}
         local gpu_style = require('src.features.farkle.tray_workshop').current
+        if Scriptorium.minimalHud and gpu_style == 'book' then gpu_style = 'merchant' end
         local gpu_divider = nil
         if draw_divider then
             local inset = math.max(0, tonumber(tray_layout.divider_y_inset) or 0)

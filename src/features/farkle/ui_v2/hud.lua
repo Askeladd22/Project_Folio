@@ -195,11 +195,23 @@ local function compact_status(u)
  end
  if s.hot then return 'Dadi caldi · Rilancia tutti e sei oppure incassa.' end
  if next(s.selected) then
-  return R.selection(s) and 'Accantona la combinazione [A] o incassa.'
+  local points=R.selection(s)
+  return points and ('Selezione: '..points..' pt · Accantona [A] o incassa.')
    or 'Selezione non valida: scegli dadi che danno punti.'
  end
  if s.scored then return 'Rilancia oppure incassa il bottino.' end
  return 'Seleziona i dadi che danno punti.'
+end
+local merchant_art={}
+local function draw_table_art(name,rect)
+ local g=love.graphics
+ local image=merchant_art[name]
+ if not image then
+  image=g.newImage('resources/merchant/'..name..'.jpg')
+  merchant_art[name]=image
+ end
+ g.setColor(1,1,1,1)
+ g.draw(image,rect.x,rect.y,0,rect.w/image:getWidth(),rect.h/image:getHeight())
 end
 local function draw_minimal(u)
  local s=u.game
@@ -215,6 +227,8 @@ local function draw_minimal(u)
  panel(layout.book,Art.rgba('earth_dark'),Art.rgba('border'),9)
  panel(layout.page_main,Art.rgba('earth'),Art.rgba('timber',.85),6)
  panel(layout.header,parchment,border_ink,7)
+ draw_table_art('table-host',layout.host)
+ draw_table_art('carving',layout.carving)
  write_fitted('ASSICURATI',layout.secured_caption,14,11,paper_muted)
  write_fitted(s.bank..' pt',layout.secured_value,25,16,paper_ink)
  write_fitted('A RISCHIO',layout.risk_caption,14,11,paper_muted)
