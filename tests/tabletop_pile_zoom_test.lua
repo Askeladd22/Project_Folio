@@ -23,8 +23,10 @@ assert(Zoom.advance(owner,14,false)==1)
 
 local file=assert(io.open('src/features/farkle/tray_view.lua','r'))
 local live=file:read('*a');file:close()
-assert(live:find('local scale=target*camera_factor',1,true),
- 'the optical scale must be applied AFTER the tray has been fitted')
+assert(live:find('local scale=target',1,true) and
+ live:find('if not merchant then',1,true) and
+ live:find('scale=target*Zoom.advance(owner,now,grip and grip.group or false)',1,true),
+ 'normal folio zoom must happen after fitting; Merchant stays fixed to its illustration')
 assert(live:find('owner.trayScale=scale',1,true),
  'the same zoom must feed real physics mouse-to-world conversion')
 local game=assert(io.open('src/features/farkle/group_throw.lua','r'))
