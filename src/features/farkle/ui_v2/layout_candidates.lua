@@ -44,7 +44,7 @@ function M.build(which)
   return {
    name=which,
    header=rect(44,20,1832,72),
-   host=rect(488,0,944,229),
+   host=rect(210,0,1500,229),
    carving=rect(855,989,210,63),
    secured_caption=rect(66,33,175,20),
    secured_value=rect(66,53,175,30),
@@ -52,11 +52,11 @@ function M.build(which)
    risk_value=rect(264,53,177,30),
    help=rect(1510,32,145,46),
    runmenu=rect(1682,32,158,46),
-   book=rect(44,107,1832,788),
-   page_main=rect(56,119,1808,762),
-   shelf=rect(72,168,386,52),
-   shelf_label=rect(84,130,355,30),
-   tray=rect(75,236,1770,644),
+   book=rect(44,107,1832,862),
+   page_main=rect(56,119,1808,846),
+   shelf=rect(72,910,386,52),
+   shelf_label=rect(84,879,355,30),
+   tray=rect(210,229,1500,644),
    message=rect(280,898,1360,28),
    context_actions={rect(594,930,340,46),rect(986,930,340,46)},
    primary=rect(318,983,510,72),
@@ -170,7 +170,7 @@ function M.validate(layout)
     return false,'invalid minimal contextual action'
    end
   end
-  if layout.tray.w<1600 or layout.tray.h<640 then
+  if layout.tray.w<1500 or layout.tray.h<640 then
    return false,'physical table viewport too small'
   end
   if layout.primary.h<66 or layout.secondary.h<66 then

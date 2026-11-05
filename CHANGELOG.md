@@ -10,6 +10,16 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.17] - 2026-11-05
+
+- Il bordo posteriore del tavolo fisico raggiunge la base del ritratto
+  del Mercante. La scena illustrata si estende ai lati; il tavolo occupa
+  circa il 78% della larghezza a 16:9. Spazio di volo e inquadratura del
+  mobile sono separati. La zona di presa segue la proiezione g3d.
+- Ampliate le dimensioni fisiche della superficie; cornice continua,
+  registro dei dadi sotto il piano e targhette separate per i comandi.
+- Test di proiezione a 720p, 1080p e 1440p; collaudo grafico Windows aperto.
+
 ## [0.1.16] - 2026-11-05
 
 - Rimossa la Sfida il Monaco (beta) dal menu e dal ciclo di gioco, inclusi

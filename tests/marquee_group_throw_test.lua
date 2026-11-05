@@ -111,13 +111,14 @@ end
 assert(Group.clearance(heldPositions)>.42,
  'held-stage contacts must not collapse the D6 into one point')
 
+local bounds=require('src.data.dice_scene_schema').box
 -- Hand motion toward a wall is bounded, but no rigid formation is imposed.
 now=now+.02;U:mousemoved(centers[1].x+5000,centers[1].y+30)
 for i=1,45 do U:update(.03) end
 for _,member in ipairs(grip.held) do
  local p=member.body.position
- assert(p[1]<=9.2 and p[1]>=-9.2 and
-        p[2]<=3.8 and p[2]>=-3.8,
+ assert(p[1]<=bounds.half_x and p[1]>=-bounds.half_x and
+        p[2]<=bounds.half_y and p[2]>=-bounds.half_y,
   'all physical group bodies must remain inside the tray')
 end
 now=now+.02;U:mousemoved(centers[1].x+45,centers[1].y+30)
@@ -126,8 +127,8 @@ assert(#ends==6 and starts==1 and U.logicalRollId==1,
  'six released dice must be exactly one official Farkle roll')
 for i=1,6 do
  local body=dice[i].body
- assert(body.position[1]>=-9.2 and body.position[1]<=9.2 and
-        body.position[2]>=-3.8 and body.position[2]<=3.8,
+ assert(body.position[1]>=-bounds.half_x and body.position[1]<=bounds.half_x and
+        body.position[2]>=-bounds.half_y and body.position[2]<=bounds.half_y,
   'release must preserve valid world-space die positions')
 end
 assert(U.manualRoll==nil and U.game.phase=='rolling' and U.game.pot==0,

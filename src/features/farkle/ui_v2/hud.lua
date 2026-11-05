@@ -220,11 +220,9 @@ local function draw_minimal(u)
  Res.begin_ui()
  g.setColor(.077,.060,.047,1)
  g.rectangle('fill',0,0,1920,1080)
- -- Dark timber surround makes the actual 3D playing tray the focal point.
- panel(layout.book,Art.rgba('earth_dark'),Art.rgba('border'),9)
- panel(layout.page_main,Art.rgba('earth'),Art.rgba('timber',.85),6)
- panel(layout.header,parchment,border_ink,7)
  draw_table_art('table-host',layout.host)
+ panel({x=44,y=20,w=420,h=72},parchment,border_ink,7)
+ panel({x=1494,y=20,w=382,h=72},parchment,border_ink,7)
  draw_table_art('carving',layout.carving)
  write_fitted('ASSICURATI',layout.secured_caption,14,11,paper_muted)
  write_fitted(s.bank..' pt',layout.secured_value,25,16,paper_ink)
@@ -236,8 +234,9 @@ local function draw_minimal(u)
   end
  end
  -- Only real accepted dice are painted on this unobtrusive register.
- write_fitted('DADI ACCANTONATI',layout.shelf_label,17,12,
-   Art.rgba('ochre_light'))
+ if next(s.used) then
+  write_fitted('DADI ACCANTONATI',layout.shelf_label,17,12,Art.rgba('ochre_light'))
+ end
  write_fitted(compact_status(u),layout.message,18,12,
    (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
    'center')

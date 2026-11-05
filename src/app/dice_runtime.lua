@@ -540,6 +540,15 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
     if Scriptorium.getTrayProjection then
         fitted_x, fitted_y, fitted_scale = Scriptorium:getTrayProjection(tray, view, world_extents)
     end
+    -- Keep the interaction rect on the tabletop, but draw airborne bodies
+    -- in the transparent band above its rear rail.
+    local render_viewport = tray
+    if Scriptorium.minimalHud and fitted_scale then
+        local flight = math.ceil(DICE_SCENE_BOX_SCHEMA.height * view.sin_pitch
+            * view.focus / view.distance * fitted_scale)
+        local top = math.max(0, tray.y - flight)
+        render_viewport = {x=tray.x, y=top, w=tray.w, h=tray.h + tray.y - top}
+    end
     local draw_offset_x = region.x_center or 0
 
     local function with_draw_offset(body, fn)
@@ -638,7 +647,7 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
             extents=world_extents, height=box.border_height or 1.1,
             style=gpu_style,divider=gpu_divider,
             offset=draw_offset_x,
-            viewport=tray,cx=cx,cy=cy,scale=scale,
+            viewport=render_viewport,cx=cx,cy=cy,scale=scale,
             usable=glow_enabled and usable_map or nil,
             mask=not fitted_scale and true or false,
         }), 'g3d tray failed to render')

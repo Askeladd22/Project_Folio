@@ -2,22 +2,27 @@
 local T={}
 function T.fit(owner,tray,view,extents)
  view.projection='orthographic'
- view.pitch=.48;view.cos_pitch=math.cos(view.pitch);view.sin_pitch=math.sin(view.pitch)
+ local merchant=owner.minimalHud
+ local scene=require('src.data.dice_scene_schema')
+ view.pitch=merchant and scene.tray_camera.pitch or .48;view.cos_pitch=math.cos(view.pitch);view.sin_pitch=math.sin(view.pitch)
  local minx,miny,maxx,maxy=math.huge,math.huge,-math.huge,-math.huge
  local points={}
  local function include(x,y,z)
   local px,py=view.project(x,y,z);points[#points+1]={px,py}
   minx=math.min(minx,px);maxx=math.max(maxx,px);miny=math.min(miny,py);maxy=math.max(maxy,py)
  end
- for _,x in ipairs({extents[1]-.85,extents[2]+.85}) do
-  for _,y in ipairs({extents[3]-.85,extents[4]+.85}) do
-   for _,z in ipairs({0,9}) do include(x,y,z) end
+ -- Fit the merchant's visible rim; flight space is rendered above it.
+ local rim=merchant and .40 or .85
+ local top=merchant and scene.box.border_height or 9
+ for _,x in ipairs({extents[1]-rim,extents[2]+rim}) do
+  for _,y in ipairs({extents[3]-rim,extents[4]+rim}) do
+   for _,z in ipairs({0,top}) do include(x,y,z) end
   end
  end
  for _,d in ipairs(dice) do for _,v in ipairs(d.body) do
   local px,py=view.project(v[1]+d.body.position[1],v[2]+d.body.position[2],v[3]+d.body.position[3]);points[#points+1]={px,py}
  end end
- local margin=18*require('src.core.resolution_manager').get_scale()
+ local margin=(merchant and 0 or 18)*require('src.core.resolution_manager').get_scale()
  local target=math.min((tray.w-2*margin)/(maxx-minx),(tray.h-2*margin)/(maxy-miny))
  -- Fixed launch envelope, independent of body positions and frame rate.
  -- Apply a small optical pullback *after* fitting the scene. Altering
@@ -31,9 +36,13 @@ function T.fit(owner,tray,view,extents)
  owner.trayScale=scale
  local cx=tray.x+tray.w/2-(minx+maxx)*scale/2
  local cy=tray.y+tray.h/2-(miny+maxy)*scale/2
+ if merchant then
+  local _,rear=view.project(0,extents[3],0)
+  cy=tray.y-rear*scale
+ end
  owner.trayProjection={cx=cx,cy=cy,scale=scale,points=points,rect=tray,pitch=view.pitch}
  local corners={}
- for _,p in ipairs({{extents[1]-.85,extents[3]-.85},{extents[2]+.85,extents[3]-.85},{extents[2]+.85,extents[4]+.85},{extents[1]-.85,extents[4]+.85}}) do
+ for _,p in ipairs({{extents[1]-rim,extents[3]-rim},{extents[2]+rim,extents[3]-rim},{extents[2]+rim,extents[4]+rim},{extents[1]-rim,extents[4]+rim}}) do
   local x,y=view.project(p[1],p[2],0);corners[#corners+1]={x=cx+x*scale,y=cy+y*scale}
  end
  local best,edge=-math.huge,nil
