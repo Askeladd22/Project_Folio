@@ -44,34 +44,36 @@ function M.build(which)
   return {
    name=which,
    header=rect(44,20,1832,72),
-   host=rect(210,0,1500,229),
+   -- Full-frame room painting: its far tabletop meets the real tray
+   -- at the bottom of this band, 210 px in from each side.
+   host=rect(0,0,1920,338),
+   rear_span=1500,
    -- One unified scorecard: the risk total is not stranded below the table.
    score_panel=rect(44,20,414,72),
    -- Align the one-button state to the same axis as the real tray.
-   single_action=rect(763,904,394,68),
+   single_action=rect(763,948,394,68),
    secured_caption=rect(63,32,173,20),
    secured_value=rect(63,52,173,32),
    risk_caption=rect(258,32,178,20),
    risk_value=rect(258,52,178,32),
    help=rect(1510,32,145,46),
    runmenu=rect(1682,32,158,46),
-   book=rect(44,107,1832,862),
-   page_main=rect(56,119,1808,846),
+   book=rect(44,107,1832,944),
+   page_main=rect(56,119,1808,921),
    -- A small command plaque, shown ONLY when controls are present.
-   -- The physical tray, its rear seam and g3d camera stay untouched.
-   -- The compact plaque, its trim and composite action row now share
-   -- the tray's real 1920-wide center (x=960); no camera/physics change.
-   footer=rect(445,889,1030,94),
-   footer_trim=rect(458,897,1004,2),
+   -- Sit immediately below the front apron. All UI and pick targets
+   -- share the same virtual coordinates as the painted room.
+   footer=rect(445,938,1030,87),
+   footer_trim=rect(458,943,1004,2),
    -- The accepted-dice register is just to the LEFT of the plaque.
-   shelf=rect(56,913,384,51),
-   shelf_label=rect(58,884,382,25),
-   tray=rect(60,229,1800,644),
-   message=rect(655,988,610,33),
-   idle_message=rect(707,907,506,36),
-   context_actions={rect(459,904,186,67),rect(459,977,186,43)},
-   primary=rect(665,904,392,68),
-   secondary=rect(1076,904,383,68),
+   shelf=rect(56,961,384,51),
+   shelf_label=rect(58,935,382,25),
+   tray=rect(60,338,1800,593),
+   message=rect(650,1030,620,33),
+   idle_message=rect(650,940,620,36),
+   context_actions={rect(459,948,186,67),rect(459,1020,186,43)},
+   primary=rect(665,948,392,68),
+   secondary=rect(1076,948,383,68),
   }
  end
  local a=common()
@@ -213,7 +215,7 @@ function M.validate(layout)
     return false,'invalid minimal contextual action'
    end
   end
-  if layout.tray.w<1500 or layout.tray.h<640 then
+  if layout.tray.w<1500 or layout.tray.h<580 then
    return false,'physical table viewport too small'
   end
   if layout.primary.h<66 or layout.secondary.h<66 then

@@ -10,6 +10,19 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.32] - 2026-11-05
+
+### Selezione sul tavolo del Mercante
+
+- Un segno sotto i dadi indica quali possono contribuire al punteggio. Il
+  contorno segue il dado sotto il puntatore. Il pulsante Accantona mostra
+  i punti della selezione e distingue un gruppo incompleto da uno impossibile.
+- Il Mercante e il pavimento della stanza riempiono l'inquadratura. La nuova
+  illustrazione lascia visibile il berretto ed elimina il dado rosso dipinto.
+  Il tavolo 3D si raccorda alla stanza e i comandi sono vicini al suo bordo.
+- Verifica di selezione, contorni e composizione con le suite Lua e con
+  catture LÖVE/Mesa in formato 16:9 e ultrawide.
+
 ## [0.1.31] - 2026-11-05
 
 ### Ombre dei dadi sul tavolo

@@ -193,22 +193,43 @@ local function compact_status(u)
  if s.hot then return 'Dadi caldi · Rilancia tutti e sei oppure incassa.' end
  if next(s.selected) then
   local points=R.selection(s)
-  if not points then return 'Selezione non valida: ogni dado scelto deve fare punti.' end
-  return 'Selezionati: +'..points..' pt · Non ancora accantonati'
+  if points then return R.bank_status(s) and 'Accantona [A] oppure incassa [Invio].'
+    or 'Accantona [A] per aggiungere punti a rischio.' end
+  if H.can_complete(s) then return 'Aggiungi i dadi che completano la combinazione.' end
+  return 'Deseleziona i dadi che non fanno parte di una combinazione.'
  end
- if s.scored then return '' end
- return 'Scegli i dadi da accantonare · clic oppure 1–6'
+ local eligible=H.eligible(s)
+ local keys={}
+ for i=1,6 do if eligible[i] then keys[#keys+1]='['..i..']' end end
+ if #keys==0 then return '' end
+ return 'Scegli i dadi segnati · clic o tasti '..table.concat(keys,' ')
 end
-local merchant_art={}
-local function draw_table_art(name,rect)
+local merchant_room,room_edges
+local function draw_merchant_room()
  local g=love.graphics
- local image=merchant_art[name]
- if not image then
-  image=g.newImage('resources/merchant/'..name..'.jpg')
-  merchant_art[name]=image
+ local w,h=Layout.virtual_w,Layout.virtual_h
+ if not merchant_room then
+  merchant_room=g.newImage('resources/merchant/table-host.jpg')
+  local iw,ih=merchant_room:getWidth(),merchant_room:getHeight()
+  -- Mirror only a strip of the empty room past the composition on
+  -- non-16:9 windows. Never duplicate the host or rescale the seam.
+  local side,top,base=math.max(1,math.floor(iw*.09)),
+   math.max(1,math.floor(ih*.012)),math.max(1,math.floor(ih*.07))
+  room_edges={left=g.newQuad(0,0,side,ih,iw,ih),right=g.newQuad(iw-side,0,side,ih,iw,ih),
+   top=g.newQuad(0,0,iw,top,iw,ih),base=g.newQuad(0,ih-base,iw,base,iw,ih),
+   side=side,top_h=top,base_h=base}
  end
+ local iw,ih=merchant_room:getWidth(),merchant_room:getHeight()
+ local x,y=Res.to_virtual(0,0)
  g.setColor(1,1,1,1)
- g.draw(image,rect.x,rect.y,0,rect.w/image:getWidth(),rect.h/image:getHeight())
+ g.draw(merchant_room,0,0,0,w/iw,h/ih)
+ if x<-.001 then
+  g.draw(merchant_room,room_edges.left,0,0,0,x/room_edges.side,h/ih)
+  g.draw(merchant_room,room_edges.right,w-x,0,0,x/room_edges.side,h/ih)
+ elseif y<-.001 then
+  g.draw(merchant_room,room_edges.top,0,0,0,w/iw,y/room_edges.top_h)
+  g.draw(merchant_room,room_edges.base,0,h-y,0,w/iw,y/room_edges.base_h)
+ end
 end
 local function draw_minimal(u)
  local s=u.game
@@ -220,7 +241,7 @@ local function draw_minimal(u)
  Res.begin_ui()
  g.setColor(.077,.060,.047,1)
  g.rectangle('fill',0,0,1920,1080)
- draw_table_art('table-host',layout.host)
+ draw_merchant_room()
  -- Keep both sides of the wager in one legible scorecard.
  panel(layout.score_panel,parchment,border_ink,7)
  g.setColor(unpack(Art.rgba('border',.48)))

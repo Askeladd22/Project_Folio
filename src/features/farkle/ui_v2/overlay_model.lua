@@ -10,7 +10,7 @@ local function finite(n)
  return type(n)=='number' and n==n and n~=math.huge and n~=-math.huge
 end
 
-function M.build(u,hits)
+function M.build(u,hits,hoveredId)
  local result={markers={},marquee=nil,hand=nil,physicalCount=0}
  local s=u and u.game
  if not s or u.modal or H.reward_active(s) then return result end
@@ -35,7 +35,8 @@ function M.build(u,hits)
  local eligible=s.phase=='ready' and H.eligible(s) or {}
  local hasScoreSelection=s.phase=='ready' and s.selected
     and next(s.selected)~=nil
- local selectionValid=hasScoreSelection and R.selection(s)~=nil
+ local scoreKind=hasScoreSelection and (R.selection(s) and 'score'
+     or H.can_complete(s) and 'partial' or 'invalid')
  for _,hit in ipairs(hits or {}) do
   local id=hit.index or hit.roll_index
   if type(id)=='number' and id%1==0 and id>=1 and id<=6
@@ -44,14 +45,16 @@ function M.build(u,hits)
    if u.dragSelected and u.dragSelected[id] then
     kind='physical'
    elseif s.phase=='ready' and s.selected and s.selected[id] then
-    kind=selectionValid and 'score' or 'invalid'
+    kind=scoreKind
    elseif eligible[id] then
     kind='eligible'
    end
+   local hovered=s.phase=='ready' and not s.used[id] and s.hand[id] and id==hoveredId
+   if not kind and hovered then kind='neutral' end
    if kind then
     result.markers[#result.markers+1]={
      id=id,x=hit.x,y=hit.y,r=finite(hit.r) and
-       math.max(11,math.min(30,hit.r*.70)) or 22,kind=kind
+       math.max(11,math.min(30,hit.r*.70)) or 22,kind=kind,outline=hit.outline,hovered=not not hovered
     }
    end
   end

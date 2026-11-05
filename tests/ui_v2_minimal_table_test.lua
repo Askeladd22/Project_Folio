@@ -154,19 +154,25 @@ Hud.draw(u)
 assert(not u.buttons.roll and not u.buttons.take and not u.buttons.choices)
 assert(R.toggle(game,3))
 Hud.draw(u)
-assert(u.buttons.take.enabled and u.buttons.take.label:find('+5 pt',1,true))
+assert(u.buttons.take.enabled and u.buttons.take.label=='Accantona · 5 pt')
 assert(R.take(game) and game.pot==20)
 Hud.draw(u)
 assert(u.buttons.roll.enabled and u.buttons.roll.label=='Rilancia 3 dadi')
 local hand=R.new()
 assert(R.start(hand) and R.settle(hand,{1,1,3,3,3,6}))
 u.game=hand
+textDrawn={}
+Hud.draw(u)
+local hints=table.concat(textDrawn,' ')
+assert(hints:find('[1] [2] [3] [4] [5]',1,true) and not hints:find('[6]',1,true),
+ 'keyboard users need the IDs of dice that can contribute, including the triple')
 for i=1,5 do assert(R.toggle(hand,i)) end
 local function check_selection(points)
  textDrawn={}
  Hud.draw(u)
- assert(table.concat(textDrawn,' '):find(
-  'Selezionati: +'..points..' pt · Non ancora accantonati',1,true))
+ assert(u.buttons.take.label=='Accantona · '..points..' pt',
+   'the primary action must quote the exact uncommitted group score')
+ assert(hand.pot==0,'preview changed the amount at risk')
 end
 check_selection(50)
 assert(u.buttons.bank and u.buttons.bank.enabled)

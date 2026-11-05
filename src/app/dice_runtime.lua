@@ -162,6 +162,7 @@ local diceSettledTimer = 0
 local SETTLE_DELAY = DICE_CONFIG.settle_delay
 local last_roll_indices = nil
 local tray_die_hits = {}
+local ProjectedDie = require('src.engine3d.projected_die')
 
 local fps_font = nil
 local fps_font_size = 0
@@ -502,32 +503,7 @@ local function get_usable_dice_map()
 end
 
 local function pick_tray_die_at_screen(x, y)
-    if not tray_die_hits or #tray_die_hits <= 0 then
-        return nil
-    end
-    local mx = tonumber(x)
-    local my = tonumber(y)
-    if not mx or not my then
-        return nil
-    end
-
-    local best = nil
-    local best_score = nil
-    for _, hit in ipairs(tray_die_hits) do
-        local dx = mx - hit.x
-        local dy = my - hit.y
-        local dist2 = dx * dx + dy * dy
-        local r = math.max(1, hit.r or 1)
-        local r2 = r * r
-        if dist2 <= r2 then
-            local score = dist2 / r2
-            if (not best) or score < best_score or (score == best_score and (hit.depth or -math.huge) > (best.depth or -math.huge)) then
-                best = hit
-                best_score = score
-            end
-        end
-    end
-    return best and best.index or nil
+    return ProjectedDie.pick(tray_die_hits, x, y)
 end
 
 local function draw_single_tray(tray, tray_layout, region, die_predicate, usable_map, glow_enabled, collect_hits, draw_divider)
@@ -619,23 +595,10 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
             if die_predicate(die_entry, i) then
                 with_draw_offset(die_entry.body, function()
                     if collect_hits and die_entry.body and die_entry.body.position then
-                        local bx = die_entry.body.position[1]
-                        local by = die_entry.body.position[2]
-                        local bz = die_entry.body.position[3] or 0
-                        local px, py, depth = view.project(bx, by, bz)
-                        local radius_world = math.max(0.20, (die_entry.body.radius or 0.38) * 0.90)
-                        local pxr, pyr = view.project(bx + radius_world, by, bz)
-                        local radius_screen = math.max(10, math.sqrt((pxr - px) * (pxr - px) + (pyr - py) * (pyr - py)) * scale * 1.55)
-                        local sx = cx + px * scale
-                        local sy = cy + py * scale
-                        if sx >= tray.x and sx <= (tray.x + tray.w) and sy >= render_viewport.y and sy <= (tray.y + tray.h) then
-                            tray_die_hits[#tray_die_hits + 1] = {
-                                index = i,
-                                x = sx,
-                                y = sy,
-                                r = radius_screen,
-                                depth = depth or -math.huge,
-                            }
+                        local hit = ProjectedDie.from_body(i, die_entry.body, view.project, cx, cy, scale)
+                        if hit.x >= tray.x and hit.x <= tray.x + tray.w and
+                            hit.y >= render_viewport.y and hit.y <= tray.y + tray.h then
+                            tray_die_hits[#tray_die_hits + 1] = hit
                         end
                     end
 

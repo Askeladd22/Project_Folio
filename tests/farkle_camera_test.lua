@@ -35,6 +35,16 @@ for _,width in ipairs{1280,1920,2560} do
  local fraction=(right-left)*k/width
  assert(fraction>=.75 and fraction<=.80,'table must occupy 75–80% of screen width')
  assert(math.abs(cy+rear*k-(layout.host.y+layout.host.h)*factor)<1,'rear rail disconnected from portrait')
+ -- Compare actual projected surfaces, not the larger render viewport.
+ local seamLeft=V.project(extents[1]-.4,extents[3],0)
+ local seamRight=V.project(extents[2]+.4,extents[3],0)
+ assert(math.abs(cx+seamLeft*k-210*factor)<1 and math.abs(cx+seamRight*k-1710*factor)<1,
+  'illustrated wood and physical rails must meet at both ends')
+ local _,apron=V.project(0,extents[4]+.4,-scene.box.border_height)
+ local gap=layout.footer.y*factor-(cy+apron*k)
+ assert(gap>=0 and gap<=20*factor,'command plaque too far from the visible front plank')
+ local instructionGap=layout.idle_message.y*factor-(cy+apron*k)
+ assert(instructionGap>=0 and instructionGap<=24*factor,'idle instruction detached from the visible table')
  local savedLove=love
  local time=0
  love={timer={getTime=function() return time end}}

@@ -62,6 +62,24 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE: '1'
           ALSOFT_DRIVERS: 'null'
         run: timeout 60s xvfb-run -a love .
+      - name: Merchant table interaction and composition (Mesa)
+        env:
+          MANUSCRIPT_FARKLE_HUD_SMOKE: '1'
+          PROJECT_FOLIO_MERCHANT_REVIEW: '1'
+          MANUSCRIPT_AUDIT_OUT: ${{ runner.temp }}/merchant-table
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          ALSOFT_DRIVERS: 'null'
+        run: |
+          mkdir -p "$MANUSCRIPT_AUDIT_OUT"
+          timeout 75s xvfb-run -a -s '-screen 0 1920x1080x24' love . ||
+            { cat "$MANUSCRIPT_AUDIT_OUT/hud-smoke.log"; exit 1; }
+          cat "$MANUSCRIPT_AUDIT_OUT/hud-smoke.log"
+      - name: Save merchant table frames
+        uses: actions/upload-artifact@v4
+        with:
+          name: merchant-table
+          path: ${{ runner.temp }}/merchant-table/merchant-*.png
+          if-no-files-found: error
       - name: Deterministic A/B/C signs benchmark (research only)
         run: |
           luajit experiments/signs_lab/run.lua 256 20261031

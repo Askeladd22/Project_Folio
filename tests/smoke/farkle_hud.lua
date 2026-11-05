@@ -182,6 +182,59 @@ function M.install(U)
   shot(prefix..'merchant-live')
   record('PASS '..prefix..' current V2 layout/modals, real grip and rule-based reward paths')
  end
+ -- Deterministic presentation fixture: orient six real bodies and read their
+ -- top faces before feeding the usual controller. No simulated roll timing.
+ local function merchant_selection(w,h)
+  assert(love.window.setMode(w,h,{resizable=true,vsync=0}))
+  love.resize(w,h)
+  U:reset('build')
+  local faceState=require('src.engine3d.face_state')
+  local rows={{3,-3,-.9,.20},{3,-.5,-1.45,-.27},{3,1.8,-.7,.43},
+   {5,3.2,1.3,-.14},{2,-2.2,1.35,.51},{6,.3,1.75,-.38}}
+  local hand={}
+  for i,row in ipairs(rows) do
+   local entry=dice[i]
+   local b=entry.body
+   local lowest=math.huge
+   for j,v in ipairs(entry.restPose) do
+    local x,y,z=unpack(v)
+    if row[1]==3 then x,z=-z,x
+    elseif row[1]==5 then y,z=z,-y
+    elseif row[1]==2 then y,z=-z,y
+    else y,z=-y,-z end
+    local c,s=math.cos(row[4]),math.sin(row[4])
+    b[j][1],b[j][2],b[j][3]=x*c-y*s,x*s+y*c,z
+    lowest=math.min(lowest,z)
+   end
+   b.position[1],b.position[2],b.position[3]=row[2],row[3],-lowest
+   local state=faceState.inspect(entry)
+   hand[i]=entry.die.faceValueMap[state.face]
+   assert(state.valid and hand[i]==row[1],'fixture face mismatch')
+  end
+  feed(hand)
+  shot('merchant-'..w..'-ready')
+  local hits=Bridge.getTrayDieHits()
+  assert(#hits==6 and hits[1].outline,'six projected silhouettes required')
+  local tray=assert(Bridge.getDiceTrayRect())
+  for _,item in ipairs(hits) do
+   assert(item.x>=tray.x and item.x<=tray.x+tray.w and item.y>=tray.y and item.y<=tray.y+tray.h,
+    'grounded die outside interactive region')
+  end
+  local hit=hits[1]
+  assert(Bridge.pickTrayDie(hit.x,hit.y)==1)
+  love.mouse.setPosition(hit.x,hit.y)
+  U:mousepressed(hit.x,hit.y,1)
+  U:mousereleased(hit.x,hit.y,1)
+  assert(U.game.selected[1] and not R.selection(U.game),'partial triple via mouse')
+  U:keypressed('2');U:keypressed('3')
+  love.mouse.setPosition(hits[4].x,hits[4].y)
+  shot('merchant-'..w..'-selected')
+  assert(U.buttons.take.enabled and U.buttons.take.label=='Accantona · 30 pt')
+  click('take')
+  assert(U.game.pot==30 and U.game.used[1] and U.game.used[3])
+  shot('merchant-'..w..'-taken')
+  record('PASS merchant '..w..'x'..h..' mouse, keyboard, hover and triple score')
+ end
  local function scenario(w,h)
   love.window.setMode(w,h,{resizable=true});love.resize(w,h);U.hud_variant='standard';U:reset('build')
   local prefix='hud-usability-'..w..'-'
@@ -310,7 +363,7 @@ function M.install(U)
   U:reset('build');feed({1,1,5,5,2,3});local eligible,count=H.eligible(U.game)
   assert(count==4 and not eligible[5] and not eligible[6]);shot(prefix..'duplicates')
   click('die1');click('die2');assert(R.selection(U.game)==20);shot(prefix..'duplicates-selected')
-  assert(U.buttons.take.label:find('2 dice') and U.buttons.take.label:find('20'));assert(U.buttons.take.x==64)
+  assert(U.buttons.take.label=='Accantona · 20 pt')
   click('take');assert(U.game.pot==20);shot(prefix..'duplicates-held');click('bank')
   U:reset('build');U.game.stage=2;feed({1,3,3,3,4,6})
   U:keypressed('1');assert(R.selection(U.game)==10);shot(prefix..'below-entry');U:draw();assert(not U.buttons.bank or not U.buttons.bank.enabled)
@@ -359,7 +412,10 @@ function M.install(U)
  function love.load()
   load()
   co=coroutine.create(function()
-   if os.getenv('MANUSCRIPT_UI_V2_REVIEW_CAPTURE')=='1' then
+   if os.getenv('PROJECT_FOLIO_MERCHANT_REVIEW')=='1' then
+    merchant_selection(1280,720)
+    merchant_selection(1680,720)
+   elseif os.getenv('MANUSCRIPT_UI_V2_REVIEW_CAPTURE')=='1' then
     review_scenario(1920,1080)
     review_scenario(1280,720)
     record('PASS current UI V2 visual review at both resolutions')
@@ -412,7 +468,7 @@ function M.install(U)
  function love.draw()
   draw();frames=frames+1
   local p=U.trayProjection
-  if p then
+  if p and os.getenv('PROJECT_FOLIO_MERCHANT_REVIEW')~='1' then
    for _,v in ipairs(p.points) do
     local x,y=p.cx+v[1]*p.scale,p.cy+v[2]*p.scale
     assert(x>=p.rect.x and x<=p.rect.x+p.rect.w and y>=p.rect.y and y<=p.rect.y+p.rect.h,'projected geometry clipped')

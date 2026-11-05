@@ -66,8 +66,11 @@ local invalid=R.new()
 assert(R.start(invalid) and R.settle(invalid,{2,2,2,3,4,6}))
 assert(R.toggle(invalid,1))
 local bad=Model.build({game=invalid},physical)
-assert(count_kind(bad,'invalid')==1,
- 'a lone non-scoring 2 must not look like valid scoring')
+assert(count_kind(bad,'partial')==1,
+ 'a single 2 can still complete the triple and must not read as a mistake')
+assert(R.toggle(invalid,4))
+assert(count_kind(Model.build({game=invalid},physical),'invalid')==2,
+ 'a selection that cannot be completed must be distinct from a partial triple')
 invalid.phase='rolling'
 assert(#Model.build({game=invalid},physical).markers==0)
 invalid.phase='upgrade'
@@ -112,14 +115,13 @@ UI.high_contrast=function() return true end
 Overlay.draw(u,physical)
 assert(calls.line>0 and calls.circle==0 and calls.push==calls.pop,
  'V2 markers must not use giant rings or leak graphics state')
--- Selected valid dice use short underlines positioned close to hit centers.
-local chosenHit=physical[1]
+-- Auxiliary scoring marks must stay compact, even at large text size.
 local mark=Model.build(u,physical).markers[1]
 assert(mark and mark.kind=='score' and mark.id==1)
 assert(mark.r<=30,'marker radius must not expand far beyond the die')
 for _,segment in ipairs(calls.segments) do
  assert(math.abs(segment[3]-segment[1])<=40,
-  'selected-die underline must never become an oversized bracket')
+  'auxiliary scoring mark must never become an oversized bracket')
 end
 u.mouseThrow={group=true,held={1,2,3,4,5,6},x=500,y=380}
 local previousLines=calls.line
