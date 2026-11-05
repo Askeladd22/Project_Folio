@@ -36,6 +36,28 @@ La palette è un **vincolo di produzione**, non una richiesta di
 desaturare brutalmente ogni texture. Le reference non autorizzano
 a copiare personaggi/composizioni di altri illustratori.
 
+## Dadi base in osso inciso — riferimento del 5 novembre 2026
+
+Il riferimento fotografico approvato mostra dadi color osso invecchiato,
+con superfici crema/miele, patina tenue, piccoli pori e spigoli consumati.
+I punti sono cavità scure circondate da anelli incisi nella stessa materia.
+
+Le facce opposte dei dadi comuni seguono le coppie **1/6, 2/5 e 3/4**.
+La mappa fisica è `{1,6,3,5,4,2}`; il test verifica le tre coppie
+sulle facce geometricamente opposte. La build incisa modifica
+intenzionalmente la faccia 2 del primo dado in 1.
+
+Il materiale ivory calcola superficie e incisioni nel frammento g3d.
+Il valore visualizzato arriva dalla mappa effettiva della faccia;
+la patina dipende dall'ID del dado e resta stabile durante la rotazione.
+Lo smusso grafico deriva dalla geometria fisica. Le miniature
+degli accantonamenti usano lo stesso materiale.
+
+Lo smoke `PROJECT_FOLIO_BONE_DICE_SMOKE=1` verifica le sei facce,
+le incisioni, il renderer e i ritratti con LÖVE/Mesa in CI.
+Su Windows confrontare il risultato con la foto a 720p/1080p/1440p,
+inclusi i dadi piccoli a fondo tavolo e quelli accantonati.
+
 ## Scala cromatica canonica
 
 Il file autoritativo è `src/data/art_palette.lua`, usabile

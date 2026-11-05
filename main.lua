@@ -36,3 +36,7 @@ if os.getenv('MANUSCRIPT_FRONTEND_SMOKE') then require('tests.smoke.frontend') e
 if os.getenv('MANUSCRIPT_UI_V2_LAYOUT_STUDY')=='1' then
  require('tests.smoke.ui_v2_layout_preview').install()
 end
+
+if os.getenv('PROJECT_FOLIO_BONE_DICE_SMOKE')=='1' then
+ require('tests.smoke.bone_dice').install()
+end

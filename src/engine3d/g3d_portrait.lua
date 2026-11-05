@@ -2,6 +2,9 @@
 -- Captures once per held die, without stepping physics or changing a score.
 local P={}
 local images={}
+local Materials=require('src.engine3d.g3d_materials')
+local Bevel=require('src.engine3d.g3d_bevel')
+local dice_shader
 local function physical_pose(entry)
  local body=assert(entry.body,'die body required')
  local copy={position={0,0,0}}
@@ -11,7 +14,7 @@ local function physical_pose(entry)
  return copy
 end
 P.physical_pose=physical_pose
-function P.capture(entry,projection)
+function P.capture(entry,projection,index)
  assert(entry and entry.die and entry.body,'held die required')
  assert(projection and projection.pitch and projection.yaw,'tray projection required')
  local g=assert(love and love.graphics,'LÖVE graphics required')
@@ -23,6 +26,12 @@ function P.capture(entry,projection)
   local Mesh=require('src.engine3d.g3d_mesh')
   local Camera=require('src.engine3d.g3d_camera')
   local body=physical_pose(entry)
+  local is_d8=#entry.die.faces==8
+  local shader
+  if Materials.uses_shader(Materials.default) then
+   dice_shader=dice_shader or g.newShader(Materials.shader_path,Materials.vertex_path)
+   shader=dice_shader
+  end
   local size=112
   image=g.newCanvas(size,size)
   local v={yaw=projection.yaw,pitch=projection.pitch,distance=14.1,focus=5}
@@ -34,6 +43,12 @@ function P.capture(entry,projection)
   g.setShader()
   g.setColor(1,1,1,1)
   g.setBlendMode('alpha','alphamultiply')
+  if not images.white then
+   local pixel=love.image.newImageData(1,1)
+   pixel:setPixel(0,0,1,1,1,1)
+   images.white=g.newImage(pixel)
+  end
+  if shader then Materials.configure(shader,Materials.default,v,is_d8,index) end
   for face_idx,face in ipairs(entry.die.faces) do
    local key=entry.die.faceValueMap[face_idx]
    local texture
@@ -41,14 +56,10 @@ function P.capture(entry,projection)
     if not images[key] then images[key]=g.newImage('resources/dice/'..key..'.png') end
     texture=images[key]
    else
-    if not images.white then
-     local pixel=love.image.newImageData(1,1)
-     pixel:setPixel(0,0,1,1,1,1)
-     images.white=g.newImage(pixel)
-    end
     texture=images.white
    end
-   local vertices=Mesh.face_vertices(body,face)
+   local vertices=not is_d8 and Bevel.face_vertices(Mesh,body,face,true,Bevel.default_fraction)
+    or Mesh.face_vertices(body,face,shader~=nil)
    if #face==3 then
     local tint=require('src.engine3d.g3d_scenery').face_color(entry.die,face_idx)
     for _,vert in ipairs(vertices) do
@@ -59,7 +70,14 @@ function P.capture(entry,projection)
    end
    local model=g3d.newModel(vertices,texture)
    models[#models+1]=model
-   model:draw()
+   if shader then Materials.configure_pips(shader,Materials.default,texture,not is_d8 and key or nil) end
+   model:draw(shader)
+  end
+  if not is_d8 then
+   local bevel=g3d.newModel(Bevel.rim_vertices(body,entry.die.faces,Bevel.default_fraction),images.white)
+   models[#models+1]=bevel
+   if shader then Materials.configure_pips(shader,Materials.default,nil) end
+   bevel:draw(shader)
   end
   g.setDepthMode()
   g.setCanvas()
