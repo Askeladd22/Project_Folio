@@ -110,9 +110,9 @@ for _,size in ipairs{{1280,720},{1920,1080},{2560,1440}} do
   assert(caption_visible('REGISTRO DEI DADI ACCANTONATI',layout.shelf_caption),
    'accepted-dice title is obscured by slot drawings')
   assert(caption_visible('MANOSCRITTO',layout.sidebar_caption))
-  assert(u.buttons.choices and u.buttons.medaluse,
+  assert(not u.buttons.choices and u.buttons.medaluse,
    'all contextual actions must survive visual composition')
-  for i,id in ipairs{'choices','medaluse'} do
+  for i,id in ipairs{'medaluse'} do
    local a,b=u.buttons[id],layout.context_actions[i]
    assert(a.x==b.x and a.y==b.y and a.w==b.w and a.h==b.h,
     'redrawn side button has drifted away from controller hitbox')

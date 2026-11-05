@@ -52,9 +52,9 @@ Windows LÖVE input
 | `held` | Destro premuto su un dado o sul gruppo selezionato; Esc annulla | `u.mouseThrow` per 1+ dadi; ruota/insegue puntatore; i risultati **non** sono ancora conteggiabili |
 | `manualRoll` parziale | Restanti dadi possono essere presi e lanciati | `u.manualRoll.pending/count`; un gruppo 2+4 è **un solo tiro Farkle**; non mostrare un secondo pulsante «turno» |
 | `rolling` / assestamento | Nessuna selezione per punteggio; azioni disabilitate; alcuni overlay vengono comunque disegnati | `s.phase='rolling'`, `u.state='rolling'`; gli esiti vengono accettati solo da `onDiceSettled` |
-| `ready`, nessun dado selezionato | `roll` se `R.can_roll`, `bank` se `R.bank_status`; `choices` se `R.options` non vuoto; `medaluse` quando disponibile | Se prima del tiro non si è accantonata una combinazione, `roll` non è abilitato. Il click sui dadi seleziona per il punteggio |
-| `ready`, selezione valida | `take`, `bank` se consentito; `choices` | La selezione si valida con `R.selection`. Spazio attiva `take` se presente; A è scorciatoia per `take` |
-| `ready`, selezione non valida | `take` disabilitato, `bank` disabilitato; `choices` | Nessun punto assegnato solo dall'evidenziazione. Stato deve essere comprensibile e reversibile |
+| `ready`, nessun dado selezionato | `roll` se `R.can_roll`, `bank` se `R.bank_status`; `medaluse` quando disponibile | Se prima del tiro non si è accantonata una combinazione, `roll` non è abilitato. Il click sui dadi seleziona per il punteggio |
+| `ready`, selezione valida | `take`, `bank` se consentito | La selezione si valida con `R.selection`. Spazio attiva `take` se presente; A è scorciatoia per `take` |
+| `ready`, selezione non valida | `take` disabilitato, `bank` disabilitato | Nessun punto assegnato solo dall'evidenziazione. Stato deve essere comprensibile e reversibile |
 | `hot dice` (`s.hot=true` e `ready`) | `roll` per tutti e 6, `bank` quando permesso | Il rischio del turno non viene cancellato automaticamente da «hot dice» |
 | `rescue` | `rescue` (medaglia Correttore), `fail` (accetta Farkle) | `rescue` usa `R.rescue`; `fail` usa `R.fail`. Errore fisico e Farkle **non** sono la stessa cosa |
 | `physics_error` (stato tecnico) | `retryphysical` | Non assegnare Farkle, non incassare né spendere un secondo turno: recupero tecnico dello stesso tiro |
@@ -74,14 +74,13 @@ I modelli della UI devono **derivare** abilità e numeri dalle regole (`R.can_ro
 | Folio laterale | `folio` | Apre il dettaglio del manoscritto |
 | Azioni principali | `roll`, `take`, `bank`, `next` | `u:request`, `u:act('take')`, `u:act('bank')`, `u:act('next')` |
 | Farkle e recupero | `rescue`, `fail`, `retryphysical` | Rilancio con Correttore, fallimento logico, ritentativo tecnico |
-| Consultazione | `choices`, `medaluse` | Pannelli contestuali disponibili solo in fasi appropriate |
+| Consultazione | `medaluse` | Pannelli contestuali disponibili solo in fasi appropriate |
 | Ricompensa dado | `weighted`, `engraved` | `R.choose_build` e installazione modificatore |
 | Ricompensa medaglia | `medal`, `none` | `R.choose_medal` |
 | Dialog comune | `close` | Chiusura modale, non della partita |
 | Pausa di gioco | `resume`, `settings`, `restart`, `mainmenu` | Riprendi, Impostazioni, riavvio o ritorno al menu |
 | Conferme pausa | `cancel`, `confirmrestart`, `confirmexit` | Annulla; conferma il reset della stessa modalità oppure l'uscita senza salvataggio |
 | Laboratorio tecnico F7 | `medals` come modale; `inspect1`–`inspect6`, `equip` | Strumento di sviluppo, non voce del menu giocatore |
-| Scelte punteggio | `option1` … `option7`, `prev`, `nextpage` | `u:select_option`, paginazione |
 | Aiuto | `helpTab1` … `helpTab3` | Cambia sezione del regolamento |
 | Laboratorio medaglie | `inspect1` … `inspect6`, `equip`, `medalprev`, `medalnext` | Anteprima e equipaggiamento **con restart della commissione** |
 | Utilizzo medaglia | `target1` … `target6`, `activate` | Seleziona bersagli **separati dai dadi Farkle**, applica l'effetto |
@@ -122,7 +121,6 @@ Nota: `hud_minimal.draw()` aggiorna `u.buttons` ogni frame; `hud.overlay()` usa 
 | `help` | 3 schede: gioco, combinazioni, regole speciali |
 | `run` | Riavvia con build, run di controllo, laboratorio medaglie |
 | `folio` | Dettaglio manoscritto e vincoli commissione |
-| `choices` | Opzioni del tiro paginabili a blocchi di 7, selezione fisica degli ID |
 | `medals` | Catalogo/laboratorio; **equipaggiare riavvia la commissione** |
 | `medaluse` | Uso dell'effetto sul dado o moltiplicatore; bersagli separati |
 | `upgrade` | Due modificatori dado dopo commissione |

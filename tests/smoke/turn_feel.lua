@@ -27,7 +27,7 @@ function love.update(dt)
   assert(U.state~='physics_error');say('First physical result '..table.concat(U.game.hand,'/'));shot('result')
   if U.game.phase=='ready' then phase='select';deadline=elapsed+.7 else phase='ended';deadline=elapsed+.7 end
  elseif phase=='select' and elapsed>=deadline then
-  local choices=R.options(U.game);local o=assert(choices[1]);U:select_option(o.mask)
+  local choices=R.options(U.game);local o=assert(choices[1]);for _,id in ipairs(o.ids) do U:toggle(id) end
   phase='take';deadline=elapsed+.6;shot('selected')
  elseif phase=='take' and elapsed>=deadline then
   U:act('take',function() return R.take(U.game) end);phase='hold';deadline=elapsed+.8
@@ -36,7 +36,7 @@ function love.update(dt)
  elseif phase=='second' and U.game.phase~='rolling' then
   assert(U.state~='physics_error');shot('reroll-result');phase='bank';deadline=elapsed+.6
  elseif phase=='bank' and elapsed>=deadline then
-  if U.game.phase=='ready' then local o=R.options(U.game)[1];if o then U:select_option(o.mask);U:act('bank',function() return R.bank_turn(U.game) end) end end
+  if U.game.phase=='ready' then local o=R.options(U.game)[1];if o then for _,id in ipairs(o.ids) do U:toggle(id) end;U:act('bank',function() return R.bank_turn(U.game) end) end end
   shot('conclusion');phase='ended';deadline=elapsed+1.1
  elseif phase=='ended' and elapsed>=deadline then
   if U.game.phase=='ended' then U:act('next',function() return R.next_turn(U.game) end) end

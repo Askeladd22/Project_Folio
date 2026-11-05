@@ -47,7 +47,7 @@ assert(not rolling.bank or not rolling.bank.enabled)
 assert(not rolling.folio.enabled and not rolling.help.enabled)
 assert(R.settle(fresh,{1,1,1,1,1,1}) and fresh.phase=='ready')
 local ready=items(u)
-assert(ready.choices and ready.choices.enabled and
+assert(not ready.choices and
        ready.roll and not ready.roll.enabled)
 for i=1,6 do assert(R.toggle(fresh,i)) end
 local selected=items(u)

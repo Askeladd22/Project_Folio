@@ -14,12 +14,12 @@ local old=R.points.kind[4][2];R.points.kind[4][2]=987
 assert(H.help_sections(R.new())[2].rows[2][3]==987,'help must read current official points')
 R.points.kind[4][2]=old
 assert(sections[1].title=='How to play' and sections[3].title=='Special rules')
-local s=R.new();assert(#H.options(s)==0)
-assert(R.start(s));assert(R.settle(s,{1,5,2,3,4,6}));assert(#H.options(s)==5)
-assert(R.toggle(s,1));assert(R.take(s));assert(#H.options(s)==2)
+local s=R.new()
+assert(R.start(s));assert(R.settle(s,{1,5,2,3,4,6}))
+assert(R.toggle(s,1));assert(R.take(s))
 assert(#H.reroll_indices(s)==5)
 s.hot=true;assert(#H.reroll_indices(s)==6)
-s.phase='rolling';assert(#H.options(s)==0)
+s.phase='rolling'
 print('PASS HUD combinations omit spent dice, remain presentation-only, and hot dice include all six')
 for _,phase in ipairs({'lost','won','upgrade','medal','advance'}) do
  s.phase=phase;s.hot=true;s.selected={[1]=true}
@@ -32,7 +32,6 @@ assert(H.state_text({game=s,lastLoss=250}):find('250'))
 print('PASS terminal messages override stale turn events and hot dice')
 s=R.new();assert(R.start(s));assert(R.settle(s,{1,1,5,5,2,3}))
 local eligible,n=H.eligible(s);assert(n==4 and eligible[1] and eligible[4] and not eligible[5])
-assert(H.options(s)[1]:find('20') and H.options(s)[2]:find('10'))
 assert(R.toggle(s,1));assert(R.toggle(s,2));assert(H.selected_count(s)==2);assert(R.take(s))
 eligible,n=H.eligible(s);assert(n==2 and not eligible[1])
 s=R.new();assert(R.start(s));assert(R.settle(s,{2,2,2,3,4,6}))

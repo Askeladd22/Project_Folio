@@ -20,7 +20,7 @@ for _,needle in ipairs({
  "settingsState.apply_settings(original)",
  "shot(prefix..'help')",
  "shot(prefix..'help-scores')",
- "shot(prefix..'choices-fixture')",
+ "shot(prefix..'manual-pair')",
  "shot(prefix..'upgrade-fixture')",
  "shot(prefix..'medal-fixture')",
  "shot(prefix..'merchant-live')",

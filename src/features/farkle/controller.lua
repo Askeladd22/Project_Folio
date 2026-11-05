@@ -202,13 +202,6 @@ function U:onDiceSettled(values)
  return true
 end
 function U:toggle(i) if R.toggle(self.game,i) then self:log('select',i) end end
-function U:select_option(mask)
- for _,o in ipairs(R.options(self.game)) do if o.mask==mask then
-  self.game.selected={};for _,id in ipairs(o.ids) do self.game.selected[id]=true end
-  self:log('select_option',mask);return true
- end end
- return false
-end
 function U:draw()
  require('src.features.farkle.ui_v2.hud').draw(self)
 end

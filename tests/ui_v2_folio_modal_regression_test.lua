@@ -70,7 +70,7 @@ for _,scenario in ipairs(scenarios) do check_modal(unpack(scenario)) end
 
 -- Existing modal dispatch also must not regressed by the folio repair.
 Res.refresh(1920,1080)
-for _,mode in ipairs({'run','help','choices','medals'}) do
+for _,mode in ipairs({'run','help','medals'}) do
  local state=R.new()
  local u={game=state,modal=mode,buttons={roll={enabled=true}},presentation=P.new(state)}
  displayed={}

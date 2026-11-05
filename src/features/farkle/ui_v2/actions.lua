@@ -25,11 +25,6 @@ function M.build(u)
  if not u.minimalHud then
   add('folio','Apri folio [F]',not block,function() u.modal='folio' end,'folio')
  end
- if s.phase=='ready' then
-  local choices=R.options(s)
-  if #choices>0 then add('choices','Combinazioni ('..#choices..')',true,
-   function() u.choicePage=1;u.modal='choices' end,'context') end
- end
  if s.medal~='none' then
   local d=Medals.get(s.medal)
   local uses=Medals.remaining(s)
@@ -68,8 +63,10 @@ function M.build(u)
    local label=s.hot and 'Rilancia sei dadi' or
      (s.phase=='fresh' and 'Lancia i sei dadi' or
        'Rilancia '..R.count_free(s)..' dadi')
-   add('roll',label,can,function() u:request() end,
-    'primary','[Spazio] · Destro: presa fisica')
+   if not u.minimalHud or can then
+    add('roll',label,can,function() u:request() end,
+     'primary','[Spazio] · Destro: presa fisica')
+   end
   end
   local ok,total,min=R.bank_status(s)
   -- Existing Farkle rules permit banking a VALID selected combination

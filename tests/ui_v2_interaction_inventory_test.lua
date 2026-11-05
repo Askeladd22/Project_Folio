@@ -27,11 +27,10 @@ end
 local buttons={
  actions={"'help'","'runmenu'","'folio'","'roll'","'take'",
       "'bank'","'next'","'rescue'","'fail'","'retryphysical'",
-      "'choices'","'medaluse'"},
+      "'medaluse'"},
  modals={"'weighted'","'engraved'","'medal'","'none'","'close'",
          "'resume'","'settings'","'restart'","'mainmenu'","'cancel'",
-         "'confirmrestart'","'confirmexit'","'prev'",
-         "'nextpage'","'helpTab'..i","'option'..row"},
+         "'confirmrestart'","'confirmexit'","'helpTab'..i"},
  medal={"'inspect'..n","'equip'","'medalprev'","'medalnext'",
         "'target'..i","'activate'"}
 }
@@ -39,8 +38,7 @@ for section,ids in pairs(buttons) do
  for _,id in ipairs(ids) do
   exact(sources[section],id,section..' button')
   local label=id:gsub("'",''):gsub("%.%.%a+",'')
-  if label=='option' then label='option1'
-  elseif label=='inspect' then label='inspect1'
+  if label=='inspect' then label='inspect1'
   elseif label=='target' then label='target1'
   elseif label=='helpTab' then label='helpTab1' end
   exact(sources.doc,label,'documented UI v2 control')

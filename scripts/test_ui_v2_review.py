@@ -31,7 +31,7 @@ class UiReviewManifestTests(unittest.TestCase):
         self.assertGreaterEqual(len(SCENES), 15)
         for scene in (
             "physical-group-held", "accessibility-on", "help",
-            "choices-fixture", "upgrade-fixture", "medal-fixture",
+            "manual-pair", "upgrade-fixture", "medal-fixture",
             "folio", "merchant-live",
         ):
             self.assertIn(scene, SCENES)
