@@ -10,6 +10,10 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.21] - 2026-11-05
+
+- README abbreviato con presentazione del gioco, avvio e comandi essenziali.
+
 ## [0.1.20] - 2026-11-05
 
 - Il piano del Mercante usa una texture di legno ricavata dall'illustrazione,
