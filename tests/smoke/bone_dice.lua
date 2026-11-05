@@ -92,6 +92,43 @@ function S.install()
     viewport={x=0,y=0,w=960,h=620},cx=480,cy=310,scale=210,
     view=view,style='merchant',offset=0,
    }
+   -- Compare actual merchant-floor pixels with an empty-tray capture. Probe
+   -- outside the cube's silhouette, where a player can see the cast shadow.
+   local function check_table_shadows()
+    local body=Geometry.newD6Body(.8):set({0,0,.5},{0,0,0},{0,0,0})
+    local die={index=1,entry={body=body,die=Geometry.d6}}
+    local function capture(items)
+     renderer:draw{
+      entries=items,extents={-4,4,-3,3},height=.74,
+      viewport={x=0,y=0,w=384,h=288},cx=192,cy=144,scale=48,
+      view=flatView,style='merchant',offset=0,
+     }
+     return renderer.canvas:newImageData()
+    end
+    local empty=capture({})
+    local function darkening(frame,x,y)
+     local sx,sy=Camera.screen(flatView,384,288,48,x,y,0)
+     local reference,actual=0,0
+     for py=math.floor(sy)-2,math.floor(sy)+2 do
+      for px=math.floor(sx)-2,math.floor(sx)+2 do
+       reference=reference+luminance(empty,px,py)
+       actual=actual+luminance(frame,px,py)
+      end
+     end
+     return 1-actual/reference
+    end
+    local resting=capture({die})
+    local contact=darkening(resting,.76,.32)
+    assert(contact>.22,('resting shadow outside die is too faint (%.3f)'):format(contact))
+    body.position[3]=3.5
+    local raised=capture({die})
+    local cast=darkening(raised,2.05,1.45)
+    assert(cast>.08 and cast<contact,'airborne shadow must move and soften')
+    assert(math.abs(darkening(raised,.76,.32))<.04,'old contact shadow left behind')
+    print(('PASS GPU merchant shadows: grounded %.3f, raised %.3f'):format(contact,cast))
+    empty:release();resting:release();raised:release()
+   end
+   check_table_shadows()
    -- Portrait capture uses the same face maps, patina and chamfer.
    for i,item in ipairs(entries) do
     g.setColor(.2,.3,.4,.5)

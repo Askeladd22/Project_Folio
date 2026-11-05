@@ -10,6 +10,14 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.31] - 2026-11-05
+
+### Ombre dei dadi sul tavolo
+- Ombra proiettata sul legno dalla luce principale. La posa del dado determina
+  il contorno, mentre la distanza dal piano regola intensità e sfumatura.
+- Lo smoke GPU confronta i pixel del tavolo vuoto con quelli di un dado
+  appoggiato e di uno sollevato.
+
 ## [0.1.30] - 2026-11-05
 
 ### Dadi in osso inciso
