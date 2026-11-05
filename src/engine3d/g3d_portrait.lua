@@ -5,7 +5,9 @@ local images={}
 local function physical_pose(entry)
  local body=assert(entry.body,'die body required')
  local copy={position={0,0,0}}
- for i,v in ipairs(body) do copy[i]={v[1],v[2],v[3]} end
+ -- Undo the tabletop scale on the portrait copy to retain its framing.
+ local scale=entry.tableScale or 1
+ for i,v in ipairs(body) do copy[i]={v[1]/scale,v[2]/scale,v[3]/scale} end
  return copy
 end
 P.physical_pose=physical_pose

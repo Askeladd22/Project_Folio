@@ -58,6 +58,7 @@ local DICE_AUDIO_SCHEMA = DICE_CONFIG.audio
 local DICE_VISUAL_PROTOTYPE_SCHEMA = DICE_CONFIG.visual.prototypes
 local DICE_VISUAL_FACE_SCHEMA = DICE_CONFIG.visual.face_colors
 
+local TABLE_DIE_SCALE = 0.85
 local DICE_SIZE_BASE = DICE_SIZE_SCHEMA.base
 local DICE_SIZE_MIN = DICE_SIZE_SCHEMA.min
 local DICE_SIZE_SCALE_REFERENCE_COUNT = DICE_SIZE_SCHEMA.scale_reference_dice_count
@@ -771,7 +772,8 @@ local function spawn_initial_dice()
             local die_text = is_d8 and D8_PROTO_TEXT or D6_PROTO_TEXT
 
             dice[die_index] = {
-                body = body_factory(spawn_dice_size):set(
+                tableScale = TABLE_DIE_SCALE,
+                body = body_factory(spawn_dice_size * TABLE_DIE_SCALE):set(
                     {sx, sy, DICE_INITIAL_POSITION_Z},
                     (die_index % 2 == 0)
                         and {DICE_INITIAL_VELOCITY_EVEN[1], DICE_INITIAL_VELOCITY_EVEN[2], DICE_INITIAL_VELOCITY_EVEN[3]}
