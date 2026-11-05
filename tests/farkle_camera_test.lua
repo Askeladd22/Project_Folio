@@ -32,6 +32,17 @@ for _,width in ipairs{1280,1920,2560} do
  local fraction=(right-left)*k/width
  assert(fraction>=.75 and fraction<=.80,'table must occupy 75–80% of screen width')
  assert(math.abs(cy+rear*k-(layout.host.y+layout.host.h)*factor)<1,'rear rail disconnected from portrait')
+ local savedLove=love
+ local time=0
+ love={timer={getTime=function() return time end}}
+ for frame=1,120 do
+  time=frame/60
+  owner.mouseThrow=frame<=60 and {group=true} or nil
+  local gx,gy,gk=T.fit(owner,tray,V,extents)
+  assert(math.abs((right-left)*(gk-k))<.01 and gx==cx and gy==cy,
+   'group pickup or release moved the table against its fixed illustration')
+ end
+ love=savedLove
  local camera=require('src.engine3d.g3d_camera')
  for _,x in ipairs{extents[1]+.6,extents[2]-.6} do
   for _,y in ipairs{region.y_back+.6,region.y_front-.6} do

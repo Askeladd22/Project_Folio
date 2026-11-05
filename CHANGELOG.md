@@ -10,6 +10,12 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.18] - 2026-11-05
+
+- Corretta la presa di gruppo sul Tavolo del Mercante: inquadratura e
+  bordi restano allineati all'illustrazione durante presa e rilascio.
+  Regressione verificata su 120 frame a 720p, 1080p e 1440p.
+
 ## [0.1.17] - 2026-11-05
 
 - Il bordo posteriore del tavolo fisico raggiunge la base del ritratto
