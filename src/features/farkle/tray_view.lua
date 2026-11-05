@@ -24,15 +24,15 @@ function T.fit(owner,tray,view,extents)
  end end
  local margin=(merchant and 0 or 18)*require('src.core.resolution_manager').get_scale()
  local target=math.min((tray.w-2*margin)/(maxx-minx),(tray.h-2*margin)/(maxy-miny))
- -- Fixed launch envelope, independent of body positions and frame rate.
- -- Apply a small optical pullback *after* fitting the scene. Altering
- -- only view.distance would be canceled by the fitter (and would break
- -- mouse picking if it did not update the whole projection).
- local Zoom=require('src.features.farkle.group_hold_projection')
- local now=(love and love.timer and love.timer.getTime and love.timer.getTime()) or 0
- local grip=owner.mouseThrow
- local camera_factor=Zoom.advance(owner,now,grip and grip.group or false)
- local scale=target*camera_factor
+ -- The merchant backdrop is fixed in screen space. Its tabletop must
+ -- keep the same projection throughout pickup, hold and release.
+ local scale=target
+ if not merchant then
+  local Zoom=require('src.features.farkle.group_hold_projection')
+  local now=(love and love.timer and love.timer.getTime and love.timer.getTime()) or 0
+  local grip=owner.mouseThrow
+  scale=target*Zoom.advance(owner,now,grip and grip.group or false)
+ end
  owner.trayScale=scale
  local cx=tray.x+tray.w/2-(minx+maxx)*scale/2
  local cy=tray.y+tray.h/2-(miny+maxy)*scale/2
