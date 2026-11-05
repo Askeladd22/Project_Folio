@@ -42,16 +42,25 @@ function M.draw(u,hits)
  end
  for _,m in ipairs(model.markers) do
   colour(colors[m.kind])
-  if m.kind=='eligible' then
-   -- A short underline signals scoring availability without hiding faces.
-   g.setLineWidth(2.3*viewportScale)
-   local y=m.y+m.r+8*viewportScale
-   local edge=u.trayProjection and u.trayProjection.floorEnd
-   if edge and y>edge-4*viewportScale then y=m.y-m.r-4*viewportScale end
-   g.line(m.x-9,y,m.x+9,y)
+  if m.kind=='physical' then
+   -- Drag-grab remains cyan but stays close to the projected die.
+   g.setLineWidth(2.1*viewportScale)
+   corner_marks(m.x,m.y,math.min(24,m.r),false)
   else
-   g.setLineWidth((m.kind=='physical' and 2.1 or 2.8)*viewportScale)
-   corner_marks(m.x,m.y,m.r,m.kind=='score' or m.kind=='invalid')
+   -- A compact, die-attached underline replaces the enormous disconnected
+   -- gold brackets. Valid selection: two strokes; invalid: one red stroke;
+   -- available scoring die: one short muted tick. No pip is covered.
+   local shift=math.min(29,m.r+3*viewportScale)
+   local y=m.y+shift
+   local edge=u.trayProjection and u.trayProjection.floorEnd
+   if edge and y>edge-4*viewportScale then y=m.y-shift end
+   local half=(m.kind=='eligible' and 8 or 13)*viewportScale
+   g.setLineWidth((m.kind=='eligible' and 1.5 or 2.9)*viewportScale)
+   g.line(m.x-half,y,m.x+half,y)
+   if m.kind=='score' then
+    g.line(m.x-half+3*viewportScale,y+4*viewportScale,
+           m.x+half-3*viewportScale,y+4*viewportScale)
+   end
   end
  end
  if model.hand then

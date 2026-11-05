@@ -7,10 +7,10 @@ for _,r in ipairs{L.secured_caption,L.secured_value,L.risk_caption,L.risk_value}
  assert(Layout.overlap(L.tray,r)==0,'score metric obscures a real D6')
 end
 assert(L.risk_value.x>L.secured_value.x)
-assert(L.footer.y<=L.tray.y+L.tray.h and
- L.footer_trim.y>=L.tray.y+L.tray.h,
- 'footer must meet the table without obstructing gameplay')
-for _,r in ipairs{L.shelf,L.primary,L.secondary,L.single_action,L.message} do
+assert(L.footer.y>=L.tray.y+L.tray.h and
+ L.footer.h<=110 and L.footer.w<=1160,
+ 'footer must be a compact plaque instead of a full-width slab')
+for _,r in ipairs{L.shelf,L.primary,L.secondary,L.single_action,L.message,L.idle_message} do
  assert(Layout.overlap(L.tray,r)==0,'action obstructs physical D6 viewport')
 end
 assert(Layout.overlap(L.primary,L.secondary)==0)

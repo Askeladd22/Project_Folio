@@ -194,7 +194,7 @@ local function compact_status(u)
  if next(s.selected) then
   local points=R.selection(s)
   if not points then return 'Selezione non valida: ogni dado scelto deve fare punti.' end
-  return 'Selezione: '..points..' pt · Totale dopo l’accantonamento: '..(s.pot+points)..' pt'
+  return 'Selezionati: +'..points..' pt · Non ancora accantonati'
  end
  if s.scored then return '' end
  return 'Scegli i dadi da accantonare · clic oppure 1–6'
@@ -231,14 +231,20 @@ local function draw_minimal(u)
  write_fitted(s.bank..' pt',layout.secured_value,25,16,paper_ink)
  write_fitted('A RISCHIO',layout.risk_caption,14,11,paper_muted)
  write_fitted(s.pot..' pt',layout.risk_value,25,16,paper_warning)
- -- A timber command rail visually joins the table rather than leaving
- -- a large strip of dead black beneath the physical play surface.
- panel(layout.footer,Art.rgba('earth_dark'),nil,0)
- panel(layout.footer_trim,Art.rgba('earth'),Art.rgba('timber',.72),7)
- g.setLineWidth(2)
- g.setColor(unpack(Art.rgba('ochre_light',.32)))
- g.line(layout.footer_trim.x+12,layout.footer_trim.y+7,
-        layout.footer_trim.x+layout.footer_trim.w-12,layout.footer_trim.y+7)
+ -- Keep the timber plaque small and never show an empty panel while
+ -- the dice are rolling. Controls are actual actions, not placeholders.
+ local has_controls=false
+ for _,a in ipairs(actions) do
+  if a.slot=='primary' or a.slot=='secondary' or a.slot=='context' then
+   if a.id~='bank' or a.enabled then has_controls=true;break end
+  end
+ end
+ if has_controls then
+  panel(layout.footer,Art.rgba('earth_dark',.95),Art.rgba('timber',.64),6)
+  g.setColor(unpack(Art.rgba('ochre_light',.35)))
+  g.rectangle('fill',layout.footer_trim.x,layout.footer_trim.y,
+    layout.footer_trim.w,layout.footer_trim.h)
+ end
  for _,a in ipairs(actions) do
   if a.slot=='header' then
    action_button(u,a,a.id=='help' and layout.help or layout.runmenu)
@@ -249,7 +255,9 @@ local function draw_minimal(u)
   write_fitted('DADI ACCANTONATI',layout.shelf_label,16,12,Art.rgba('ochre_light'))
  end
  local choosing=s.phase=='ready' and not s.scored and not next(s.selected) and not u.physicalFailure
- write_fitted(compact_status(u),choosing and layout.single_action or layout.message,choosing and 23 or 18,12,
+ local notice_rect=(not has_controls or choosing)
+   and layout.idle_message or layout.message
+ write_fitted(compact_status(u),notice_rect,choosing and 20 or 18,12,
    (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
    'center')
  local solo=s.phase=='fresh' and s.medal=='none' and not u.physicalFailure

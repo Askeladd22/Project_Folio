@@ -90,13 +90,16 @@ end
 -- and restores graphics state, even with contrast and large-text settings.
 local prevLove=love
 local prevScale,prevBig,prevContrast=UI.scale,UI.big_text,UI.high_contrast
-local calls={push=0,pop=0,line=0,circle=0,print=0}
+local calls={push=0,pop=0,line=0,circle=0,print=0,segments={}}
 love={graphics={
  push=function() calls.push=calls.push+1 end,
  pop=function() calls.pop=calls.pop+1 end,
  setColor=function() end,
  setLineWidth=function() end,
- line=function() calls.line=calls.line+1 end,
+ line=function(x1,y1,x2,y2)
+  calls.line=calls.line+1
+  calls.segments[#calls.segments+1]={x1,y1,x2,y2}
+ end,
  circle=function() calls.circle=calls.circle+1 end,
  rectangle=function() end,
  setFont=function() end,
@@ -108,7 +111,16 @@ UI.big_text=function() return true end
 UI.high_contrast=function() return true end
 Overlay.draw(u,physical)
 assert(calls.line>0 and calls.circle==0 and calls.push==calls.pop,
- 'V2 score brackets must not use giant rings or leak graphics state')
+ 'V2 markers must not use giant rings or leak graphics state')
+-- Selected valid dice use short underlines positioned close to hit centers.
+local chosenHit=physical[1]
+local mark=Model.build(u,physical).markers[1]
+assert(mark and mark.kind=='score' and mark.id==1)
+assert(mark.r<=30,'marker radius must not expand far beyond the die')
+for _,segment in ipairs(calls.segments) do
+ assert(math.abs(segment[3]-segment[1])<=40,
+  'selected-die underline must never become an oversized bracket')
+end
 u.mouseThrow={group=true,held={1,2,3,4,5,6},x=500,y=380}
 local previousLines=calls.line
 Overlay.draw(u,physical)

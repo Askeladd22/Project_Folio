@@ -57,7 +57,8 @@ function M.build(u)
    local n=H.selected_count(s)
    add('take',pts and ('Accantona '..n..' · +'..pts..' pt') or 'Selezione non valida',
      pts~=nil,function() u:act('take',function() return R.take(s) end) end,
-     'primary','[A] · Convalida la combinazione')
+     'primary',u.minimalHud and '[A] · Aggiungi ai punti a rischio'
+       or '[A] · Convalida la combinazione')
   else
    local can=R.can_roll(s) and u.manualRoll==nil
    local label=s.hot and 'Rilancia sei dadi' or
@@ -73,7 +74,9 @@ function M.build(u)
   -- directly, without forcing a separate Set aside action first.
   add('bank','Incassa '..total..' pt',ok,
    function() u:act('bank',function() return R.bank_turn(s) end) end,
-   'secondary','[Invio] · minimo '..min..' pt')
+   'secondary',u.minimalHud and
+      (min>0 and ('[Invio] · Soglia '..min..' pt') or '[Invio] · Metti al sicuro')
+      or ('[Invio] · minimo '..min..' pt'))
  end
  return a
 end
