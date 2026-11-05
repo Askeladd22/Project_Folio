@@ -10,6 +10,18 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.30] - 2026-11-05
+
+### Dadi in osso inciso
+- Materiale color osso invecchiato con patina deterministica per dado,
+  porosità tenue e punti incavati circondati da anelli.
+- Il renderer usa il valore effettivo di ogni faccia, inclusa l'incisione
+  2 → 1 della build. Il modello base segue le coppie opposte 1/6, 2/5 e 3/4.
+- Miniature dei dadi accantonati allineate al materiale e allo smusso del tavolo.
+- Verifica headless di mappa e configurazione del materiale, più smoke GPU
+  con LÖVE e Mesa per shader, facce e miniature.
+- Aspetto finale da confrontare con il riferimento fotografico su Windows.
+
 ## [0.1.29] - 2026-11-05
 
 ### Pulizia del repository

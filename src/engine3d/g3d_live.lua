@@ -346,10 +346,13 @@ function M:_draw_scene(args)
     local models=self.models[item.index]
     local shader=Materials.uses_shader(self.material_mode) and self.dice_shader or nil
     if shader then
-     Materials.configure(shader,self.material_mode,args.view,#item.entry.die.faces==8)
+     Materials.configure(shader,self.material_mode,args.view,#item.entry.die.faces==8,item.index)
     end
-    for _,m in ipairs(models.faces) do
-     if shader then Materials.configure_pips(shader,self.material_mode,m.texture) end
+    for face_index,m in ipairs(models.faces) do
+     if shader then
+      local value=#item.entry.die.faces==6 and item.entry.die.faceValueMap[face_index] or nil
+      Materials.configure_pips(shader,self.material_mode,m.texture,value)
+     end
      m:draw(shader)
     end
     if models.bevel then

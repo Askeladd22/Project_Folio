@@ -28,9 +28,9 @@ function M.tint(d8,mode)
  if mode=='diffuse' then return {1,1,1} end
  -- D8 has independently colored faces: don't turn its color cycle ivory.
  if d8 then return {1,1,1} end
- return {.98,.91,.79}
+ return {.98,.95,.89}
 end
-function M.configure(shader,mode,view,is_d8)
+function M.configure(shader,mode,view,is_d8,index)
  assert(M.uses_shader(mode),'unsupported dice material mode')
  shader:send('debugMode',M.shader_mode(mode))
  shader:send('lightDirection',M.light)
@@ -38,25 +38,29 @@ function M.configure(shader,mode,view,is_d8)
  shader:send('viewDirection',M.view_direction(view))
  shader:send('materialTint',M.tint(is_d8,mode))
  local bone=mode=='ivory' and not is_d8
+ shader:send('boneSurface',bone and 1 or 0)
+ shader:send('boneSeed',((index or 1)-1)%6)
+ shader:send('pipValue',0)
  shader:send('ambientStrength',bone and .50 or .46)
  shader:send('keyStrength',bone and .40 or .46)
  shader:send('fillStrength',bone and .18 or .15)
- shader:send('specularStrength',bone and .045 or .075)
+ shader:send('specularStrength',bone and .025 or .075)
  shader:send('specularExponent',30)
  shader:send('pipTexel',{0,0})
  shader:send('pipReliefStrength',.045)
 end
 
--- The pip texture is a white face with dark dots. Sampling adjacent
--- texels yields a subtle engraved lip without changing pip positions,
--- readability, physical face values or producing extra geometric surfaces.
--- Material may switch per model; reset offset for untextured bevel quads.
-function M.configure_pips(shader,mode,texture)
+-- Ivory uses the physical face value for procedural ring-and-dot pips.
+-- Diagnostic textures retain their texel offset. Clear the value on bevels.
+function M.configure_pips(shader,mode,texture,value)
  local step={0,0}
  if mode=='ivory' and texture and type(texture.getDimensions)=='function' then
   local w,h=texture:getDimensions()
   if w and h and w>0 and h>0 then step={1/w,1/h} end
  end
  shader:send('pipTexel',step)
+ local pip=mode=='ivory' and type(value)=='number' and value%1==0
+  and value>=1 and value<=6 and value or 0
+ shader:send('pipValue',pip)
 end
 return M

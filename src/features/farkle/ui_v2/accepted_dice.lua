@@ -56,7 +56,7 @@ function M.draw(u)
   if used and entry and dice and dice[i] and u.trayProjection then
    if not entry.g3dPortrait then
     entry.g3dPortrait=require('src.engine3d.g3d_portrait')
-     .capture(dice[i],u.trayProjection)
+     .capture(dice[i],u.trayProjection,i)
    end
    if entry.g3dPortrait then
     g.push('all')
