@@ -15,8 +15,9 @@ assert(Layout.contains(layout.score_panel,layout.risk_value))
 assert(Layout.contains(layout.score_panel,layout.secured_value))
 assert(layout.risk_caption.y==layout.secured_caption.y)
 assert(layout.risk_value.y==layout.secured_value.y)
-assert(layout.footer.y<=layout.tray.y+layout.tray.h,
- 'no black gap between front rail and physical table')
+assert(layout.footer.y>=layout.tray.y+layout.tray.h
+ and layout.footer.h<=110 and layout.footer.w<=1160,
+ 'the plaque must be compact and must not overlap 3D dice')
 assert(layout.message.y>=layout.primary.y+layout.primary.h,
  'status must stay below the main actions')
 local buttons={}
@@ -86,8 +87,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
   return false
  end
  assert(painted(layout.score_panel),'shared scorecard not drawn')
- assert(painted(layout.footer),'wooden command rail not drawn')
- assert(painted(layout.footer_trim),'command surface not drawn')
+ assert(painted(layout.footer),'compact command plaque not drawn')
+ assert(painted(layout.footer_trim),'command plaque trim not drawn')
  for _,obsolete in ipairs{'COMMISSIONE','OBIETTIVO','TURNI',
                            'MANOSCRITTO','STRUMENTI','FOLIO 1'} do
   assert(not labels:find(obsolete,1,true),
@@ -153,7 +154,8 @@ for i=1,5 do assert(R.toggle(hand,i)) end
 local function check_selection(points)
  textDrawn={}
  Hud.draw(u)
- assert(table.concat(textDrawn,' '):find('Selezione: '..points..' pt',1,true))
+ assert(table.concat(textDrawn,' '):find(
+  'Selezionati: +'..points..' pt · Non ancora accantonati',1,true))
 end
 check_selection(50)
 assert(u.buttons.bank and u.buttons.bank.enabled)
