@@ -38,14 +38,18 @@ function S.install()
     local r,green,b=data:getPixel(x,y)
     return .299*r+.587*green+.114*b
    end
-   for value=1,6 do
-    local data=rendered_face(value,false)
+   local function hole_count(data,positions)
     local count=0
-    for _,x in ipairs{32,64,96} do
-     for _,y in ipairs{32,64,96} do
+    for _,x in ipairs(positions) do
+     for _,y in ipairs(positions) do
       if luminance(data,x,y)<.30 then count=count+1 end
      end
     end
+    return count
+   end
+   for value=1,6 do
+    local data=rendered_face(value,false)
+    local count=hole_count(data,{32,64,96})
     assert(count==value,('GPU face %d shows %d pip holes'):format(value,count))
     if value==1 then
      assert(luminance(data,64,64)<.30,'central pip must be recessed and dark')
@@ -106,15 +110,37 @@ function S.install()
     assert(visible>300,'shelf portrait is empty')
     data:release();portrait:release()
    end
-   -- The engraved 2 -> 1 variant traverses the same live model cache.
-   entries[1].entry.die.faceValueMap=Dice.values('engraved',1)
-   renderer:draw{
-    entries=entries,extents={-5.5,5.5,-3.5,3.5},height=.74,
-    viewport={x=0,y=0,w=960,h=620},cx=480,cy=310,scale=210,
-    view=view,style='merchant',offset=0,
-   }
-   -- Return to the common set for the visual evidence.
-   entries[1].entry.die.faceValueMap=Dice.values('normal',1)
+   -- Face 6 is the base 2 and points upward on this physical fixture.
+   -- Reuse the same body, die and model cache while changing only its map.
+   local entry=entries[2].entry
+   local oldX,oldY=entry.body.position[1],entry.body.position[2]
+   entry.body.position[1],entry.body.position[2]=0,0
+   local focused={{index=1,entry=entry}}
+   for _,build in ipairs{'normal','engraved'} do
+    entry.die.faceValueMap=Dice.values(build,1)
+    renderer:draw{
+     entries=focused,extents={-1.5,1.5,-1.5,1.5},height=.74,
+     viewport={x=0,y=0,w=128,h=128},cx=64,cy=64,scale=64,
+     view=flatView,style='merchant',offset=0,
+    }
+    local data=renderer.canvas:newImageData()
+    local expected=build=='normal' and 2 or 1
+    assert(hole_count(data,{44,64,84})==expected,
+     build..' live physical face has wrong pip count')
+    assert((luminance(data,64,64)<.30)==(expected==1),
+     'live face must change from diagonal holes to a central hole')
+    data:release()
+    local portrait=Portrait.capture(entry,flatView,1)
+    local held=portrait:newImageData()
+    assert(hole_count(held,{39,56,72})==expected,
+     build..' accepted portrait has wrong pip count')
+    assert((luminance(held,56,56)<.30)==(expected==1),
+     'portrait must change from diagonal holes to a central hole')
+    held:release();portrait:release()
+   end
+   print('PASS GPU physical 2 -> 1 mapping in live model cache and accepted portrait')
+   entry.die.faceValueMap=Dice.values('normal',2)
+   entry.body.position[1],entry.body.position[2]=oldX,oldY
    renderer:draw{
     entries=entries,extents={-5.5,5.5,-3.5,3.5},height=.74,
     viewport={x=0,y=0,w=960,h=620},cx=480,cy=310,scale=210,
