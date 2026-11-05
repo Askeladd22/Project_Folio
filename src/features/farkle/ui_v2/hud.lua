@@ -192,12 +192,11 @@ local function compact_status(u)
  end
  if s.hot then return 'Dadi caldi · Rilancia tutti e sei oppure incassa.' end
  if next(s.selected) then
-  local points=R.selection(s)
-  if points then return R.bank_status(s) and 'Accantona [A] oppure incassa [Invio].'
-    or 'Accantona [A] per aggiungere punti a rischio.' end
+  if R.selection(s) then return '' end
   if H.can_complete(s) then return 'Aggiungi i dadi che completano la combinazione.' end
   return 'Deseleziona i dadi che non fanno parte di una combinazione.'
  end
+ if s.scored then return '' end
  local eligible=H.eligible(s)
  local keys={}
  for i=1,6 do if eligible[i] then keys[#keys+1]='['..i..']' end end
@@ -254,13 +253,16 @@ local function draw_minimal(u)
  write_fitted(s.pot..' pt',layout.risk_value,25,16,paper_warning)
  -- Keep the timber plaque small and never show an empty panel while
  -- the dice are rolling. Controls are actual actions, not placeholders.
- local has_controls=false
+ local visible_controls,has_context=0,false
  for _,a in ipairs(actions) do
-  if a.slot=='primary' or a.slot=='secondary' or a.slot=='context' then
-   if a.id~='bank' or a.enabled then has_controls=true;break end
+  if a.slot=='context' then
+   has_context=true
+   visible_controls=visible_controls+1
+  elseif a.slot=='primary' or a.slot=='secondary' and (a.id~='bank' or a.enabled) then
+   visible_controls=visible_controls+1
   end
  end
- if has_controls then
+ if visible_controls>0 then
   panel(layout.footer,Art.rgba('earth_dark',.95),Art.rgba('timber',.64),6)
   g.setColor(unpack(Art.rgba('ochre_light',.35)))
   g.rectangle('fill',layout.footer_trim.x,layout.footer_trim.y,
@@ -276,12 +278,23 @@ local function draw_minimal(u)
   write_fitted('DADI ACCANTONATI',layout.shelf_label,16,12,Art.rgba('ochre_light'))
  end
  local choosing=s.phase=='ready' and not s.scored and not next(s.selected) and not u.physicalFailure
- local notice_rect=(not has_controls or choosing)
+ local notice_rect=(visible_controls==0 or choosing)
    and layout.idle_message or layout.message
  write_fitted(compact_status(u),notice_rect,choosing and 20 or 18,12,
    (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
    'center')
- local solo=s.phase=='fresh' and s.medal=='none' and not u.physicalFailure
+ local primary,secondary=layout.primary,layout.secondary
+ if not has_context then
+  if visible_controls==1 then
+   primary,secondary=layout.single_action,layout.single_action
+  elseif visible_controls==2 then
+   -- This frame owns its layout. Slide the pair together so the gap
+   -- stays the same and the two outer edges balance on the tray axis.
+   local axis=layout.tray.x+layout.tray.w/2
+   local shift=axis-(primary.x+secondary.x+secondary.w)/2
+   primary.x,secondary.x=primary.x+shift,secondary.x+shift
+  end
+ end
  local context=0
  for _,a in ipairs(actions) do
   if a.slot=='context' then
@@ -290,9 +303,9 @@ local function draw_minimal(u)
     'missing minimal table context slot')
    action_button(u,a,rect)
   elseif a.slot=='primary' then
-   action_button(u,a,solo and layout.single_action or layout.primary)
+   action_button(u,a,primary)
   elseif a.slot=='secondary' and (a.id~='bank' or a.enabled) then
-   action_button(u,a,layout.secondary)
+   action_button(u,a,secondary)
   end
  end
  Res.end_ui()

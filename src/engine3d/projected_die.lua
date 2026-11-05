@@ -5,15 +5,19 @@ local function cross(a,b,c)
  return (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])
 end
 
-function P.from_body(index,body,project,cx,cy,scale)
+function P.from_body(index,body,project,cx,cy,scale,faces,perspective)
  local bx,by,bz=body.position[1],body.position[2],body.position[3]
  local px,py,depth=project(bx,by,bz)
  local x,y=cx+px*scale,cy+py*scale
- local points,r2={},0
+ local points,vertices,r2={},{},0
  for i,v in ipairs(body) do
-  local vx,vy=project(bx+v[1],by+v[2],bz+v[3])
+  local vx,vy,vz=project(bx+v[1],by+v[2],bz+v[3])
   local sx,sy=cx+vx*scale,cy+vy*scale
-  points[i]={sx,sy}
+  -- Eye Z is negative. In perspective 1 / distance varies linearly
+  -- across the screen triangle; in orthographic projection eye Z does.
+  -- Both keys increase toward the viewer.
+  vertices[i]={sx,sy,perspective and -1/vz or vz}
+  points[i]=vertices[i]
   r2=math.max(r2,(sx-x)^2+(sy-y)^2)
  end
  table.sort(points,function(a,b) return a[1]<b[1] or a[1]==b[1] and a[2]<b[2] end)
@@ -32,7 +36,8 @@ function P.from_body(index,body,project,cx,cy,scale)
  for i=1,#hull-1 do
   outline[#outline+1]=hull[i][1];outline[#outline+1]=hull[i][2]
  end
- return {index=index,x=x,y=y,r=math.sqrt(r2),depth=depth,outline=outline}
+ return {index=index,x=x,y=y,r=math.sqrt(r2),depth=depth,outline=outline,
+  faces=faces,vertices=vertices}
 end
 
 local function contains(outline,x,y)
@@ -45,11 +50,41 @@ local function contains(outline,x,y)
  return #outline>=6
 end
 
+local function surface_depth(hit,pointer)
+ local nearest=-math.huge
+ for _,face in ipairs(hit.faces) do
+  local a=hit.vertices[face[1]]
+  for i=2,#face-1 do
+   local b,c=hit.vertices[face[i]],hit.vertices[face[i+1]]
+   local area=cross(a,b,c)
+   if math.abs(area)>1e-12 then
+    local wa=cross(b,c,pointer)/area
+    local wb=cross(c,a,pointer)/area
+    local wc=1-wa-wb
+    if wa>=-1e-8 and wb>=-1e-8 and wc>=-1e-8 then
+     nearest=math.max(nearest,wa*a[3]+wb*b[3]+wc*c[3])
+    end
+   end
+  end
+ end
+ return nearest
+end
+
 function P.pick(hits,x,y)
  if type(x)~='number' or type(y)~='number' then return nil end
- local best
+ local best,bestDepth,pointer
  for _,h in ipairs(hits) do
-  if (not best or h.depth>best.depth) and contains(h.outline,x,y) then best=h end
+  if contains(h.outline,x,y) then
+   if best then
+    -- Evaluate faces only when two or more silhouettes contain the pointer.
+    pointer=pointer or {x,y}
+    bestDepth=bestDepth or surface_depth(best,pointer)
+    local candidate=surface_depth(h,pointer)
+    if candidate>bestDepth then best,bestDepth=h,candidate end
+   else
+    best=h
+   end
+  end
  end
  return best and best.index
 end

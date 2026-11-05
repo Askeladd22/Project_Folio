@@ -595,7 +595,8 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
             if die_predicate(die_entry, i) then
                 with_draw_offset(die_entry.body, function()
                     if collect_hits and die_entry.body and die_entry.body.position then
-                        local hit = ProjectedDie.from_body(i, die_entry.body, view.project, cx, cy, scale)
+                        local hit = ProjectedDie.from_body(i, die_entry.body, view.project, cx, cy, scale,
+                            die_entry.die.faces, view.projection == 'perspective')
                         if hit.x >= tray.x and hit.x <= tray.x + tray.w and
                             hit.y >= render_viewport.y and hit.y <= tray.y + tray.h then
                             tray_die_hits[#tray_die_hits + 1] = hit
@@ -952,7 +953,7 @@ end
 
 function love.resize(w, h)
     ResolutionManager.refresh(w, h)
-    -- Projected picking circles are rebuilt by the next tray draw.
+    -- Projected die silhouettes are rebuilt by the next tray draw.
     tray_die_hits = {}
 end
 
