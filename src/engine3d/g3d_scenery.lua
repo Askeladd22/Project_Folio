@@ -8,7 +8,7 @@ local PALETTE={
 -- Plain, non-textured floors keep the physical dice visually prominent.
 -- Unlike the old painter's manuscript rubrics these meshes share g3d depth.
 local FLOORS={
- merchant={.80,.60,.34},book={.88,.79,.64},current={.36,.29,.22},
+ merchant={1,1,1},book={.88,.79,.64},current={.36,.29,.22},
  A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
 }
 function S.floor_vertices(mesh,extents,style)
@@ -57,7 +57,15 @@ function S.style_vertices(mesh,extents,height,style)
  -- to the physical floor instead of laying a second crossbar across it.
  if style=='merchant' then
   local sides={}
-  for i=8*3*6+1,#v do sides[#sides+1]=v[i] end
+  for i=8*3*6+1,#v do
+   local point=v[i]
+   -- A flush joint at the illustrated edge, rising to full rail height
+   -- over the first segment. Keep both sides of each joint coincident.
+   local rise=math.max(0,math.min(1,(point[2]-y1)/1.4))
+   point[2]=math.max(y1,point[2])
+   point[3]=point[3]*rise
+   sides[#sides+1]=point
+  end
   return sides
  end
  -- Variant B is a wide counter around an unchanged tray opening.

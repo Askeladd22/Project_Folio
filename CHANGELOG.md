@@ -10,6 +10,17 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.20] - 2026-11-05
+
+- Il piano del Mercante usa una texture di legno ricavata dall'illustrazione,
+  raccordata al colore del bordo posteriore. Le sponde salgono gradualmente
+  dal piano nel punto in cui si uniscono all'immagine.
+- Riflessi più tenui sull'avorio e ombre più raccolte a contatto. Durante
+  il lancio la distanza del vertice più basso dal piano guida intensità,
+  apertura e spostamento dell'ombra.
+- Verifiche headless di geometria, materiali e proiezione. Resta la prova
+  visiva in LÖVE su Windows.
+
 ## [0.1.19] - 2026-11-05
 
 - Prospettiva fissa del Mercante: il piano si allarga verso il giocatore,
