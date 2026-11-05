@@ -1,7 +1,4 @@
 > **Direzione aggiornata al 4 novembre 2026:** il brainstorming corrente e
-
-> I percorsi di audit e archivio riportati come codice si riferiscono ai
-> materiali locali citati nel rapporto originale, assenti dalla copia corrente.
 > i tre pilastri vincolanti sono in [PROJECT_VISION.md](PROJECT_VISION.md).
 > Questo documento conserva la ricerca e le ipotesi precedenti
 > (incluso il copista medievale): **non** sovrascrive il nuovo setting
@@ -9,6 +6,9 @@
 > Per le feature effettive prevalgono codice, test e regole Farkle.
 >
 # Project Folio — Game Design
+
+> I percorsi di audit e archivio riportati come codice si riferiscono ai
+> materiali locali citati nel rapporto originale, assenti dalla copia corrente.
 
 **Revisione del documento 0.7 · 30 ottobre 2026.** Il nome di lavoro
 attuale è **Project Folio**, non un titolo commerciale definitivo.
