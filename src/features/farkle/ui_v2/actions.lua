@@ -21,7 +21,7 @@ function M.build(u)
  add('help','Regole [?]',not block,function() u.modal='help' end,'header')
  add('runmenu','Pausa [Esc]',not block,function() u.modal='run' end,'header')
  -- The page remains accessible via F; the large always-clickable folio
- -- card is not part of the normal table. Keep it in the isolated Monk beta.
+ -- card is not part of the normal table. The comparison layout still exposes this action.
  if not u.minimalHud then
   add('folio','Apri folio [F]',not block,function() u.modal='folio' end,'folio')
  end

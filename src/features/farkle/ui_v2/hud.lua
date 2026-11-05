@@ -176,9 +176,6 @@ local function work_surface(layout)
   end
  end
 end
--- Player-facing table; the Monk beta keeps its separate historical
--- comparison layout until its game design is revisited. No 3D backend or
--- Farkle rules are selected here: the controller owns the table viewport.
 local function compact_status(u)
  local s=u.game
  if u.mouseThrow or u.manualRoll then return Actions.state(u) end
@@ -266,11 +263,6 @@ function V.draw(u)
  local s=u.game
  if not s then return end
  local layout=Layout.build('single_folio')
- -- The Monk's status occupies the top of this sidebar: keep the
- -- manuscript folio BELOW it, never behind an opaque overlay.
- if u.botDuel then
-  layout.folio={x=layout.folio.x,y=320,w=layout.folio.w,h=370}
- end
  local actions=Actions.build(u)
  u.buttons={} -- a single authoritative hitbox table for controller.lua
  local g=love.graphics
@@ -278,7 +270,7 @@ function V.draw(u)
  Res.begin_ui()
  work_surface(layout)
  header(u,s,layout,actions)
- if not u.botDuel and layout.sidebar_caption then
+ if layout.sidebar_caption then
   write_fitted('MANOSCRITTO',layout.sidebar_caption,17,13,
    Art.rgba('ochre_light'), 'center')
  end

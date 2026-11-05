@@ -62,7 +62,7 @@ All'avvio normale di Project Folio non modifica HUD, logica, 3D o impostazioni.
 
 I frame registrano menu della partita, informazioni nell'HUD,
 help/regole, folio, combinazioni, ricompensa dado, ricompensa
-medaglia, catalogo e pannello della sfida al Monaco.
+medaglia, catalogo e tavolo del Mercante.
 
 I frame `marquee-six` e `physical-group-held` eseguono una **vera**
 selezione e presa fisica con sei dadi 3D tramite il controller. Il

@@ -112,7 +112,6 @@ function M.install(U)
  local function review_scenario(w,h)
   love.window.setMode(w,h,{resizable=true})
   love.resize(w,h)
-  U.duelActive=false
   U:reset('build')
   local prefix='hud-usability-'..w..'-'
   shot(prefix..'fresh')
@@ -180,12 +179,8 @@ function M.install(U)
   assert(U.modal=='medals')
   shot(prefix..'reference-catalog')
   click('close')
-  U.duelActive=true
-  U:reset('control')
-  assert(U.botDuel,'Monk visual review must use optional real duel')
-  shot(prefix..'monk-live')
-  U.duelActive=false
   U:reset('build')
+  shot(prefix..'merchant-live')
   record('PASS '..prefix..' current V2 layout/modals, real grip and rule-based reward paths')
  end
  local function scenario(w,h)

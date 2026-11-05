@@ -149,8 +149,7 @@ local function draw_pause(u)
     if restarting then
       pause_button(u,'confirmrestart','Conferma riavvio',
         ModalLayout.pause_confirm_actions[2],function()
-          local mode=(u.duelActive or u.botDuel) and 'control'
-            or (u.game and u.game.mode) or 'build'
+          local mode=(u.game and u.game.mode) or 'build'
           u:reset(mode)
         end)
     else

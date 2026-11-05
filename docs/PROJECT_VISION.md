@@ -51,8 +51,7 @@ sceglie se incassare o rilanciare e rischia di perdere il bottino del
 turno con un Farkle. Rendering unico **g3d**; nessun ripristino
 di painter/fallback legacy.
 
-La partita attuale usa commissioni e include, separatamente,
-`Sfida il Monaco (beta)`, duello **simmetrico** Farkle.
+La partita attuale usa commissioni sul Tavolo del Mercante.
 Il bilanciamento di obiettivi e progressione è ancora provvisorio.
 
 ## Incontri e poste — principi forti, regolamento ancora aperto
@@ -105,4 +104,4 @@ più ampio, punteggi assicurati/a rischio e azioni essenziali.
 **È una revisione UI, non la nuova meccanica di encounter.**
 Gli obiettivi delle vecchie commissioni rimangono nel gameplay
 provvisorio e nel folio accessibile con **F**.
-La Sfida il Monaco beta resta temporaneamente separata.
+La beta del Monaco è stata rimossa nella 0.1.16.

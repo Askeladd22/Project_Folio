@@ -39,7 +39,7 @@ game.bank=42
 game.pot=15
 local resets={}
 local u={game=game,buttons={roll={enabled=true}},modal='run',
- duelActive=false,
+
  reset=function(self,mode)
   resets[#resets+1]=mode
   self.modal=nil
@@ -81,15 +81,13 @@ u.modalButtons.confirmrestart.fn()
 assert(#resets==1 and resets[1]=='build','normal run mode changed on restart')
 assert(u.modal==nil)
 
-u.duelActive=true
 u.game=R.new('control')
 u.modal='run'
 render()
 u.modalButtons.restart.fn()
 render()
 u.modalButtons.confirmrestart.fn()
-assert(resets[2]=='control','Monk duel must not restart in build mode')
-u.duelActive=false
+assert(resets[2]=='control','restart must preserve the active ruleset')
 u.game=game
 
 route=nil
@@ -110,4 +108,4 @@ assert(#resets==2,'leaving a run must not silently reset it')
 
 Navigation.configure(nil)
 love=originalLove
-print('PASS compact pause routes, restart confirmations, session preservation and duel mode')
+print('PASS compact pause routes, restart confirmations, session preservation and ruleset')

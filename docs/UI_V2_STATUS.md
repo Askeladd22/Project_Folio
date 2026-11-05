@@ -1,3 +1,7 @@
+## 0.1.16 · 5 novembre 2026
+
+Ritirata la Sfida il Monaco beta. La cattura di revisione corrente usa il tavolo del Mercante. Le voci seguenti documentano le versioni precedenti.
+
 ## Tavolo Farkle essenziale — 0.1.14 (4 novembre 2026)
 
 Il gameplay principale usa ora un layout privo di sidebar

@@ -17,9 +17,7 @@ nel corpo sono conservati per tracciabilità. Le etichette distinguono **attuale
 > [`experiments/signs_lab`](../experiments/signs_lab/README.md)
 > esiste una simulazione riproducibile A/B/C di Incontri e
 > Segni. La variante C è una *ipotesi non approvata* e non
-> entra nel gameplay. Nel gioco resta separatamente
-> disponibile il beta simmetrico del Monaco (PR #36);
-> miniatura 2D e dadi/tray g3d 3D sono invariati.
+> entra nel gameplay. La beta simmetrica del Monaco (PR #36) è stata ritirata nella 0.1.16.
 >
 ## Identità e pilastri
 

@@ -38,12 +38,12 @@ assert(code:find('illustrated=has_illustrated_background()',1,true),
 assert(code:find("local emphasized = item.primary and item.enabled",1,true),
        "disabled Continue must not compete with the enabled New Game")
 assert(not code:find("get_footer_alpha_label",1,true))
-local expected={"continue","new-game","bot-duel","settings","wishlist","quit"}
+local expected={"continue","new-game","settings","wishlist","quit"}
 assert(#Schema.menu_items==#expected)
 for i,item in ipairs(Schema.menu_items) do
  assert(item.id==expected[i],"menu functionality or order changed")
 end
 assert(not Schema.menu_items[1].enabled and Schema.menu_items[2].enabled)
-assert(Schema.menu_items[5].label.default=="Wishlist")
+assert(Schema.menu_items[4].label.default=="Wishlist")
 love=oldLove
 print("PASS editorial main menu: readable hierarchy, minimal surface, actions preserved")

@@ -40,7 +40,7 @@ function M.build(which)
         which=='table_minimal','unknown UI 2.0 layout candidate')
  if which=='table_minimal' then
   -- Production Farkle table: preserve a large 3D viewport, without the
-  -- legacy commission/folio/tools sidebar. Beta Monk keeps single_folio.
+  -- legacy commission/folio/tools sidebar.
   return {
    name=which,
    header=rect(44,20,1832,72),

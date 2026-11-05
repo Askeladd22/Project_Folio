@@ -94,14 +94,14 @@ for _,size in ipairs{{1280,720},{1920,1080},{2560,1440}} do
  realW,realH=size[1],size[2]
  Res.init(1920,1080)
  Res.refresh(realW,realH)
- for _,duel in ipairs{false,true} do
+ do
   paint={}
   local s=R.new()
   s.medal='retry'
   assert(R.start(s))
   assert(R.settle(s,{1,5,2,3,4,6}))
   local bank,pot,phase,turn=s.bank,s.pot,s.phase,s.turn
-  local u={game=s,presentation=Presentation.new(s),botDuel=duel}
+  local u={game=s,presentation=Presentation.new(s)}
   Hud.draw(u)
   assert(stack==unstack,'sidebar painting left a graphics transform open')
   assert(rect_drawn(layout.sidebar_frame),'folio needs a unified outer binding')
@@ -109,9 +109,7 @@ for _,size in ipairs{{1280,720},{1920,1080},{2560,1440}} do
   assert(rect_drawn(layout.shelf_caption),'rubric must sit on an illuminated ribbon')
   assert(caption_visible('REGISTRO DEI DADI ACCANTONATI',layout.shelf_caption),
    'accepted-dice title is obscured by slot drawings')
-  assert(not duel or not caption_visible('MANOSCRITTO',layout.sidebar_caption),
-   'monk status takes precedence over normal sidebar heading')
-  assert(duel or caption_visible('MANOSCRITTO',layout.sidebar_caption))
+  assert(caption_visible('MANOSCRITTO',layout.sidebar_caption))
   assert(u.buttons.choices and u.buttons.medaluse,
    'all contextual actions must survive visual composition')
   for i,id in ipairs{'choices','medaluse'} do
@@ -119,7 +117,7 @@ for _,size in ipairs{{1280,720},{1920,1080},{2560,1440}} do
    assert(a.x==b.x and a.y==b.y and a.w==b.w and a.h==b.h,
     'redrawn side button has drifted away from controller hitbox')
   end
-  local expectedFolio=duel and {x=1512,y=320,w=352,h=370} or layout.folio
+  local expectedFolio=layout.folio
   local actual=u.buttons.folio
   assert(actual.x==expectedFolio.x and actual.y==expectedFolio.y
    and actual.w==expectedFolio.w and actual.h==expectedFolio.h,
@@ -128,4 +126,4 @@ for _,size in ipairs{{1280,720},{1920,1080},{2560,1440}} do
  end
 end
 love=originalLove
-print('PASS sidebar and six-slot composition, monk exception, unchanged 3D tray and real hitboxes at 720p/1080p/1440p')
+print('PASS sidebar and six-slot composition, unchanged 3D tray and real hitboxes at 720p/1080p/1440p')
