@@ -97,9 +97,9 @@ function S.install()
    local function check_table_shadows()
     local body=Geometry.newD6Body(.8):set({0,0,.5},{0,0,0},{0,0,0})
     local die={index=1,entry={body=body,die=Geometry.d6}}
-    local function capture(items)
+    local function capture(items,extents)
      renderer:draw{
-      entries=items,extents={-4,4,-3,3},height=.74,
+      entries=items,extents=extents or {-4,4,-3,3},height=.74,
       viewport={x=0,y=0,w=384,h=288},cx=192,cy=144,scale=48,
       view=flatView,style='merchant',offset=0,
      }
@@ -124,9 +124,20 @@ function S.install()
     local raised=capture({die})
     local cast=darkening(raised,2.05,1.45)
     assert(cast>.08 and cast<contact,'airborne shadow must move and soften')
-    assert(math.abs(darkening(raised,.76,.32))<.04,'old contact shadow left behind')
-    print(('PASS GPU merchant shadows: grounded %.3f, raised %.3f'):format(contact,cast))
-    empty:release();resting:release();raised:release()
+    local residual=darkening(raised,.76,.32)
+    assert(residual<contact*.45,('former contact patch too dark (%.3f)'):format(residual))
+    -- Move the airborne die again and check a pixel fully outside its penumbra.
+    body.position[1]=-3
+    local moved=capture({die})
+    assert(math.abs(darkening(moved,2.05,1.45))<.01,'old airborne shadow left behind')
+    -- Project beyond the timber. Transparency outside the receiving tray is exact.
+    body.position[1]=1.5
+    local edge=capture({die},{-2,2,-3,3})
+    local _,_,_,outside=edge:getPixel(360,215)
+    assert(outside==0,'cast shadow escaped the tray')
+    print(('PASS GPU merchant shadows: grounded %.3f, raised %.3f, former contact %.3f')
+     :format(contact,cast,residual))
+    empty:release();resting:release();raised:release();moved:release();edge:release()
    end
    check_table_shadows()
    -- Portrait capture uses the same face maps, patina and chamfer.
