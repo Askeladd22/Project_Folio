@@ -7,6 +7,7 @@ M.__index=M
 local Scenery=require('src.engine3d.g3d_scenery')
 local Materials=require('src.engine3d.g3d_materials')
 local Bevel=require('src.engine3d.g3d_bevel')
+local shadow_vertices=require('src.engine3d.g3d_shadow')
 
 local function supported(entries)
  for _,entry in ipairs(entries) do
@@ -91,39 +92,6 @@ local function rim_vertices(mesh,extents,thickness,height)
  return v
 end
 
-
--- Soft radial contact shadow on the unchanged z=0 manuscript floor.
-local function shadow_vertices(body,offset)
- local p=assert(body.position,'physical body position required')
- -- Height above actual ground is the approximate cube clearance,
- -- NOT the vertical position of its center. At rest the old shadow
- -- incorrectly faded as though the die were already airborne.
- local bottom=-(body.radius or .65)
- if #body>0 then
-  bottom=math.huge
-  for _,corner in ipairs(body) do bottom=math.min(bottom,corner[3]) end
- end
- local clearance=math.max(0,(p[3] or 0)+bottom)
- local radius=math.max(.42,(body.radius or .65)*1.11)*
-  (1+math.min(clearance,8)*.09)
- local alpha=.42/(1+clearance*.55)+.10*math.exp(-clearance*8)
- -- Small warm-light cast to make the footprint readable without adding
- -- an exaggerated opaque black blob under the entire cube.
- local cx=p[1]-(offset or 0)+.035+.065*math.exp(-clearance*8)+clearance*.20
- local cy=p[2]+.025+clearance*.14
- local vertices={}
- local function vertex(x,y,a)
-  return {x,y,.012,0,0,0,0,1,.16,.105,.06,a}
- end
- for i=0,23 do
-  local a=i*math.pi/12
-  local b=(i+1)*math.pi/12
-  vertices[#vertices+1]=vertex(cx,cy,alpha)
-  vertices[#vertices+1]=vertex(cx+radius*math.cos(a),cy+radius*math.sin(a),0)
-  vertices[#vertices+1]=vertex(cx+radius*math.cos(b),cy+radius*math.sin(b),0)
- end
- return vertices
-end
 
 -- Seven folio lines on the three visible paper edges, excluding leather spine.
 local function page_rule_vertices(extents,width,height)
@@ -255,10 +223,10 @@ function M:_update_faces(entries,draw_offset,usable_map,drag_preview)
   end
   active[key]=true
   local bevel_on=self:uses_bevel(entry)
+  local preview=drag_preview and drag_preview.index==key and drag_preview or nil
   for i,face in ipairs(entry.die.faces) do
    local value=entry.die.faceValueMap[i]
    local img=#face==4 and self.images[value] or self.white
-   local preview=drag_preview and drag_preview.index==key and drag_preview or nil
    local verts=vertices(self.mesh,entry,face,draw_offset,preview,
      Materials.uses_shader(self.material_mode),bevel_on and self.bevel_fraction or nil)
    if #face==3 then
@@ -282,7 +250,6 @@ function M:_update_faces(entries,draw_offset,usable_map,drag_preview)
   end
   if bevel_on then
    local cut=Bevel.rim_vertices(entry.body,entry.die.faces,self.bevel_fraction)
-   local preview=drag_preview and drag_preview.index==key and drag_preview or nil
    for _,v in ipairs(cut) do
     v[1]=v[1]-(draw_offset or 0)+(preview and preview.x or 0)
     v[2]=v[2]+(preview and preview.y or 0)
@@ -294,7 +261,7 @@ function M:_update_faces(entries,draw_offset,usable_map,drag_preview)
    record.bevel.mesh:release()
    record.bevel=nil
   end
-  local shadow=shadow_vertices(entry.body,draw_offset)
+  local shadow=shadow_vertices(entry.body,draw_offset,preview)
   if record.shadow then record.shadow.mesh:setVertices(shadow)
   else record.shadow=g3d.newModel(shadow,self.white) end
  end
@@ -335,9 +302,13 @@ function M:_draw_scene(args)
    g.setDepthMode('lequal',true)
    self.floor_model:draw()
    g.setDepthMode('lequal',false)
+   -- A shadow may darken an opaque floor pixel, but cannot create tray pixels
+   -- beyond its edge. Keep the receiver alpha when blending pure black.
+   g.setColorMask(true,true,true,false)
    for _,item in ipairs(args.entries) do
     self.models[item.index].shadow:draw()
    end
+   g.setColorMask(true,true,true,true)
    g.setDepthMode('lequal',true)
    self.walls:draw()
    if self.carving then self.carving:draw() end

@@ -30,7 +30,7 @@ assert(not package.loaded['lib.g3d'],
        'g3d must not initialize graphics until an opted-in scene is drawn')
 local shadow=Live.shadow_vertices({position={2,3,1},radius=.5},0)
 assert(#shadow==72 and shadow[1][3]>.0,'contact shadows have a floor offset')
-assert(shadow[1][12]>0 and shadow[2][12]==0,'soft shadow alpha fades to zero')
+assert(shadow[1][12]>0 and shadow[5][12]==0,'soft shadow alpha fades to zero')
 local moved=Live.shadow_vertices({position={2,3,1},radius=.5},2)
 assert(math.abs(moved[1][1]-(shadow[1][1]-2))<1e-9,'shadow follows draw offset')
 local rules=Live.page_rule_vertices({-9.2,9.2,-3.8,3.8},.85,.74)
