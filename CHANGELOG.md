@@ -10,6 +10,10 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.24] - 2026-11-05
+
+- I contatti con le sponde usano gli estremi dei vertici ruotati, con il calcolo di `fps_part_boundary_update` di FPS 1.2.5 adattato a Lua. Il frontale del Tavolo del Mercante scende sotto il piano per lasciare visibili i dadi a riposo.
+
 ## [0.1.23] - 2026-11-05
 
 - Rimossi il pulsante Combinazioni e il selettore paginato. I dadi si

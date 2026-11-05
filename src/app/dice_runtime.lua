@@ -1,6 +1,7 @@
 
 require("core")
 local Physics = require("src.engine3d.physics")
+local FpsBounds = require("src.engine3d.fps_bounds")
 local Geometry = require("src.engine3d.geometry")
 local view = require("src.engine3d.view")
 local box = Physics.box
@@ -403,8 +404,7 @@ local function constrain_dice_to_regions()
             local y_max = base_region.y_front
             local bounce = region.bounce or base_region.bounce or 0.34
             local slide_damping = region.slide_damping or base_region.slide_damping or 0.90
-            local radius_scale = (die_entry and die_entry.kind == "d8") and 0.62 or 0.50
-            local radius = math.max(0.15, (body.radius or 0.4) * radius_scale)
+            local x_low, x_high, y_low, y_high = FpsBounds.footprint(body)
 
             local px = body.position[1]
             local py = body.position[2]
@@ -412,8 +412,8 @@ local function constrain_dice_to_regions()
             local vy = body.velocity[2]
             local corrected = false
 
-            local min_y = y_min + radius
-            local max_y = y_max - radius
+            local min_y = y_min - y_low
+            local max_y = y_max - y_high
 
             if py < min_y then
                 py = min_y
@@ -432,8 +432,8 @@ local function constrain_dice_to_regions()
             end
 
             local left_x, right_x = get_region_x_bounds_at_y(region, py)
-            local min_x = left_x + radius
-            local max_x = right_x - radius
+            local min_x = left_x - x_low
+            local max_x = right_x - x_high
             if max_x < min_x then
                 local mid_x = (left_x + right_x) * 0.5
                 min_x = mid_x
@@ -457,7 +457,6 @@ local function constrain_dice_to_regions()
             end
 
             if corrected then
-                -- Legacy safety region, not a collision with the visible rim.
                 -- A sub-contact-scale correction must not restart the sleep clock.
                 require('src.engine3d.containment').apply(body,px,py,vx,vy,body._supported)
             end

@@ -42,12 +42,15 @@ local touching=G.shadow_vertices(cornerBody,0)
 assert(touching[1][12]>tilted[1][12],'clearance must follow the lowest rotated vertex')
 local scene=require('src.engine3d.g3d_scenery')
 local sides=scene.style_vertices(Mesh,{-14,14,-6,6},.74,'merchant')
-local fullHeight=false
+local apron=false
 for _,v in ipairs(sides) do
  assert(v[2]>=-6 and (v[2]>-6 or v[3]==0),'rear rail tip must meet the painted plane')
- if v[2]>0 and v[3]==.74 then fullHeight=true end
+ if v[2]>=6 then
+  assert(v[3]<=1e-8,'front lip occludes the floor')
+  if v[3]<-.7 then apron=true end
+ end
 end
-assert(fullHeight,'front rail must keep its height')
+assert(apron,'front timber must extend below the floor')
 local sent={}
 local fake={send=function(_,k,v) sent[k]=v end}
 Materials.configure(fake,'ivory',{yaw=0,pitch=.62},false)

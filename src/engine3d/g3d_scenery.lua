@@ -72,6 +72,9 @@ function S.style_vertices(mesh,extents,height,style)
    if point[3]>height*.98 then
     for channel=9,11 do point[channel]=math.min(1,point[channel]+.09) end
    end
+   -- Sink the near apron under the floor so it cannot mask a resting die.
+   local drop=math.max(0,math.min(1,(point[2]-y2+1.4)/1.4))
+   point[3]=point[3]-height*drop
    sides[#sides+1]=point
   end
   return sides
@@ -96,7 +99,7 @@ function S.merchant_carving(extents,height)
  local y=extents[4]+.40+.003
  local x=(extents[1]+extents[2])*.5
  local half=height*1.2
- local lower,upper=height*.04,height*.96
+ local lower,upper=-height*.96,-height*.04
  local function point(dx,z,u,v)
   return {x+dx,y,z,u,v,0,1,0,1,1,1,1}
  end
