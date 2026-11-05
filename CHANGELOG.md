@@ -10,6 +10,31 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.27] - 2026-11-05
+
+### Feedback Farkle e compattezza del tavolo
+- Rimossa la grande fascia inferiore marrone: i comandi sono ospitati
+  in una piccola traversa di legno, nascosta quando non esistono
+  azioni utilizzabili (es. durante il lancio). I messaggi di stato
+  restano leggibili senza un pannello vuoto.
+- Il punteggio dei dadi selezionati è dichiarato esplicitamente
+  **non ancora accantonato**; i punti assicurati e a rischio
+  continuano a essere calcolati dal motore Farkle senza modifiche.
+- Rimosso il testo ridondante `minimo 0 pt` dal pulsante Incassa.
+  Accantona comunica che aggiunge punti alla posta a rischio.
+- Selezione dei dadi più aderente alle mesh proiettate: due piccole
+  sottolineature dorate per i selezionati, una sottolineatura rossa
+  per le selezioni invalide e una tacca tenue per i dadi che
+  possono segnare punti. La presa fisica rimane distinta in ciano.
+- Nessun cambiamento a fisica, scala dei dadi, camera g3d o
+  distribuzione casuale: da valutare con il collaudo dei lanci.
+
+### Verifiche e limiti
+- Aggiornati test di layout, pittura del pannello, selezioni e
+  corrispondenza dei pulsanti con le hitbox a risoluzioni diverse.
+- QA visiva e fisica Windows ancora necessaria; il laboratorio
+  nativo FPS isolato aveva già un test di supporto instabile.
+
 ## [0.1.26] - 2026-11-05
 
 ### Tavolo del Mercante

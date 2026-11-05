@@ -1,3 +1,25 @@
+## Barra comandi e feedback — 0.1.27 (5 novembre 2026)
+
+Sostituita la grande fascia inferiore color marrone con una placca
+ridotta e visibile solo quando servono i comandi. Il messaggio
+di stato resta disponibile anche durante il lancio, senza riempire
+il quinto inferiore dello schermo.
+
+I punti selezionati sono esplicitamente **non ancora accantonati**;
+il pulsante `Accantona` li aggiunge alla posta a rischio,
+mentre `Incassa` conserva l'operazione attuale del Farkle
+(incluso l'incasso diretto di una selezione valida).
+Le marcature sono vicine al dado, non grandi parentesi distanti.
+
+**Non sono state cambiate** le dimensioni reali dei D6, la loro
+fisica, la generazione dei tiri o la camera g3d. La distribuzione
+dei dadi nel vassoio è da osservare su più lanci, non da
+correggere con un offset artificiale.
+
+**QA Windows ancora aperta:** 50 lanci, selezione di mani
+valide/invalide, Farkle, accantonamento e incasso diretto,
+presa multipla, DPI, 720p/1080p/1440p/ultrawide.
+
 ## Revisione del Tavolo del Mercante — 0.1.26 (5 novembre 2026)
 
 HUD ricomposto con punteggi assicurati e a rischio nella stessa
