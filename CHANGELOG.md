@@ -10,6 +10,28 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.28] - 2026-11-05
+
+### Allineamento tavolo del Mercante
+- Corretta la traslazione verso destra della placca inferiore e del
+  pulsante singolo: il loro centro ora coincide con l'asse del tray
+  fisico (x=960 nelle coordinate virtuali 1920×1080).
+- Ricentrata la composizione completa quando sono presenti
+  più azioni; spostato il registro dei dadi accantonati per
+  evitare che tocchi la placca.
+- Messaggio contestuale ricentrato. Non cambiano la scena, il
+  fondale del Mercante, la camera g3d, la scala dei dadi, il
+  picking o le hitbox dei dadi: cambiano soltanto le coordinate
+  UI dei comandi con le rispettive hitbox.
+- Aggiunti vincoli geometrici e test del centro anche dopo il
+  mapping 720p/1080p/1440p/ultrawide.
+
+### Limiti
+- La CI completa resta soggetta al problema preesistente
+  nel laboratorio FPS isolato; nessuna correzione fittizia del
+  solver è inclusa in questo intervento.
+- Verifica visiva su Windows ancora necessaria.
+
 ## [0.1.27] - 2026-11-05
 
 ### Feedback Farkle e compattezza del tavolo

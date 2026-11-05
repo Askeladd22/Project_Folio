@@ -1,3 +1,16 @@
+## Centratura pannello inferiore — 0.1.28 (5 novembre 2026)
+
+L'asse del tavolo 3D corrisponde a x=960 in spazio virtuale
+1920×1080. Nella v0.1.27 la placca era centrata a x=1007
+e il pulsante singolo a x=1004. Placca, rifilo, pulsante
+singolo, status e gruppo di azioni ora sono centrati
+sull'asse fisico del tavolo. Il registro dei dadi accantonati
+rimane alla sinistra della placca senza sovrapposizioni.
+
+L'intervento modifica soltanto geometrie e hitbox UI;
+**nessun cambiamento** alla fisica, alla telecamera, ai D6,
+al rendering g3d o alle regole Farkle.
+
 ## Barra comandi e feedback — 0.1.27 (5 novembre 2026)
 
 Sostituita la grande fascia inferiore color marrone con una placca

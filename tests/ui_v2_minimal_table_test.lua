@@ -18,6 +18,17 @@ assert(layout.risk_value.y==layout.secured_value.y)
 assert(layout.footer.y>=layout.tray.y+layout.tray.h
  and layout.footer.h<=110 and layout.footer.w<=1160,
  'the plaque must be compact and must not overlap 3D dice')
+local center=layout.tray.x+layout.tray.w/2
+for _,r in ipairs{layout.footer,layout.footer_trim,layout.single_action,
+                  layout.idle_message,layout.message} do
+ assert(math.abs(r.x+r.w/2-center)<=3,
+  'merchant table element does not share tray central axis')
+end
+assert(math.abs((layout.context_actions[1].x+
+ layout.secondary.x+layout.secondary.w)/2-center)<=3,
+ 'the multi-action row must also be balanced around the tray')
+assert(Layout.overlap(layout.shelf,layout.footer)==0,
+ 'accepted-die register must not cross into command plaque')
 assert(layout.message.y>=layout.primary.y+layout.primary.h,
  'status must stay below the main actions')
 local buttons={}
