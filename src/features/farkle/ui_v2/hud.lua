@@ -221,12 +221,24 @@ local function draw_minimal(u)
  g.setColor(.077,.060,.047,1)
  g.rectangle('fill',0,0,1920,1080)
  draw_table_art('table-host',layout.host)
- panel({x=44,y=20,w=218,h=72},parchment,border_ink,7)
+ -- Keep both sides of the wager in one legible scorecard.
+ panel(layout.score_panel,parchment,border_ink,7)
+ g.setColor(unpack(Art.rgba('border',.48)))
+ g.setLineWidth(1)
+ g.line(246,32,246,82)
  panel({x=1494,y=20,w=382,h=72},parchment,border_ink,7)
  write_fitted('ASSICURATI',layout.secured_caption,14,11,paper_muted)
  write_fitted(s.bank..' pt',layout.secured_value,25,16,paper_ink)
- write_fitted('A RISCHIO',layout.risk_caption,16,12,pale)
- write_fitted(s.pot..' pt',layout.risk_value,23,16,Art.rgba('ochre_light'))
+ write_fitted('A RISCHIO',layout.risk_caption,14,11,paper_muted)
+ write_fitted(s.pot..' pt',layout.risk_value,25,16,paper_warning)
+ -- A timber command rail visually joins the table rather than leaving
+ -- a large strip of dead black beneath the physical play surface.
+ panel(layout.footer,Art.rgba('earth_dark'),nil,0)
+ panel(layout.footer_trim,Art.rgba('earth'),Art.rgba('timber',.72),7)
+ g.setLineWidth(2)
+ g.setColor(unpack(Art.rgba('ochre_light',.32)))
+ g.line(layout.footer_trim.x+12,layout.footer_trim.y+7,
+        layout.footer_trim.x+layout.footer_trim.w-12,layout.footer_trim.y+7)
  for _,a in ipairs(actions) do
   if a.slot=='header' then
    action_button(u,a,a.id=='help' and layout.help or layout.runmenu)
@@ -234,7 +246,7 @@ local function draw_minimal(u)
  end
  -- Only real accepted dice are painted on this unobtrusive register.
  if next(s.used) then
-  write_fitted('DADI ACCANTONATI',layout.shelf_label,17,12,Art.rgba('ochre_light'))
+  write_fitted('DADI ACCANTONATI',layout.shelf_label,16,12,Art.rgba('ochre_light'))
  end
  local choosing=s.phase=='ready' and not s.scored and not next(s.selected) and not u.physicalFailure
  write_fitted(compact_status(u),choosing and layout.single_action or layout.message,choosing and 23 or 18,12,

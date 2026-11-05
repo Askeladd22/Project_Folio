@@ -58,7 +58,9 @@ local DICE_AUDIO_SCHEMA = DICE_CONFIG.audio
 local DICE_VISUAL_PROTOTYPE_SCHEMA = DICE_CONFIG.visual.prototypes
 local DICE_VISUAL_FACE_SCHEMA = DICE_CONFIG.visual.face_colors
 
-local TABLE_DIE_SCALE = 0.85
+-- Restore a little more physical presence without faking mesh-only zoom:
+-- rendering, collisions and projected picking all use this same body size.
+local TABLE_DIE_SCALE = 0.94
 local DICE_SIZE_BASE = DICE_SIZE_SCHEMA.base
 local DICE_SIZE_MIN = DICE_SIZE_SCHEMA.min
 local DICE_SIZE_SCALE_REFERENCE_COUNT = DICE_SIZE_SCHEMA.scale_reference_dice_count
