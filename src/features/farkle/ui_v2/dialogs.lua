@@ -235,17 +235,7 @@ if H.reward_active(s) then reward(u);return end
     -- unbound manuscript(...) call crashed every time this modal opened.
     FolioView.draw(s,u.presentation,665,245,510,625,txt,R.contracts[s.stage].target)
     paragraph(R.contracts[s.stage].condition,435,882,1050,49,24,15)
- elseif u.modal=='choices' then
-  txt('CURRENT ROLL OPTIONS',425,180,800,30)
-  local choices=R.options(s);local pages=math.max(1,math.ceil(#choices/7))
-  u.choicePage=math.max(1,math.min(u.choicePage or 1,pages))
-  paragraph('Choose dice, then Set aside or Bank. You can also click dice directly.',440,240,1040,49,23,16)
-  for row=1,7 do local o=choices[(u.choicePage-1)*7+row];if o then
-   button(u,'option'..row,H.option_text(o),440,290+(row-1)*72,1040,66,true,function() if u:select_option(o.mask) then u.modal=nil end end)
-  end end
-  button(u,'prev','Previous',440,830,240,60,u.choicePage>1,function() u.choicePage=u.choicePage-1 end)
-  fitted('Page '..u.choicePage..' / '..pages,{x=745,y=836,w=250,h=46},25,16,ink,'center')
-  button(u,'nextpage','Next',1190,830,290,60,u.choicePage<pages,function() u.choicePage=u.choicePage+1 end) else
+ else
   txt('FARKLE RULES',425,180,800,30)
   local sections=H.help_sections(s);u.helpTab=math.max(1,math.min(3,u.helpTab or 1))
   for i,section in ipairs(sections) do

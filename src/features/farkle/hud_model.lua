@@ -51,29 +51,6 @@ function H.state_text(u)
  if s.scored then local ok,_,_,reason=R.bank_status(s);return ok and 'Reroll or bank your turn points.' or reason end
  return 'Select scoring dice with the mouse or keys 1–6.'
 end
-function H.options(s)
- if s.phase~='ready' then return {} end
- local counts={0,0,0,0,0,0};for i=1,6 do if not s.used[i] and s.hand[i] then counts[s.hand[i]]=counts[s.hand[i]]+1 end end
- local out={}
- for _,v in ipairs({1,5}) do if counts[v]>0 then
-  local n,p=counts[v],R.score({v})
-  out[#out+1]=n==1 and ('1 die showing '..v..' = '..p)
-   or n==2 and ('2 dice showing '..v..' = '..2*p..' ('..p..' each)')
-   or (n..' dice showing '..v..': '..p..' each as singles')
- end end
- for v=1,6 do for n=3,counts[v] do local a={};for j=1,n do a[j]=v end;out[#out+1]=n..' dice showing '..v..' = '..R.score(a) end end
- for _,a in ipairs({{1,2,3,4,5},{2,3,4,5,6},{1,2,3,4,5,6}}) do
-  local valid=true;for _,v in ipairs(a) do if counts[v]==0 then valid=false end end
-  if valid then out[#out+1]=table.concat(a,'-')..' = '..R.score(a) end
- end
- local special={}
- for _,o in ipairs(R.options(s)) do for _,g in ipairs(o.groups) do
-  if g.label=='Three pairs' or g.label=='Full house (4+2)' or g.label=='Two triplets' then
-   if not special[g.label] then special[g.label]=true;out[#out+1]=g.label..' = '..g.points end
-  end
- end end
- return out
-end
 function H.eligible(s)
  local ids,count={},0
  if s.phase~='ready' then return ids,count end
@@ -88,10 +65,6 @@ function H.eligible(s)
 end
 function H.selected_count(s)
  local n=0;for i=1,6 do if s.selected[i] and not s.used[i] then n=n+1 end end;return n
-end
-function H.option_text(o)
- local labels={};for _,g in ipairs(o.groups) do labels[#labels+1]=g.label end
- return '#'..table.concat(o.ids,', #')..' · '..table.concat(labels,' + ')..' = '..o.points..' · '..(o.remaining==0 and '6 dice (hot)' or o.remaining..' dice remaining')
 end
 function H.selection_text(s)
  local o=R.selection_option(s);if not o then return nil end

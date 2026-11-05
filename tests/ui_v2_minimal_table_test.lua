@@ -85,9 +85,9 @@ game.medal='retry'
 u.buttons={}
 textDrawn,rectangles={},{}
 Hud.draw(u)
-assert(u.buttons.choices and u.buttons.medaluse)
+assert(not u.buttons.choices and u.buttons.medaluse and not u.buttons.roll)
 assert(not u.buttons.folio)
-for _,id in ipairs{'choices','medaluse'} do
+for _,id in ipairs{'medaluse'} do
  local b=u.buttons[id]
  assert(Layout.overlap(b,layout.tray)==0)
 end
@@ -98,6 +98,17 @@ Accepted.draw(u)
 assert(#rectangles>0,'accepted die needs a visible register token')
 assert(game.pot==10 and game.used[1],
  'minimal presentation must preserve authoritative Farkle decisions')
+-- Two dice set aside for 15, then a single five among four physical dice.
+assert(R.toggle(game,2) and R.take(game) and game.pot==15)
+assert(R.start(game) and R.settle(game,{[3]=5,[4]=2,[5]=3,[6]=4}))
+Hud.draw(u)
+assert(not u.buttons.roll and not u.buttons.take and not u.buttons.choices)
+assert(R.toggle(game,3))
+Hud.draw(u)
+assert(u.buttons.take.enabled and u.buttons.take.label:find('+5 pt',1,true))
+assert(R.take(game) and game.pot==20)
+Hud.draw(u)
+assert(u.buttons.roll.enabled and u.buttons.roll.label=='Rilancia 3 dadi')
 local hand=R.new()
 assert(R.start(hand) and R.settle(hand,{1,1,3,3,3,6}))
 u.game=hand

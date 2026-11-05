@@ -193,11 +193,11 @@ local function compact_status(u)
  if s.hot then return 'Dadi caldi · Rilancia tutti e sei oppure incassa.' end
  if next(s.selected) then
   local points=R.selection(s)
-  return points and ('Selezione: '..points..' pt · Accantona [A] o incassa.')
-   or 'Selezione non valida: scegli dadi che danno punti.'
+  if not points then return 'Selezione non valida: ogni dado scelto deve fare punti.' end
+  return 'Selezione: '..points..' pt · Totale dopo l’accantonamento: '..(s.pot+points)..' pt'
  end
- if s.scored then return s.pot..' pt a rischio' end
- return 'Seleziona i dadi che danno punti.'
+ if s.scored then return '' end
+ return 'Scegli i dadi da accantonare · clic oppure 1–6'
 end
 local merchant_art={}
 local function draw_table_art(name,rect)
@@ -221,12 +221,12 @@ local function draw_minimal(u)
  g.setColor(.077,.060,.047,1)
  g.rectangle('fill',0,0,1920,1080)
  draw_table_art('table-host',layout.host)
- panel({x=44,y=20,w=420,h=72},parchment,border_ink,7)
+ panel({x=44,y=20,w=218,h=72},parchment,border_ink,7)
  panel({x=1494,y=20,w=382,h=72},parchment,border_ink,7)
  write_fitted('ASSICURATI',layout.secured_caption,14,11,paper_muted)
  write_fitted(s.bank..' pt',layout.secured_value,25,16,paper_ink)
- write_fitted('A RISCHIO',layout.risk_caption,14,11,paper_muted)
- write_fitted(s.pot..' pt',layout.risk_value,25,16,paper_warning)
+ write_fitted('A RISCHIO',layout.risk_caption,16,12,pale)
+ write_fitted(s.pot..' pt',layout.risk_value,23,16,Art.rgba('ochre_light'))
  for _,a in ipairs(actions) do
   if a.slot=='header' then
    action_button(u,a,a.id=='help' and layout.help or layout.runmenu)
@@ -236,7 +236,8 @@ local function draw_minimal(u)
  if next(s.used) then
   write_fitted('DADI ACCANTONATI',layout.shelf_label,17,12,Art.rgba('ochre_light'))
  end
- write_fitted(compact_status(u),layout.message,18,12,
+ local choosing=s.phase=='ready' and not s.scored and not next(s.selected) and not u.physicalFailure
+ write_fitted(compact_status(u),choosing and layout.single_action or layout.message,choosing and 23 or 18,12,
    (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
    'center')
  local solo=s.phase=='fresh' and s.medal=='none' and not u.physicalFailure

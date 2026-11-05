@@ -107,7 +107,7 @@ local function readableButton(r)
 end
 local function state(mode)
  local s=R.new()
- if mode=='choices' or mode=='medaluse' then
+ if mode=='medaluse' then
   assert(R.start(s) and R.settle(s,{1,5,2,3,4,6}))
  end
  if mode=='medaluse' then
@@ -126,7 +126,7 @@ for _,screen in ipairs{{1280,720},{1920,1080},{2560,1440}} do
  Res.init(1920,1080);Res.refresh(sw,sh)
  for _,access in ipairs{{false,false},{true,true}} do
   big,high=access[1],access[2]
-  for _,mode in ipairs{'help','choices','folio','run',
+  for _,mode in ipairs{'help','folio','run',
                       'run_restart_confirm','run_exit_confirm','medals',
                       'medaluse','upgrade','reward-medal'} do
    local s=state(mode)
@@ -134,7 +134,7 @@ for _,screen in ipairs{{1280,720},{1920,1080},{2560,1440}} do
    local modal=reward and nil or mode
    local buttons={saved={x=16,y=16,w=22,h=22,enabled=true}}
    local u={game=s,modal=modal,buttons=buttons,
-    presentation=P.new(s),choicePage=1,helpTab=1,
+    presentation=P.new(s),helpTab=1,
     medalPage=1}
    local bank,pot,phase,turn=s.bank,s.pot,s.phase,s.turn
    paint={}
@@ -186,12 +186,7 @@ for _,screen in ipairs{{1280,720},{1920,1080},{2560,1440}} do
       a.y+a.h<=frame.y+frame.h,
       'modal button outside manuscript page: '..id)
     end
-    if mode=='choices' then
-     assert(u.modalButtons.option1 and u.modalButtons.prev)
-     assert(not u.modalButtons.prev.enabled)
-     assert(not hoverFill(u.modalButtons.prev),
-      'disabled page action cannot show active hover')
-    elseif mode=='help' then
+    if mode=='help' then
      assert(u.modalButtons.helpTab1 and u.modalButtons.helpTab2
       and u.modalButtons.helpTab3)
     elseif mode=='run' then

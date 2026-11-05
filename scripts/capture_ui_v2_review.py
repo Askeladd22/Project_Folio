@@ -21,7 +21,7 @@ SCENES = (
     "fresh", "marquee-six", "physical-group-held",
     "fresh-after-cancel", "accessibility-on",
     "help", "help-scores", "folio", "run-menu",
-    "ready-fixture", "choices-fixture", "selected-fixture",
+    "ready-fixture", "manual-pair", "selected-fixture",
     "upgrade-fixture", "medal-fixture", "reference-catalog",
     "merchant-live",
 )

@@ -10,6 +10,14 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.23] - 2026-11-05
+
+- Rimossi il pulsante Combinazioni e il selettore paginato. I dadi si
+  scelgono direttamente sul tavolo con il mouse o con i tasti 1–6.
+- Il punteggio a rischio è accanto al registro dei dadi accantonati.
+  Il comando di rilancio appare quando disponibile; la selezione mostra
+  i punti scelti e il totale che si otterrebbe accantonandoli.
+
 ## [0.1.22] - 2026-11-05
 
 - La partita apre con sei dadi raccolti sul lato del giocatore. Il comando
