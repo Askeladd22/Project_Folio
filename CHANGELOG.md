@@ -10,6 +10,32 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.29] - 2026-11-05
+
+### Pulizia del repository
+- Rimossi il modulo di illuminazione CPU inutilizzato `src/engine3d/light.lua`
+  e la texture senza utilizzatori `resources/textures/felt.png`.
+- Il laboratorio g3d riutilizza `resources/textures/wood.png` per piano e bordi.
+  Rimossi la texture dedicata `walnut.png` da 81.056.842 byte e il relativo
+  file di provenienza. Il cambio di materiale riguarda il laboratorio isolato.
+- Aggiornati i controlli di conservazione delle risorse per proteggere
+  il legno condiviso e quello del Tavolo del Mercante.
+- La regola `/audits/` esclude nuovi checkpoint e catture locali.
+
+### Documentazione
+- Aggiunto l'indice `docs/README.md` e collegato dal README principale.
+- Allineato il regolamento alla selezione diretta introdotta nella 0.1.23.
+- Riscritto `TECHNICAL.md` sui percorsi correnti, con collegamento allo
+  snapshot storico del documento.
+- Corretti i collegamenti relativi risolvibili. Le citazioni di evidenze
+  locali assenti sono conservate come percorsi testuali nei rapporti.
+
+### Verifiche
+- Ricontrollati import, percorsi delle risorse e collegamenti Markdown.
+- Verifica headless demandata alla CI GitHub per indisponibilità
+  dell'ambiente locale di esecuzione.
+- La nuova venatura del laboratorio richiede controllo visivo in LÖVE.
+
 ## [0.1.28] - 2026-11-05
 
 ### Allineamento tavolo del Mercante

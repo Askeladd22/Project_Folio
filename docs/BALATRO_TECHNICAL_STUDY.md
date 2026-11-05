@@ -1,5 +1,8 @@
 # Balatro — studio tecnico e applicazioni indipendenti a Manuscript
 
+> I percorsi di audit e archivio riportati come codice si riferiscono ai
+> materiali locali citati nel rapporto originale, assenti dalla copia corrente.
+
 Data: 15 ottobre 2026. Versione studiata: **1.0.1o-FULL**, verificata nei sorgenti accessibili e nel menu. Questo documento descrive questa copia, non tutte le versioni di Balatro.
 
 Il risultato principale è una sequenza causale leggibile: elemento che contribuisce, variazione del contatore, totale della mano, trasferimento al punteggio accumulato, nuova mano. Non dipende da un unico shader o da una generica animazione elastica. Il codice orchestra barriere temporali, trasformazioni continue e segnali sonori; non separa però completamente la presentazione dallo stato di gioco. Per Manuscript conviene estendere il modello di presentazione già esistente, mantenendo autorevole la logica Farkle.
@@ -8,7 +11,7 @@ Il risultato principale è una sequenza causale leggibile: elemento che contribu
 
 Installazione letta: `S:/Hydra Games/Balatro/Balatro.exe`. SHA-256: `0d75fe164accf3312734d4b37ac98788dd15f0b8e4f9bb8b7f90c4e59de93f47`. REA identifica un PE x86-64. Il contenitore ZIP incorporato è leggibile senza aggiramenti: 304 voci, 47 Lua, 19 shader `.fs`. Lettura selettiva in memoria, nessuna decompilazione nativa e nessun trasferimento di sorgenti o asset commerciali nel repository.
 
-Le citazioni Balatro sotto sono **membri dell'archivio e righe a base 1**, riproducibili sulla copia identificata. Le impronte dei membri sono in [source-identity.json](audits/balatro-study/source-identity.json). I percorsi Manuscript sono invece file reali del repository. Distinzioni: **statico** = verificato nel codice; **osservato** = visto nei fotogrammi; **proposta** = progetto originale, non implementato; **ignoto** = non misurato.
+Le citazioni Balatro sotto sono **membri dell'archivio e righe a base 1**, riproducibili sulla copia identificata. Le impronte dei membri sono in source-identity.json (`audits/balatro-study/source-identity.json`). I percorsi Manuscript sono invece file reali del repository. Distinzioni: **statico** = verificato nel codice; **osservato** = visto nei fotogrammi; **proposta** = progetto originale, non implementato; **ignoto** = non misurato.
 
 | Modulo Balatro | Responsabilità verificata |
 |---|---|
@@ -125,7 +128,7 @@ Le prime righe usano normalmente TOTAL: velocità impostata, accelerazione di st
 
 ### Osservazione diretta riproducibile
 
-Due mani semplici giocate attraverso la UI, senza modifiche ai file. Nessun Joker equipaggiato nella sequenza campionata. Coppia di 9: base 10×2, contributi 9+9, totale 56. Coppia successiva di 7: (10+7+7)×2=48, accumulato 56→104. La seconda sequenza è conservata in 18 PNG e [timestamp JSON](audits/balatro-study/pair7-observations.json).
+Due mani semplici giocate attraverso la UI, senza modifiche ai file. Nessun Joker equipaggiato nella sequenza campionata. Coppia di 9: base 10×2, contributi 9+9, totale 56. Coppia successiva di 7: (10+7+7)×2=48, accumulato 56→104. La seconda sequenza è conservata in 18 PNG e timestamp JSON (`audits/balatro-study/pair7-observations.json`).
 
 | Fotogramma | Tempo dalla richiesta di clic | Contenuto verificato visivamente |
 |---|---:|---|

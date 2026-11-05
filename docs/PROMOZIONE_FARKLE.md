@@ -1,14 +1,17 @@
 # Promozione definitiva del Farkle e pulizia della documentazione
 
+> I percorsi di audit e archivio riportati come codice si riferiscono ai
+> materiali locali citati nel rapporto originale, assenti dalla copia corrente.
+
 15 ottobre 2026. **Completata:** Manuscript parte da sorgenti con `love .` e `Avvia.cmd`; il Farkle è organizzato in `src/`, senza moduli di produzione o alias sotto `experiments/farkle_roguelite/`.
 
 ## Baseline e perimetro
 
-La baseline è la versione corrente con il nuovo regolamento già implementato e verificato, non una vecchia copia del gioco. Prima della migrazione: 19/19 file della suite generale, test Farkle/HUD/spawn e 4 test Python del runtime; smoke reali di partial/A-B/integration, HUD 1280×720/1920×1080 e frontend tramite launcher superati. Evidenze in [validation.log](audits/farkle-official/validation.log).
+La baseline è la versione corrente con il nuovo regolamento già implementato e verificato, non una vecchia copia del gioco. Prima della migrazione: 19/19 file della suite generale, test Farkle/HUD/spawn e 4 test Python del runtime; smoke reali di partial/A-B/integration, HUD 1280×720/1920×1080 e frontend tramite launcher superati. Evidenze in validation.log (`audits/farkle-official/validation.log`).
 
-La richiesta precedente sul regolamento viene documentata direttamente nei nuovi documenti canonici: [FARKLE_RULES.md](docs/FARKLE_RULES.md) consolida la consegna originariamente chiamata `NUOVO_REGOLAMENTO_FARKLE.md`; [GAME_DESIGN.md](docs/GAME_DESIGN.md) versione 0.4 sostituisce il vecchio `MANUSCRIPT_GAME_DESIGN (2).md`. Non vengono creati duplicati con i vecchi nomi.
+La richiesta precedente sul regolamento viene documentata direttamente nei nuovi documenti canonici: [FARKLE_RULES.md](FARKLE_RULES.md) consolida la consegna originariamente chiamata `NUOVO_REGOLAMENTO_FARKLE.md`; [GAME_DESIGN.md](GAME_DESIGN.md) versione 0.4 sostituisce il vecchio `MANUSCRIPT_GAME_DESIGN (2).md`. Non vengono creati duplicati con i vecchi nomi.
 
-Checkpoint completo **prima** dei trasferimenti: 6.882 file, 15.658.313.679 byte di contenuti, inclusi audit, backup e pacchetti storici già presenti. Archivio `audits/farkle-promotion/before.zip`, manifest [before.json](audits/farkle-promotion/before.json); ogni membro riletto e verificato SHA-256. La sola directory che contiene questo nuovo checkpoint è esclusa per evitare autoricorsione.
+Checkpoint completo **prima** dei trasferimenti: 6.882 file, 15.658.313.679 byte di contenuti, inclusi audit, backup e pacchetti storici già presenti. Archivio `audits/farkle-promotion/before.zip`, manifest before.json (`audits/farkle-promotion/before.json`); ogni membro riletto e verificato SHA-256. La sola directory che contiene questo nuovo checkpoint è esclusa per evitare autoricorsione.
 
 SHA-256 archivio: `dd6c7ec73ecccd8813b06ccae2d4a310210fe5d712f1a4a7e500ba1ac0b5f2d1`.
 
@@ -51,18 +54,18 @@ Gli ID `startup_splash`, `main_menu`, `settings`, `campaign_select`, `scriptoriu
 
 **24 Markdown eliminati**, dopo confronto del loro hash con il checkpoint; **6 rapporti spostati**, **4 documenti creati** (tre canonici e questo rapporto richiesto). README e indice legacy aggiornati. I conteggi non includono file interni agli archivi ZIP/.love. Nessun rapporto Markdown aggiunto per i singoli passi: inventari, piano e manifest sono JSON nell'audit.
 
-Documenti autorevoli: [README](README.md), [design](docs/GAME_DESIGN.md), [regole](docs/FARKLE_RULES.md), [tecnica](docs/TECHNICAL.md), [indice storico](legacy/README.md). Questo rapporto è l'eccezione richiesta per tracciare la migrazione.
+Documenti autorevoli: [README](../README.md), [design](GAME_DESIGN.md), [regole](FARKLE_RULES.md), [tecnica](TECHNICAL.md), indice storico (`legacy/README.md`). Questo rapporto è l'eccezione richiesta per tracciare la migrazione.
 
 Consolidati: regole e parametri attuali; soglie, opzioni e risultati numerici; identità/proposte/questioni aperte del GDD; pipeline e identità dei salvataggi; contratto A/B, D2 e spawn; mapping triangolato e texture; limiti fisici noti; contratto PNG/cache/fallback. Le vecchie coordinate del puzzle cromatico non sono presentate come HUD corrente. La bibliografia è riassunta nel GDD senza attribuire regole non approvate.
 
 Rapporti conservati per le loro evidenze uniche:
 
-- [audit-motore-3d.md](legacy/reports/audit-motore-3d.md).
-- [correzione-renderer-dadi.md](legacy/reports/correzione-renderer-dadi.md).
-- [consolidamento-finale-spawn.md](legacy/reports/consolidamento-finale-spawn.md).
-- [verifica-fallback-spawn.md](legacy/reports/verifica-fallback-spawn.md).
-- [reverse-kcd2-dice.md](legacy/reports/reverse-kcd2-dice.md).
-- [reverse-scriptorium.md](legacy/reports/reverse-scriptorium.md).
+- audit-motore-3d.md (`legacy/reports/audit-motore-3d.md`).
+- correzione-renderer-dadi.md (`legacy/reports/correzione-renderer-dadi.md`).
+- consolidamento-finale-spawn.md (`legacy/reports/consolidamento-finale-spawn.md`).
+- verifica-fallback-spawn.md (`legacy/reports/verifica-fallback-spawn.md`).
+- reverse-kcd2-dice.md (`legacy/reports/reverse-kcd2-dice.md`).
+- reverse-scriptorium.md (`legacy/reports/reverse-scriptorium.md`).
 
 Eliminazioni e destinazione delle informazioni ancora pertinenti:
 
@@ -93,24 +96,24 @@ Eliminazioni e destinazione delle informazioni ancora pertinenti:
 
 I dettagli dei protocolli intermedi restano integralmente recuperabili nel checkpoint; i loro dati di audit non sono eliminati. I README dei prototipi archiviati e i risultati delle 54.000 simulazioni dell'Arte del rischio rimangono perché descrivono materiali diversi dal gioco corrente. Conservati anche licenza splash, documentazione bloom, licenze/attribuzioni non-Markdown e istruzioni di ripristino. Nessun AGENTS/CLAUDE presente è stato cancellato.
 
-Censimento completo con percorso, contenuto, data filesystem, hash, titoli e candidati riferimenti: [markdown-before.json](audits/farkle-promotion/markdown-before.json). La data è quella del file, non una data di pubblicazione verificata. Decisioni per tutti i 63 documenti: [markdown-classification.json](audits/farkle-promotion/markdown-classification.json). Riferimenti per nome comune come README sono candidati, non prove di caricamento. Dettaglio delle rimozioni/archiviazioni: [cleanup.json](audits/farkle-promotion/cleanup.json).
+Censimento completo con percorso, contenuto, data filesystem, hash, titoli e candidati riferimenti: markdown-before.json (`audits/farkle-promotion/markdown-before.json`). La data è quella del file, non una data di pubblicazione verificata. Decisioni per tutti i 63 documenti: markdown-classification.json (`audits/farkle-promotion/markdown-classification.json`). Riferimenti per nome comune come README sono candidati, non prove di caricamento. Dettaglio delle rimozioni/archiviazioni: cleanup.json (`audits/farkle-promotion/cleanup.json`).
 
-Aggiornati 17 collegamenti nei documenti esistenti, oltre ai nuovi collegamenti dei documenti canonici; [link-edits.json](audits/farkle-promotion/link-edits.json). Zero link locali Markdown mancanti fuori da audit/backup nella verifica finale. I riferimenti testuali e comandi degli audit/checkpoint protetti restano storici: non sono alias attivi; riprodurli nel loro checkpoint. [document-paths.json](audits/farkle-promotion/document-paths.json) permette di risalire ai nuovi documenti.
+Aggiornati 17 collegamenti nei documenti esistenti, oltre ai nuovi collegamenti dei documenti canonici; link-edits.json (`audits/farkle-promotion/link-edits.json`). Zero link locali Markdown mancanti fuori da audit/backup nella verifica finale. I riferimenti testuali e comandi degli audit/checkpoint protetti restano storici: non sono alias attivi; riprodurli nel loro checkpoint. document-paths.json (`audits/farkle-promotion/document-paths.json`) permette di risalire ai nuovi documenti.
 
 ## Verifiche dopo la migrazione
 
-- **22/22 file Lua**, inclusi HUD/spawn ora nella suite ordinaria e nuovo test dei percorsi; **4/4 test Python** del runtime. [Log](audits/farkle-promotion/unit-validation.log).
+- **22/22 file Lua**, inclusi HUD/spawn ora nella suite ordinaria e nuovo test dei percorsi; **4/4 test Python** del runtime. Log (`audits/farkle-promotion/unit-validation.log`).
 - Enumerazione esatta e 923 multinsiemi: punteggi/rischi coerenti con il regolamento già approvato. Nessuna nuova campagna fisica o ritaratura.
 - Rilanci fisici subset 1, 2/4/6, 1–5 e 1–6: accantonati esclusi e immutati, rollback su spawn esaurito, retry riuscito.
 - A/B: posa ambigua rifiutata, recuperi limitati, retry manuale, stato Farkle invariato.
-- Integrazione: normale/inciso/pesato sui seed 54083 e 87001, più copertura del rifiuto pesato; faccia geometrica e valore concordi. **Log prima/dopo identici**, compresi esiti e numero di passi; [confronto](audits/farkle-promotion/physical-comparison.json). Non è una certificazione cross-platform o statistica.
+- Integrazione: normale/inciso/pesato sui seed 54083 e 87001, più copertura del rifiuto pesato; faccia geometrica e valore concordi. **Log prima/dopo identici**, compresi esiti e numero di passi; confronto (`audits/farkle-promotion/physical-comparison.json`). Non è una certificazione cross-platform o statistica.
 - Hot dice e Correttore avviano lanci fisici; 36 associazioni faccia-texture, background/banco/pergamena/font/shader caricati.
 - HUD completo a **1280×720 e 1920×1080**: selezione mouse e tastiera, picking 6/6, accantonamento, rilanci, Farkle, hot, incasso, soglie, commissioni, ricompense e modali; anche alternative A/B/C e paginazione.
 - Frontend tramite `Avvia.cmd`: splash completa e salto, menu, Continue disabilitato, Settings salvate/ricaricate su disco isolato, New Game, Choose Commission, Back, Farkle, testo grande e Quit.
 - Nessun modulo `experiments.*` caricato nei censimenti runtime; zero vecchi riferimenti in entry point, sorgenti e strumenti correnti.
-- **6.434 file protetti invariati**: audit precedenti, backup, motore, risorse/librerie/licenze, runtime, conf e launcher. I sette moduli di produzione trasferiti sono equivalenti byte per byte dopo la sola sostituzione degli import: [verification.json](audits/farkle-promotion/verification.json).
+- **6.434 file protetti invariati**: audit precedenti, backup, motore, risorse/librerie/licenze, runtime, conf e launcher. I sette moduli di produzione trasferiti sono equivalenti byte per byte dopo la sola sostituzione degli import: verification.json (`audits/farkle-promotion/verification.json`).
 
-Screenshot controllati visivamente: [selezione reale 1920](audits/farkle-promotion/after/hud/hud-usability-1920-selected.png), [soglia e selezione 1280](audits/farkle-promotion/after/hud/hud-usability-1280-entry-selected.png), [Choose Commission 1280](audits/farkle-promotion/after/frontend/1280-commissions.png). La seconda usa una fixture numerica per l'HUD: i dadi 3D possono conservare le pose del tiro precedente, non è una discrepanza osservata nel flusso fisico reale. Tutti gli screenshot e log in `audits/farkle-promotion/after/`.
+Screenshot controllati visivamente: selezione reale 1920 (`audits/farkle-promotion/after/hud/hud-usability-1920-selected.png`), soglia e selezione 1280 (`audits/farkle-promotion/after/hud/hud-usability-1280-entry-selected.png`), Choose Commission 1280 (`audits/farkle-promotion/after/frontend/1280-commissions.png`). La seconda usa una fixture numerica per l'HUD: i dadi 3D possono conservare le pose del tiro precedente, non è una discrepanza osservata nel flusso fisico reale. Tutti gli screenshot e log in `audits/farkle-promotion/after/`.
 
 ## Regressioni e differenze
 

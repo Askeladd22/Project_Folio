@@ -34,6 +34,12 @@ più ricchi: questo laboratorio non sostituisce la verifica visiva
 della partita effettiva. Testare l'eseguibile su Windows a 720p
 e 1080p, verificando occlusione, profondità, orientamento e FPS.
 
+## Texture condivisa
+
+Piano e bordi riutilizzano `resources/textures/wood.png`, già incluso nel
+progetto. Il laboratorio conserva UV, ripetizione, geometria e comandi.
+La resa della venatura va controllata nella verifica visiva del laboratorio.
+
 ## Licenza
 
 `lib/g3d/` deriva da [groverburger/g3d](https://github.com/groverburger/g3d)

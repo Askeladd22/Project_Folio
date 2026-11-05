@@ -83,7 +83,7 @@ local function load_models()
   state.images[n]=g.newImage(path)
   state.images[n]:setFilter('linear','linear')
  end
- state.wood=g.newImage('resources/textures/tray/walnut.png')
+ state.wood=g.newImage('resources/textures/wood.png')
  state.wood:setFilter('linear','linear')
  state.models={}
  for i,b in ipairs(state.bodies) do

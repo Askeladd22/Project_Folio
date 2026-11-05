@@ -2,6 +2,10 @@
 -- The old desk loader, palette, optional PNG art pack, and obsolete
 -- presentation_view had no production callers at the 2026-10-31 audit.
 local removed={
+ 'src/engine3d/light.lua',
+ 'resources/textures/felt.png',
+ 'resources/textures/tray/walnut.png',
+ 'resources/textures/tray/SOURCE.txt',
  'src/features/scriptorium/desk_view.lua',
  'src/data/scriptorium_module_config.lua',
  'src/data/colors.lua',
@@ -66,8 +70,8 @@ assert(ignore:find('/experiments/fx_lab/audit/*.png',1,true),
 for _,path in ipairs{
  'src/engine3d/physics.lua',
  'src/engine3d/g3d_live.lua',
- 'resources/textures/tray/walnut.png',
- 'resources/textures/felt.png',
+ 'resources/textures/wood.png',
+ 'resources/merchant/wood-floor.jpg',
  'resources/dice/1.png',
  'experiments/physics_lab/fpslab.c',
 } do

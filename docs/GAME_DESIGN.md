@@ -1,4 +1,7 @@
 > **Direzione aggiornata al 4 novembre 2026:** il brainstorming corrente e
+
+> I percorsi di audit e archivio riportati come codice si riferiscono ai
+> materiali locali citati nel rapporto originale, assenti dalla copia corrente.
 > i tre pilastri vincolanti sono in [PROJECT_VISION.md](PROJECT_VISION.md).
 > Questo documento conserva la ricerca e le ipotesi precedenti
 > (incluso il copista medievale): **non** sovrascrive il nuovo setting
@@ -109,7 +112,7 @@ In partita: **Gestione run → Laboratorio medaglie**. Una sola medaglia per com
 
 I rilanci sono fisici, con identità e risultati conservati per i dadi non rilanciati. Nessuna nuova combinazione, conversione di punteggio arbitraria, settimo dado invisibile o trasformazione nascosta. Prima della revisione originale osservare ridondanza tra rilanci, utilità situazionale, consumo automatico delle cariche e impatto dell'incasso ×2 sulle commissioni; non correggerne adesso la potenza.
 
-Inventario, divergenze e limiti: [ricerca medaglie](../KCD2_MEDAGLIE_RICERCA.md). Controlli, test e rollback: [implementazione](../MEDAGLIE_IMPLEMENTAZIONE.md).
+Inventario, divergenze e limiti: [ricerca medaglie](KCD2_MEDAGLIE_RICERCA.md). Controlli, test e rollback: [implementazione](MEDAGLIE_IMPLEMENTAZIONE.md).
 
 ## Commissioni e manoscritto
 
@@ -155,7 +158,7 @@ Fonti consultate o allegate, non garanzia di lettura integrale né di adozione:
 - **Storia e immagini:** Sara J. Charles, *The Medieval Scriptorium*; Richard Hayman, *Illuminated Manuscripts*; Tymms e Wyatt, *Masterpieces of Illuminated Letters and Borders*; *Common Medieval Pigments*; *Come un copista medievale*; tavola comparativa dei pigmenti storici. Verificare epoca, area e permessi delle immagini; la carolina non è una grafia universale del XV secolo.
 - **Giochi e riferimenti visivi:** Farkle/KCD2 e Squire's Dice per lancio fisico e immediatezza; Dice Forge per facce identificabili; Balatro per build e feedback causale; Biblios e Biblios: Quill and Parchment per obiettivi librari; Trismegistus per relazioni fra selezione e azioni. Il concept della mod cooperativa *Star Realms Boss Fight* (2020) e il codice Lua Tabletop Simulator di P4ND0RA, condivisi in discussione, sono riferimenti per IA asimmetrica e sacchetto a esaurimento: non regole già adottate né codice del progetto. La plancia lignea, la pagina ornata e le fotografie del libro/cofanetto apribile fornite dall'utente sono riferimenti di struttura, materiali, apertura e lessico figurativo, non autorizzazioni a copiarne gli asset. I riferimenti non autorizzano aste, moltiplicatori o nuovi sottosistemi per analogia.
 
-Le ricerche tecniche originali sono nell'[indice storico](../legacy/README.md); i materiali allegati non sono necessariamente distribuiti nel repository.
+Le ricerche tecniche originali sono nell'indice storico (`../legacy/README.md`); i materiali allegati non sono necessariamente distribuiti nel repository.
 
 ### Consolidamento tecnico senza nuove regole (ottobre 2026)
 

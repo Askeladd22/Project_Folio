@@ -1,5 +1,8 @@
 # Laboratorio originale degli effetti di Manuscript
 
+> I percorsi di audit e archivio riportati come codice si riferiscono ai
+> materiali locali citati nel rapporto originale, assenti dalla copia corrente.
+
 15 ottobre 2026. Cinque prototipi autonomi, **nessun effetto integrato nel Farkle**. Il confronto dei riferimenti e i limiti della ricerca sono in [FX_STUDIO.md](FX_STUDIO.md).
 
 ## Avvio e controlli
@@ -10,7 +13,7 @@ Dalla radice del repository:
 love experiments/fx_lab
 ```
 
-Oppure aprire [experiments/fx_lab/Avvia.cmd](experiments/fx_lab/Avvia.cmd). Il launcher usa `LOVE_EXE`, il PATH oppure le installazioni Windows note. Avvio direttamente dai sorgenti, nessun pacchetto `.love`, nessuna nuova dipendenza.
+Oppure aprire [experiments/fx_lab/Avvia.cmd](../experiments/fx_lab/Avvia.cmd). Il launcher usa `LOVE_EXE`, il PATH oppure le installazioni Windows note. Avvio direttamente dai sorgenti, nessun pacchetto `.love`, nessuna nuova dipendenza.
 
 Il pannello **A** mostra lo stato finale senza effetto; **B** mostra la stessa scena animata. La comparazione riguarda la presentazione, non due simulazioni fisiche.
 
@@ -164,6 +167,6 @@ Questa graduatoria è un giudizio progettuale motivato, **non un risultato di pl
 
 ## File e rollback
 
-Creati soltanto il laboratorio, i due rapporti e le evidenze sotto `audits/fx-study/`. [Manifest prima](audits/fx-study/production-before.json) e [verifica dopo](audits/fx-study/production-after.json): **164 file attivi invariati**. Nessun `.love` nel laboratorio, nessuna modifica a fisica, geometria, camera, probabilità, regole o HUD di produzione.
+Creati soltanto il laboratorio, i due rapporti e le evidenze sotto `audits/fx-study/`. Manifest prima (`audits/fx-study/production-before.json`) e verifica dopo (`audits/fx-study/production-after.json`): **164 file attivi invariati**. Nessun `.love` nel laboratorio, nessuna modifica a fisica, geometria, camera, probabilità, regole o HUD di produzione.
 
 Per smettere di usarlo basta chiudere il laboratorio e continuare ad avviare Manuscript con `love .`. Nessun rollback del gioco necessario; non eliminare gli audit storici. L'eventuale futura promozione richiede una decisione separata.

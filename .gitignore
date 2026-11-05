@@ -36,3 +36,6 @@ runs.csv
 /build/
 /*.love
 /*.zip
+
+# One-off audits, local checkpoints and captured media
+/audits/
