@@ -29,9 +29,11 @@ local airborne=G.shadow_vertices({position={0,0,3},radius=.65},0)
 assert(#contact==72 and #airborne==72)
 assert(contact[1][12]>airborne[1][12],
  'contact shadow must be stronger for a die resting on the floor')
-assert(contact[2][12]==0,'contact disk must feather to transparency')
-assert(contact[2][1]-contact[1][1]>.7,
- 'floor shadow must extend visibly beyond the cube footprint')
+local right=-math.huge
+for _,v in ipairs(contact) do
+ if v[12]==0 then right=math.max(right,v[1]) end
+end
+assert(right-contact[1][1]>.7,'transparent penumbra extends past the footprint')
 local offset=G.shadow_vertices({position={2,0,.65},radius=.65},2)
 assert(math.abs(offset[1][1]-contact[1][1])<1e-8,
  'world shadow must honor split-tray rendering offset')
