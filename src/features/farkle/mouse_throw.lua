@@ -7,13 +7,26 @@ local function clamp(x,lo,hi) return math.max(lo,math.min(hi,x)) end
 local function finite(x) return type(x)=='number' and x==x and math.abs(x)<math.huge end
 local function copy3(v) return {v[1],v[2],v[3]} end
 
-function T.world_motion(dx,dy,view,scale)
+function T.world_motion(dx,dy,view,scale,anchor)
  local zoom=(view.focus or 5)/(view.distance or 14.1)
  local k=math.max(.001,(scale or 1)*zoom)
  local yaw,pitch=view.yaw or 0,view.pitch or .48
  local sx=dx/k
  local sy=dy/(k*math.max(.15,math.cos(pitch)))
  local c,s=math.cos(yaw),math.sin(yaw)
+ if view.projection=='perspective' and anchor then
+  -- Unproject the displaced screen point onto the anchor's horizontal plane.
+  local ax,ay,az=anchor[1],anchor[2],anchor[3]
+  local rx,ry=c*ax-s*ay,s*ax+c*ay
+  local cp,sp=math.cos(pitch),math.sin(pitch)
+  local depth=view.distance-sp*ry-cp*az
+  local focal=scale*view.focus
+  local u=rx/depth+dx/focal
+  local v=(cp*ry-sp*az)/depth+dy/focal
+  local newY=(v*(view.distance-cp*az)+sp*az)/math.max(.05,cp+v*sp)
+  sx=u*(view.distance-sp*newY-cp*az)-rx
+  sy=newY-ry
+ end
  return c*sx+s*sy,-s*sx+c*sy
 end
 
@@ -79,7 +92,7 @@ end
 
 function T.move(g,x,y,time,view,scale,bounds)
  if not T.track(g,x,y,time) then return false end
- local vx,vy=T.world_motion(x-g.x0,y-g.y0,view,scale)
+ local vx,vy=T.world_motion(x-g.x0,y-g.y0,view,scale,g.original.position)
  local b=g.body
  local pad=math.max(.4,(b.radius or .5)*.7)
  local hw=(bounds and bounds.half_x or 9.2)-pad
@@ -131,7 +144,7 @@ function T.release(g,x,y,time,view,scale,bounds)
   if g.t-sample[i].t<=.15 then recent=sample[i];break end
  end
  local dt=math.max(.025,g.t-recent.t)
- local dx,dy=T.world_motion(g.x-recent.x,g.y-recent.y,view,scale)
+ local dx,dy=T.world_motion(g.x-recent.x,g.y-recent.y,view,scale,g.body.position)
  local vx,vy=clamp(dx/dt,-18,18),clamp(dy/dt,-18,18)
  local b=g.body
  -- A simple release still drops the held die; vigorous swipes impart speed.

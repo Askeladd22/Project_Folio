@@ -298,14 +298,9 @@ function M:_draw_scene(args)
  self:_ensure(args.entries,args.extents,args.height,vp,args.style,args.divider)
  self:_update_faces(args.entries,args.offset,args.usable,args.drag_preview)
  local cam=self.g3d.camera
- self.camera.apply(args.view,cam,self.width,self.height,args.scale)
- -- Shift orthographic clip space to the exact projected tray position.
- -- Camera.apply's centre is canvas centre; the 2D overlay may use
- -- a different centre due to fitting, so preserve that screen alignment.
  local dx=args.cx-vp.x-self.width/2
  local dy=args.cy-vp.y-self.height/2
- cam.projectionMatrix[4]=cam.projectionMatrix[4]+2*dx/self.width
- cam.projectionMatrix[8]=cam.projectionMatrix[8]-2*dy/self.height
+ self.camera.apply(args.view,cam,self.width,self.height,args.scale,dx,dy)
  g.push('all')
  local ok,err=xpcall(function()
    -- Rendering happens in a tray-local Canvas, in pixel coordinates.

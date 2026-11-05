@@ -156,7 +156,7 @@ function G.begin(indices,dice,x,y,time,view,scale,bounds,anchor_index,hit_x,hit_
  local picked=dice[anchor_index or indices[1]] or dice[indices[1]]
  local ax,ay=picked.body.position[1],picked.body.position[2]
  if hit_x and hit_y then
-  local wx,wy=Single.world_motion(x-hit_x,y-hit_y,camera(view),scale)
+  local wx,wy=Single.world_motion(x-hit_x,y-hit_y,camera(view),scale,picked.body.position)
   ax,ay=ax+wx,ay+wy
  end
  local hold_velocity={}
@@ -171,7 +171,7 @@ end
 
 function G.move(g,x,y,time,view,scale,bounds)
  if not g or not g.group then return false end
- local dx,dy=Single.world_motion(x-g.x0,y-g.y0,camera(view),scale)
+ local dx,dy=Single.world_motion(x-g.x0,y-g.y0,camera(view),scale,{g.anchor_x,g.anchor_y,3.7})
  local cx,cy=g.anchor_x+dx,g.anchor_y+dy
  local limit=bounds or bounds_for(g)
  g.bounds=limit

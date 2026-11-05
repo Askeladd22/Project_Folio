@@ -56,7 +56,7 @@ function M.build(which)
    page_main=rect(56,119,1808,846),
    shelf=rect(72,910,386,52),
    shelf_label=rect(84,879,355,30),
-   tray=rect(210,229,1500,644),
+   tray=rect(60,229,1800,644),
    message=rect(280,898,1360,28),
    context_actions={rect(594,930,340,46),rect(986,930,340,46)},
    primary=rect(318,983,510,72),

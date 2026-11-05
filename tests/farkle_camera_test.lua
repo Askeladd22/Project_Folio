@@ -29,6 +29,9 @@ for _,width in ipairs{1280,1920,2560} do
  local _,rear=V.project(0,extents[3],0)
  local left=V.project(extents[1]-.4,extents[3]-.4,scene.box.border_height)
  local right=V.project(extents[2]+.4,extents[3]-.4,scene.box.border_height)
+ local farScale=select(4,V.project(0,region.y_back,.6))
+ local nearScale=select(4,V.project(0,region.y_front,.6))
+ assert(nearScale/farScale>1.12 and nearScale/farScale<1.24,'dice depth cue must stay readable')
  local fraction=(right-left)*k/width
  assert(fraction>=.75 and fraction<=.80,'table must occupy 75–80% of screen width')
  assert(math.abs(cy+rear*k-(layout.host.y+layout.host.h)*factor)<1,'rear rail disconnected from portrait')
@@ -49,6 +52,9 @@ for _,width in ipairs{1280,1920,2560} do
    local px,py=V.project(x,y,.6)
    local gx,gy=camera.screen(V,tray.w,tray.h,k,x,y,.6)
    assert(math.abs(gx-tray.w/2-px*k)<1e-7 and math.abs(gy-tray.h/2-py*k)<1e-7)
+   local mx,my=require('src.features.farkle.mouse_throw').world_motion(24,-18,V,k,{x,y,.6})
+   local qx,qy=V.project(x+mx,y+my,.6)
+   assert(math.abs((qx-px)*k-24)<1e-6 and math.abs((qy-py)*k+18)<1e-6)
    assert(cx+px*k>=tray.x and cx+px*k<=tray.x+tray.w and cy+py*k>=tray.y and cy+py*k<=tray.y+tray.h)
   end
  end

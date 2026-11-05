@@ -218,6 +218,7 @@ local function get_mouse_delta()
 end
 
 local function apply_tray_camera_lock()
+    view.projection = Scriptorium.minimalHud and 'perspective' or nil
     view.yaw = TRAY_CAMERA.yaw
     view.pitch = TRAY_CAMERA.pitch
     view.distance = TRAY_CAMERA.distance
@@ -544,9 +545,8 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
     -- in the transparent band above its rear rail.
     local render_viewport = tray
     if Scriptorium.minimalHud and fitted_scale then
-        local flight = math.ceil(DICE_SCENE_BOX_SCHEMA.height * view.sin_pitch
-            * view.focus / view.distance * fitted_scale)
-        local top = math.max(0, tray.y - flight)
+        local _, highest = view.project(0, world_extents[3], DICE_SCENE_BOX_SCHEMA.height)
+        local top = math.max(0, math.min(tray.y, math.floor(fitted_y + highest * fitted_scale)))
         render_viewport = {x=tray.x, y=top, w=tray.w, h=tray.h + tray.y - top}
     end
     local draw_offset_x = region.x_center or 0
@@ -626,7 +626,7 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
                         local radius_screen = math.max(10, math.sqrt((pxr - px) * (pxr - px) + (pyr - py) * (pyr - py)) * scale * 1.55)
                         local sx = cx + px * scale
                         local sy = cy + py * scale
-                        if sx >= tray.x and sx <= (tray.x + tray.w) and sy >= tray.y and sy <= (tray.y + tray.h) then
+                        if sx >= tray.x and sx <= (tray.x + tray.w) and sy >= render_viewport.y and sy <= (tray.y + tray.h) then
                             tray_die_hits[#tray_die_hits + 1] = {
                                 index = i,
                                 x = sx,

@@ -44,3 +44,40 @@ local m=C.matrix(v)
 for i=1,16 do nearly(mock.viewMatrix[i],m[i],'matrix '..i) end
 nearly(mock.aspectRatio,900/550,'aspect')
 print('PASS g3d camera parity: screen X/Y and camera depth at 18 angles')
+
+-- Exercise the real g3d projection matrix, including the off-centre canvas.
+local vendor=package.loaded['lib.g3d']
+package.loaded['lib.g3d']={path='lib.g3d'}
+local newMatrix=require('lib.g3d.matrices')
+package.loaded['lib.g3d']=vendor
+local gpu={viewMatrix=newMatrix(),projectionMatrix=newMatrix()}
+gpu.updateProjectionMatrix=function()
+ gpu.projectionMatrix:setProjectionMatrix(gpu.fov,.01,1000,gpu.aspectRatio)
+end
+local function transform(matrix,vec)
+ local out={}
+ for row=0,3 do
+  local i=row*4
+  out[row+1]=matrix[i+1]*vec[1]+matrix[i+2]*vec[2]+matrix[i+3]*vec[3]+matrix[i+4]*vec[4]
+ end
+ return out
+end
+local scene=require('src.data.dice_scene_schema')
+local cam=scene.tray_camera
+V.yaw,V.pitch,V.distance=cam.yaw,cam.pitch,cam.distance
+V.cos_yaw,V.sin_yaw=math.cos(V.yaw),math.sin(V.yaw)
+V.cos_pitch,V.sin_pitch=math.cos(V.pitch),math.sin(V.pitch)
+V.projection='perspective'
+local w,h,scale,dx,dy=1800,860,530,12,84
+C.apply(V,gpu,w,h,scale,dx,dy)
+for _,x in ipairs{-13,13} do
+ for _,y in ipairs{-6,6} do
+  for _,z in ipairs{.6,3.7,9} do
+   local clip=transform(gpu.projectionMatrix,transform(gpu.viewMatrix,{x,y,z,1}))
+   local px,py=V.project(x,y,z)
+   nearly(w*(1+clip[1]/clip[4])/2,w/2+dx+px*scale,'GPU/pick X')
+   nearly(h*(1-clip[2]/clip[4])/2,h/2+dy+py*scale,'GPU/pick Y')
+  end
+ end
+end
+print('PASS perspective GPU matrix and picking at rear/front, held and airborne heights')

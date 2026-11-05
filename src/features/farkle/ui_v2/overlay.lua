@@ -45,7 +45,9 @@ function M.draw(u,hits)
   if m.kind=='eligible' then
    -- A short underline signals scoring availability without hiding faces.
    g.setLineWidth(2.3*viewportScale)
-   local y=m.y+m.r+8
+   local y=m.y+m.r+8*viewportScale
+   local edge=u.trayProjection and u.trayProjection.floorEnd
+   if edge and y>edge-4*viewportScale then y=m.y-m.r-4*viewportScale end
    g.line(m.x-9,y,m.x+9,y)
   else
    g.setLineWidth((m.kind=='physical' and 2.1 or 2.8)*viewportScale)
