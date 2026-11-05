@@ -1,4 +1,7 @@
-# Regolamento ufficiale Farkle di Manuscript
+# Regolamento Farkle di Project Folio
+
+> I percorsi di audit e archivio riportati come codice si riferiscono ai
+> materiali locali citati nel rapporto originale, assenti dalla copia corrente.
 
 Versione 0.4, 15 ottobre 2026; **nota di contesto aggiornata al 30 ottobre 2026**. Questo documento consolida la consegna «Nuovo regolamento Farkle». Le regole implementate sono approvate; la taratura delle commissioni è provvisoria. La direzione futura degli incontri con miniature, descritta in [INCONTRI_E_SEGNI.md](INCONTRI_E_SEGNI.md), **non modifica questa tabella né costituisce implementazione di un nuovo sistema di combattimento**.
 
@@ -29,9 +32,9 @@ Sei D6. Un singolo 1 vale **10**, un singolo 5 **5**; 2, 3, 4 e 6 non valgono si
 
 Ogni dado mantiene il proprio ID fisico 1–6. Una selezione è valida soltanto se **tutti** i suoi dadi appartengono a gruppi validi e disgiunti: nessun dado può contare due volte. Non si usano dadi accantonati precedentemente per formare altre combinazioni, neppure aggiungendo successivamente altri dadi dello stesso tiro.
 
-Si possono selezionare solo alcuni dadi utili e rilanciare gli altri, rinunciando anche a una combinazione già presente. Il pulsante **Scelte** elenca tutti i sottoinsiemi validi per ID, con gruppi, punti e dadi residui; non seleziona automaticamente nulla. Clic sui dadi e tasti 1–6 restano disponibili. Il limite naturale è 63 sottoinsiemi non vuoti; la finestra li suddivide in pagine.
+Si possono selezionare solo alcuni dadi utili e rilanciare gli altri, rinunciando anche a una combinazione già presente. La selezione avviene direttamente sui dadi con il mouse oppure con i tasti 1–6. Il feedback mostra il valore della selezione. Il selettore paginato delle combinazioni è stato ritirato nella 0.1.23.
 
-**Convenzione di deduplicazione:** per lo stesso identico insieme di ID si mostra una sola partizione, quella di maggior valore; a parità di punti si preferisce la partizione che soddisfa il requisito di gruppo. Non si elimina alcun sottoinsieme fisicamente diverso. Il massimo riguarda la valutazione dei dadi scelti, non una scelta automatica dell'intero lancio.
+**Convenzione del valutatore:** per lo stesso identico insieme di ID si calcola una sola partizione, quella di maggior valore; a parità di punti si preferisce la partizione che soddisfa il requisito di gruppo. Non si elimina alcun sottoinsieme fisicamente diverso. Il massimo riguarda la valutazione dei dadi scelti, non una scelta automatica dell'intero lancio.
 
 Esempio `#1=1, #2=3, #3=3, #4=3, #5=4, #6=6`:
 
@@ -113,15 +116,15 @@ Sono state eseguite 4.800 mini-run numeriche isolate: 400 per combinazione di 2 
 | Inciso + Correttore dalla terza commissione | 200/400; 45,1–54,9% | 153/400; 33,6–43,1% |
 | Pesato + Correttore dalla terza commissione | 193/400; 43,4–53,1% | 162/400; 35,8–45,4% |
 
-Con soglie azzerate, politica valore: 167/400, 203/400, 202/400 rispettivamente. Campioni distinti e intervalli sovrapposti: non dimostrano un miglioramento causato dalle soglie. Il confronto build è confuso anche dalla medaglia assente nel controllo. Dati, seed e metodo sono conservati in [exact.csv](../audits/farkle-official/exact.csv), [simulation.csv](../audits/farkle-official/simulation.csv) e nello script storico di analisi dello stesso audit.
+Con soglie azzerate, politica valore: 167/400, 203/400, 202/400 rispettivamente. Campioni distinti e intervalli sovrapposti: non dimostrano un miglioramento causato dalle soglie. Il confronto build è confuso anche dalla medaglia assente nel controllo. Dati, seed e metodo sono conservati in exact.csv (`../audits/farkle-official/exact.csv`), simulation.csv (`../audits/farkle-official/simulation.csv`) e nello script storico di analisi dello stesso audit.
 
 **Proposta da playtestare, non ulteriore modifica:** confrontare la tabella corrente con obiettivi e turni identici ma ingresso/incasso 0/0. Solo dopo valutare l'eventuale aumento degli obiettivi, separato dall'aumento delle soglie. Non cercare una percentuale arbitraria di vittorie. La riserva di dadi è una scelta reale ma la specifica euristica «riserva» testata non risulta superiore.
 
 ## Test, limiti e decisioni aperte
 
-La suite copre tutte le combinazioni, ID disgiunti, selezione parziale, tiri separati, soglie e ingresso, hot ottenuti/incassati, Farkle, commissioni, medaglia e mapping. Smoke reali coprono avvio, selezione e rilancio fisico, inciso/pesato, A/B e HUD 1280×720/1920×1080; gli stati rari dell'HUD usano anche fixture numeriche, le cui pose 3D possono provenire dal tiro precedente. Non sono prove di uniformità fisica. Comandi riproducibili nel [README](../README.md).
+La suite copre tutte le combinazioni, ID disgiunti, selezione parziale, tiri separati, soglie e ingresso, hot ottenuti/incassati, Farkle, commissioni, medaglia e mapping. Gli smoke storici del 15 ottobre coprono avvio, selezione e rilancio fisico, inciso/pesato, A/B e HUD 1280×720/1920×1080; gli stati rari dell'HUD usano anche fixture numeriche, le cui pose 3D possono provenire dal tiro precedente. Non sono prove di uniformità fisica. Comandi dei test e dei laboratori in [TECHNICAL.md](TECHNICAL.md).
 
-Restano da valutare con giocatori: taratura degli incarichi, utilità di mostrare fino a 63 selezioni, influenza delle soglie sulle scelte forzate, convenienza relativa delle build. Incassare quando la consegna è soddisfatta domina il rischio senza premio aggiuntivo; equipaggiare gratuitamente una medaglia opzionale amplia le possibilità senza costo. Con sei dadi normali e Correttore disponibile, due Farkle IID consecutivi hanno probabilità circa 0,0536%: quel singolo tentativo può essere quasi privo di rischio, ma consuma il salvataggio. Non si certificano divertimento, equilibrio o assenza di strategie dominanti.
+Restano da valutare con giocatori: taratura degli incarichi, leggibilità della selezione diretta, influenza delle soglie sulle scelte forzate, convenienza relativa delle build. Incassare quando la consegna è soddisfatta domina il rischio senza premio aggiuntivo; equipaggiare gratuitamente una medaglia opzionale amplia le possibilità senza costo. Con sei dadi normali e Correttore disponibile, due Farkle IID consecutivi hanno probabilità circa 0,0536%: quel singolo tentativo può essere quasi privo di rischio, ma consuma il salvataggio. Non si certificano divertimento, equilibrio o assenza di strategie dominanti.
 
 ### Note architetturali (ottobre 2026)
 

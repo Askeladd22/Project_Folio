@@ -10,4 +10,4 @@ Installa [LÖVE 11.x](https://love2d.org/) e scarica il repository. Su Windows a
 
 Premi **Spazio** per lanciare, clicca sui dadi per selezionarli, premi **A** per accantonarli o **Invio** per incassare. Con **?** apri le regole.
 
-[Regole Farkle](docs/FARKLE_RULES.md) · [Visione del progetto](docs/PROJECT_VISION.md) · [Changelog](CHANGELOG.md) · [Crediti e licenze di terzi](third_party/)
+[Documentazione](docs/README.md) · [Regole Farkle](docs/FARKLE_RULES.md) · [Visione del progetto](docs/PROJECT_VISION.md) · [Changelog](CHANGELOG.md) · [Crediti e licenze di terzi](third_party/)

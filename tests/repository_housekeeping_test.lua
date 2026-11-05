@@ -10,7 +10,8 @@ assert(not exists('audits/ui-v2-review/20261101-101134-b2e7f4cb/hud/hud-usabilit
 assert(not exists('audits/ui-v2-review/20261101-101134-b2e7f4cb/hud/hud-usability-1920-fresh.hitboxes.tsv'),
  'archived November 1 hitboxes must not be reintroduced')
 for _,path in ipairs{
- 'resources/textures/tray/walnut.png',
+ 'resources/textures/wood.png',
+ 'resources/merchant/wood-floor.jpg',
  'resources/ui/menu_manuzio.png',
  'resources/ui/menu.png',
  'resources/ui/startup_splash/love.png',

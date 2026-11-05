@@ -1,6 +1,9 @@
 # Studio comparativo degli effetti visivi
 
-15 ottobre 2026. Ricognizione locale in sola lettura e ricerca su fonti primarie; laboratorio originale in [experiments/fx_lab](experiments/fx_lab/). Nessuna promozione nel gioco principale.
+> I percorsi di audit e archivio riportati come codice si riferiscono ai
+> materiali locali citati nel rapporto originale, assenti dalla copia corrente.
+
+15 ottobre 2026. Ricognizione locale in sola lettura e ricerca su fonti primarie; laboratorio originale in [experiments/fx_lab](../experiments/fx_lab). Nessuna promozione nel gioco principale.
 
 ## Esito e grado di verifica
 
@@ -32,7 +35,7 @@ Le directory reali sono state risolte anche dai collegamenti desktop; alcuni col
 
 Nei tre giochi Unity non sono stati trovati file sciolti `.shader`, `.glsl`, `.hlsl`, `.cginc`, `.anim`, `.mat`: ciò **non** significa che questi contenuti non esistano nei pacchetti. `boot.config` non è stato trattato come configurazione degli effetti. Le versioni Unity derivano dai metadati di `UnityPlayer.dll`, non dall'aspetto grafico.
 
-Evidenze riproducibili: [inventario archivi](audits/fx-study/archive-inventory.json), [parser originale](audits/fx-study/inventory_archives.py), [risultati archivi](audits/fx-study/archive-inventory.txt), [inventario Unity/Dicey](audits/fx-study/unity-inventory.txt). Gli inventari contengono percorsi, metadati e riferimenti; non raccolte di sorgenti o asset da riutilizzare.
+Evidenze riproducibili: inventario archivi (`audits/fx-study/archive-inventory.json`), parser originale (`audits/fx-study/inventory_archives.py`), risultati archivi (`audits/fx-study/archive-inventory.txt`), inventario Unity/Dicey (`audits/fx-study/unity-inventory.txt`). Gli inventari contengono percorsi, metadati e riferimenti; non raccolte di sorgenti o asset da riutilizzare.
 
 ### Riscontri tecnici specifici
 
@@ -50,10 +53,10 @@ Sessione locale del 15 ottobre 2026, screenshot puntuali attraverso Computer Use
 
 | Gioco | Copertura diretta | Evidenza / cosa manca |
 |---|---|---|
-| Balatro | Menu CRT e schermata di selezione del buio, obiettivo 300 e risorse del round | [Screenshot](audits/fx-study/observations/balatro-blind.png). Input non avanzati in modo affidabile; conteggio, edizioni e ricompense non misurati. |
+| Balatro | Menu CRT e schermata di selezione del buio, obiettivo 300 e risorse del round | Screenshot (`audits/fx-study/observations/balatro-blind.png`). Input non avanzati in modo affidabile; conteggio, edizioni e ricompense non misurati. |
 | Dicey Dungeons | Combattimento Warrior/Space Marine, pannelli equipaggiamento, dado e fumetto; variazione di posa fra snapshot | Screenshot nei risultati della sessione strumenti, non esportati in un file dedicato. Nessuna sequenza completa di inserimento o uso dell'equipaggiamento verificata. |
-| Scriptorium | Menu e sandbox vuoto, carta, selezione tessera, tavolozza e tooltip dei materiali | [Screenshot](audits/fx-study/observations/scriptorium-materials.png). Nessun deposito riuscito della figura o conclusione della commissione osservato. |
-| BOOK OF HOURS | Scena St Brandan's Cove: fondo granuloso, onde disegnate, velo atmosferico, punti luminosi, icone sature e pannello nero/oro nettamente separati | [Screenshot](audits/fx-study/observations/book-of-hours-cove.png). Non è una misura del moto delle onde/particelle o dell'illuminazione; nessuna attribuzione a uno shader particolare. |
+| Scriptorium | Menu e sandbox vuoto, carta, selezione tessera, tavolozza e tooltip dei materiali | Screenshot (`audits/fx-study/observations/scriptorium-materials.png`). Nessun deposito riuscito della figura o conclusione della commissione osservato. |
+| BOOK OF HOURS | Scena St Brandan's Cove: fondo granuloso, onde disegnate, velo atmosferico, punti luminosi, icone sature e pannello nero/oro nettamente separati | Screenshot (`audits/fx-study/observations/book-of-hours-cove.png`). Non è una misura del moto delle onde/particelle o dell'illuminazione; nessuna attribuzione a uno shader particolare. |
 | Slay the Spire | Primo combattimento completo, selezione/uso di Strike e Bash, passaggio di turno, stato Vulnerable, ricompense e scelta carta | Sequenza `spire-*.png` nella cartella osservazioni. Build V2.3.4 (12-18-2022). Creato dal gioco uno slot vuoto `fx`, nessun salvataggio preesistente sovrascritto. Audio e durata esatta NV. |
 | Luck Be a Landlord | Build v1.2.24: nuova partita, griglia iniziale, primo spin, conteggio e scelta di un simbolo | Dialogo firewall gestito dall'utente. Screenshot `luck-*.png`; catene complesse e audio non osservati. |
 | Inkulinati | Menu, Accademia, anteprima e creazione di due cani con spada nel tutorial | Build WIN_GOG_1.48.1.0. Screenshot `ink-*.png`; osservati contorni, posizioni, costo e risultato. Transitorio della mano non catturato dai campioni puntuali. |
@@ -99,7 +102,7 @@ Fonti: [versione 1.11](https://terrycavanagh.itch.io/dicey-dungeons/devlog/23310
 
 Fonti primarie dello sviluppatore: [Effects](https://github.com/TrampolineTales/LBAL-Modding-Docs/wiki/Effects), [Modding Variables](https://github.com/TrampolineTales/LBAL-Modding-Docs/wiki/Modding-Variables), [aggiornamento modding](https://blog.trampolinetales.com/the-magnificent-modding-update-patch-notes/). Sono l'evidenza più precisa dello studio sul rapporto fra animazione e destinatari semantici.
 
-Evidenze dirette: [prima dello spin](audits/fx-study/observations/luck-before-spin.png), [conteggio intermedio](audits/fx-study/observations/luck-spin-count.png), [scelta successiva](audits/fx-study/observations/luck-symbol-choice.png). La nuova partita parte da 1 moneta, arriva a 0 durante lo spin e a 5 dopo l'accredito; non deduco da questi tre frame l'algoritmo di animazione del contatore. Il comando Continue non ha aperto una partita; Start ha mostrato l'introduzione iniziale, senza richiesta di sovrascrittura.
+Evidenze dirette: prima dello spin (`audits/fx-study/observations/luck-before-spin.png`), conteggio intermedio (`audits/fx-study/observations/luck-spin-count.png`), scelta successiva (`audits/fx-study/observations/luck-symbol-choice.png`). La nuova partita parte da 1 moneta, arriva a 0 durante lo spin e a 5 dopo l'accredito; non deduco da questi tre frame l'algoritmo di animazione del contatore. Il comando Continue non ha aperto una partita; Start ha mostrato l'introduzione iniziale, senza richiesta di sovrascrittura.
 
 ### Slay the Spire
 
@@ -113,7 +116,7 @@ Evidenze dirette: [prima dello spin](audits/fx-study/observations/luck-before-sp
 
 Fonti: [BaseMod Custom Relics](https://github.com/daviscook477/BaseMod/wiki/Custom-Relics), [Card Border Glow Manager](https://github.com/daviscook477/BaseMod/wiki/Card-Border-Glow-Manager), [press kit Mega Crit](https://www.megacrit.com/press-kits/slay-the-spire/). Non sono stati decompilati i corpi delle classi.
 
-Evidenze dirette: [ingresso combattimento](audits/fx-study/observations/spire-battle-start.png), [bersaglio](audits/fx-study/observations/spire-target.png), [danno e blocco](audits/fx-study/observations/spire-hit.png), [stato applicato](audits/fx-study/observations/spire-status-impact.png), [energia esaurita](audits/fx-study/observations/spire-end-turn-ready.png), [turno avversario](audits/fx-study/observations/spire-enemy-turn.png), [Strike finale](audits/fx-study/observations/spire-final-strike.png), [ricompense](audits/fx-study/observations/spire-rewards.png), [scelta carta](audits/fx-study/observations/spire-card-reward.png). Sono snapshot in ordine causale, non una registrazione a frame rate noto: l'intervallo fra chiamate degli strumenti non misura la durata dell'effetto. Nell'ultima azione un frame con la scia era disponibile circa 233 ms dopo l'invio del clic; è un campione puntuale che include latenza di input/cattura, non la durata di Strike.
+Evidenze dirette: ingresso combattimento (`audits/fx-study/observations/spire-battle-start.png`), bersaglio (`audits/fx-study/observations/spire-target.png`), danno e blocco (`audits/fx-study/observations/spire-hit.png`), stato applicato (`audits/fx-study/observations/spire-status-impact.png`), energia esaurita (`audits/fx-study/observations/spire-end-turn-ready.png`), turno avversario (`audits/fx-study/observations/spire-enemy-turn.png`), Strike finale (`audits/fx-study/observations/spire-final-strike.png`), ricompense (`audits/fx-study/observations/spire-rewards.png`), scelta carta (`audits/fx-study/observations/spire-card-reward.png`). Sono snapshot in ordine causale, non una registrazione a frame rate noto: l'intervallo fra chiamate degli strumenti non misura la durata dell'effetto. Nell'ultima azione un frame con la scia era disponibile circa 233 ms dopo l'invio del clic; è un campione puntuale che include latenza di input/cattura, non la durata di Strike.
 
 ### Scriptorium: Master of Manuscripts
 
@@ -148,7 +151,7 @@ Fonti: [direzione artistica dei libri](https://weatherfactory.biz/boh-the-early-
 
 Fonti: [descrizione ufficiale](https://store.steampowered.com/app/957960/Inkulinati/), [comunicato Daedalic del 22 febbraio 2024](https://daedalic.prezly.com/wield-thy-quills-inkulinati-is-out-now-for-ye-olde-pc-nintendo-switch-playstation-and-xbox). Il filmato pre-release segnalato dallo sviluppatore nel 2021 non è una prova del runtime corrente.
 
-Evidenze dirette: [anteprima](audits/fx-study/observations/ink-preview.png), [prima figura creata](audits/fx-study/observations/ink-created.png), [due figure e cambio di stato](audits/fx-study/observations/ink-two-created.png). Questi snapshot verificano il cambiamento, non una rivelazione progressiva o una simulazione dell'inchiostro. Il laboratorio resta un'implementazione concettuale indipendente; la sua maschera non è attribuita al renderer di Inkulinati.
+Evidenze dirette: anteprima (`audits/fx-study/observations/ink-preview.png`), prima figura creata (`audits/fx-study/observations/ink-created.png`), due figure e cambio di stato (`audits/fx-study/observations/ink-two-created.png`). Questi snapshot verificano il cambiamento, non una rivelazione progressiva o una simulazione dell'inchiostro. Il laboratorio resta un'implementazione concettuale indipendente; la sua maschera non è attribuita al renderer di Inkulinati.
 
 ## Licenze e possibilità di riuso
 

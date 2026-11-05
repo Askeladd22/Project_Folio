@@ -1,5 +1,8 @@
 # Medaglie sperimentali: implementazione
 
+> I percorsi di audit e archivio riportati come codice si riferiscono ai
+> materiali locali citati nel rapporto originale, assenti dalla copia corrente.
+
 ## Piano circoscritto
 
 Lua/LuaJIT, LÖVE2D 11.x. Specifica comparativa: [ricerca](KCD2_MEDAGLIE_RICERCA.md).
@@ -73,7 +76,7 @@ Ambiente: LÖVE 11, LuaJIT 2.1.1700008891, OpenGL 3.3 NVIDIA RTX 5080. Log/scree
 
 I test unitari usano valori deterministici. I test fisici leggono i dadi reali: non assegnano esiti per far riuscire un rilancio. Gli screenshot dell'incasso usano fixture di regole dichiarate, quelli del rilancio selettivo sono catture di tiri fisici. Nessuna misura di distribuzione è dedotta da questi pochi tiri.
 
-Ispezionati visivamente catalogo, equipaggiamento, selezione e anteprima incasso alle due risoluzioni: testo e comandi nei pannelli, nessun cambiamento all'inquadratura. Esempi: [attivazione 720p](audits/medals-reference/final/hud/hud-usability-1280-reference-activation.png), [incasso 1080p](audits/medals-reference/final/hud/hud-usability-1920-reference-bank-preview.png).
+Ispezionati visivamente catalogo, equipaggiamento, selezione e anteprima incasso alle due risoluzioni: testo e comandi nei pannelli, nessun cambiamento all'inquadratura. Esempi: attivazione 720p (`audits/medals-reference/final/hud/hud-usability-1280-reference-activation.png`), incasso 1080p (`audits/medals-reference/final/hud/hud-usability-1920-reference-bank-preview.png`).
 
 Limite della copertura: il test unitario del filtro pesato dimostra conservazione dei valori e consumo singolo durante il rifiuto di una proposta. Non certifica ogni possibile movimento residuo dei dadi già accettati dopo un successivo rilancio del solo D1; quel percorso preesistente non è stato riscritto. Le prove fisiche documentano i casi eseguiti, non una garanzia per tutte le traiettorie. Revisione separata completata sulla maschera di esclusione e sulla sua durata; nessun ulteriore difetto grave rilevato.
 
