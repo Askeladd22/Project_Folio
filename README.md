@@ -42,9 +42,7 @@ La distinzione fra gameplay funzionante e proposte si trova in
   permanente di commissione/folio/strumenti, soli punteggi
   assicurati e a rischio, dadi accantonati visibili quando presenti.
   Il folio completo rimane consultabile con **F**.
-- **Sfida il Monaco (beta)**: modalità separata, attualmente un duello
-  Farkle simmetrico con bot e miniatura 2D. Conserva temporaneamente
-  il suo vecchio HUD; non è il futuro sistema di encounter asimmetrici.
+- Il Mercante illustrato accompagna la partita sul tavolo fisico.
 - Menu con scena di bottega veneziana in
   `resources/ui/menu_manuzio.png`; splash originale LÖVE conservato.
 

@@ -10,6 +10,13 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.16] - 2026-11-05
+
+- Rimossa la Sfida il Monaco (beta) dal menu e dal ciclo di gioco, inclusi
+  il bot dedicato, il pannello del duello e la rivincita.
+- Il collaudo del menu e la cattura di revisione seguono il tavolo del
+  Mercante. La cronologia della beta resta consultabile nel registro.
+
 ## [0.1.15] - 2026-11-05
 
 - Prova visiva del Tavolo del Mercante nella partita normale: ritratto,

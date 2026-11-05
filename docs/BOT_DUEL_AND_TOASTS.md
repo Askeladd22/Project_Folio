@@ -1,3 +1,5 @@
+> **Archivio storico.** La Sfida al Monaco è stata rimossa nella 0.1.16. Le istruzioni di gioco e i test descritti sotto si riferiscono alla beta ritirata.
+
 > **v0.1.0-dev.7:** la UI 2.0 è l'unica UI di
 > gioco e la pagina del Monaco si colloca ora
 > sotto il pannello di resoconto, non dietro di esso.

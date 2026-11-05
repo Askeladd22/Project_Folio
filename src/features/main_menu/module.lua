@@ -41,7 +41,6 @@ local AUDIO_TOGGLE_SFX = expect_string(FLOW_SCHEMA.audio_toggle, "flow.audio_tog
 local AUDIO_CONFIRM_SFX = expect_string(FLOW_SCHEMA.audio_confirm, "flow.audio_confirm")
 local AUDIO_HOVER_SFX = expect_string(FLOW_SCHEMA.audio_hover, "flow.audio_hover")
 local NAVIGATION_NEW_GAME = expect_string(FLOW_SCHEMA.navigation_new_game, "flow.navigation_new_game")
-local NAVIGATION_CONTINUE = expect_string(FLOW_SCHEMA.navigation_continue, "flow.navigation_continue")
 local NAVIGATION_SETTINGS = expect_string(FLOW_SCHEMA.navigation_settings, "flow.navigation_settings")
 local MUSIC_TRACK_ID = expect_string(FLOW_SCHEMA.music_track_id, "flow.music_track_id")
 local MAIN_THEME_MIX_GAIN = expect_number(FLOW_SCHEMA.main_theme_mix_gain, "flow.main_theme_mix_gain")
@@ -349,17 +348,6 @@ local function begin_new_game()
         end
     end)
     Navigation.go(NAVIGATION_NEW_GAME)
-end
-
-local function begin_bot_duel()
-    -- Independent opponent uses official scoring; human still throws physical D6.
-    local seed = os.time()
-    pcall(function()
-        if love.math and love.math.setRandomSeed then
-            love.math.setRandomSeed(seed)
-        end
-    end)
-    Navigation.go(NAVIGATION_CONTINUE, {new_run = true, bot_duel = true})
 end
 
 local function continue_game()
@@ -737,8 +725,6 @@ function MainMenu:activate(idx)
 
     if item.id == "new-game" then
         queue_transition(begin_new_game)
-    elseif item.id == "bot-duel" then
-        queue_transition(begin_bot_duel)
     elseif item.id == "continue" then
         queue_transition(continue_game)
     elseif item.id == "settings" then

@@ -23,7 +23,7 @@ for _,needle in ipairs({
  "shot(prefix..'choices-fixture')",
  "shot(prefix..'upgrade-fixture')",
  "shot(prefix..'medal-fixture')",
- "shot(prefix..'monk-live')",
+ "shot(prefix..'merchant-live')",
  "PASS current UI V2 visual review at both resolutions",
  "write_review_hitboxes(name)",
  "Res.to_screen(r.x,r.y)",

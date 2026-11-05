@@ -116,8 +116,8 @@ class EvidenceBundleTests(unittest.TestCase):
     def test_schema_lists_all_screenshot_pairs_and_original_reports(self):
         files = required_capture_files()
         self.assertEqual(len(files), 68)
-        self.assertIn("hud/hud-usability-1280-monk-live.png", files)
-        self.assertIn("hud/hud-usability-1920-monk-live.hitboxes.tsv", files)
+        self.assertIn("hud/hud-usability-1280-merchant-live.png", files)
+        self.assertIn("hud/hud-usability-1920-merchant-live.hitboxes.tsv", files)
         self.assertIn("review-manifest.json", files)
 
 
