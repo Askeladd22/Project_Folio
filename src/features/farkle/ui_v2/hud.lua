@@ -181,7 +181,7 @@ local function compact_status(u)
  if u.mouseThrow or u.manualRoll then return Actions.state(u) end
  if u.physicalFailure then return 'Tiro non valido: usa Riprova tiro fisico.' end
  if s.phase=='rolling' then return 'I dadi stanno rotolando…' end
- if s.phase=='fresh' then return 'Lancia i sei dadi.' end
+ if s.phase=='fresh' then return '' end
  if s.phase=='rescue' then return 'FARKLE · Usa il Correttore o accetta la perdita.' end
  if s.phase=='ended' then return 'Turno concluso · Continua con [N].' end
  if s.phase=='lost' then return 'Partita terminata · Nessun turno rimasto.' end
@@ -196,7 +196,7 @@ local function compact_status(u)
   return points and ('Selezione: '..points..' pt · Accantona [A] o incassa.')
    or 'Selezione non valida: scegli dadi che danno punti.'
  end
- if s.scored then return 'Rilancia oppure incassa il bottino.' end
+ if s.scored then return s.pot..' pt a rischio' end
  return 'Seleziona i dadi che danno punti.'
 end
 local merchant_art={}
@@ -223,7 +223,6 @@ local function draw_minimal(u)
  draw_table_art('table-host',layout.host)
  panel({x=44,y=20,w=420,h=72},parchment,border_ink,7)
  panel({x=1494,y=20,w=382,h=72},parchment,border_ink,7)
- draw_table_art('carving',layout.carving)
  write_fitted('ASSICURATI',layout.secured_caption,14,11,paper_muted)
  write_fitted(s.bank..' pt',layout.secured_value,25,16,paper_ink)
  write_fitted('A RISCHIO',layout.risk_caption,14,11,paper_muted)
@@ -240,6 +239,7 @@ local function draw_minimal(u)
  write_fitted(compact_status(u),layout.message,18,12,
    (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
    'center')
+ local solo=s.phase=='fresh' and s.medal=='none' and not u.physicalFailure
  local context=0
  for _,a in ipairs(actions) do
   if a.slot=='context' then
@@ -248,8 +248,8 @@ local function draw_minimal(u)
     'missing minimal table context slot')
    action_button(u,a,rect)
   elseif a.slot=='primary' then
-   action_button(u,a,layout.primary)
-  elseif a.slot=='secondary' then
+   action_button(u,a,solo and layout.single_action or layout.primary)
+  elseif a.slot=='secondary' and (a.id~='bank' or a.enabled) then
    action_button(u,a,layout.secondary)
   end
  end

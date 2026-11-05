@@ -45,7 +45,7 @@ function M.build(which)
    name=which,
    header=rect(44,20,1832,72),
    host=rect(210,0,1500,229),
-   carving=rect(855,989,210,63),
+   single_action=rect(734,882,452,72),
    secured_caption=rect(66,33,175,20),
    secured_value=rect(66,53,175,30),
    risk_caption=rect(264,33,177,20),
@@ -57,10 +57,10 @@ function M.build(which)
    shelf=rect(72,910,386,52),
    shelf_label=rect(84,879,355,30),
    tray=rect(60,229,1800,644),
-   message=rect(280,898,1360,28),
-   context_actions={rect(594,930,340,46),rect(986,930,340,46)},
-   primary=rect(318,983,510,72),
-   secondary=rect(1092,983,510,72),
+   message=rect(478,964,964,30),
+   context_actions={rect(472,882,224,38),rect(472,926,224,38)},
+   primary=rect(710,882,396,72),
+   secondary=rect(1122,882,364,72),
   }
  end
  local a=common()
