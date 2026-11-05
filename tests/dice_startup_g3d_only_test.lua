@@ -12,6 +12,9 @@ local source=read('src/app/dice_runtime.lua')
 local first=assert(source:find('local function spawn_initial_dice()',1,true))
 local last=assert(source:find('\nlocal function seed_rng()',first,true))
 local actual=source:sub(first,last-1)
+-- The extracted function must receive the same module-scoped scale as
+-- production; omitting it previously caused a nil global in headless CI.
+local tableDieScale=tonumber(assert(source:match('local TABLE_DIE_SCALE%s*=%s*([%d%.]+)')))
 assert(not actual:find('light.plastic',1,true),
  'CPU painter material must not be referenced by the g3d dice spawn')
 assert(not actual:find('material = die_material',1,true),
@@ -52,6 +55,7 @@ end
 local args={
  get_total_dice_count=function() return expected end,
  DICE_SIZE_BASE=config.sizes.base,
+ TABLE_DIE_SCALE=tableDieScale,
  DICE_SIZE_SCALE_REFERENCE_COUNT=config.sizes.scale_reference_dice_count,
  DICE_SIZE_MIN=config.sizes.min,
  DICE_POOL=pool,
@@ -88,7 +92,7 @@ local args={
 }
 local params={
  'get_total_dice_count','DICE_SIZE_BASE','DICE_SIZE_SCALE_REFERENCE_COUNT',
- 'DICE_SIZE_MIN','DICE_POOL','d6','newD6Body',
+ 'DICE_SIZE_MIN','TABLE_DIE_SCALE','DICE_POOL','d6','newD6Body',
  'initial_position_for_slot','build_face_colors','D8_PROTO_COLOR',
  'D6_PROTO_COLOR','D8_PROTO_TEXT','D6_PROTO_TEXT',
  'DICE_INITIAL_POSITION_Z','DICE_INITIAL_VELOCITY_EVEN',
@@ -110,9 +114,18 @@ callable(args)
 assert(#dice==expected and #box==expected and #bodies==expected,
  'real startup did not spawn and register all configured physical dice')
 assert(applied==expected,'startup must apply physical bone material to each body')
+local expectedSize=config.sizes.base
+if expected>config.sizes.scale_reference_dice_count then
+ local factor=math.sqrt(config.sizes.scale_reference_dice_count/expected)
+ expectedSize=math.max(config.sizes.min,
+   math.min(config.sizes.base,config.sizes.base*factor))
+end
+expectedSize=expectedSize*tableDieScale
 for index,entry in ipairs(dice) do
  assert(entry.body==box[index] and entry.die and entry.die.faces)
  assert(entry.die.material==nil,'legacy CPU material leaked into g3d die')
+ assert(math.abs(entry.body.size-expectedSize)<1e-9,
+  'D6 visual scale must match the real rigid body')
  assert(entry.body.position[3]==config.initial_state.position_z)
  assert(entry.kind=='d6' or entry.kind=='d8')
  assert(#entry.die.faceColors==#entry.die.faces)
