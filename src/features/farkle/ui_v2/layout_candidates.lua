@@ -45,22 +45,28 @@ function M.build(which)
    name=which,
    header=rect(44,20,1832,72),
    host=rect(210,0,1500,229),
-   single_action=rect(734,882,452,72),
-   secured_caption=rect(66,33,175,20),
-   secured_value=rect(66,53,175,30),
-   risk_caption=rect(84,879,105,30),
-   risk_value=rect(190,879,95,30),
+   -- One unified scorecard: the risk total is not stranded below the table.
+   score_panel=rect(44,20,414,72),
+   single_action=rect(758,905,404,72),
+   secured_caption=rect(63,32,173,20),
+   secured_value=rect(63,52,173,32),
+   risk_caption=rect(258,32,178,20),
+   risk_value=rect(258,52,178,32),
    help=rect(1510,32,145,46),
    runmenu=rect(1682,32,158,46),
    book=rect(44,107,1832,862),
    page_main=rect(56,119,1808,846),
-   shelf=rect(72,910,386,52),
-   shelf_label=rect(287,879,175,30),
+   -- Background command rail starts just before the table's front edge:
+   -- 3D geometry stays in the same viewport and is drawn over this rail.
+   footer=rect(0,860,1920,220),
+   footer_trim=rect(43,886,1834,167),
+   shelf=rect(82,902,390,54),
+   shelf_label=rect(88,879,374,24),
    tray=rect(60,229,1800,644),
-   message=rect(478,964,964,30),
-   context_actions={rect(472,882,224,38),rect(472,926,224,38)},
-   primary=rect(710,882,396,72),
-   secondary=rect(1122,882,364,72),
+   message=rect(684,994,830,37),
+   context_actions={rect(504,911,211,57),rect(504,974,211,49)},
+   primary=rect(740,905,406,72),
+   secondary=rect(1176,905,370,72),
   }
  end
  local a=common()
@@ -140,7 +146,8 @@ function M.validate(layout)
  if layout.name=='table_minimal' then
   local required={'header','book','page_main','shelf','tray','message',
    'primary','secondary','help','runmenu','secured_caption','secured_value',
-   'risk_caption','risk_value','shelf_label'}
+   'risk_caption','risk_value','shelf_label','score_panel',
+   'footer','footer_trim','single_action'}
   for _,name in ipairs(required) do
    local r=layout[name]
    if not r or r.w<=0 or r.h<=0 or not M.contains(bounds,r) then
@@ -154,14 +161,27 @@ function M.validate(layout)
      not M.contains(layout.header,layout.runmenu) then
    return false,'invalid table containment'
   end
+  if not M.contains(layout.score_panel,layout.secured_caption) or
+     not M.contains(layout.score_panel,layout.secured_value) or
+     not M.contains(layout.score_panel,layout.risk_caption) or
+     not M.contains(layout.score_panel,layout.risk_value) or
+     M.overlap(layout.secured_caption,layout.risk_caption)>0 or
+     M.overlap(layout.secured_value,layout.risk_value)>0 or
+     M.overlap(layout.score_panel,layout.help)>0 or
+     not M.contains(layout.footer,layout.footer_trim) then
+   return false,'invalid unified scorecard or command rail'
+  end
   for _,r in ipairs{layout.shelf,layout.header,layout.message,
-    layout.primary,layout.secondary,layout.help,layout.runmenu} do
+    layout.primary,layout.secondary,layout.single_action,
+    layout.help,layout.runmenu} do
    if M.overlap(r,layout.tray)>0 then
     return false,'minimal controls overlap the physical D6 field'
    end
   end
   if M.overlap(layout.primary,layout.secondary)>0 or
-     M.overlap(layout.help,layout.runmenu)>0 then
+     M.overlap(layout.help,layout.runmenu)>0 or
+     M.overlap(layout.message,layout.primary)>0 or
+     M.overlap(layout.message,layout.secondary)>0 then
    return false,'overlapping minimal table actions'
   end
   for _,r in ipairs(layout.context_actions) do

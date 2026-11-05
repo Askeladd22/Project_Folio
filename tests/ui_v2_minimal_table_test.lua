@@ -10,6 +10,15 @@ assert(Layout.validate(layout))
 assert(layout.tray.w>Layout.build('single_folio').tray.w,
  'normal physical playing field must reclaim old sidebar area')
 assert(layout.folio==nil and layout.context==nil and layout.sidebar_frame==nil)
+assert(Layout.contains(layout.score_panel,layout.risk_caption))
+assert(Layout.contains(layout.score_panel,layout.risk_value))
+assert(Layout.contains(layout.score_panel,layout.secured_value))
+assert(layout.risk_caption.y==layout.secured_caption.y)
+assert(layout.risk_value.y==layout.secured_value.y)
+assert(layout.footer.y<=layout.tray.y+layout.tray.h,
+ 'no black gap between front rail and physical table')
+assert(layout.message.y>=layout.primary.y+layout.primary.h,
+ 'status must stay below the main actions')
 local buttons={}
 local game=R.new()
 local u={game=game,presentation=P.new(game),minimalHud=true}
@@ -69,6 +78,16 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  local labels=table.concat(textDrawn,' | ')
  assert(labels:find('ASSICURATI',1,true) and
    labels:find('A RISCHIO',1,true))
+ local function painted(target)
+  for _,r in ipairs(rectangles) do
+   if r.mode=='fill' and r.x==target.x and r.y==target.y and
+      r.w==target.w and r.h==target.h then return true end
+  end
+  return false
+ end
+ assert(painted(layout.score_panel),'shared scorecard not drawn')
+ assert(painted(layout.footer),'wooden command rail not drawn')
+ assert(painted(layout.footer_trim),'command surface not drawn')
  for _,obsolete in ipairs{'COMMISSIONE','OBIETTIVO','TURNI',
                            'MANOSCRITTO','STRUMENTI','FOLIO 1'} do
   assert(not labels:find(obsolete,1,true),

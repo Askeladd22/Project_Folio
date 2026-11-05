@@ -10,6 +10,26 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.26] - 2026-11-05
+
+### Tavolo del Mercante
+- `Assicurati` e `A rischio` ora condividono un'unica scheda
+  leggibile nella parte superiore, anziché essere separati fra angoli.
+- Sostituita la vasta zona nera sotto il tavolo con una traversa
+  color legno per comandi, stato e dadi accantonati.
+- D6 un poco più presenti: fattore dimensione fisica
+  `TABLE_DIE_SCALE` da 0.85 a 0.94; mesh g3d e collisioni
+  sono ricavate dallo stesso corpo, senza zoom grafico fittizio.
+- Lasciati invariati inquadratura del Mercante, coordinate del
+  vassoio, regole Farkle e comandi di gioco.
+
+### Collaudo e limiti
+- Aggiornati test headless di pannelli, pulsanti e ridimensionamento
+  a 720p/1080p/1440p e ultrawide.
+- Le modifiche alla scala fisica dei dadi richiedono collaudo
+  su Windows con 50 lanci, collisioni, presa singola/gruppo e picking.
+  La CI non certifica la resa visiva.
+
 ## [0.1.25] - 2026-11-05
 
 - Ridotta del 15% la dimensione lineare dei dadi sul tavolo, inclusa la geometria delle collisioni. Le miniature dei dadi accantonati conservano la dimensione precedente.

@@ -1,3 +1,14 @@
+## Revisione del Tavolo del Mercante — 0.1.26 (5 novembre 2026)
+
+HUD ricomposto con punteggi assicurati e a rischio nella stessa
+scheda; sotto il tavolo è presente una traversa color legno per
+dadi accantonati, comandi e stato. La scala dei dadi fisici passa
+da 0.85 a 0.94, condivisa da mesh e collisioni. Prospettiva,
+perimetro del vassoio e regole Farkle rimangono invariati.
+
+**QA Windows aperta:** verificare picking, presa, 50 lanci, DPI,
+font grandi, audio e resa del tavolo a 720p/1080p/1440p.
+
 ## 0.1.16 · 5 novembre 2026
 
 Ritirata la Sfida il Monaco beta. La cattura di revisione corrente usa il tavolo del Mercante. Le voci seguenti documentano le versioni precedenti.

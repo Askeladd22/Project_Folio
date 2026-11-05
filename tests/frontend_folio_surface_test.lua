@@ -37,6 +37,9 @@ local Campaign=require('src.features.campaign_select.module')
 local build_main=get_upvalue(Main.draw,'compute_layout')
 local build_campaign=get_upvalue(Campaign.draw,'build_layout')
 local campaigns=require('src.data.commission_menu')
+local mainSchema=require('src.data.main_menu_schema')
+local expectedMenuCount=#mainSchema.menu_items
+assert(expectedMenuCount>=2,'menu schema must retain navigation controls')
 for i=1,70 do
  local name=debug.getupvalue(build_campaign,i)
  if name=='campaigns' then debug.setupvalue(build_campaign,i,campaigns);break end
@@ -50,7 +53,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  local w,h=size[1],size[2]
  local m=build_main(w,h)
  assert(Surface.within(m.frame,w,h),'menu page outside viewport')
- assert(#m.item_rects==6,'must not discard any menu item')
+ assert(#m.item_rects==expectedMenuCount,
+  'must render exactly the menu items defined by current schema')
  assert(inside(m.frame,m.mute_rect),'music mute outside folio page')
  for i,item in ipairs(m.item_rects) do
   assert(Surface.within(item,w,h),'menu action outside viewport')
@@ -60,7 +64,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
     'main actions overlap')
   end
  end
- assert(m.footer_y>m.item_rects[6].y+m.item_rects[6].h-1)
+ assert(m.footer_y>m.item_rects[#m.item_rects].y+
+   m.item_rects[#m.item_rects].h-1)
  local c=build_campaign()
  assert(Surface.within(c.frame,w,h),'commission page outside viewport')
  assert(#c.items==#campaigns+1,'only valid campaigns and Back')
@@ -122,4 +127,4 @@ end
 assert(a:find("MainMenu:activate",1,true))
 assert(c:find("start_campaign(campaign.id)",1,true))
 love=oldLove
-print('PASS unified parchment frontend: all six menu actions, Back, mute and card bounds at 720p/1080p/1440p')
+print('PASS unified parchment frontend: current menu actions, Back, mute and card bounds at 720p/1080p/1440p')
