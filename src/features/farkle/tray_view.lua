@@ -17,7 +17,7 @@ function T.fit(owner,tray,view,extents)
  local top=merchant and scene.box.border_height or 9
  for _,x in ipairs({extents[1]-rim,extents[2]+rim}) do
   for _,y in ipairs({extents[3]-rim,extents[4]+rim}) do
-   for _,z in ipairs({0,top}) do include(x,y,z) end
+   for _,z in ipairs({merchant and y>extents[4] and -top or 0,top}) do include(x,y,z) end
   end
  end
  for _,d in ipairs(dice) do for _,v in ipairs(d.body) do
