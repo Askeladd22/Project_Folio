@@ -15,10 +15,8 @@ assert(Layout.contains(layout.score_panel,layout.risk_value))
 assert(Layout.contains(layout.score_panel,layout.secured_value))
 assert(layout.risk_caption.y==layout.secured_caption.y)
 assert(layout.risk_value.y==layout.secured_value.y)
-assert(layout.footer.h<=110 and layout.footer.w<=1160,
- 'command plaque must not fill the bottom fifth of the screen')
-assert(layout.footer.y>=layout.tray.y+layout.tray.h,
- 'command plaque must stay outside the dice viewport')
+assert(layout.footer.y<=layout.tray.y+layout.tray.h,
+ 'no black gap between front rail and physical table')
 assert(layout.message.y>=layout.primary.y+layout.primary.h,
  'status must stay below the main actions')
 local buttons={}
@@ -88,8 +86,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
   return false
  end
  assert(painted(layout.score_panel),'shared scorecard not drawn')
- assert(painted(layout.footer),'compact command plaque not drawn')
- assert(painted(layout.footer_trim),'command plaque hairline not drawn')
+ assert(painted(layout.footer),'wooden command rail not drawn')
+ assert(painted(layout.footer_trim),'command surface not drawn')
  for _,obsolete in ipairs{'COMMISSIONE','OBIETTIVO','TURNI',
                            'MANOSCRITTO','STRUMENTI','FOLIO 1'} do
   assert(not labels:find(obsolete,1,true),
@@ -101,6 +99,19 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
   'six empty accepted-dice boxes must not be permanently drawn')
 end
 assert(R.start(game))
+-- A rolling turn must NOT retain a blank brown control panel.
+textDrawn,rectangles={},{}
+Hud.draw(u)
+local footerInFlight=false
+for _,r in ipairs(rectangles) do
+ if r.mode=='fill' and r.x==layout.footer.x and r.y==layout.footer.y
+   and r.w==layout.footer.w and r.h==layout.footer.h then
+  footerInFlight=true
+ end
+end
+assert(not footerInFlight,'empty command plaque visible while six D6 roll')
+assert(table.concat(textDrawn,' '):find('I dadi stanno rotolando',1,true),
+ 'roll status must remain readable without a panel')
 assert(R.settle(game,{1,5,2,3,4,6}))
 game.medal='retry'
 u.buttons={}
@@ -113,6 +124,11 @@ for _,id in ipairs{'medaluse'} do
  assert(Layout.overlap(b,layout.tray)==0)
 end
 assert(R.toggle(game,1))
+local bankEntry
+for _,a in ipairs(A.build(u)) do if a.id=='bank' then bankEntry=a end end
+assert(bankEntry and bankEntry.enabled and
+ not bankEntry.detail:find('minimo 0 pt',1,true),
+ 'remove meaningless zero minimum while preserving direct banking')
 assert(R.take(game))
 textDrawn,rectangles={},{}
 Accepted.draw(u)
@@ -137,7 +153,7 @@ for i=1,5 do assert(R.toggle(hand,i)) end
 local function check_selection(points)
  textDrawn={}
  Hud.draw(u)
- assert(table.concat(textDrawn,' '):find('Selezionati: +'..points..' pt · Non ancora accantonati',1,true))
+ assert(table.concat(textDrawn,' '):find('Selezione: '..points..' pt',1,true))
 end
 check_selection(50)
 assert(u.buttons.bank and u.buttons.bank.enabled)
