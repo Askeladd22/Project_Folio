@@ -64,8 +64,8 @@ function M.build(which)
    footer=rect(445,889,1030,94),
    footer_trim=rect(458,897,1004,2),
    -- The accepted-dice register is just to the LEFT of the plaque.
-   shelf=rect(51,913,384,51),
-   shelf_label=rect(55,884,382,25),
+   shelf=rect(56,913,384,51),
+   shelf_label=rect(58,884,382,25),
    tray=rect(60,229,1800,644),
    message=rect(655,988,610,33),
    idle_message=rect(707,907,506,36),
