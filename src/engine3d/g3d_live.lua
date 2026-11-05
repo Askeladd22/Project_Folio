@@ -98,14 +98,19 @@ local function shadow_vertices(body,offset)
  -- Height above actual ground is the approximate cube clearance,
  -- NOT the vertical position of its center. At rest the old shadow
  -- incorrectly faded as though the die were already airborne.
- local clearance=math.max(0,(p[3] or 0)-(body.radius or .65))
- local radius=math.max(.42,(body.radius or .65)*1.18)*
-  (1+math.min(clearance,8)*.045)
- local alpha=.34/(1+clearance*.32)
+ local bottom=-(body.radius or .65)
+ if #body>0 then
+  bottom=math.huge
+  for _,corner in ipairs(body) do bottom=math.min(bottom,corner[3]) end
+ end
+ local clearance=math.max(0,(p[3] or 0)+bottom)
+ local radius=math.max(.42,(body.radius or .65)*1.11)*
+  (1+math.min(clearance,8)*.09)
+ local alpha=.42/(1+clearance*.55)
  -- Small warm-light cast to make the footprint readable without adding
  -- an exaggerated opaque black blob under the entire cube.
- local cx=p[1]-(offset or 0)+.13+clearance*.11
- local cy=p[2]-.12-clearance*.07
+ local cx=p[1]-(offset or 0)+.035+clearance*.20
+ local cy=p[2]+.025+clearance*.14
  local vertices={}
  local function vertex(x,y,a)
   return {x,y,.012,0,0,0,0,1,.16,.105,.06,a}
@@ -208,8 +213,17 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
   -- The single opaque GPU floor replaces the historical overlaid 2D book
   -- ornaments. It participates in the SAME depth buffer as walls and dice.
+  local floor_texture=self.white
+  if style=='merchant' then
+   if not self.merchantWood then
+    self.merchantWood=g.newImage('resources/merchant/wood-floor.jpg',{mipmaps=true})
+    self.merchantWood:setFilter('linear','linear')
+    self.merchantWood:setMipmapFilter('linear')
+   end
+   floor_texture=self.merchantWood
+  end
   self.floor_model=self.g3d.newModel(
-   Scenery.floor_vertices(self.mesh,extents,style),self.white)
+   Scenery.floor_vertices(self.mesh,extents,style),floor_texture)
   self.walls=self.g3d.newModel(
    Scenery.style_vertices(self.mesh,extents,border,style),self.white)
   -- Do not overlay ruling lines across the play surface in the clean mode.

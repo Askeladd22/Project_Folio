@@ -35,6 +35,19 @@ assert(contact[2][1]-contact[1][1]>.7,
 local offset=G.shadow_vertices({position={2,0,.65},radius=.65},2)
 assert(math.abs(offset[1][1]-contact[1][1])<1e-8,
  'world shadow must honor split-tray rendering offset')
+local cornerBody={position={0,0,1},radius=1,{0,0,-.6}}
+local tilted=G.shadow_vertices(cornerBody,0)
+cornerBody[1][3]=-1
+local touching=G.shadow_vertices(cornerBody,0)
+assert(touching[1][12]>tilted[1][12],'clearance must follow the lowest rotated vertex')
+local scene=require('src.engine3d.g3d_scenery')
+local sides=scene.style_vertices(Mesh,{-14,14,-6,6},.74,'merchant')
+local fullHeight=false
+for _,v in ipairs(sides) do
+ assert(v[2]>=-6 and (v[2]>-6 or v[3]==0),'rear rail tip must meet the painted plane')
+ if v[2]>0 and v[3]==.74 then fullHeight=true end
+end
+assert(fullHeight,'front rail must keep its height')
 local sent={}
 local fake={send=function(_,k,v) sent[k]=v end}
 Materials.configure(fake,'ivory',{yaw=0,pitch=.62},false)
