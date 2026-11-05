@@ -10,6 +10,15 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.15] - 2026-11-05
+
+- Prova visiva del Tavolo del Mercante nella partita normale: ritratto,
+  bicchiere e posta illustrati sopra il vassoio fisico g3d color miele.
+  Il dado rosso del Mercante è un riferimento visivo fisso.
+- Il messaggio di selezione mostra il punteggio calcolato dalle regole.
+  Test headless per la mano da 50 punti e il passaggio a 30.
+  Collaudo interattivo in LÖVE su Windows ancora da effettuare.
+
 ## [0.1.14] - 2026-11-04
 
 **Tipo:** primo passaggio verso il tavolo Farkle essenziale, senza nuove

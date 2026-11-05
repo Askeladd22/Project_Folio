@@ -2,13 +2,13 @@
 -- GPU scene remains independent from Farkle rules, fixed stepping and picking.
 local S={}
 local PALETTE={
- book={.76,.67,.51},current={.35,.215,.12},
+ merchant={.45,.24,.105},book={.76,.67,.51},current={.35,.215,.12},
  A={.31,.18,.095},B={.48,.33,.20},C={.52,.43,.255},
 }
 -- Plain, non-textured floors keep the physical dice visually prominent.
 -- Unlike the old painter's manuscript rubrics these meshes share g3d depth.
 local FLOORS={
- book={.88,.79,.64},current={.36,.29,.22},
+ merchant={.80,.60,.34},book={.88,.79,.64},current={.36,.29,.22},
  A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
 }
 function S.floor_vertices(mesh,extents,style)
