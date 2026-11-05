@@ -47,7 +47,8 @@ function M.build(which)
    host=rect(210,0,1500,229),
    -- One unified scorecard: the risk total is not stranded below the table.
    score_panel=rect(44,20,414,72),
-   single_action=rect(807,904,394,68),
+   -- Align the one-button state to the same axis as the real tray.
+   single_action=rect(763,904,394,68),
    secured_caption=rect(63,32,173,20),
    secured_value=rect(63,52,173,32),
    risk_caption=rect(258,32,178,20),
@@ -58,16 +59,19 @@ function M.build(which)
    page_main=rect(56,119,1808,846),
    -- A small command plaque, shown ONLY when controls are present.
    -- The physical tray, its rear seam and g3d camera stay untouched.
-   footer=rect(492,889,1030,94),
-   footer_trim=rect(505,897,1004,2),
-   shelf=rect(78,913,384,51),
-   shelf_label=rect(82,884,382,25),
+   -- The compact plaque, its trim and composite action row now share
+   -- the tray's real 1920-wide center (x=960); no camera/physics change.
+   footer=rect(445,889,1030,94),
+   footer_trim=rect(458,897,1004,2),
+   -- The accepted-dice register is just to the LEFT of the plaque.
+   shelf=rect(56,913,384,51),
+   shelf_label=rect(58,884,382,25),
    tray=rect(60,229,1800,644),
-   message=rect(694,988,798,33),
+   message=rect(655,988,610,33),
    idle_message=rect(707,907,506,36),
-   context_actions={rect(506,904,186,67),rect(506,977,186,43)},
-   primary=rect(712,904,392,68),
-   secondary=rect(1123,904,383,68),
+   context_actions={rect(459,904,186,67),rect(459,977,186,43)},
+   primary=rect(665,904,392,68),
+   secondary=rect(1076,904,383,68),
   }
  end
  local a=common()
@@ -184,6 +188,16 @@ function M.validate(layout)
     return false,'minimal controls overlap the physical D6 field'
    end
   end
+  local center=layout.tray.x+layout.tray.w*.5
+  local function aligned(r) return math.abs(r.x+r.w*.5-center)<=3 end
+  local actions_left=layout.context_actions[1].x
+  local actions_right=layout.secondary.x+layout.secondary.w
+  if not aligned(layout.footer) or not aligned(layout.footer_trim) or
+     not aligned(layout.single_action) or not aligned(layout.idle_message) or
+     not aligned(layout.message) or
+     math.abs((actions_left+actions_right)*.5-center)>3 then
+   return false,'merchant controls are not centered on physical table'
+  end
   if M.overlap(layout.primary,layout.secondary)>0 or
      M.overlap(layout.help,layout.runmenu)>0 or
      M.overlap(layout.message,layout.primary)>0 or
@@ -194,7 +208,8 @@ function M.validate(layout)
   end
   for _,r in ipairs(layout.context_actions) do
    if not M.contains(bounds,r) or M.overlap(r,layout.tray)>0 or
-     M.overlap(r,layout.primary)>0 or M.overlap(r,layout.secondary)>0 then
+     M.overlap(r,layout.primary)>0 or M.overlap(r,layout.secondary)>0 or
+     M.overlap(r,layout.message)>0 then
     return false,'invalid minimal contextual action'
    end
   end
