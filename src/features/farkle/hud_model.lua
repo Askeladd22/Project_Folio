@@ -63,6 +63,19 @@ function H.eligible(s)
  end
  return ids,count
 end
+-- An unfinished group is still useful if all chosen physical IDs are
+-- contained in at least one legal option from this throw.
+function H.can_complete(s)
+ if s.phase~='ready' or not next(s.selected) then return false end
+ for _,option in ipairs(R.options(s)) do
+  local all=true
+  for id in pairs(s.selected) do
+   if math.floor(option.mask/2^(id-1))%2==0 then all=false;break end
+  end
+  if all then return true end
+ end
+ return false
+end
 function H.selected_count(s)
  local n=0;for i=1,6 do if s.selected[i] and not s.used[i] then n=n+1 end end;return n
 end

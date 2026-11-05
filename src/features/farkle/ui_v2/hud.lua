@@ -192,23 +192,43 @@ local function compact_status(u)
  end
  if s.hot then return 'Dadi caldi · Rilancia tutti e sei oppure incassa.' end
  if next(s.selected) then
-  local points=R.selection(s)
-  if not points then return 'Selezione non valida: ogni dado scelto deve fare punti.' end
-  return 'Selezionati: +'..points..' pt · Non ancora accantonati'
+  if R.selection(s) then return '' end
+  if H.can_complete(s) then return 'Aggiungi i dadi che completano la combinazione.' end
+  return 'Deseleziona i dadi che non fanno parte di una combinazione.'
  end
  if s.scored then return '' end
- return 'Scegli i dadi da accantonare · clic oppure 1–6'
+ local eligible=H.eligible(s)
+ local keys={}
+ for i=1,6 do if eligible[i] then keys[#keys+1]='['..i..']' end end
+ if #keys==0 then return '' end
+ return 'Scegli i dadi segnati · clic o tasti '..table.concat(keys,' ')
 end
-local merchant_art={}
-local function draw_table_art(name,rect)
+local merchant_room,room_edges
+local function draw_merchant_room()
  local g=love.graphics
- local image=merchant_art[name]
- if not image then
-  image=g.newImage('resources/merchant/'..name..'.jpg')
-  merchant_art[name]=image
+ local w,h=Layout.virtual_w,Layout.virtual_h
+ if not merchant_room then
+  merchant_room=g.newImage('resources/merchant/table-host.jpg')
+  local iw,ih=merchant_room:getWidth(),merchant_room:getHeight()
+  -- Mirror only a strip of the empty room past the composition on
+  -- non-16:9 windows. Never duplicate the host or rescale the seam.
+  local side,top,base=math.max(1,math.floor(iw*.09)),
+   math.max(1,math.floor(ih*.012)),math.max(1,math.floor(ih*.07))
+  room_edges={left=g.newQuad(0,0,side,ih,iw,ih),right=g.newQuad(iw-side,0,side,ih,iw,ih),
+   top=g.newQuad(0,0,iw,top,iw,ih),base=g.newQuad(0,ih-base,iw,base,iw,ih),
+   side=side,top_h=top,base_h=base}
  end
+ local iw,ih=merchant_room:getWidth(),merchant_room:getHeight()
+ local x,y=Res.to_virtual(0,0)
  g.setColor(1,1,1,1)
- g.draw(image,rect.x,rect.y,0,rect.w/image:getWidth(),rect.h/image:getHeight())
+ g.draw(merchant_room,0,0,0,w/iw,h/ih)
+ if x<-.001 then
+  g.draw(merchant_room,room_edges.left,0,0,0,x/room_edges.side,h/ih)
+  g.draw(merchant_room,room_edges.right,w-x,0,0,x/room_edges.side,h/ih)
+ elseif y<-.001 then
+  g.draw(merchant_room,room_edges.top,0,0,0,w/iw,y/room_edges.top_h)
+  g.draw(merchant_room,room_edges.base,0,h-y,0,w/iw,y/room_edges.base_h)
+ end
 end
 local function draw_minimal(u)
  local s=u.game
@@ -220,7 +240,7 @@ local function draw_minimal(u)
  Res.begin_ui()
  g.setColor(.077,.060,.047,1)
  g.rectangle('fill',0,0,1920,1080)
- draw_table_art('table-host',layout.host)
+ draw_merchant_room()
  -- Keep both sides of the wager in one legible scorecard.
  panel(layout.score_panel,parchment,border_ink,7)
  g.setColor(unpack(Art.rgba('border',.48)))
@@ -233,13 +253,16 @@ local function draw_minimal(u)
  write_fitted(s.pot..' pt',layout.risk_value,25,16,paper_warning)
  -- Keep the timber plaque small and never show an empty panel while
  -- the dice are rolling. Controls are actual actions, not placeholders.
- local has_controls=false
+ local visible_controls,has_context=0,false
  for _,a in ipairs(actions) do
-  if a.slot=='primary' or a.slot=='secondary' or a.slot=='context' then
-   if a.id~='bank' or a.enabled then has_controls=true;break end
+  if a.slot=='context' then
+   has_context=true
+   visible_controls=visible_controls+1
+  elseif a.slot=='primary' or a.slot=='secondary' and (a.id~='bank' or a.enabled) then
+   visible_controls=visible_controls+1
   end
  end
- if has_controls then
+ if visible_controls>0 then
   panel(layout.footer,Art.rgba('earth_dark',.95),Art.rgba('timber',.64),6)
   g.setColor(unpack(Art.rgba('ochre_light',.35)))
   g.rectangle('fill',layout.footer_trim.x,layout.footer_trim.y,
@@ -255,12 +278,23 @@ local function draw_minimal(u)
   write_fitted('DADI ACCANTONATI',layout.shelf_label,16,12,Art.rgba('ochre_light'))
  end
  local choosing=s.phase=='ready' and not s.scored and not next(s.selected) and not u.physicalFailure
- local notice_rect=(not has_controls or choosing)
+ local notice_rect=(visible_controls==0 or choosing)
    and layout.idle_message or layout.message
  write_fitted(compact_status(u),notice_rect,choosing and 20 or 18,12,
    (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
    'center')
- local solo=s.phase=='fresh' and s.medal=='none' and not u.physicalFailure
+ local primary,secondary=layout.primary,layout.secondary
+ if not has_context then
+  if visible_controls==1 then
+   primary,secondary=layout.single_action,layout.single_action
+  elseif visible_controls==2 then
+   -- This frame owns its layout. Slide the pair together so the gap
+   -- stays the same and the two outer edges balance on the tray axis.
+   local axis=layout.tray.x+layout.tray.w/2
+   local shift=axis-(primary.x+secondary.x+secondary.w)/2
+   primary.x,secondary.x=primary.x+shift,secondary.x+shift
+  end
+ end
  local context=0
  for _,a in ipairs(actions) do
   if a.slot=='context' then
@@ -269,9 +303,9 @@ local function draw_minimal(u)
     'missing minimal table context slot')
    action_button(u,a,rect)
   elseif a.slot=='primary' then
-   action_button(u,a,solo and layout.single_action or layout.primary)
+   action_button(u,a,primary)
   elseif a.slot=='secondary' and (a.id~='bank' or a.enabled) then
-   action_button(u,a,layout.secondary)
+   action_button(u,a,secondary)
   end
  end
  Res.end_ui()

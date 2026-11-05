@@ -42,6 +42,7 @@ assert(not buttons.folio,'no always-visible folio panel in player mode')
 local savedLove=love
 local width,height=1920,1080
 local textDrawn,rectangles={},{}
+local footerNotice
 local push,pop=0,0
 local currentFont=nil
 local function mock_font(pt)
@@ -63,6 +64,7 @@ love={graphics=setmetatable({
  push=function()push=push+1 end,pop=function()pop=pop+1 end,
  printf=function(s,x,y,w)
   textDrawn[#textDrawn+1]=tostring(s)
+  if y>=layout.message.y and y<layout.message.y+layout.message.h then footerNotice=tostring(s) end
  end,
  rectangle=function(mode,x,y,w,h)
   rectangles[#rectangles+1]={mode=mode,x=x,y=y,w=w,h=h}
@@ -154,24 +156,54 @@ Hud.draw(u)
 assert(not u.buttons.roll and not u.buttons.take and not u.buttons.choices)
 assert(R.toggle(game,3))
 Hud.draw(u)
-assert(u.buttons.take.enabled and u.buttons.take.label:find('+5 pt',1,true))
+assert(u.buttons.take.enabled and u.buttons.take.label=='Accantona · 5 pt')
 assert(R.take(game) and game.pot==20)
 Hud.draw(u)
 assert(u.buttons.roll.enabled and u.buttons.roll.label=='Rilancia 3 dadi')
 local hand=R.new()
 assert(R.start(hand) and R.settle(hand,{1,1,3,3,3,6}))
 u.game=hand
+textDrawn={}
+Hud.draw(u)
+local hints=table.concat(textDrawn,' ')
+assert(hints:find('[1] [2] [3] [4] [5]',1,true) and not hints:find('[6]',1,true),
+ 'keyboard users need the IDs of dice that can contribute, including the triple')
+assert(R.toggle(hand,3))
+footerNotice=nil
+Hud.draw(u)
+assert(u.buttons.take and not u.buttons.bank)
+assert(u.buttons.take.x+u.buttons.take.w/2==center,'a lone scoring control must be centered')
+assert(footerNotice and footerNotice:find('completano',1,true),'partial group needs a next step')
+assert(R.toggle(hand,6))
+footerNotice=nil
+Hud.draw(u)
+assert(footerNotice and footerNotice:find('Deseleziona',1,true),'impossible set needs a correction')
+assert(R.toggle(hand,6) and R.toggle(hand,3))
 for i=1,5 do assert(R.toggle(hand,i)) end
 local function check_selection(points)
- textDrawn={}
+ textDrawn={};footerNotice=nil
  Hud.draw(u)
- assert(table.concat(textDrawn,' '):find(
-  'Selezionati: +'..points..' pt · Non ancora accantonati',1,true))
+ assert(u.buttons.take.label=='Accantona · '..points..' pt',
+   'the primary action must quote the exact uncommitted group score')
+ assert(hand.pot==0,'preview changed the amount at risk')
+ assert(math.abs((u.buttons.take.x+u.buttons.bank.x+u.buttons.bank.w)/2-center)<1,
+   'the actual visible action pair must be centered without a medal')
+ assert(not footerNotice,'a valid selection already gives its instructions on the two buttons')
 end
 check_selection(50)
 assert(u.buttons.bank and u.buttons.bank.enabled)
 assert(R.toggle(hand,1) and R.toggle(hand,2))
 check_selection(30)
+hand.medal='retry'
+Hud.draw(u)
+assert(u.buttons.medaluse.x==layout.context_actions[1].x and u.buttons.take.x==layout.primary.x
+ and u.buttons.bank.x==layout.secondary.x,'three visible controls must retain the contextual slots')
+assert(R.take(hand))
+textDrawn={};footerNotice=nil
+Hud.draw(u)
+assert(u.buttons.roll.enabled and u.buttons.bank.enabled)
+assert(not footerNotice or not footerNotice:find('Scegli i dadi',1,true),
+ 'additional scoring dice are optional once the player may roll or bank')
 assert(Layout.overlap(layout.host,layout.tray)==0)
 assert(Layout.overlap(layout.host,layout.shelf)==0)
 love=savedLove

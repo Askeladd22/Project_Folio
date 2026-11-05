@@ -31,7 +31,11 @@ function T.fit(owner,tray,view,extents)
   local layout=require('src.features.farkle.ui_v2.layout_candidates').build('table_minimal')
   local left=view.project(extents[1]-rim,extents[3],0)
   local right=view.project(extents[2]+rim,extents[3],0)
-  target=math.min(target,tray.w*(layout.host.w/layout.tray.w)/(right-left))
+  -- The anchor is the floor seam, not the top of an imaginary rear
+  -- rail. Flight headroom is rendered above it by dice_runtime.
+  local _,rear=view.project(0,extents[3],0)
+  target=math.min(tray.w/(maxx-minx),tray.h/(maxy-rear),
+   tray.w*(layout.rear_span/layout.tray.w)/(right-left))
  end
  local scale=target
  if not merchant then

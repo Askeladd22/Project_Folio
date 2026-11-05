@@ -1,16 +1,20 @@
--- UI v2 P3: deliberately small screen-space indicators around g3d dice.
--- The legacy shelf/folio/modal painter remains a separate temporary path.
+-- Legible marks beside the pips, with silhouettes taken from the same
+-- projected physical dice the pointer picks.
 local Model=require('src.features.farkle.ui_v2.overlay_model')
 local UI=require('src.core.runtime_ui')
+local Bridge=require('src.core.engine_bridge')
+local Res=require('src.core.resolution_manager')
 local M={}
 local fonts={}
 local function palette()
  if UI.high_contrast() then
   return {physical={.30,1,1,1},score={1,.86,.20,1},
-    invalid={1,.28,.28,1},eligible={1,.96,.64,1}}
+    partial={1,.86,.20,1},invalid={1,.52,.46,1},eligible={1,.96,.64,1},
+    neutral={1,1,1,.85},hover={1,1,.94,1}}
  end
  return {physical={.40,.83,.91,.96},score={1,.80,.30,.98},
-   invalid={.98,.34,.30,.98},eligible={.94,.81,.54,.74}}
+   partial={.96,.78,.41,1},invalid={1,.54,.46,1},eligible={.96,.82,.52,.95},
+   neutral={.88,.84,.76,.52},hover={1,.95,.77,.94}}
 end
 local function colour(c)
  love.graphics.setColor(c[1],c[2],c[3],c[4])
@@ -25,12 +29,58 @@ local function corner_marks(x,y,r,extended)
  g.line(x-d,y+d-reach,x-d,y+d,x-d+reach,y+d)
  g.line(x+d-reach,y+d,x+d,y+d,x+d,y+d-reach)
 end
+local edgeInk={.18,.12,.065,.86}
+local function score_mark(m,colors,scale,floorEdge)
+ local g=love.graphics
+ local chosen=m.kind=='score' or m.kind=='partial' or m.kind=='invalid'
+ -- Trace the actual cube contour for hover and selection. The ink backing
+ -- keeps a hairline legible against both ivory and brightly lit wood.
+ if m.outline and (m.hovered or chosen) then
+  local stroke=chosen and 2.5 or 1.4
+  g.setLineWidth((stroke+1.8)*scale);colour(edgeInk)
+  g.polygon('line',m.outline)
+  g.setLineWidth(stroke*scale)
+  colour(chosen and colors[m.kind] or m.kind=='neutral' and colors.neutral or colors.hover)
+  g.polygon('line',m.outline)
+ end
+ if m.kind=='neutral' then return end
+ -- The anchor follows the lower (or, at the front rail, upper) hull edge
+ -- so the mark never moves across the pips of a large foreground die.
+ local low,high=m.y+m.r,m.y-m.r
+ if m.outline then
+  low,high=-math.huge,math.huge
+  for i=2,#m.outline,2 do low=math.max(low,m.outline[i]);high=math.min(high,m.outline[i]) end
+ end
+ local y=low+4*scale
+ if floorEdge and y>floorEdge-6*scale then y=high-6*scale end
+ local x=m.x
+ local function glyph()
+  if m.kind=='score' then
+   g.line(x-7*scale,y,x-2*scale,y+3*scale,x+7*scale,y-3*scale)
+  elseif m.kind=='invalid' then
+   g.line(x-3*scale,y-3*scale,x+3*scale,y+3*scale)
+   g.line(x+3*scale,y-3*scale,x-3*scale,y+3*scale)
+  elseif m.kind=='partial' then
+   g.line(x-8*scale,y,x-3*scale,y)
+   g.line(x+3*scale,y,x+8*scale,y)
+  else
+   g.line(x-8*scale,y,x+8*scale,y)
+  end
+ end
+ g.setLineWidth((chosen and 4.8 or 4)*scale);colour(edgeInk);glyph()
+ g.setLineWidth((chosen and 2.5 or 2)*scale);colour(colors[m.kind]);glyph()
+end
 function M.draw(u,hits)
- local model=Model.build(u,hits)
+ local hover
+ if u.game and u.game.phase=='ready' and not u.modal and not u.mouseThrow and
+    not u.marquee and love.mouse and love.mouse.getPosition then
+  hover=Bridge.pickTrayDie(love.mouse.getPosition())
+ end
+ local model=Model.build(u,hits,hover)
  local g=love.graphics
  g.push('all')
  local colors=palette()
- local viewportScale=math.max(.5,math.min(1.8,UI.scale()))
+ local viewportScale=math.max(.8,math.min(2,Res.get_scale()*UI.scale()))
  if model.marquee then
   local r=model.marquee
   colour(colors.physical)
@@ -47,20 +97,7 @@ function M.draw(u,hits)
    g.setLineWidth(2.1*viewportScale)
    corner_marks(m.x,m.y,math.min(24,m.r),false)
   else
-   -- A compact, die-attached underline replaces the enormous disconnected
-   -- gold brackets. Valid selection: two strokes; invalid: one red stroke;
-   -- available scoring die: one short muted tick. No pip is covered.
-   local shift=math.min(29,m.r+3*viewportScale)
-   local y=m.y+shift
-   local edge=u.trayProjection and u.trayProjection.floorEnd
-   if edge and y>edge-4*viewportScale then y=m.y-shift end
-   local half=(m.kind=='eligible' and 8 or 13)*viewportScale
-   g.setLineWidth((m.kind=='eligible' and 1.5 or 2.9)*viewportScale)
-   g.line(m.x-half,y,m.x+half,y)
-   if m.kind=='score' then
-    g.line(m.x-half+3*viewportScale,y+4*viewportScale,
-           m.x+half-3*viewportScale,y+4*viewportScale)
-   end
+   score_mark(m,colors,viewportScale,u.trayProjection and u.trayProjection.floorEnd)
   end
  end
  if model.hand then

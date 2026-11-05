@@ -54,8 +54,9 @@ function M.build(u)
   local pts=R.selection(s)
   local has_selection=next(s.selected)~=nil
   if has_selection then
-   local n=H.selected_count(s)
-   add('take',pts and ('Accantona '..n..' · +'..pts..' pt') or 'Selezione non valida',
+   local label=pts and ('Accantona · '..pts..' pt')
+     or (H.can_complete(s) and 'Completa la combinazione' or 'Selezione non valida')
+   add('take',label,
      pts~=nil,function() u:act('take',function() return R.take(s) end) end,
      'primary',u.minimalHud and '[A] · Aggiungi ai punti a rischio'
        or '[A] · Convalida la combinazione')

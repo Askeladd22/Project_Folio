@@ -25,6 +25,8 @@ assert(Layout.overlap(L.shelf,L.footer)==0,
 for _,r in ipairs{L.shelf,L.primary,L.secondary,L.single_action,L.message,L.idle_message} do
  assert(Layout.overlap(L.tray,r)==0,'action obstructs physical D6 viewport')
 end
+assert(Layout.overlap(L.context_actions[1],L.idle_message)==0,
+ 'the ready instruction must stay readable beside an equipped medal')
 assert(Layout.overlap(L.primary,L.secondary)==0)
 local file=assert(io.open('src/app/dice_runtime.lua','rb'))
 local code=file:read('*a');file:close()
@@ -48,5 +50,47 @@ for _,wh in ipairs{{1920,1080},{1280,720},{2560,1440},{3440,1440}} do
   local vx,vy=Res.to_virtual(x,y)
   assert(math.abs(vx-(r.x+r.w/2))<1e-6 and math.abs(vy-(r.y+r.h/2))<1e-6)
  end
+end
+-- Even with letterbox or pillarbox space, the actual room art must reach
+-- all four physical edges. The central illustration stays in proportion.
+local images={}
+local function image(w,h)
+ return {getWidth=function() return w end,getHeight=function() return h end}
+end
+local font={getWidth=function(_,s) return #s*8 end,getHeight=function() return 16 end}
+love={graphics=setmetatable({
+ newImage=function() return image(1920,1080) end,newFont=function() return font end,
+ newQuad=function(x,y,w,h) return {width=w,height=h} end,
+ draw=function(im,q,x,y,angle,sx,sy)
+  local w,h=im:getWidth(),im:getHeight()
+  if type(q)=='number' then q,x,y,angle,sx,sy=nil,q,x,y,angle,sx end
+  if q then w,h=q.width,q.height end
+  local x2,y2=x+w*(sx or 1),y+h*(sy or 1)
+  images[#images+1]={x=math.min(x,x2),y=math.min(y,y2),w=math.abs(x2-x),h=math.abs(y2-y),
+   sx=math.abs(sx or 1),sy=math.abs(sy or 1)}
+ end,
+},{__index=function() return function() end end})}
+local Hud=require('src.features.farkle.ui_v2.hud')
+local game=require('src.gameplay.farkle.rules').new()
+for _,wh in ipairs{{1920,1080},{3440,1440},{1280,1024}} do
+ Res.refresh(wh[1],wh[2]); images={}
+ Hud.draw({game=game,minimalHud=true})
+ local expected=0
+ for _,r in ipairs(images) do
+  expected=expected+r.w*r.h
+  if r.w==1920 and r.h==1080 then
+   assert(r.x==0 and r.y==0 and math.abs(r.sx-r.sy)<1e-7,'the room must keep its perspective')
+  end
+ end
+ local vx,vy=Res.to_virtual(0,0)
+ local xmax,ymax=Res.to_virtual(wh[1],wh[2])
+ for _,p in ipairs{{vx,vy},{vx,ymax},{xmax,vy},{xmax,ymax},{960,540}} do
+  local covered=false
+  for _,r in ipairs(images) do
+   if p[1]>=r.x-1e-6 and p[1]<=r.x+r.w+1e-6 and p[2]>=r.y-1e-6 and p[2]<=r.y+r.h+1e-6 then covered=true end
+  end
+  assert(covered,'unpainted room edge at '..wh[1]..'x'..wh[2])
+ end
+ assert(math.abs(expected-(xmax-vx)*(ymax-vy))<1,'room art leaves a band or duplicates the host')
 end
 print('PASS merchant table layout, unified scorecard, footer and physical D6 scale')
