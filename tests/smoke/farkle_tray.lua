@@ -26,8 +26,8 @@ function M.install(U)
  end
  function love.load()
   load();assert(#dice==6 and U.tray_divided==false)
-    assert(originalBox.half_x==9.2 and originalBox.half_y==3.8 and originalBox.border_height==.74)
-    assert(regions.unified.half_back==6.3 and regions.unified.half_front==8.4)
+    assert(originalBox.half_x>regions.unified.half_back and originalBox.half_y>regions.unified.y_front and originalBox.border_height==.74)
+    assert(regions.unified.half_back==regions.unified.half_front)
     assert(U:request());record('START physical throw of all six D6; expanded tray dimensions')
  end
  function love.update(dt)

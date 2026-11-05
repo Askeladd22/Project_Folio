@@ -17,21 +17,34 @@ local scene=require('src.data.dice_scene_schema')
 local roll=require('src.data.dice_roll_schema')
 local originalYaw=V.yaw
 V.yaw=scene.tray_camera.yaw;V.cos_yaw=math.cos(V.yaw);V.sin_yaw=math.sin(V.yaw)
-local oldRect={x=70,y=84,w=1400,h=760}
-local newRect={x=40,y=60,w=1460,h=808}
-local oldOwner,newOwner={},{}
-T.fit(oldOwner,oldRect,V,{-7.2,7.2,-3.4,3.4})
-T.fit(newOwner,newRect,V,{-scene.box.half_x,scene.box.half_x,-scene.box.half_y,scene.box.half_y})
-local oldWidth=oldOwner.trayProjection.front[2].x-oldOwner.trayProjection.front[1].x
-local newWidth=newOwner.trayProjection.front[2].x-newOwner.trayProjection.front[1].x
-local widthRatio=newWidth/oldWidth
-local dieRatio=roll.sizes.base/.92*newOwner.trayScale/oldOwner.trayScale
-assert(widthRatio>=1.20 and widthRatio<=1.30,'projected tray width must grow 20-30%')
-assert(dieRatio>=.85 and dieRatio<=.90,'projected dice must shrink 10-15%')
-assert(newRect.x+newRect.w/2==oldRect.x+oldRect.w/2 and newRect.y+newRect.h/2==oldRect.y+oldRect.h/2,'tray framing center must remain fixed')
-assert(roll.spawn_layout.main.row_spacing>=2*roll.sizes.base,'initial rows need breathing room')
-print(string.format('PASS tray width +%.1f%%, dice scale %.1f%%',100*(widthRatio-1),100*dieRatio))
+local region=scene.regions.unified
+local extents={-region.half_back,region.half_back,region.y_back,region.y_front}
+local layout=require('src.features.farkle.ui_v2.layout_candidates').build('table_minimal')
+for _,width in ipairs{1280,1920,2560} do
+ local factor=width/1920
+ local tray={}
+ for k,v in pairs(layout.tray) do tray[k]=v*factor end
+ local owner={minimalHud=true}
+ local cx,cy,k=T.fit(owner,tray,V,extents)
+ local _,rear=V.project(0,extents[3],0)
+ local left=V.project(extents[1]-.4,extents[3]-.4,scene.box.border_height)
+ local right=V.project(extents[2]+.4,extents[3]-.4,scene.box.border_height)
+ local fraction=(right-left)*k/width
+ assert(fraction>=.75 and fraction<=.80,'table must occupy 75–80% of screen width')
+ assert(math.abs(cy+rear*k-(layout.host.y+layout.host.h)*factor)<1,'rear rail disconnected from portrait')
+ local camera=require('src.engine3d.g3d_camera')
+ for _,x in ipairs{extents[1]+.6,extents[2]-.6} do
+  for _,y in ipairs{region.y_back+.6,region.y_front-.6} do
+   local px,py=V.project(x,y,.6)
+   local gx,gy=camera.screen(V,tray.w,tray.h,k,x,y,.6)
+   assert(math.abs(gx-tray.w/2-px*k)<1e-7 and math.abs(gy-tray.h/2-py*k)<1e-7)
+   assert(cx+px*k>=tray.x and cx+px*k<=tray.x+tray.w and cy+py*k>=tray.y and cy+py*k<=tray.y+tray.h)
+  end
+ end
+ print(string.format('PASS %d px: table %.1f%%, rear seam %.2f px',width,100*fraction,cy+rear*k-layout.host.h*factor))
+end
 V.yaw=originalYaw;V.cos_yaw=math.cos(V.yaw);V.sin_yaw=math.sin(V.yaw)
+local eyeX,eyeY,eyeZ=V.get()
 V.projection=nil
-local g,h,i=V.to_camera(5,4,7);assert(g==d-5 and h==e-4 and i==f-7)
+local g,h,i=V.to_camera(5,4,7);assert(g==eyeX-5 and h==eyeY-4 and i==eyeZ-7)
 print('PASS stable tray framing, orthographic scale and projection-aware culling')

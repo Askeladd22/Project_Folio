@@ -5,12 +5,12 @@ return {
     tray_camera = {
         locked = true,
         yaw = 0.00,
-        pitch = 0.62,
+        pitch = 0.42,
         distance = 14.1,
     },
     box = {
-        half_x = 9.2,
-        half_y = 3.8,
+        half_x = 14.5,
+        half_y = 6.30,
         height = 10,
         -- Explicit physical parameters; these preserve the pre-audit runtime.
         gravity = 25,
@@ -28,27 +28,27 @@ return {
             -- Full usable inner parchment area in the visible g3d board.
             -- Old 6.3/8.4 world-unit trapezoid made the ordinary six-D6
             -- roll bounce against invisible boundaries inside the tray.
-            -- Keep a small margin from the real box walls at +/-9.2.
-            y_back = -3.55,
-            y_front = 3.55,
-            half_back = 8.70,
-            half_front = 8.70,
+            -- Keep a small margin from the real box walls on all four sides.
+            y_back = -6.05,
+            y_front = 6.05,
+            half_back = 14.00,
+            half_front = 14.00,
             bounce = 0.34,
             slide_damping = 0.90,
         },
         main = {
             parent = "unified",
             slot = "main",
-            y_back = -3.45,
-            y_front = 3.45,
+            y_back = -5.95,
+            y_front = 5.95,
             bounce = 0.34,
             slide_damping = 0.90,
         },
         mini = {
             parent = "unified",
             slot = "mini",
-            y_back = -3.45,
-            y_front = 3.45,
+            y_back = -5.95,
+            y_front = 5.95,
             bounce = 0.34,
             slide_damping = 0.90,
         },

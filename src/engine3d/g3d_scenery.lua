@@ -43,13 +43,22 @@ function S.style_vertices(mesh,extents,height,style)
       or ({[1]={.76,.67,.51},[2]={.60,.50,.355},[3]={.86,.775,.61}})[part]
     shade=1
    end
-   local first=((side-1)*3+(part-1))*48+1
-   for i=first,first+47 do
+   for vertex_index=0,47 do
+    -- Mesh order within each side: segment, then outer/inner/rim quad.
+    local segment=math.floor(vertex_index/6)
+    local i=((side-1)*8+segment)*18+(part-1)*6+vertex_index%6+1
     v[i][9]=math.min(1,c[1]*shade)
     v[i][10]=math.min(1,c[2]*shade)
     v[i][11]=math.min(1,c[3]*shade)
    end
   end
+ end
+ -- The illustration supplies the merchant's far end. Join its wood directly
+ -- to the physical floor instead of laying a second crossbar across it.
+ if style=='merchant' then
+  local sides={}
+  for i=8*3*6+1,#v do sides[#sides+1]=v[i] end
+  return sides
  end
  -- Variant B is a wide counter around an unchanged tray opening.
  if style=='B' then
