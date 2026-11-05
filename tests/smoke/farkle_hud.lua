@@ -213,7 +213,7 @@ function M.install(U)
   end
   feed(hand)
   shot('merchant-'..w..'-ready')
-  local hits=Bridge.getTrayDieHits()
+  local hits=U.hits -- the exact screen silhouettes received by the overlay
   assert(#hits==6 and hits[1].outline,'six projected silhouettes required')
   local tray=assert(Bridge.getDiceTrayRect())
   for _,item in ipairs(hits) do
