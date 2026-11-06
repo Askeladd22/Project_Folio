@@ -271,10 +271,10 @@ local function draw_minimal(u)
  g.setLineWidth(1)
  g.line(246,32,246,82)
  panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
- write_fitted('ASSICURATI',layout.secured_caption,14,11,paper_muted)
- write_fitted(s.bank..' pt',layout.secured_value,25,16,paper_ink)
- write_fitted('A RISCHIO',layout.risk_caption,14,11,paper_muted)
- write_fitted(s.pot..' pt',layout.risk_value,25,16,paper_warning)
+ write_fitted('ASSICURATI',layout.secured_caption,17,12,paper_muted)
+ write_fitted(s.bank..' pt',layout.secured_value,29,18,paper_ink)
+ write_fitted('A RISCHIO',layout.risk_caption,17,12,paper_muted)
+ write_fitted(s.pot..' pt',layout.risk_value,29,18,paper_warning)
  -- Keep the timber plaque small and never show an empty panel while
  -- the dice are rolling. Controls are actual actions, not placeholders.
  local visible_controls,has_context=0,false

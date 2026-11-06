@@ -43,7 +43,10 @@ function M.run(mode,policy,seed)
  for hand=1,limit do
   local announced=encounter and encounter:announce() or nil
   local cat=announced and announced.category or 'nessuno'
-  local category=categories[cat] or {bank=0,roll=0,disagreements=0}
+  local category=categories[cat] or {
+   bank=0,roll=0,disagreements=0,context_switches=0,
+   context_to_bank=0,context_to_roll=0,
+  }
   categories[cat]=category
   -- Per-hand stateless stream preserves the same common random outcomes
   -- even if another policy took more rolls or set aside different dice.
@@ -52,6 +55,15 @@ function M.run(mode,policy,seed)
    function(snapshot,decision)
     choices[decision]=choices[decision]+1
     category[decision]=category[decision]+1
+    local without_sign=Turn.decision(policy,{
+     points=snapshot.points,free_after=snapshot.free_after,
+     rolls=snapshot.rolls,can_bank=snapshot.can_bank,
+    })
+    if without_sign~=decision then
+     category.context_switches=category.context_switches+1
+     local key=decision=='bank' and 'context_to_bank' or 'context_to_roll'
+     category[key]=category[key]+1
+    end
     local prudent=Turn.decision('prudent',snapshot)
     local audace=Turn.decision('audace',snapshot)
     local reattiva=Turn.decision('reattiva',snapshot)
@@ -107,12 +119,16 @@ local function add(row,s)
  for cat,counts in pairs(s.categories) do
   local dest=row.categories[cat]
   if not dest then
-   dest={bank=0,roll=0,disagreements=0}
+  dest={bank=0,roll=0,disagreements=0,context_switches=0,
+   context_to_bank=0,context_to_roll=0}
    row.categories[cat]=dest
   end
   dest.bank=dest.bank+counts.bank
   dest.roll=dest.roll+counts.roll
   dest.disagreements=dest.disagreements+counts.disagreements
+  dest.context_switches=dest.context_switches+counts.context_switches
+  dest.context_to_bank=dest.context_to_bank+counts.context_to_bank
+  dest.context_to_roll=dest.context_to_roll+counts.context_to_roll
  end
 end
 local function new_pair(policy,control,variant,n)

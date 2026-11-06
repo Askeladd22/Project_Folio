@@ -10,6 +10,14 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.39] - 2026-11-06
+
+### Migliorata la leggibilità del tavolo
+- Spostato il badge FPS opzionale sotto la scheda punteggio, evitando la sovrapposizione con assicurati e rischio.
+- Aumentate le dimensioni richieste per etichette e valori della scheda; il fitting esistente continua ad adattare il testo alle risoluzioni e alle impostazioni di accessibilità.
+- Eseguiti `tests/ui_v2_minimal_table_test.lua` e `tests/merchant_table_composition_test.lua` tramite LuaJIT fornito da LÖVE: entrambi superati.
+- Da verificare visivamente su Windows; nessuna modifica a dimensioni dei dadi, mesh, collisioni o regole.
+
 ## [0.1.38] - 2026-11-06
 
 ### Audio dei dadi sincronizzato alla fisica

@@ -21,14 +21,17 @@ for _,pair in ipairs(study.pairs) do
   pair.control_only,pair.variant_only,pair.neither,
   pair.delta,pair.low,pair.high))
 end
-io.write('\nPUBLIC_CATEGORY_CHOICES MODE POLICY CATEGORY BANK REROLL DISAGREE\n')
+io.write('\nPUBLIC_CATEGORY_CHOICES MODE POLICY CATEGORY BANK REROLL',
+ ' DISAGREE CONTEXT_SWITCH TO_BANK TO_REROLL\n')
 for _,row in ipairs(study.rows) do
  if row.mode=='C' or row.mode=='C0' then
   for _,category in ipairs{'assalto','guardia','occasione'} do
    local d=row.categories[category] or
-    {bank=0,roll=0,disagreements=0}
-   io.write(string.format('%s %s %s %d %d %d\n',
-    row.mode,row.policy,category,d.bank,d.roll,d.disagreements))
+    {bank=0,roll=0,disagreements=0,context_switches=0,
+     context_to_bank=0,context_to_roll=0}
+   io.write(string.format('%s %s %s %d %d %d %d %d %d\n',
+    row.mode,row.policy,category,d.bank,d.roll,d.disagreements,
+    d.context_switches,d.context_to_bank,d.context_to_roll))
   end
  end
 end
@@ -42,3 +45,6 @@ io.write('95% intervals are normal approximate intervals of PAIRED',
  ' success differences, not proof of fun, balance or causality.',
  ' A is the shipping 4-turn Farkle control and is not',
  ' a difficulty-matched baseline.\n')
+io.write('CONTEXT_SWITCH compares each observed decision with the same',
+ ' Farkle state and no announced Sign category; it measures policy',
+ ' sensitivity only, not decision quality or player enjoyment.\n')

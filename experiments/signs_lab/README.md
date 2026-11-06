@@ -49,6 +49,7 @@ Il mescolamento con XOR a 31 bit è scritto in puro Lua
 ma **non costituisce una certificazione di casualità fisica**.
 
 L'output ora include:
+
 - **PAIRED_OUTCOMES**, con risultati congiunti sui medesimi
   semi, varianti C contro B e C contro C0, inclusa differenza
   di frequenza delle vittorie e intervallo approssimativo
@@ -56,6 +57,11 @@ L'output ora include:
 - **PUBLIC_CATEGORY_CHOICES**, con incassi, rilanci e
   divergenze degli stati osservati sotto Assalto, Guardia
   e Occasione;
+- **CONTEXT_SWITCH**, che confronta la scelta osservata con
+  quella della stessa politica sullo stesso stato Farkle senza
+  categoria del Segno. Conta anche se il contesto sposta la scelta
+  verso incassare o rilanciare; misura la sensibilità della politica,
+  non la qualità della decisione né il divertimento del giocatore;
 - i contatori precedenti di durata, Farkle e rilanci.
 
 Le tre strategie restano politiche a soglia inventate per

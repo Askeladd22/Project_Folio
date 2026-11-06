@@ -1026,9 +1026,9 @@ function love.draw()
             love.graphics.setFont(fps_font)
         end
         love.graphics.setColor(0, 0, 0, high_contrast and 0.75 or 0.55)
-        love.graphics.rectangle("fill", 8, 8, 92, 24, 4, 4)
+        love.graphics.rectangle("fill", 8, 100, 92, 24, 4, 4)
         love.graphics.setColor(high_contrast and 1.0 or 0.95, high_contrast and 0.97 or 0.92, high_contrast and 0.90 or 0.82, 1)
-        love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 14, 12)
+        love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 14, 104)
         if prev_font then
             love.graphics.setFont(prev_font)
         end

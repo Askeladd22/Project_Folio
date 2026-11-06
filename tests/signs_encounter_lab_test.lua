@@ -106,6 +106,12 @@ assert(Turn.decision('reattiva',{points=40,can_bank=true,
 assert(Turn.decision('reattiva',{points=40,can_bank=true,
  rolls=1,free_after=3,category='occasione'})=='roll',
  'visible category must permit a different stop/reroll tradeoff')
+local neutral_choice=Turn.decision('reattiva',{points=40,can_bank=true,
+ rolls=1,free_after=3})
+assert(neutral_choice=='bank' and
+ Turn.decision('reattiva',{points=40,can_bank=true,rolls=1,
+  free_after=3,category='guardia'})=='roll',
+ 'context sensitivity must compare the same Farkle state without a Sign')
 
 local a=Sim.run('C','reattiva',20261031)
 local b=Sim.run('C','reattiva',20261031)
@@ -157,12 +163,17 @@ for _,row in ipairs(rows) do
  assert(row.bank_choices>=0 and row.roll_choices>=0)
  assert(row.success>=0 and row.success<=3)
  assert(row.disagreements<=row.bank_choices+row.roll_choices)
- local sum=0
+  local sum,switched=0,0
  for _,data in pairs(row.categories) do
   sum=sum+data.bank+data.roll
+   switched=switched+data.context_switches
+   assert(data.context_switches==data.context_to_bank+
+    data.context_to_roll,'context switches must name their resulting decision')
  end
  assert(sum==row.bank_choices+row.roll_choices,
   'public category counts must cover all actual Farkle decisions')
+  assert(switched>=0 and switched<=sum,
+   'context switches must be a subset of observed decisions')
 end
 
 for _,mode in ipairs{'B','C0','C'} do
