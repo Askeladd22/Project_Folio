@@ -165,28 +165,105 @@ local dice_sample_paths = {
     },
 }
 local dice_variant_cursor = {}
+-- Each entry owns a real LÖVE Source; impact clips are intentionally short
+-- transients because the shipped 'throw' OGGs contain their own roll tails.
 local dice_active_voices = {}
 local DICE_MAX_VOICES = 16
 
+local function stop_voice(entry)
+    if entry.voice and type(entry.voice.stop) == "function" then
+        entry.voice:stop()
+    end
+end
+
 local function prune_dice_voices()
     for i = #dice_active_voices, 1, -1 do
-        local voice = dice_active_voices[i]
-        if type(voice.isPlaying) == "function" and not voice:isPlaying() then
+        local entry = dice_active_voices[i]
+        if type(entry.voice.isPlaying) == "function" and
+            not entry.voice:isPlaying() then
             table.remove(dice_active_voices, i)
+        end
+    end
+end
+
+-- Game-loop time, never wall-clock time: this also permits deterministic
+-- headless checks and avoids keeping a looping or overlapping shake alive.
+function AudioManager.update_dice(dt)
+    if type(dt) ~= "number" or dt ~= dt or dt <= 0 then return end
+    prune_dice_voices()
+    for i = #dice_active_voices, 1, -1 do
+        local entry = dice_active_voices[i]
+        entry.age = entry.age + dt
+        if entry.max_age and entry.age >= entry.max_age and
+            not entry.fade_duration then
+            entry.fade_duration = 0.035
+            entry.fade_elapsed = 0
+        end
+        if entry.fade_duration then
+            entry.fade_elapsed = entry.fade_elapsed + dt
+            if entry.fade_elapsed >= entry.fade_duration then
+                stop_voice(entry)
+                table.remove(dice_active_voices, i)
+            elseif type(entry.voice.setVolume) == "function" then
+                entry.voice:setVolume(entry.volume *
+                    (1 - entry.fade_elapsed / entry.fade_duration))
+            end
+        end
+    end
+end
+
+function AudioManager.stop_dice(event, fade)
+    local duration = tonumber(fade) or 0
+    for i = #dice_active_voices, 1, -1 do
+        local entry = dice_active_voices[i]
+        if entry.event == event then
+            if duration <= 0 then
+                stop_voice(entry)
+                table.remove(dice_active_voices, i)
+            elseif not entry.fade_duration then
+                entry.fade_duration = duration
+                entry.fade_elapsed = 0
+            end
         end
     end
 end
 
 function AudioManager.play_dice(event, opts)
     local count = tonumber(opts and opts.count) or 1
-    local category = event == "throw" and
-        (count > 1 and "throw_group" or "throw_single") or event
+    local category = (event == "impact") and "throw_single" or
+        (event == "throw" and
+            (count > 1 and "throw_group" or "throw_single") or event)
     local paths = dice_sample_paths[category]
     if not paths or not (love and love.audio and love.audio.newSource) then
         return false
     end
     local gain = get_sfx_gain()
     if gain <= 0 then return false end
+
+    local strength = clamp(tonumber(opts and opts.strength) or 0.7, 0, 1)
+    local loudness = category == "shake" and
+        0.58 * (0.65 + 0.35 * strength) or
+        category == "grab" and 0.72 or 0.85
+    if event == "impact" then
+        -- The leading transient is aligned to an actual solver contact;
+        -- no complete pre-recorded throw is triggered at mouse release.
+        loudness = (opts and opts.kind == "pair" and 0.23 or 0.30)
+            + 0.37 * strength
+    end
+    local volume = clamp(gain * loudness, 0, 1)
+    prune_dice_voices()
+
+    if event == "shake" then
+        for _, entry in ipairs(dice_active_voices) do
+            if entry.event == "shake" and not entry.fade_duration then
+                -- Repeated reversals sustain one voice instead of layering
+                -- several complete shake recordings over each other.
+                entry.volume = volume
+                entry.voice:setVolume(volume)
+                return true
+            end
+        end
+    end
 
     local index = (dice_variant_cursor[category] or 0) % #paths + 1
     local path = paths[index]
@@ -200,23 +277,21 @@ function AudioManager.play_dice(event, opts)
     local ok, voice = pcall(function() return base:clone() end)
     if not ok or not voice then return false end
 
-    local loudness = category == "shake" and 0.58 or
-        category == "grab" and 0.72 or 0.85
-    if category == "shake" then
-        local strength = clamp(tonumber(opts and opts.strength) or 0.7, 0, 1)
-        loudness = loudness * (0.65 + 0.35 * strength)
-    end
-    local volume = clamp(gain * loudness, 0, 1)
     voice:setVolume(volume)
+    if event == "impact" and type(voice.setPitch) == "function" then
+        voice:setPitch(0.93 + 0.13 * strength)
+    end
     local played = pcall(function() voice:play() end)
     if not played then return false end
 
-    prune_dice_voices()
     if #dice_active_voices >= DICE_MAX_VOICES then
-        local oldest = table.remove(dice_active_voices, 1)
-        if type(oldest.stop) == "function" then oldest:stop() end
+        stop_voice(table.remove(dice_active_voices, 1))
     end
-    dice_active_voices[#dice_active_voices + 1] = voice
+    dice_active_voices[#dice_active_voices + 1] = {
+        voice = voice, event = event, category = category,
+        volume = volume, age = 0,
+        max_age = event == "impact" and 0.115 or nil,
+    }
     dice_variant_cursor[category] = index
     return true
 end
