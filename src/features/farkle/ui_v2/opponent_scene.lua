@@ -36,11 +36,13 @@ function S.resolve(id,exists)
 end
 function S.portrait_bounds(w,h,layout)
  assert(w>0 and h>0 and layout and layout.tray,'invalid portrait/layout')
- -- Lower edge slips behind the 3D table; gameplay and dice remain independent.
- local scale=math.min(520/w,350/h)
+ -- All PNG opponents use one proportional envelope. The lower edge
+ -- slips behind the g3d floor, avoiding floating or pasted-on figures.
+ local bottom=layout.tray.y+35
+ local maxHeight=math.max(1,math.min(408,bottom-12))
+ local scale=math.min(606/w,maxHeight/h)
  local outW,outH=w*scale,h*scale
  local x=layout.tray.x+layout.tray.w*.5-outW*.5
- local bottom=layout.tray.y+35
  return {x=x,y=bottom-outH,w=outW,h=outH}
 end
 local image_cache={}
