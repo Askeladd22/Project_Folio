@@ -6,9 +6,9 @@ return {
         manuzio_background_path = "resources/ui/menu_manuzio.png",
         illustrated_background_path = "resources/ui/menu_illustrated.png",
         background_path = "resources/ui/menu.png",
-        font_text = "resources/font/GoudyBookletter1911.ttf",
-        font_uppercase = "resources/font/GoudyBookletter1911.ttf",
-        font_fallback = "resources/font/GoudyBookletter1911.ttf",
+        font_text = "resources/font/AldineAetna-Regular.ttf",
+        font_uppercase = "resources/font/AldineAetna-Regular.ttf",
+        font_fallback = "resources/font/Cardo-Regular.ttf",
     },
     colors = {
         -- Ink and ochre on the shared manuscript surface; sliders only.

@@ -16,8 +16,8 @@ return {
             "resources/ui/startup_splash/scriptorium_logo.jpg",
             "resources/ui/startup_splash/scriptorium_logo.jpeg",
         },
-        title_font_primary = "resources/font/GoudyBookletter1911.ttf",
-        title_font_fallback = "resources/font/GoudyBookletter1911.ttf",
+        title_font_primary = "resources/font/AldineAetna-Regular.ttf",
+        title_font_fallback = "resources/font/Cardo-Regular.ttf",
         title_base_font_size = 96,
     },
     colors = {
