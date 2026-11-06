@@ -10,15 +10,6 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
-## [0.1.33] - 2026-11-06
-
-### Prima integrazione giocabile — la bottega dell'incisore
-- La stanza del Mercante riceve una prova di stampa e un torchio ligneo sul fondale, entrambi disegnati dietro il tavolo fisico, senza introdurre hitbox o oggetti di gameplay. Il centro resta riservato all'avversario.
-- Il tavolo g3d acquisisce sottili linee di registro tipografico solo nei margini laterali, e una tinta del legno più calda; niente decorazioni sovrapposte al lancio dei sei D6.
-- Le lineette sotto i dadi erano indicatori di disponibilità al punteggio, non ombre sbagliate: sostituite con un contorno aderente alla sagoma del dado, debole quando idoneo, più marcato su hover/selezione. Ombre e hit-test non sono stati modificati.
-- Aggiunte verifiche headless per la scenografia, l'ordine degli elementi g3d e l'area centrale libera. Il rifacimento dell'illustrazione integrale del Mercante in stile xilografico resta una fase artistica distinta, non ancora implementata.
-- Nessuna modifica a regole Farkle, numero e dimensione dei dadi, fisica, telecamera, input, salvataggi o audio. Da verificare resa estetica e profondità su Windows.
-
 ## [0.1.32] - 2026-11-05
 
 ### Selezione sul tavolo del Mercante

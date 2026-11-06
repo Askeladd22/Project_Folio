@@ -8,7 +8,7 @@ local PALETTE={
 -- Plain, non-textured floors keep the physical dice visually prominent.
 -- Unlike the old painter's manuscript rubrics these meshes share g3d depth.
 local FLOORS={
- merchant={.96,.91,.84},book={.88,.79,.64},current={.36,.29,.22},
+ merchant={1,1,1},book={.88,.79,.64},current={.36,.29,.22},
  A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
 }
 function S.floor_vertices(mesh,extents,style)
@@ -22,8 +22,8 @@ end
 local function vertex(pos,color,alpha)
  return {pos[1],pos[2],pos[3],0,0,0,0,1,color[1],color[2],color[3],alpha or 1}
 end
-local function quad(out,a,b,c,d,color,alpha)
- for _,p in ipairs({a,b,c,a,c,d}) do out[#out+1]=vertex(p,color,alpha) end
+local function quad(out,a,b,c,d,color)
+ for _,p in ipairs({a,b,c,a,c,d}) do out[#out+1]=vertex(p,color) end
 end
 function S.style_vertices(mesh,extents,height,style)
  style=PALETTE[style] and style or 'book'
@@ -121,28 +121,6 @@ function S.divider_vertices(info)
  quad(p,{x1-w,y1,.01},{x1-w,y1,z},{x1+w,y1,z},{x1+w,y1,.01},{.31,.22,.15})
  quad(p,{x2-w,y2,.01},{x2+w,y2,.01},{x2+w,y2,z},{x2-w,y2,z},{.31,.22,.15})
  return p
-end
--- Thin engraved registration rules on the two side margins of the
--- engraver's workbench. The central six-die landing zone stays unmarked.
--- All geometry lives on the existing GPU floor, with no new collisions.
-function S.workbench_marks(extents)
- local x1,x2,y1,y2=unpack(extents)
- local marks={}
- local function strip(xa,ya,xb,yb,c,alpha)
-  quad(marks,{xa,ya,.014},{xb,ya,.014},{xb,yb,.014},{xa,yb,.014},c,alpha)
- end
- local ink={.23,.13,.075}
- local brass={.65,.48,.27}
- for _,left in ipairs({true,false}) do
-  local x=left and x1+.58 or x2-.58
-  strip(x-.021,y1+.8,x+.021,y2-.8,ink,.48)
-  local inwards=left and .35 or -.35
-  for _,y in ipairs({y1+1.05,y2-1.05}) do
-   local a,b=math.min(x,x+inwards),math.max(x,x+inwards)
-   strip(a,y-.025,b,y+.025,brass,.57)
-  end
- end
- return marks
 end
 function S.face_color(die,i)
  local color=die.faceColors and die.faceColors[i] or die.color or {255,255,255,255}
