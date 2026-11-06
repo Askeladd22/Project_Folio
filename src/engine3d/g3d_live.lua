@@ -29,7 +29,7 @@ function M.new()
   models={},images={},canvas=nil,
   material_mode=mode,dice_shader=nil,
   bevel_enabled=true,bevel_fraction=Bevel.default_fraction,
-  width=0,height=0,floor_model=nil,walls=nil,lines=nil,divider_model=nil,wall_signature=nil,
+  width=0,height=0,floor_model=nil,walls=nil,lines=nil,divider_model=nil,workmarks=nil,wall_signature=nil,
  },M)
 end
 
@@ -179,6 +179,8 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   if self.walls and self.walls.mesh then self.walls.mesh:release() end
   if self.lines and self.lines.mesh then self.lines.mesh:release() end
   if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
+  if self.workmarks and self.workmarks.mesh then self.workmarks.mesh:release() end
+  self.workmarks=nil
   -- The single opaque GPU floor replaces the historical overlaid 2D book
   -- ornaments. It participates in the SAME depth buffer as walls and dice.
   if self.carving then self.carving.mesh:release();self.carving=nil end
@@ -195,6 +197,9 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   end
   self.floor_model=self.g3d.newModel(
    Scenery.floor_vertices(self.mesh,extents,style),floor_texture)
+  if style=='merchant' then
+   self.workmarks=self.g3d.newModel(Scenery.workbench_marks(extents),self.white)
+  end
   self.walls=self.g3d.newModel(
    Scenery.style_vertices(self.mesh,extents,border,style),floor_texture)
   -- Do not overlay ruling lines across the play surface in the clean mode.
@@ -302,6 +307,7 @@ function M:_draw_scene(args)
    g.setDepthMode('lequal',true)
    self.floor_model:draw()
    g.setDepthMode('lequal',false)
+   if self.workmarks then self.workmarks:draw() end
    -- A shadow may darken an opaque floor pixel, but cannot create tray pixels
    -- beyond its edge. Keep the receiver alpha when blending pure black.
    g.setColorMask(true,true,true,false)

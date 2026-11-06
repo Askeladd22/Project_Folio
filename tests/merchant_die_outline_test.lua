@@ -80,7 +80,7 @@ local function outline_painted()
 end
 assert(outline_painted(),'selected contour must remain after pointer exit')
 assert(R.toggle(game,1) and R.toggle(game,2) and R.toggle(game,3))
-assert(not outline_painted(),'passive eligibility and pointer hover must look different')
+assert(outline_painted(),'passive eligibility must have a subtle cube outline instead of the under-die dash')
 x,y=120,130
 assert(outline_painted(),'pointer over a scoring die must trace its projected edges')
 assert(not next(game.selected) and game.pot==0,'hover must not change the game')
