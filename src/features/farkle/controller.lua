@@ -175,7 +175,7 @@ function U:update(dt)
     held.sound_shaking=false
    end
    if held.group then GroupThrow.tick(held,dt)
-   else MouseThrow.tick(held,dt) end
+   else MouseThrow.tick(self.mouseThrow,dt) end
   end
  end
  self:sync_presentation()
