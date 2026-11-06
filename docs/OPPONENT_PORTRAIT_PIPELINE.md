@@ -19,11 +19,19 @@ require('src.features.farkle.controller'):setOpponentVisual('monk')
 Il loader costruisce il nome del file dall'ID senza inserire nomi di
 avversari nel rendering. Sono ammessi solo ID composti da lettere minuscole,
 numeri e underscore. Le immagini vengono centrate sull'asse del tavolo,
-con massimo 540 px di larghezza, 300 px di altezza e piede a y=333
+con massimo 520 px di larghezza, 350 px di altezza e piede a y=373
 nel canvas virtuale 1920×1080: tutte conservano il rapporto d'aspetto.
 L'area di lancio, le hitbox e le regole non vengono modificate.
 
-**Stato reale:** `resources/merchant/table-host.jpg` ha il Mercante
+**Art pack 0.1.34:** i due PNG necessari sono stati prodotti e resi
+disponibili separatamente come `Project_Folio_Art_Pack_0.1.34.zip`.
+Estrarre lo ZIP nella radice di `Project_Folio`, preservando i percorsi
+`resources/scenes/printshop-room.png` e
+`resources/opponents/merchant.png`. All'avvio il loader riconosce entrambi
+ed esclude automaticamente il Mercante incorporato nel vecchio JPEG.
+Il pacchetto non e' commitato nel repository.
+
+**Senza art pack:** `resources/merchant/table-host.jpg` ha il Mercante
 già disegnato nello sfondo. Fino alla disponibilità di `printshop-room.png`
 (senza Mercante) e `merchant.png` (isolato su trasparenza), il Mercante
 usa ancora il composito storico. NON è stato creato un PNG separato.

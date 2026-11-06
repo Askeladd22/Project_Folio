@@ -7,9 +7,9 @@ return {
         illustrated_background_path = "resources/ui/menu_illustrated.png",
         background_path = "resources/ui/menu.png",
         music_path = "resources/sounds/maintitle.ogg",
-        font_text = "resources/font/ManuskriptGothischUNZ1A.ttf",
-        font_uppercase = "resources/font/IMFeENsc28P.ttf",
-        font_fallback = "resources/font/EagleLake-Regular.ttf",
+        font_text = "resources/font/GoudyBookletter1911.ttf",
+        font_uppercase = "resources/font/GoudyBookletter1911.ttf",
+        font_fallback = "resources/font/GoudyBookletter1911.ttf",
     },
     links = {
         wishlist_url = "https://store.steampowered.com/",

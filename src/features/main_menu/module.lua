@@ -229,14 +229,14 @@ local function ensure_fonts(view_h)
 
     fonts.title = load_font({FONT_TEXT, FONT_FALLBACK, FONT_UPPERCASE}, sizes.title)
     fonts.title_upper = load_font({FONT_UPPERCASE, FONT_TEXT, FONT_FALLBACK}, sizes.title)
-    fonts.subtitle = load_font({FONT_FALLBACK, FONT_UPPERCASE}, sizes.subtitle)
+    fonts.subtitle = load_font({FONT_TEXT, FONT_FALLBACK}, sizes.subtitle)
     fonts.subtitle_upper = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.subtitle)
     fonts.primary = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.primary)
     fonts.primary_upper = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.primary)
     fonts.secondary = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.secondary)
     fonts.secondary_upper = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.secondary)
     -- Plain small print is easier to read than miniature blackletter.
-    fonts.footer = load_font({}, sizes.footer)
+    fonts.footer = load_font({FONT_TEXT, FONT_FALLBACK}, sizes.footer)
     fonts.footer_upper = fonts.footer
     fonts.modal = load_font({FONT_UPPERCASE, FONT_FALLBACK}, sizes.modal)
     fonts.modal_upper = fonts.modal
