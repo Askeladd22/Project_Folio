@@ -127,7 +127,7 @@ Ogni laboratorio dispone del proprio README e viene avviato esplicitamente.
 | [FX](../experiments/fx_lab/README.md) | Prototipi di effetti grafici |
 | [Segni](../experiments/signs_lab/README.md) | Simulazioni numeriche di encounter |
 
-Il rapporto della [QA del 3 novembre](WINDOWS_QA_CAPTURE_REVIEW_20261103.md)
+Il rapporto della [QA del 3 novembre](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/WINDOWS_QA_CAPTURE_REVIEW_20261103.md)
 descrive le acquisizioni presenti in `audits/ui-v2-review/`.
 Gli output nuovi di audit e checkpoint sono esclusi da Git.
 

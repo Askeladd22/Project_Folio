@@ -2,7 +2,7 @@
 
 **Ambito:** interfaccia V2 attualmente attiva in Project Folio; script
 introdotto con `0.1.0-dev.15`, confermato per la serie `0.1.x`.
-La precedente procedura [P0 legacy](UI_V2_BASELINE_CAPTURE.md) è
+La precedente procedura [P0 legacy](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/UI_V2_BASELINE_CAPTURE.md) è
 documentazione storica. Questa cattura automatica è **un passaggio**
 della [checklist tecnica Windows](WINDOWS_TECHNICAL_QA.md), che comprende
 anche controlli manuali di input, OpenGL, audio, 50 lanci e FPS.

@@ -10,6 +10,29 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.40] - 2026-11-06
+
+### Pulizia conservativa della documentazione storica
+
+- Eliminati **13 documenti Markdown obsoleti** dalla working tree
+  (roadmap UI P0/P1 e F6/F9, vecchia matrice degli input, vecchi
+  rapporti di pulizia, snapshot incompleto QA, beta Monaco rimossa,
+  promozione Farkle superata, istruzioni di installazione del vecchio
+  menu e note g3d anteriori alla dismissione del painter).
+- Nessun documento di regole Farkle, visione, storia editoriale,
+  ricerca su Segni, medaglie, direction art, licenze o diagnostica
+  attiva è stato rimosso; i vecchi documenti rimangono recuperabili
+  dai commit precedenti della cronologia Git.
+- Aggiunto `docs/CONTROLS.md`: piccolo inventario aggiornato dei
+  comandi che sostituisce la matrice legata all'HUD pre-cutover.
+  Il test dei controlli punta al nuovo documento, mantenendo
+  invariate tutte le asserzioni sui pulsanti e sugli input attivi.
+- Riscritto l'indice `docs/README.md` per separare contratti
+  correnti, QA e ricerca; corretti i link storici nei documenti
+  rimasti usando permalink a commit immutabile.
+- **Solo documentazione e verifica statica:** nessuna modifica a
+  gameplay, fisica, mesh, g3d, HUD di produzione, dati o asset.
+
 ## [0.1.39] - 2026-11-06
 
 ### Migliorata la leggibilità del tavolo
