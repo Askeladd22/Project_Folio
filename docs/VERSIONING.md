@@ -11,8 +11,9 @@
   senza un suffisso di sviluppo.
 - **`docs/GAME_DESIGN.md`:** la sua versione interna misura la revisione
   del documento; **non** equivale alla versione del gioco.
-- **`docs/UI_V2_STATUS.md`:** tracker delle milestone UI, utile ma
-  distinto dal changelog ufficiale del software.
+- **`docs/CONTROLS.md`:** inventario sintetico dei controlli attivi;
+  i piani della migrazione UI sono ora recuperabili dalla storia Git e
+  non sostituiscono il changelog ufficiale del software.
 
 ## Regola per OGNI update
 
