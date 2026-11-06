@@ -7,7 +7,7 @@ end
 local smoke=read('tests/smoke/farkle_hud.lua')
 local runner=read('scripts/run_smoke.py')
 local capture=read('scripts/capture_ui_v2_review.py')
-local doc=read('docs/UI_V2_VISUAL_REVIEW.md')
+local doc=read('docs/WINDOWS_TECHNICAL_QA.md')
 for _,needle in ipairs({
  "MANUSCRIPT_UI_V2_REVIEW_CAPTURE",
  "review_scenario(1920,1080)",

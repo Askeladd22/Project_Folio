@@ -1,46 +1,26 @@
 # Project Folio — documentazione essenziale
 
-Questa cartella contiene **soltanto i documenti necessari al progetto
-corrente**. La versione del gioco è in [`version.txt`](../version.txt);
-gli aggiornamenti e le rimozioni sono nel [changelog](../CHANGELOG.md).
-Le idee non approvate non devono essere considerate meccaniche implementate.
+La cartella `docs/` contiene **7 documenti**, uno per argomento;
+`research/` conserva le ricerche non canoniche. La versione è in
+[`version.txt`](../version.txt) e lo storico nel
+[changelog](../CHANGELOG.md).
 
-## Game design
+| Documento | Contenuto |
+|---|---|
+| [Visione e brainstorming](PROJECT_VISION.md) | Storia, artista ispirato a Dürer, Farkle come centro, tre pilastri, Folio, avversari, scommesse, idee studiate e problemi aperti |
+| [Regole Farkle](FARKLE_RULES.md) | Combinazioni, turni, dadi, accantonamento, rischio e commissioni provvisorie |
+| [Architettura e controlli](TECHNICAL.md) | Componenti Lua, rendering g3d, suoni fisici, mouse/tastiera, modali e stati della UI |
+| [Direzione artistica](ART_DIRECTION.md) | Venezia manuziana, tavolo del Mercante, palette, Aetna/Cardo, licenze e PNG degli avversari |
+| [QA Windows](WINDOWS_TECHNICAL_QA.md) | Collaudo con 50 lanci, GPU/audio, catture UI e hitbox, limiti della CI |
+| [Versionamento](VERSIONING.md) | Regole SemVer, aggiornamento changelog e gate delle PR |
+| [Indice](README.md) | Questa pagina |
 
-- [Visione](PROJECT_VISION.md) — Venezia di Manuzio, protagonista ispirato
-  ad Albrecht Dürer, principi **Simplicity / World Structure / Swelling Power**,
-  mastery e incontri ancora da progettare.
-- [Brainstorming fondativo v0.3](Project_Folio_Brainstorming_Fondativo_v0.3.md)
-  — documento storico del 4 novembre; la definizione successiva del
-  protagonista è nella *Visione*.
-- [Regolamento Farkle](FARKLE_RULES.md) — il comportamento del gioco attuale.
+Il brainstorming v0.3 completo e i vecchi documenti confluiti
+nei file canonici sono recuperabili nella
+[cronologia Git](https://github.com/Askeladd22/Project_Folio/tree/629573929604a096d32236a151c44124ce94e02a/docs).
+Le parti esplorative **non** sono regole approvate né funzionalità
+necessariamente implementate.
 
-## Produzione
-
-- [Architettura e test](TECHNICAL.md)
-- [Controlli e stati UI](CONTROLS.md)
-- [Direzione artistica](ART_DIRECTION.md)
-- [Tipografia](TYPOGRAPHY.md)
-- [Ritratti degli avversari](OPPONENT_PORTRAIT_PIPELINE.md)
-- [Versionamento](VERSIONING.md)
-
-## Verifiche Windows
-
-- [Checklist tecnica](WINDOWS_TECHNICAL_QA.md)
-- [Acquisizione grafica UI attiva](UI_V2_VISUAL_REVIEW.md)
-
-## Studi separati dalla documentazione
-
-Gli studi sperimentali su [incontri/Segni](../research/INCONTRI_E_SEGNI.md),
-[medaglie](../research/MEDAGLIE_IMPLEMENTAZIONE.md),
-[presa e scuotimento](../research/TTS_GRIP_DRAG_SHAKE_DIAGNOSIS.md)
-e le [fonti storiche](../research/README.md) sono in `research/`.
-Questi studi **non approvano automaticamente nuovi sistemi**.
-
-Gli studi superati di GUI, renderer, tavolo-folio, FX e prime prove
-grafiche sono stati rimossi dalla *working tree*, non dalla storia Git.
-Sono recuperabili nel
-[commit precedente alla pulizia](https://github.com/Askeladd22/Project_Folio/tree/0fc25e369bc2655aa42489ae9078b04b9cef1650/docs).
-
-**Nessuna cartella `archive/` dentro `docs/`**: quella avrebbe
-mantenuto lo stesso problema di sovraffollamento.
+Per gli studi separati di **Incontri e Segni**, medaglie,
+Tabletop Simulator e i PDF sui giochi storici:
+[Indice della ricerca](../research/README.md).

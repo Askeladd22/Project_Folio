@@ -10,6 +10,25 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.42] - 2026-11-06
+
+### Unificazione dei documenti: 12 → 7 file
+
+- Unificati `PROJECT_VISION.md` e brainstorming fondativo v0.3:
+  visione aggiornata, protagonista ispirato a Dürer, tre pilastri,
+  Folio, poste, incontri e riferimenti studiati. Fonte originale
+  reperibile tramite permalink Git, senza documento concorrente.
+- Accorpati `TYPOGRAPHY.md` e `OPPONENT_PORTRAIT_PIPELINE.md`
+  in `ART_DIRECTION.md`, preservando font, licenze, asset e contratti.
+- Accorpati `CONTROLS.md` in `TECHNICAL.md` e
+  `UI_V2_VISUAL_REVIEW.md` in `WINDOWS_TECHNICAL_QA.md`.
+- Rimossi i cinque duplicati dopo la fusione; aggiornati indice,
+  riferimenti del versionamento e i due test che verificano
+  i documenti con asserzioni dirette.
+- Rimangono indipendenti regolamento Farkle, versionamento e
+  le fonti storiche in `research/`. Nessuna modifica al motore,
+  al gameplay, al rendering, all'audio o agli asset.
+
 ## [0.1.41] - 2026-11-06
 
 ### Documentazione essenziale: 41 → 12 file in docs/
