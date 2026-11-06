@@ -1,3 +1,4 @@
+local Typography=require('src.core.typography')
 local R=require('src.gameplay.farkle.rules')
 local Medals=require('src.gameplay.farkle.medals')
 local MedalPanel=require('src.features.farkle.medal_panel')
@@ -26,7 +27,7 @@ local function sized(n)
 end
 local function face(px)
  fonts[px]=fonts[px] or
-  love.graphics.newFont('resources/font/GoudyBookletter1911.ttf',px)
+  Typography.load(Typography.primary,px)
  return fonts[px]
 end
 -- Body paragraphs must preserve their existing wraps and deliberate line

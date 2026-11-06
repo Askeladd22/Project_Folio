@@ -1,3 +1,4 @@
+local Typography=require('src.core.typography')
 local Presentation=require('src.features.farkle.presentation')
 local F={}
 local fonts={}
@@ -40,7 +41,7 @@ function F.draw(s,p,x,y,w,h,txt,target)
    local color=pigment('ink',threshold,.025)
    local text=words[(row*3+word*5)%#words+1]
   local size=math.max(9,math.floor(w*.033))
-  fonts[size]=fonts[size] or g.newFont('resources/font/GoudyBookletter1911.ttf',size)
+  fonts[size]=fonts[size] or Typography.load(Typography.primary,size)
   local font=fonts[size]
   local fit=math.min(1,(available/4-3)/math.max(1,font:getWidth(text)))
   g.setFont(font);g.setColor(unpack(color))
