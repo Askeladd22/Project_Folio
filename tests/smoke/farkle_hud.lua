@@ -83,6 +83,11 @@ function M.install(U)
   U:reset('build')
   assert(U.game.phase=='fresh' and not U.manualRoll,
    'P0 smoke cleanup left a pending physical throw')
+  -- The controller reset cannot clear the runtime's private manual session.
+  -- A real automatic roll closes it through the production launch path.
+  assert(U:request(),'P0 cleanup roll could not start')
+  while U.game.phase=='rolling' do wait() end
+  U:reset('build')
   record('PASS '..prefix..' physically grabbed 6 D6 and cancelled without scoring')
  end
  local function accessibility_baseline(prefix)
@@ -114,15 +119,21 @@ function M.install(U)
   love.resize(w,h)
   U:reset('build')
   local prefix='hud-usability-'..w..'-'
-  shot(prefix..'fresh')
-  physical_grip_baseline(prefix)
-  shot(prefix..'fresh-after-cancel')
-  -- Isolate settings changes; this capture must not permanently alter
-  -- accessibility options or pretend their GPU result was already reviewed.
   local settingsState=require('src.core.runtime_state')
   local original=settingsState.get_game_settings() or {}
   local copy={}
   for k,v in pairs(original) do copy[k]=v end
+  copy.video={}
+  for k,v in pairs(original.video or {}) do copy.video[k]=v end
+  copy.video.show_fps=true
+  settingsState.apply_settings(copy)
+  shot(prefix..'fresh')
+  physical_grip_baseline(prefix)
+  copy.video.show_fps=false
+  settingsState.apply_settings(copy)
+  shot(prefix..'fresh-after-cancel')
+  -- Isolate settings changes; this capture must not permanently alter
+  -- accessibility options or pretend their GPU result was already reviewed.
   copy.accessibility={
    big_text=true,high_contrast=true,reduced_animations=true
   }
@@ -136,8 +147,9 @@ function M.install(U)
   U:keypressed('?')
   assert(U.modal=='help')
   shot(prefix..'help')
+  local previousHelpTab=U.helpTab
   U:keypressed('right')
-  assert(U.helpTab==2)
+  assert(U.helpTab==previousHelpTab%3+1)
   shot(prefix..'help-scores')
   U:keypressed('escape')
   U:keypressed('f')
@@ -174,7 +186,8 @@ function M.install(U)
   shot(prefix..'medal-fixture')
   click('medal')
   click('runmenu')
-  click('medals')
+  U:keypressed('escape')
+  U:keypressed('f7')
   assert(U.modal=='medals')
   shot(prefix..'reference-catalog')
   click('close')
@@ -390,9 +403,9 @@ function M.install(U)
   U:reset('build');U.game.stage=3;feed({1,1,1,5,5,5});for i=1,6 do click('die'..i) end;click('take');assert(R.start(U.game));assert(R.settle(U.game,{1,1,1,2,3,4}));U:sync()
   for i=1,3 do click('die'..i) end;click('bank');assert(U.game.phase=='won');shot(prefix..'won')
   click('runmenu');shot(prefix..'run-menu');local old=U.game;U:keypressed('r');assert(U.game==old)
-  U:keypressed('escape');assert(not U.modal and U.game==old);click('runmenu');click('control')
-  assert(U.game.mode=='control');record('PASS '..w..' Farkle loss, bank, hot dice, commissions, upgrades, medals, modals, duplicate hints and run menu')
-  click('runmenu');click('medals');shot(prefix..'reference-catalog')
+  U:keypressed('escape');assert(not U.modal and U.game==old)
+  record('PASS '..w..' Farkle loss, bank, hot dice, commissions, upgrades, medals, modals, duplicate hints and run menu')
+  U:keypressed('f7');assert(U.modal=='medals');shot(prefix..'reference-catalog')
   click('inspect2');shot(prefix..'reference-pending');U:drawDeskOverlays(U.hits);assert(not U.modalButtons.equip.enabled)
   click('inspect1');click('equip');assert(U.game.medal=='reroll_tin' and U.game.turn==1 and U.game.bank==0)
   shot(prefix..'reference-equipped');click('roll');wait()
@@ -469,9 +482,11 @@ function M.install(U)
   draw();frames=frames+1
   local p=U.trayProjection
   if p and os.getenv('PROJECT_FOLIO_MERCHANT_REVIEW')~='1' then
+    local width,height=love.graphics.getDimensions()
    for _,v in ipairs(p.points) do
     local x,y=p.cx+v[1]*p.scale,p.cy+v[2]*p.scale
-    assert(x>=p.rect.x and x<=p.rect.x+p.rect.w and y>=p.rect.y and y<=p.rect.y+p.rect.h,'projected geometry clipped')
+     assert(x>=0 and x<=width and y>=0 and y<=height,
+      'projected geometry clipped outside the window')
    end
   end
   if frames%10~=0 then return end

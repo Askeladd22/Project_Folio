@@ -15,8 +15,9 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 ### Migliorata la leggibilità del tavolo
 - Spostato il badge FPS opzionale sotto la scheda punteggio, evitando la sovrapposizione con assicurati e rischio.
 - Aumentate le dimensioni richieste per etichette e valori della scheda; il fitting esistente continua ad adattare il testo alle risoluzioni e alle impostazioni di accessibilità.
-- Eseguiti `tests/ui_v2_minimal_table_test.lua` e `tests/merchant_table_composition_test.lua` tramite LuaJIT fornito da LÖVE: entrambi superati.
-- Da verificare visivamente su Windows; nessuna modifica a dimensioni dei dadi, mesh, collisioni o regole.
+- Riallineati i controlli dello smoke HUD al flusso attuale (catalogo medaglie F7, persistenza della scheda regole e cleanup delle prese fisiche); corretto il controllo geometrico per confrontare i dadi proiettati con la finestra, non con il solo piano del tavolo.
+- Passati `tests/ui_v2_minimal_table_test.lua` e `tests/merchant_table_composition_test.lua` via LuaJIT LÖVE; cattura LÖVE completata con 32 frame a 1920×1080 e 1280×720, inclusi FPS attivi e presa fisica.
+- Le catture aggiornate sono state controllate visivamente; checklist QA complessiva e sessione manuale di 50 lanci restano aperte. Nessuna modifica a dimensioni dei dadi, mesh, collisioni o regole.
 
 ## [0.1.38] - 2026-11-06
 
