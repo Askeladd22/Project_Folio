@@ -12,6 +12,7 @@ local Accepted=require('src.features.farkle.ui_v2.accepted_dice')
 local Dialogs=require('src.features.farkle.ui_v2.dialogs')
 local Indicators=require('src.features.farkle.ui_v2.overlay')
 local MenuSurface=require('src.features.ui_v2.menu_surface')
+local OpponentScene=require('src.features.farkle.ui_v2.opponent_scene')
 local LabelFit=require('src.features.farkle.ui_v2.label_fit')
 local Art=require('src.data.art_palette')
 local V={}
@@ -203,12 +204,13 @@ local function compact_status(u)
  if #keys==0 then return '' end
  return 'Scegli i dadi segnati · clic o tasti '..table.concat(keys,' ')
 end
-local merchant_room,room_edges
-local function draw_merchant_room()
+local merchant_room,room_edges,active_room_path
+local function draw_room(path)
  local g=love.graphics
  local w,h=Layout.virtual_w,Layout.virtual_h
- if not merchant_room then
-  merchant_room=g.newImage('resources/merchant/table-host.jpg')
+ if active_room_path~=path then
+  merchant_room=g.newImage(path)
+  active_room_path=path
   local iw,ih=merchant_room:getWidth(),merchant_room:getHeight()
   -- Mirror only a strip of the empty room past the composition on
   -- non-16:9 windows. Never duplicate the host or rescale the seam.
@@ -240,7 +242,9 @@ local function draw_minimal(u)
  Res.begin_ui()
  g.setColor(.077,.060,.047,1)
  g.rectangle('fill',0,0,1920,1080)
- draw_merchant_room()
+ local visual=OpponentScene.resolve(u.opponentId,OpponentScene.available)
+ draw_room(visual.room)
+ OpponentScene.draw_portrait(visual,layout,g)
  -- Keep both sides of the wager in one legible scorecard.
  panel(layout.score_panel,parchment,border_ink,7)
  g.setColor(unpack(Art.rgba('border',.48)))

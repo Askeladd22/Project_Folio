@@ -10,6 +10,15 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.33] - 2026-11-06
+
+### Avversari con PNG intercambiabili
+- Architettura visiva a due livelli: fondale pulito `resources/scenes/printshop-room.png` e ritaglio trasparente `resources/opponents/<id>.png`, caricati separatamente e riutilizzabili senza modifiche alla scena.
+- Il controller accetta `params.opponent_id` o `setOpponentVisual(id)`; il ritaglio condivide scala, posizione e ancoraggio con ogni futuro avversario.
+- L'immagine attuale `table-host.jpg` ha il Mercante incorporato e rimane solo come compatibilità per lui. Gli altri personaggi richiedono entrambi i nuovi asset: in loro assenza il loader segnala l'errore, senza sovrapporre il nuovo avversario al vecchio Mercante.
+- Aggiunti documentazione dell'asset pipeline e test di isolamento, swapping, limiti geometrici, caricamento cache e ID sicuri. Nessuna nuova illustrazione è stata inserita.
+- Nessun intervento su regole Farkle, dadi 3D/g3d, fisica, hitbox o salvataggi.
+
 ## [0.1.32] - 2026-11-05
 
 ### Selezione sul tavolo del Mercante
