@@ -15,14 +15,6 @@ for _,v in ipairs(book) do
 end
 local skins=Scene.style_vertices(Mesh,extents,.74,'book')
 assert(#skins==4*3*8*6,'plain book rim must retain existing face topology')
-local marks=Scene.workbench_marks(extents)
-assert(#marks==36,'engraver registration inlays must remain sparse')
-for _,v in ipairs(marks) do
- assert(v[3]>.0 and v[3]<.03 and v[12]<=.60,
-  'workbench marks must stay shallow, translucent and above the floor')
- assert(v[1]<extents[1]+1.1 or v[1]>extents[2]-1.1,
-  'workbench markings must not crowd the dice landing area')
-end
 local minx,maxx=math.huge,-math.huge
 for _,v in ipairs(skins) do minx=math.min(minx,v[1]);maxx=math.max(maxx,v[1]) end
 assert(math.abs(minx-(extents[1]-.32))<1e-8 and

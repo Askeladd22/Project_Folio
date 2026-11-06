@@ -9,12 +9,10 @@ local fonts={}
 local function palette()
  if UI.high_contrast() then
   return {physical={.30,1,1,1},score={1,.86,.20,1},
-    eligibleHint={1,.92,.71,.75},
     partial={1,.86,.20,1},invalid={1,.52,.46,1},eligible={1,.96,.64,1},
     neutral={1,1,1,.85},hover={1,1,.94,1}}
  end
  return {physical={.40,.83,.91,.96},score={1,.80,.30,.98},
-   eligibleHint={.92,.77,.48,.47},
    partial={.96,.78,.41,1},invalid={1,.54,.46,1},eligible={.96,.82,.52,.95},
    neutral={.88,.84,.76,.52},hover={1,.95,.77,.94}}
 end
@@ -37,20 +35,15 @@ local function score_mark(m,colors,scale,floorEdge)
  local chosen=m.kind=='score' or m.kind=='partial' or m.kind=='invalid'
  -- Trace the actual cube contour for hover and selection. The ink backing
  -- keeps a hairline legible against both ivory and brightly lit wood.
- local eligible=m.kind=='eligible'
- if m.outline and (m.hovered or chosen or eligible) then
-  local stroke=chosen and 2.5 or m.hovered and 1.4 or .75
-  -- Passive availability is a restrained silhouette, not the old
-  -- horizontal dash below every scoreable D6. Hover/selection stay stronger.
-  if m.hovered or chosen then
-   g.setLineWidth((stroke+1.8)*scale);colour(edgeInk)
-   g.polygon('line',m.outline)
-  end
+ if m.outline and (m.hovered or chosen) then
+  local stroke=chosen and 2.5 or 1.4
+  g.setLineWidth((stroke+1.8)*scale);colour(edgeInk)
+  g.polygon('line',m.outline)
   g.setLineWidth(stroke*scale)
-  colour(chosen and colors[m.kind] or m.hovered and colors.hover or colors.eligibleHint)
+  colour(chosen and colors[m.kind] or m.kind=='neutral' and colors.neutral or colors.hover)
   g.polygon('line',m.outline)
  end
- if m.kind=='neutral' or eligible then return end
+ if m.kind=='neutral' then return end
  -- The anchor follows the lower (or, at the front rail, upper) hull edge
  -- so the mark never moves across the pips of a large foreground die.
  local low,high=m.y+m.r,m.y-m.r
