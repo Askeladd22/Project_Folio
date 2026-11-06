@@ -2,11 +2,11 @@
 > sono nuovamente in fase di brainstorming. Questo documento conserva
 > proposte e simulazioni del 30–31 ottobre, non un sistema approvato.
 > La visione narrativa e i vincoli attuali sono in
-> [PROJECT_VISION.md](PROJECT_VISION.md).
+> [PROJECT_VISION.md](../docs/PROJECT_VISION.md).
 >
 # Manuscript — Incontri con le miniature e sacchetti di Segni
 
-**Stato: proposta di game design, 30 ottobre 2026. Nessuna delle meccaniche di incontro descritte qui è dichiarata implementata.** Questo documento sviluppa la direzione discussa dopo il prototipo di folio progressivo. Riferimenti canonici: [GAME_DESIGN.md](GAME_DESIGN.md) per visione e priorità, [FARKLE_RULES.md](FARKLE_RULES.md) per le regole effettive del Farkle.
+**Stato: proposta di game design, 30 ottobre 2026. Nessuna delle meccaniche di incontro descritte qui è dichiarata implementata.** Questo documento sviluppa la direzione discussa dopo il prototipo di folio progressivo. Riferimenti canonici: [GAME_DESIGN.md](https://github.com/Askeladd22/Project_Folio/blob/0fc25e369bc2655aa42489ae9078b04b9cef1650/docs/GAME_DESIGN.md) per visione e priorità, [FARKLE_RULES.md](../docs/FARKLE_RULES.md) per le regole effettive del Farkle.
 
 > **Aggiornamento di laboratorio — 31 ottobre 2026 / 0.1.0-dev.5:**
 > è ora implementato esclusivamente
@@ -59,7 +59,7 @@ Le cifre (8 Segni, 2 estrazioni, costi 20/30/50, soglie di 30/70, 12 HP o 2–3 
 
 ## Asimmetria: Farkle contro Segni
 
-Il **giocatore** continua a scegliere un sottoinsieme valido di dadi, accantonarlo, rilanciare i dadi liberi oppure incassare nel rispetto delle regole in [FARKLE_RULES.md](FARKLE_RULES.md). Le combinazioni non diventano automaticamente «attacco», «cura» o «elemento»; eventuali effetti supplementari devono lasciare leggibili i punti e la decisione di rischio.
+Il **giocatore** continua a scegliere un sottoinsieme valido di dadi, accantonarlo, rilanciare i dadi liberi oppure incassare nel rispetto delle regole in [FARKLE_RULES.md](../docs/FARKLE_RULES.md). Le combinazioni non diventano automaticamente «attacco», «cura» o «elemento»; eventuali effetti supplementari devono lasciare leggibili i punti e la decisione di rischio.
 
 L'**avversario** ha una regola peculiare e un insieme di **Segni**, piccoli frammenti di pergamena miniata che rappresentano le sue azioni. L'ispirazione di design proviene dal prototipo cooperativo *Star Realms Boss Fight Concept* (2020) fornito dall'utente: boss asimmetrico, gettoni in un sacchetto, sequenza di abilità/attacco/difesa e crescita nel tempo. Gli script di Tabletop Simulator sono **materiale di studio**, non codice da copiare. In particolare, il prototipo P4ND0RA usa una pesca senza reinserimento immediato, scarti, riciclo, neutralizzazione e aumento della potenza di estrazione quando il sacchetto si esaurisce. Questo non costituisce ancora una specifica implementativa per Manuscript.
 

@@ -6,7 +6,7 @@ miniature sono 2D. Nessuna modifica a `src/`, a `main.lua`, allo
 scoring, alla fisica o ai comandi è richiesta per lanciare il laboratorio.
 
 La prima versione dev.5 e l'ablation test dev.6 sviluppano la prova proposta in
-[`docs/INCONTRI_E_SEGNI.md`](../../docs/INCONTRI_E_SEGNI.md),
+[`docs/INCONTRI_E_SEGNI.md`](../../research/INCONTRI_E_SEGNI.md),
 senza confonderla con il **duello Farkle simmetrico contro il Monaco**
 già giocabile nella beta.
 

@@ -1,150 +1,88 @@
-# Project Folio — direzione artistica 2.0
+# Project Folio — direzione artistica corrente
 
-> **Aggiornamento 3 novembre 2026:** il fondale principale è ora una
-> **bottega editoriale-tipografica veneziana ispirata ad Aldo Manuzio**
-> (circa 1495–1510), non uno scriptorium monastico. La palette
-> dei pigmenti e il tratto illustrato restano validi.
->
-> Il documento vincolante per la composizione della nuova scena è
-> [MANUZIO_PRINTSHOP_ART_DIRECTION.md](MANUZIO_PRINTSHOP_ART_DIRECTION.md).
-> L'identità centrale unisce **officina rinascimentale, dadi e
-> onirismo sottile**. Il brief operativo è
-> [MANUZIO_DREAM_DICE_ART_BRIEF.md](MANUZIO_DREAM_DICE_ART_BRIEF.md).
-> Le nuove reference per torchio, lavoro e luce veneziana, con
-> note sulla licenza artistica di Flameng, sono raccolte in
-> [MANUZIO_REFERENCE_SYNTHESIS.md](MANUZIO_REFERENCE_SYNTHESIS.md).
-> Dalla **v0.1.9** `resources/ui/menu_manuzio.png` è incluso
-> nel repository. Il percorso `menu_illustrated.png` resta
-> opzionale per vecchie installazioni, mentre `menu.png`
-> è il fallback incluso. Non ripristinare lo scriptorium
-> come scena principale.
-> Il testo seguente conserva anche i riferimenti alle fasi precedenti.
+**Stato:** guida di produzione. La scena illustrata resta distinta dai
+risultati fisici e dalle regole Farkle; il 2.5D è una proposta, non un
+nuovo renderer approvato.
 
-**Stato:** palette tecnica implementata nella v0.1.5. La direzione
-nasce dalle quattro reference pittoriche condivise dal team:
-paesaggio tardo-medievale, abitato, interno e bottega copista.
+## Identità
 
-## Principio
+Una **bottega tipografica veneziana tra fine XV e inizio XVI secolo**,
+nell'ambiente di Aldo Manuzio: fogli, matrici xilografiche, torchio,
+correttori, caratteri mobili, legno, pigmenti e inchiostro.
+**Non** uno scriptorium monastico o un fantasy medievale generico.
 
-Un **manoscritto illustrato che prende vita**, non un render fantasy
-fotografico. Fondi con campiture opache e contorno intenzionale;
-gerarchia leggibile, pigmenti terrosi, dettagli selettivi. Trattare
-la storia come materia visiva: carta, inchiostro, legno, intonaco,
-pietra, lino e pigmenti opachi; niente bloom o metalli lucidi generici.
+Il protagonista è un **artista originale ispirato al profilo di
+Albrecht Dürer** — disegnatore e incisore, curioso e colto — non Dürer
+stesso e non un ritratto della sua biografia. È muto e non gli si
+impongono dialoghi. Il legame con la bottega aldina è narrativa di
+finzione, non attribuzione di un episodio storico documentato.
 
-La palette è un **vincolo di produzione**, non una richiesta di
-desaturare brutalmente ogni texture. Le reference non autorizzano
-a copiare personaggi/composizioni di altri illustratori.
+Il sogno trae forza da poche anomalie legate a carta, xilografie,
+inchiostro e tavolo. La tensione deve essere quella dell'azzardo:
+**incasso o rilancio?** Non horror, maledizioni, effetti neon o
+ornamenti decorativi ripetuti senza funzione.
 
-## Dadi base in osso inciso — riferimento del 5 novembre 2026
+## Tavolo e livelli della scena
 
-Il riferimento fotografico approvato mostra dadi color osso invecchiato,
-con superfici crema/miele, patina tenue, piccoli pori e spigoli consumati.
-I punti sono cavità scure circondate da anelli incisi nella stessa materia.
+Il **Tavolo del Mercante** è la composizione attualmente giocabile:
+sei D6 tridimensionali in osso, tavolo g3d, avversario illustrato
+oltre il piano e UI su livelli 2D separati. Evitare di sacrificare
+leggibilità e picking dei dadi a favore dell'ornamento.
 
-Le facce opposte dei dadi comuni seguono le coppie **1/6, 2/5 e 3/4**.
-La mappa fisica è `{1,6,3,5,4,2}`; il test verifica le tre coppie
-sulle facce geometricamente opposte. La build incisa modifica
-intenzionalmente la faccia 2 del primo dado in 1.
+- Fondale senza personaggi: `resources/scenes/printshop-room.png`.
+- Ritratto intercambiabile: `resources/opponents/<id>.png`.
+- Menu: `resources/ui/menu_manuzio.png`.
+- Dadi: materiale g3d color osso, patina sobria, punti incisi,
+  contatto e ombra leggibili; identità/valori derivano dalla fisica.
+- Font: **Aldine Aetna** con fallback **Cardo** (vedi
+  [Tipografia](TYPOGRAPHY.md)).
 
-Il materiale ivory calcola superficie e incisioni nel frammento g3d.
-Il valore visualizzato arriva dalla mappa effettiva della faccia;
-la patina dipende dall'ID del dado e resta stabile durante la rotazione.
-Lo smusso grafico deriva dalla geometria fisica. Le miniature
-degli accantonamenti usano lo stesso materiale.
+Il possibile **2.5D** applica profondità, piani e composizione
+illustrata ai fondali e ai personaggi. Non sostituisce g3d o il
+solver dei dadi e non è un sistema già implementato.
 
-Lo smoke `PROJECT_FOLIO_BONE_DICE_SMOKE=1` verifica le sei facce,
-le incisioni, il renderer e i ritratti con LÖVE/Mesa in CI.
-Su Windows confrontare il risultato con la foto a 720p/1080p/1440p,
-inclusi i dadi piccoli a fondo tavolo e quelli accantonati.
+Il **Folio** non è più una sidebar permanente della partita. Resta
+consultabile con **F** e rimane il perno narrativo della futura
+ricomposizione delle xilografie, **non** una barra da colorare per
+raggiungere una soglia di punti. Il sistema competitivo finale
+degli incontri non è ancora definito.
 
-## Scala cromatica canonica
+## Palette canonica
 
-Il file autoritativo è `src/data/art_palette.lua`, usabile
-in puro Lua senza caricare LÖVE:
+Il file autoritativo è `src/data/art_palette.lua`.
+Toni opachi, contrasti funzionali, superfici artigianali:
 
-| Ruolo | HEX | Utilizzo |
-|---|---|---|
-| Carta / UI | `#E7DCC8` | pannelli, folio |
-| Carta secondaria | `#D8C9B1` | righe e layer |
-| Calce | `#DCD5C8` | intonaco e fondi |
-| Pietra | `#BFB4A1` | sfondo neutro |
-| Inchiostro | `#352A23` | testo principale |
-| Terra | `#6E533C` | testo secondario |
-| Legno | `#856448` | bordi e travi |
-| Salvia | `#8E957B` | elementi naturali |
-| Oliva | `#72785C` | profondità, vegetazione |
-| Verde bosco | `#59604A` | accenti positivi |
-| Rosso coccio | `#C38B7A` | tessuti, pareti |
-| Mattone | `#A85F52` | miniature e tetti |
-| Cinabro | `#8D4B43` | pericolo e perdita |
-| Blu ardesia | `#6F8087` | acqua, ombre e selezione |
-| Blu inchiostrato | `#4F5E66` | focus UI |
-| Ocra spenta | `#BE9A4F` | reward e segnalazioni |
-| Ocra chiara | `#D4B66A` | evidenza puntuale |
+| Ruolo | HEX |
+|---|---|
+| Pergamena | `#E7DCC8` |
+| Inchiostro | `#352A23` |
+| Legno | `#856448` |
+| Salvia | `#8E957B` |
+| Rosso cinabro | `#8D4B43` |
+| Blu ardesia | `#6F8087` |
+| Ocra | `#BE9A4F` |
 
-Percentuali indicative, non limiti software: ~75% colori di
-superficie/naturali, ~20% differenziazione di scena e ~5% accenti
-funzionali. Non usare rosso/verde come unica codifica di stato.
+I colori delle facce dei dadi, dello stato di selezione e dei
+pulsanti devono restare leggibili in alto contrasto. Nessun
+filtro fotografico indiscriminato per fingere materiali storici.
 
-## Implementazione e limiti
+## Riferimenti e accuratezza
 
-Da v0.1.5: `menu_surface.lua`, menu principale, HUD Farkle
-e dialoghi condividono le stesse sorgenti cromatiche. Gli
-indicatori dei dadi continuano a usare colori molto leggibili,
-soprattutto in modalità alto contrasto. Gli elementi fisici
-g3d, gli asset esistenti, la fisica, i salvataggi, l'audio
-e la leggibilità delle facce dei dadi **non vengono modificati**.
+L'*Hypnerotomachia Poliphili* (1499) è un riferimento per
+sogno e xilografie, non una storia da riprodurre. Le immagini
+storiche della tipografia guidano gesti, utensili e luce
+veneziana, ma **non** provano che l'ambiente raffigurato sia la
+bottega reale di Manuzio. Non copiare composizioni o asset
+protetti di artisti esterni.
 
-### Seconda fase — fondale illustrato (integrazione 0.1.6)
+Gli studi precedenti su menu, Flameng, prospettive folio e
+ornamenti sono conservati nei
+[commit Git storici](https://github.com/Askeladd22/Project_Folio/tree/0fc25e369bc2655aa42489ae9078b04b9cef1650/docs),
+non costituiscono specifiche di produzione concorrenti.
 
-Il loader condiviso supporta **`resources/ui/menu_illustrated.png`** su
-Main Menu, Settings e selezione commissioni: se l'immagine è presente e
-LÖVE riesce a caricarla, la preferisce allo sfondo legacy
-`resources/ui/menu.png`. Se manca o è corrotta, mantiene l'immagine
-precedente e non interrompe il gioco.
+## Verifiche necessarie
 
-La prima illustrazione 1920×1080 era distribuita come **asset
-separato** durante la sperimentazione 0.1.6–0.1.7.
-È stata rimossa da `main` dopo la scelta della bottega
-alla Manuzio, ora incorporata in `menu_manuzio.png`. Il pacchetto ZIP fornito nella
-conversazione contiene già il path `resources/ui/menu_illustrated.png`.
-Installare lo ZIP dalla root del repository con
-`python scripts/install_menu_art.py PERCORSO_ZIP`, poi verificare
-con `python scripts/install_menu_art.py --verify-installed` e
-riavviare LÖVE. Il controllo dell'immagine è documentato in
-[MENU_ART_INSTALLATION.md](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/MENU_ART_INSTALLATION.md).
-
-Da **0.1.7** il pannello si restringe automaticamente nel margine
-illustrato (~32,5% a sinistra) e a 4:3 il ritaglio preserva il lato
-riservato all'UI. La nuova illustrazione mantiene il proprio colore,
-mentre lo sfondo precedente conserva la sua color correction.
-Non sostituire `menu.png` e non incorporare pulsanti o lettering
-nell'immagine: il software li disegna dinamicamente, anche a 720p.
-
-I passaggi di QA prima di committare l'asset sono descritti in
-[WINDOWS_TECHNICAL_QA.md](WINDOWS_TECHNICAL_QA.md). Non confondere la
-**preparazione del supporto** con la presenza dell'asset nel repository.
-
-### Terza fase — asset definitivi
-
-1. Definire l'immagine guida della bottega con **bozzetto di
-   composizione**, focal point, spazio negativo per il pannello
-   sinistro e luci piatte; approvare prima di sostituire
-   `resources/ui/menu.png`.
-2. Passare a scene con line art e colori opachi ispirati
-   ai processi del XV secolo. Sfondi e oggetti vanno
-   illustrati intenzionalmente, non ottenuti con filtri
-   indiscriminati su render fotorealistici.
-3. Coordinare texture del folio, vassoio, dadi e miniature
-   con la palette senza perdere volume e leggibilità 3D.
-4. Collaudare su Windows in LÖVE a 720p/1080p/1440p,
-   con high contrast e big text, fotografando anche la
-   scena in movimento. **CI verde non sostituisce l'audit visivo.**
-
-## Regole di giudizio
-
-Il risultato dovrebbe sembrare prodotto da un illustratore
-con una logica di forma e colore. Verificare coerenza storica,
-spazio per il gameplay, leggibilità di tutte le interazioni e
-identità riconoscibile anche in un fermo immagine senza titolo.
+Controllare Windows LÖVE a 1280×720, 1920×1080, 1440p e ultrawide:
+facce dei dadi e picking, materiali, ritratto, leggibilità dei
+font, tavolo durante presa/lancio multiplo, contrasto, testo grande
+e animazioni ridotte. La CI non sostituisce il collaudo visivo.

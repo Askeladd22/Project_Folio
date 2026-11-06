@@ -1,6 +1,6 @@
 # Architettura e verifica tecnica di Project Folio
 
-Stato dei percorsi verificato il 5 novembre 2026 sulla baseline 0.1.28.
+Percorsi di produzione ricontrollati il 6 novembre 2026. Documento tecnico di riferimento, non cronologia delle singole milestone UI.
 Questo documento descrive i componenti del prototipo corrente.
 La [visione](PROJECT_VISION.md) raccoglie la direzione narrativa e progettuale.
 
@@ -70,6 +70,17 @@ Le probabilità teoriche assumono le distribuzioni dichiarate nel
 [regolamento](FARKLE_RULES.md). La distribuzione della simulazione reale
 richiede misure dedicate. La ripetibilità dei test numerici riguarda
 i rispettivi modelli e semi.
+
+## Audio e collisioni
+
+Dalla v0.1.38 i rumori del contatto fisico provengono dai callback
+di sola lettura del solver, filtrati con `src/core/dice_impact_audio.lua`
+e riprodotti tramite `src/core/audio_manager.lua`. Il suono del
+lancio **non** parte più da un effetto completo in corrispondenza
+del rilascio del mouse. Le voci di scuotimento si attenuano
+quando la mano rimane ferma; il runtime mantiene i D6 e le
+regole Farkle invariati. Qualità dei campioni e tempi percepiti
+richiedono ascolto reale su Windows.
 
 ## Impostazioni e dati utente
 

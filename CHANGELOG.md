@@ -10,7 +10,32 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
-## [0.1.40] - 2026-11-06
+## [0.1.41] - 2026-11-06
+
+### Documentazione essenziale: 41 → 12 file in docs/
+
+- `docs/` ridotta da **41 a 12 file**: mantenuti soltanto visione,
+  brainstorming, regolamento Farkle, controlli, architettura,
+  arte, tipografia, pipeline PNG avversari, versionamento e due
+  guide per il collaudo Windows.
+- **29 file rimossi da `docs/`**: nove spostati in `research/`
+  (cinque studi e quattro PDF di giochi storici), gli altri 20
+  documenti/asset superati ritirati dalla working tree e recuperabili
+  dalla cronologia Git, senza cancellare commit passati.
+- Riscritti indice `docs/README.md`, guida artistica e pipeline PNG
+  per descrivere la scena Mercante effettiva, non procedure e fondali
+  del 2026-10-31; aggiunto riferimento al protagonista originale
+  ispirato ad Albrecht Dürer nella visione di progetto.
+- Aggiornati i riferimenti fra regolamento Farkle, visione, studi
+  di encounter e laboratorio Segni; aggiornato il documento di
+  versionamento e una descrizione tecnica dell'audio fisico.
+- PDF storici trasferiti per identificatore Git senza ricodifica;
+  nessuna licenza, asset runtime o screenshot QA attivi rimossi.
+- Nessuna modifica a regole, score, Farkle, bot, UI runtime,
+  fisica, renderer g3d, input, audio, asset binari del gioco
+  o impostazioni. Controllare Lua 5.4/LuaJIT, smoke e test versione.
+
+
 
 ### Pulizia conservativa della documentazione storica
 
