@@ -1,3 +1,4 @@
+local Typography=require('src.core.typography')
 -- Shipping folio HUD: one presentation path, one authoritative hitbox table.
 -- g3d owns physical dice and tray. Non-modal HUD no longer imports old HUD.
 -- Gameplay rules and six physical D6 are owned elsewhere; this module paints only the HUD.
@@ -37,7 +38,7 @@ local function size(n)
 end
 local function font_px(px)
  if not fonts[px] then
-  fonts[px]=love.graphics.newFont('resources/font/GoudyBookletter1911.ttf',px)
+  fonts[px]=Typography.load(Typography.primary,px)
  end
  return fonts[px]
 end

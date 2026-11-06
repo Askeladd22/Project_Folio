@@ -14,6 +14,7 @@ Per orientarsi fra software corrente, direzione progettuale e rapporti storici:
 ## Grafica e verifica visiva
 
 - [Direzione artistica](ART_DIRECTION.md)
+- [Tipografia: Aldine Aetna e Cardo](TYPOGRAPHY.md)
 - [Bottega di Manuzio](MANUZIO_PRINTSHOP_ART_DIRECTION.md)
 - [Sintesi dei riferimenti](MANUZIO_REFERENCE_SYNTHESIS.md)
 - [Brief sogno e dadi](MANUZIO_DREAM_DICE_ART_BRIEF.md)

@@ -1,3 +1,4 @@
+local Typography=require('src.core.typography')
 -- UI 2.0: accepted-dice manuscript register. No old walnut canalina.
 -- Drawn AFTER g3d so accepted dice never occupy the 3D rolling surface.
 -- Captures use only g3d; no CPU painter, legacy HUD or gameplay mutation.
@@ -10,7 +11,7 @@ local fonts={}
 local function font(n)
  local px=math.floor(n*(UI.big_text() and 1.15 or 1)+.5)
  if not fonts[px] then
-  fonts[px]=love.graphics.newFont('resources/font/GoudyBookletter1911.ttf',px)
+  fonts[px]=Typography.load(Typography.primary,px)
  end
  return fonts[px]
 end

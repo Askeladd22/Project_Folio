@@ -1,3 +1,4 @@
+local Typography = require('src.core.typography')
 local AudioManager = require("src.core.audio_manager")
 local I18n = require("src.core.i18n")
 local MenuParticles = require("src.core.menu_particles")
@@ -96,7 +97,7 @@ local function load_font(candidates, size)
         for _, path in ipairs(candidates) do
             if love.filesystem.getInfo(path) then
                 local ok, font = pcall(function()
-                    return love.graphics.newFont(path, size)
+                    return Typography.load(path, size)
                 end)
                 if ok and font then
                     return font

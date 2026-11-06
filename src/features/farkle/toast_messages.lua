@@ -1,3 +1,4 @@
+local Typography=require('src.core.typography')
 -- Presentation-only adaptation of upstream Lovely Toasts.
 -- Lazy-loaded because the original module allocates a Font at require time.
 -- Never receives mouse/touch input; the physical dice always own the pointer.
@@ -18,8 +19,8 @@ local function instance()
  engine.style.paddingTB=9
  engine.style.backgroundColor={.13,.09,.065,.92}
  engine.style.textColor={.97,.85,.64,1}
- engine.style.font=love.graphics.newFont(
-  'resources/font/GoudyBookletter1911.ttf',RuntimeUI.big_text() and 20 or 17)
+ engine.style.font=Typography.load(
+  Typography.primary,RuntimeUI.big_text() and 20 or 17)
  return engine
 end
 

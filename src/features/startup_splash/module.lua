@@ -1,3 +1,4 @@
+local Typography = require('src.core.typography')
 local Splash = {}
 
 local AudioManager = require("src.core.audio_manager")
@@ -340,7 +341,7 @@ local function tryLoadTitleFont(desiredSize)
     for _, fname in ipairs(candidates) do
         if love.filesystem and love.filesystem.getInfo and love.filesystem.getInfo(fname) then
             local ok, font = pcall(function()
-                return love.graphics.newFont(fname, desiredSize)
+                return Typography.load(fname, desiredSize)
             end)
             if ok and font then
                 return font
