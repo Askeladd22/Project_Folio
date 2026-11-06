@@ -3,7 +3,7 @@
 > I percorsi di audit e archivio riportati come codice si riferiscono ai
 > materiali locali citati nel rapporto originale, assenti dalla copia corrente.
 
-Versione 0.4, 15 ottobre 2026; **nota di contesto aggiornata al 30 ottobre 2026**. Questo documento consolida la consegna «Nuovo regolamento Farkle». Le regole implementate sono approvate; la taratura delle commissioni è provvisoria. La direzione futura degli incontri con miniature, descritta in [INCONTRI_E_SEGNI.md](INCONTRI_E_SEGNI.md), **non modifica questa tabella né costituisce implementazione di un nuovo sistema di combattimento**.
+Versione 0.4, 15 ottobre 2026; **nota di contesto aggiornata al 30 ottobre 2026**. Questo documento consolida la consegna «Nuovo regolamento Farkle». Le regole implementate sono approvate; la taratura delle commissioni è provvisoria. La direzione futura degli incontri con miniature, descritta in [INCONTRI_E_SEGNI.md](../research/INCONTRI_E_SEGNI.md), **non modifica questa tabella né costituisce implementazione di un nuovo sistema di combattimento**.
 
 ## Punteggio nello stesso lancio
 
@@ -81,7 +81,7 @@ Dopo il Salterio si sceglie la modifica del dado 1; dopo il Libro di ore il Corr
 
 **Direzione approvata:** le figure di un libro potranno diventare avversari che utilizzano intenzioni e Segni, mentre il giocatore manterrà il Farkle con i suoi dadi e l'incasso. Le regole di punteggio, la disgiunzione delle combinazioni, il significato del Farkle, gli hot dice, le mappe fisiche delle facce e i modificatori esistenti **restano la fonte canonica**. Nessuna conversione punti→danno, costo di sigillatura/rasura, salute, limitazione di rilanci o condizione speciale di vittoria è approvata da questo documento.
 
-Le attuali commissioni (Salterio/Libro di ore/Codice) con target, limiti e soglie rappresentano lo **stato del software**, non la forma finale del libro popolato da miniature. Non trasferire automaticamente i 4/5 turni a ciascun nuovo incontro. Se una futura regola di nemico cambia la convenienza di incassare, deve essere descritta e testata separatamente, evitando premi che annullino il rischio del Farkle o un obbligo universale di rilanciare. Vedere [Incontri e Segni](INCONTRI_E_SEGNI.md).
+Le attuali commissioni (Salterio/Libro di ore/Codice) con target, limiti e soglie rappresentano lo **stato del software**, non la forma finale del libro popolato da miniature. Non trasferire automaticamente i 4/5 turni a ciascun nuovo incontro. Se una futura regola di nemico cambia la convenienza di incassare, deve essere descritta e testata separatamente, evitando premi che annullino il rischio del Farkle o un obbligo universale di rilanciare. Vedere [Incontri e Segni](../research/INCONTRI_E_SEGNI.md).
 
 ## Dadi e medaglia esistenti
 

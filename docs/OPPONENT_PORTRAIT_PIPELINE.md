@@ -1,42 +1,41 @@
-# Project Folio — PNG avversari sostituibili
+# Project Folio — avversari illustrati sostituibili
 
-## Livelli della scena (0.1.33)
-1. Un **fondale senza persone**, comune a tutti: `resources/scenes/printshop-room.png`.
-2. Un solo **avversario con alpha**, `resources/opponents/<id>.png`, disegnato davanti al fondale e dietro i dadi 3D.
-3. HUD e tavolo/dadi g3d esistenti, senza modifiche.
+**Stato attuale:** gli asset modulari sono nel repository, non
+richiedono più un pacchetto grafico esterno da installare.
 
-L'esportazione del Mercante dovrà essere `resources/opponents/merchant.png`.
-Per cambiare avversario basta inserire ad esempio
-`resources/opponents/monk.png`, con trasparenza RGBA e busto vicino
-al bordo inferiore dell'immagine, e scegliere l'ID `monk`.
+## Strati
+
+1. `resources/scenes/printshop-room.png` — bottega pulita,
+   **senza personaggi**.
+2. `resources/opponents/merchant.png` — Mercante con canale alfa
+   indipendente, davanti al fondale e dietro al tavolo 3D.
+3. Tavolo, sei D6 g3d e HUD — livelli separati, nessuna modifica
+   agli eventi fisici o ai punteggi.
+
+Per altri personaggi usare `resources/opponents/<id>.png`, con
+`<id>` composto solo da lettere minuscole, cifre e underscore.
+Usare trasparenza RGBA, busto coerente e proporzioni leggibili;
+il motore usa un'area di ancoraggio comune senza distorcere
+il rapporto d'aspetto.
+
+## Selezione dell'avversario
 
 ```lua
-require('src.core.navigation').go('scriptorium',{opponent_id='monk'})
--- Oppure durante una scena già attiva:
-require('src.features.farkle.controller'):setOpponentVisual('monk')
+require('src.core.navigation').go('scriptorium',{opponent_id='merchant'})
+-- Oppure nella scena corrente:
+require('src.features.farkle.controller'):setOpponentVisual('merchant')
 ```
 
-Il loader costruisce il nome del file dall'ID senza inserire nomi di
-avversari nel rendering. Sono ammessi solo ID composti da lettere minuscole,
-numeri e underscore. Le immagini vengono centrate sull'asse del tavolo,
-con massimo 520 px di larghezza, 350 px di altezza e piede a y=373
-nel canvas virtuale 1920×1080: tutte conservano il rapporto d'aspetto.
-L'area di lancio, le hitbox e le regole non vengono modificate.
+Il modulo `src/features/farkle/ui_v2/opponent_scene.lua` risolve
+fondale e ritratto. Un ID non disponibile non deve mostrare il
+Mercante dietro a un altro personaggio: in assenza dell'immagine
+richiesta il loader segnala l'errore esplicitamente.
 
-**Art pack 0.1.34:** i due PNG necessari sono stati prodotti e resi
-disponibili separatamente come `Project_Folio_Art_Pack_0.1.34.zip`.
-Estrarre lo ZIP nella radice di `Project_Folio`, preservando i percorsi
-`resources/scenes/printshop-room.png` e
-`resources/opponents/merchant.png`. All'avvio il loader riconosce entrambi
-ed esclude automaticamente il Mercante incorporato nel vecchio JPEG.
-Il pacchetto non e' commitato nel repository.
+Il vecchio composito `resources/merchant/table-host.jpg` resta un
+fallback limitato al Mercante e non è il formato da utilizzare
+per creare nuovi avversari.
 
-**Senza art pack:** `resources/merchant/table-host.jpg` ha il Mercante
-già disegnato nello sfondo. Fino alla disponibilità di `printshop-room.png`
-(senza Mercante) e `merchant.png` (isolato su trasparenza), il Mercante
-usa ancora il composito storico. NON è stato creato un PNG separato.
-
-Per ogni altro ID è obbligatorio avere sia il fondale pulito sia il suo
-PNG: in caso contrario il gioco genera un errore esplicito, evitando
-che il Mercante rimanga sullo sfondo dietro un nuovo personaggio.
-La pipeline è pronta per gli asset futuri, ma non li inventa.
+**Confine di design:** sostituire un PNG non crea un bot, una
+scommessa o un encounter competitivo. Quei sistemi restano aperti
+nella [visione](PROJECT_VISION.md). I ritratti e la stanza non
+devono alterare le hitbox o la fisica dei dadi.

@@ -1,4 +1,4 @@
--- PROVISIONAL 2026-10-31 design fixture from docs/INCONTRI_E_SEGNI.md.
+-- PROVISIONAL 2026-10-31 design fixture from research/INCONTRI_E_SEGNI.md.
 -- Numbers are examples to falsify via A/B/C tests, NOT approved balance.
 -- No production module imports this file.
 return {

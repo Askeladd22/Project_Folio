@@ -9,8 +9,8 @@
 - **`src/core/version.lua`:** legge la versione dal file, senza
   duplicarla nell'applicazione. Il menu principale mostra `vX.Y.Z`
   senza un suffisso di sviluppo.
-- **`docs/GAME_DESIGN.md`:** la sua versione interna misura la revisione
-  del documento; **non** equivale alla versione del gioco.
+- **`docs/PROJECT_VISION.md` e brainstorming fondativo:** versioni
+  documentali indipendenti dalla SemVer ufficiale del gioco.
 - **`docs/CONTROLS.md`:** inventario sintetico dei controlli attivi;
   i piani della migrazione UI sono ora recuperabili dalla storia Git e
   non sostituiscono il changelog ufficiale del software.

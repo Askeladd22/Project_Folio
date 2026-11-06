@@ -8,8 +8,11 @@ Per la build corrente consultare [README](../README.md),
 ## Ambientazione e incipit — confermati
 
 - **Luogo ed epoca:** Venezia, fine XV / inizio XVI secolo.
-- **Lavoro del protagonista:** artigiano illustratore e incisore di
-  matrici xilografiche presso la tipografia di **Aldo Manuzio**.
+- **Lavoro del protagonista:** artista originale rinascimentale,
+  disegnatore e incisore **ispirato al profilo di Albrecht Dürer**,
+  attivo nell'ambiente delle edizioni di **Aldo Manuzio**. La
+  collaborazione è una scelta narrativa, non una biografia storica
+  né una rappresentazione di Dürer stesso.
 - **Giorno:** lavora alle edizioni aldine.
 - **Sera:** si diverte a giocare alla **zara** in taverna.
 - **Notte:** sogna un mondo onirico in cui le xilografie prendono vita
