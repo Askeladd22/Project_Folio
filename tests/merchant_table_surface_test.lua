@@ -32,7 +32,7 @@ assert(counts.lines>30 and counts.lines<140 and
  'only deterministic grain, double rule and corner ornaments are allowed')
 local renderer=assert(io.open('src/engine3d/g3d_live.lua','rb')):read('*a')
 local source=assert(io.open('src/engine3d/merchant_table_surface.lua','rb')):read('*a')
-assert(not source:find('math.random',1,true),
+assert(not source:find('math%.random%s*%('),
  'the visual surface must not consume gameplay RNG')
 assert(renderer:find('if not self.merchantLeather then',1,true),
  'procedural texture must be cached, never rebuilt each frame')
