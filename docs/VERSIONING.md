@@ -11,7 +11,7 @@
   senza un suffisso di sviluppo.
 - **`docs/PROJECT_VISION.md` e brainstorming fondativo:** versioni
   documentali indipendenti dalla SemVer ufficiale del gioco.
-- **`docs/CONTROLS.md`:** inventario sintetico dei controlli attivi;
+- **`docs/TECHNICAL.md`:** comprende anche i controlli e gli stati della UI attiva;
   i piani della migrazione UI sono ora recuperabili dalla storia Git e
   non sostituiscono il changelog ufficiale del software.
 

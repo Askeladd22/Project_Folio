@@ -19,7 +19,7 @@ local sources={
  medal=read('src/features/farkle/medal_panel.lua'),
  controller=read('src/features/farkle/controller.lua'),
  runtime=read('src/app/dice_runtime.lua'),
- doc=read('docs/CONTROLS.md')
+ doc=read('docs/TECHNICAL.md')
 }
 local function exact(source,fragment,where)
  assert(source:find(fragment,1,true),where..' lost: '..fragment)
