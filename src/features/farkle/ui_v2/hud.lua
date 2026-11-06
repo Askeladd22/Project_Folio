@@ -205,6 +205,22 @@ local function compact_status(u)
  if #keys==0 then return '' end
  return 'Scegli i dadi segnati · clic o tasti '..table.concat(keys,' ')
 end
+-- Local ambient shade, not a new illustration: quiet the right-hand
+-- printing press while retaining the Venetian opening on the left.
+local room_vignette
+local function shade_press(g)
+ if not room_vignette and g.newMesh then
+  local function vertex(x,y,alpha) return {x,y,0,0,.11,.077,.052,alpha} end
+  room_vignette=g.newMesh({
+   vertex(1200,92,0),vertex(1920,92,.12),vertex(1920,390,.075),
+   vertex(1200,92,0),vertex(1920,390,.075),vertex(1200,390,0),
+  },'triangles','static')
+ end
+ if room_vignette then
+  g.setColor(1,1,1,1)
+  g.draw(room_vignette)
+ end
+end
 local merchant_room,room_edges,active_room_path
 local function draw_room(path)
  local g=love.graphics
@@ -223,7 +239,8 @@ local function draw_room(path)
  end
  local iw,ih=merchant_room:getWidth(),merchant_room:getHeight()
  local x,y=Res.to_virtual(0,0)
- g.setColor(1,1,1,1)
+ -- Subtle warm tint reduces competing detail in the room photograph.
+ g.setColor(.975,.958,.942,1)
  g.draw(merchant_room,0,0,0,w/iw,h/ih)
  if x<-.001 then
   g.draw(merchant_room,room_edges.left,0,0,0,x/room_edges.side,h/ih)
@@ -232,6 +249,8 @@ local function draw_room(path)
   g.draw(merchant_room,room_edges.top,0,0,0,w/iw,y/room_edges.top_h)
   g.draw(merchant_room,room_edges.base,0,h-y,0,w/iw,y/room_edges.base_h)
  end
+ shade_press(g)
+ g.setColor(1,1,1,1)
 end
 local function draw_minimal(u)
  local s=u.game
@@ -247,11 +266,11 @@ local function draw_minimal(u)
  draw_room(visual.room)
  OpponentScene.draw_portrait(visual,layout,g)
  -- Keep both sides of the wager in one legible scorecard.
- panel(layout.score_panel,parchment,border_ink,7)
+ panel(layout.score_panel,Art.rgba('surface',.93),border_ink,7)
  g.setColor(unpack(Art.rgba('border',.48)))
  g.setLineWidth(1)
  g.line(246,32,246,82)
- panel({x=1494,y=20,w=382,h=72},parchment,border_ink,7)
+ panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
  write_fitted('ASSICURATI',layout.secured_caption,14,11,paper_muted)
  write_fitted(s.bank..' pt',layout.secured_value,25,16,paper_ink)
  write_fitted('A RISCHIO',layout.risk_caption,14,11,paper_muted)

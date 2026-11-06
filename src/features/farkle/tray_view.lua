@@ -25,8 +25,9 @@ function T.fit(owner,tray,view,extents)
  end end
  local margin=(merchant and 0 or 18)*require('src.core.resolution_manager').get_scale()
  local target=math.min((tray.w-2*margin)/(maxx-minx),(tray.h-2*margin)/(maxy-miny))
- -- The merchant backdrop is fixed in screen space. Its tabletop must
- -- keep the same projection throughout pickup, hold and release.
+ -- Merchant reframe reads the shared production layout. These fitted
+ -- coordinates remain identical for g3d and projected die hit-testing,
+ -- without moving the physical vertices throughout pickup or release.
  if merchant then
   local layout=require('src.features.farkle.ui_v2.layout_candidates').build('table_minimal')
   local left=view.project(extents[1]-rim,extents[3],0)

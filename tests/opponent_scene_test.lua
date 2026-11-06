@@ -19,7 +19,8 @@ for _,id in ipairs({'../monk','Monk','monk.png','',12}) do
  assert(not pcall(S.validate_id,id),'invalid filename injection allowed')
 end
 local portrait=S.portrait_bounds(700,1000,L)
-assert(portrait.w<=520 and portrait.h<=350 and portrait.y>=0 and
+assert(portrait.w<=606 and portrait.h<=408 and portrait.h>350 and
+ portrait.y>=9 and
  portrait.y+portrait.h==L.tray.y+35 and
  math.abs(portrait.x+portrait.w*.5-L.tray.x-L.tray.w*.5)<.01)
 local cache={images=0,draws=0,paths={}}
