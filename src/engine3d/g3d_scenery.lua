@@ -22,8 +22,8 @@ end
 local function vertex(pos,color,alpha)
  return {pos[1],pos[2],pos[3],0,0,0,0,1,color[1],color[2],color[3],alpha or 1}
 end
-local function quad(out,a,b,c,d,color)
- for _,p in ipairs({a,b,c,a,c,d}) do out[#out+1]=vertex(p,color) end
+local function quad(out,a,b,c,d,color,alpha)
+ for _,p in ipairs({a,b,c,a,c,d}) do out[#out+1]=vertex(p,color,alpha) end
 end
 function S.style_vertices(mesh,extents,height,style)
  style=PALETTE[style] and style or 'book'
