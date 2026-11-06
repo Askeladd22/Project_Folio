@@ -33,13 +33,13 @@ for _,width in ipairs{1280,1920,2560} do
  local nearScale=select(4,V.project(0,region.y_front,.6))
  assert(nearScale/farScale>1.12 and nearScale/farScale<1.24,'dice depth cue must stay readable')
  local fraction=(right-left)*k/width
- assert(fraction>=.70 and fraction<=.75,'refined table must occupy 70–75% of screen width')
+ assert(fraction>=.70 and fraction<=.75,'table must occupy 70–75% of screen width')
  assert(math.abs(cy+rear*k-(layout.host.y+layout.host.h)*factor)<1,'rear rail disconnected from portrait')
  -- Compare actual projected surfaces, not the larger render viewport.
  local seamLeft=V.project(extents[1]-.4,extents[3],0)
  local seamRight=V.project(extents[2]+.4,extents[3],0)
  assert(math.abs((cx+seamLeft*k)+(cx+seamRight*k)-width)<1 and
-  cx+seamLeft*k>245*factor and cx+seamLeft*k<285*factor,
+  cx+seamLeft*k>285*factor and cx+seamLeft*k<290*factor,
   'reframed rear wood must stay symmetric rather than use the old 210px seam')
  local _,apron=V.project(0,extents[4]+.4,-scene.box.border_height)
  local gap=layout.footer.y*factor-(cy+apron*k)

@@ -12,6 +12,7 @@ local MenuBackground = require("src.core.menu_background")
 local Schema = require("src.core.schema")
 local SettingsSchema = require("src.data.settings_schema")
 local SettingsUISchema = require("src.data.settings_ui_schema")
+local Art = require("src.data.art_palette")
 
 local function deep_copy(value)
     if type(value) ~= "table" then
@@ -634,7 +635,7 @@ local function draw_background(layout)
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(bg_image,x,y,0,scale,scale)
     else
-        love.graphics.setColor(0.05, 0.04, 0.03, 1)
+        love.graphics.setColor(Art.rgba("ink", 1))
         love.graphics.rectangle("fill", 0, 0, w, h)
     end
 
@@ -652,13 +653,13 @@ local function draw_title(layout)
 
     love.graphics.setFont(title_face)
     local title_text=tr_entry(TITLE_ENTRY)
-    love.graphics.setColor(.29,.18,.09,1)
+    love.graphics.setColor(Art.rgba('text',1))
     love.graphics.printf(title_text,layout.frame.x+20,
         layout.title_y,layout.frame.w-40,'center')
     local subtitle=view_mode==VIEW_MODE_SECTIONS
       and tr_entry(SUBTITLE_SECTIONS_ENTRY) or get_active_tab().label
     love.graphics.setFont(subtitle_face)
-    love.graphics.setColor(.44,.30,.17,1)
+    love.graphics.setColor(Art.rgba('text_muted',1))
     love.graphics.printf(subtitle,layout.frame.x+24,
         layout.subtitle_y,layout.frame.w-48,'center')
     MenuSurface.rule(center_x-165,
@@ -704,8 +705,7 @@ local function draw_sections(layout)
         MenuSurface.item(item,{active=active,alpha=progress,
             primary=item.type=='tab'})
         local y=item.y+(item.h-height)*.5
-        love.graphics.setColor(active and .26 or .37,
-            active and .16 or .25,.12,progress)
+        love.graphics.setColor(Art.rgba(active and 'text' or 'text_muted',progress))
         love.graphics.printf(item.label,item.x+14,y,
             item.w-28,'center')
     end
@@ -721,7 +721,7 @@ local function draw_content(layout)
         MenuSurface.item(row,{active=active,alpha=progress})
         local y=row.label_rect.y+(row.label_rect.h-face_h)*.5
         g.setFont(face)
-        g.setColor(.29,.18,.10,progress)
+        g.setColor(Art.rgba('text',progress))
         g.print(row.control.label,row.label_rect.x,y)
         if row.control.type=='slider' then
             draw_slider_gems(row.slider_rect,row.control.value,
@@ -729,7 +729,7 @@ local function draw_content(layout)
         else
             local value=control_display_value(row.control)
             local val_y=row.value_rect.y+(row.value_rect.h-face_h)*.5
-            g.setColor(.46,.31,.17,progress)
+            g.setColor(Art.rgba('text_muted',progress))
             g.printf(value,row.value_rect.x,val_y,
                 row.value_rect.w,'center')
         end
@@ -744,13 +744,14 @@ local function draw_content(layout)
         MenuSurface.item(row,{active=active,alpha=progress,
             primary=row.action.action=='confirm'})
         g.setFont(action_face)
-        g.setColor(.31,.20,.11,progress)
+        g.setColor(Art.rgba('text',progress))
         g.printf(row.action.label,row.x+12,
             row.y+(row.h-action_h)*.5,row.w-24,'center')
     end
 end
 
 function Settings:enter(params)
+    AudioManager.play_ui("menu_open")
     -- Return to the same active Farkle run after editing settings.
     return_module = params and params.return_to == 'scriptorium'
       and 'scriptorium' or EXIT_MODULE
@@ -767,6 +768,10 @@ function Settings:enter(params)
     layout_cache = nil
     reset_particles()
     reset_view_animation()
+end
+
+function Settings:exit()
+    AudioManager.play_ui("menu_close")
 end
 
 function Settings:update(dt)
@@ -794,6 +799,7 @@ function Settings:keypressed(key)
     if view_mode == VIEW_MODE_CONTENT then
         view_mode = VIEW_MODE_SECTIONS
         reset_view_animation()
+        AudioManager.play_ui("menu_close")
     else
         leave_to_main_menu()
     end
@@ -814,6 +820,7 @@ function Settings:mousepressed(x, y, button)
                     view_mode = VIEW_MODE_CONTENT
                     selected_content_index = 1
                     reset_view_animation()
+                    AudioManager.play_ui("menu_open")
                     AudioManager.play_ui(AUDIO_CONFIRM_SFX)
                 else
                     AudioManager.play_ui(AUDIO_BACK_SFX)

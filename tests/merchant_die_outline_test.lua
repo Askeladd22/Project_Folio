@@ -40,8 +40,8 @@ local function settled(index,x,y)
  return P.from_body(index,b,view.project,0,0,1000,faces,true)
 end
 local side,top=settled(1,8.96,.03),settled(2,8,0)
-assert(P.pick({side},890,-40)==1 and P.pick({top},890,-40)==2,'fixture needs two overlapping hulls')
-assert(P.pick({side,top},890,-40)==2 and P.pick({top,side},890,-40)==2,
+assert(P.pick({side},818,-88)==1 and P.pick({top},818,-88)==2,'fixture needs two overlapping hulls')
+assert(P.pick({side,top},818,-88)==2 and P.pick({top,side},818,-88)==2,
  'the visible top face must win over the neighboring die with the nearer centre')
 local Model=require('src.features.farkle.ui_v2.overlay_model')
 local R=require('src.gameplay.farkle.rules')

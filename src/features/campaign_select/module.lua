@@ -9,6 +9,7 @@ local Schema = require("src.core.schema")
 local CommissionMenu = require("src.data.commission_menu")
 local CampaignSelectSchema = require("src.data.campaign_select_schema")
 local MenuBackground = require("src.core.menu_background")
+local Art = require("src.data.art_palette")
 
 local CampaignSelect = {}
 
@@ -214,7 +215,7 @@ local function draw_background(layout)
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(bg_image,x,y,0,scale,scale)
     else
-        love.graphics.setColor(0.05, 0.04, 0.03, 1)
+        love.graphics.setColor(Art.rgba("ink", 1))
         love.graphics.rectangle("fill", 0, 0, w, h)
     end
 
@@ -232,11 +233,11 @@ local function draw_title(layout)
 
     love.graphics.setFont(title_face)
     local title_text=tr_entry(BRANDING_TITLE_ENTRY)
-    love.graphics.setColor(.29,.18,.09,1)
+    love.graphics.setColor(Art.rgba("text",1))
     love.graphics.printf(title_text,center_x-layout.max_main_w*.5+20,
         layout.title_y,layout.max_main_w-40,"center")
     love.graphics.setFont(subtitle_face)
-    love.graphics.setColor(.43,.29,.16,1)
+    love.graphics.setColor(Art.rgba("text_muted",1))
     love.graphics.printf(tr_entry(SUBTITLE_ENTRY),
         center_x-layout.max_main_w*.5+30,layout.subtitle_y,
         layout.max_main_w-60,"center")
@@ -285,6 +286,7 @@ local function start_campaign(campaign_id)
 end
 
 function CampaignSelect:enter()
+    AudioManager.play_ui("menu_open")
     ensure_assets()
     campaigns = CommissionMenu
     selected_index = nil
@@ -295,6 +297,7 @@ function CampaignSelect:enter()
 end
 
 function CampaignSelect:exit()
+    AudioManager.play_ui("menu_close")
 end
 
 function CampaignSelect:update(dt)

@@ -44,6 +44,11 @@ local expected={
  'src/features/main_menu/module.lua',
  'src/features/farkle/ui_v2/hud.lua',
  'src/features/farkle/ui_v2/dialogs.lua',
+ 'src/features/farkle/folio_view.lua',
+ 'src/features/settings/module.lua',
+ 'src/features/campaign_select/module.lua',
+ 'src/core/menu_particles.lua',
+ 'src/data/settings_ui_schema.lua',
 }
 for _,path in ipairs(expected) do
  assert(source(path):find('src.data.art_palette',1,true),

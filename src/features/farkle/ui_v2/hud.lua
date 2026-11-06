@@ -16,8 +16,10 @@ local MenuSurface=require('src.features.ui_v2.menu_surface')
 local OpponentScene=require('src.features.farkle.ui_v2.opponent_scene')
 local LabelFit=require('src.features.farkle.ui_v2.label_fit')
 local Art=require('src.data.art_palette')
+local AudioManager=require('src.core.audio_manager')
 local V={}
 local fonts={}
+local modal_states=setmetatable({},{__mode='k'})
 local unpack=table.unpack or unpack
 local function rgba(r,g,b,a) return {r,g,b,a or 1} end
 local ink=Art.rgba('text')
@@ -205,24 +207,9 @@ local function compact_status(u)
  if #keys==0 then return '' end
  return 'Scegli i dadi segnati · clic o tasti '..table.concat(keys,' ')
 end
--- Local ambient shade, not a new illustration: quiet the right-hand
--- printing press while retaining the Venetian opening on the left.
-local room_vignette
-local function shade_press(g)
- if not room_vignette and g.newMesh then
-  local function vertex(x,y,alpha) return {x,y,0,0,.11,.077,.052,alpha} end
-  room_vignette=g.newMesh({
-   vertex(1200,92,0),vertex(1920,92,.12),vertex(1920,390,.075),
-   vertex(1200,92,0),vertex(1920,390,.075),vertex(1200,390,0),
-  },'triangles','static')
- end
- if room_vignette then
-  g.setColor(1,1,1,1)
-  g.draw(room_vignette)
- end
-end
 local merchant_room,room_edges,active_room_path
-local function draw_room(path)
+local atmosphere_shader
+local function draw_room(path,depth)
  local g=love.graphics
  local w,h=Layout.virtual_w,Layout.virtual_h
  if active_room_path~=path then
@@ -239,8 +226,26 @@ local function draw_room(path)
  end
  local iw,ih=merchant_room:getWidth(),merchant_room:getHeight()
  local x,y=Res.to_virtual(0,0)
- -- Subtle warm tint reduces competing detail in the room photograph.
- g.setColor(.975,.958,.942,1)
+ g.push()
+ if depth then
+  local o=OpponentScene.depth
+  g.translate(w*.5-depth.x*o.room,h*.5-depth.y*o.room_y)
+  g.scale(o.overscan,o.overscan)
+  g.translate(-w*.5,-h*.5)
+ end
+ g.setColor(1,1,1,1)
+ if not atmosphere_shader and g.newShader then
+  local ok,shader=pcall(g.newShader,'resources/shaders/dream_atmosphere.glsl')
+  if ok then atmosphere_shader=shader end
+ end
+ if atmosphere_shader then
+  local time=0
+  if not UI.reduced_animations() and love.timer and love.timer.getTime then
+   time=love.timer.getTime()
+  end
+  atmosphere_shader:send('dreamTime',time)
+  g.setShader(atmosphere_shader)
+ end
  g.draw(merchant_room,0,0,0,w/iw,h/ih)
  if x<-.001 then
   g.draw(merchant_room,room_edges.left,0,0,0,x/room_edges.side,h/ih)
@@ -249,32 +254,50 @@ local function draw_room(path)
   g.draw(merchant_room,room_edges.top,0,0,0,w/iw,y/room_edges.top_h)
   g.draw(merchant_room,room_edges.base,0,h-y,0,w/iw,y/room_edges.base_h)
  end
- shade_press(g)
+ if atmosphere_shader then g.setShader() end
+ g.pop()
  g.setColor(1,1,1,1)
 end
-local function draw_minimal(u)
+-- Soft contact shadow grounds the g3d table on the printshop floor.
+local table_shadow
+local function draw_table_shadow(g)
+ if not table_shadow and g.newMesh then
+  local c=Art.rgb('earth_dark')
+  local function v(x,y,a) return {x,y,0,0,c[1],c[2],c[3],a} end
+  local top={v(170,976,0),v(260,976,.62),v(1660,976,.62),v(1750,976,0)}
+  local low={v(130,1060,0),v(260,1060,0),v(1660,1060,0),v(1790,1060,0)}
+  local tris={}
+  for i=1,3 do
+   for _,p in ipairs({top[i],top[i+1],low[i+1],top[i],low[i+1],low[i]}) do
+    tris[#tris+1]=p
+   end
+  end
+  table_shadow=g.newMesh(tris,'triangles','static')
+ end
+ if table_shadow then
+  g.setColor(1,1,1,1)
+  g.draw(table_shadow)
+ end
+end
+local function scene_depth(u,g)
+ local reduced=UI.reduced_animations()
+ local t=love.timer and love.timer.getTime and love.timer.getTime() or 0
+ local dt=love.timer and love.timer.getDelta and love.timer.getDelta() or 0
+ local nx,ny=0,0
+ if love.mouse and love.mouse.getPosition then
+  local px,py=love.mouse.getPosition()
+  local ww,wh=g.getDimensions()
+  -- Dampen drift while aiming a throw so the room never fights the hand.
+  local gain=u.mouseThrow and .25 or 1
+  nx,ny=(px/ww*2-1)*gain,(py/wh*2-1)*gain
+ end
+ local depth=OpponentScene.parallax(dt,nx,ny,t,reduced)
+ depth.breath=reduced and 0 or math.sin(t*1.3)
+ return depth
+end
+local function draw_minimal_footer(u,layout,actions)
  local s=u.game
- local layout=Layout.build('table_minimal')
- local actions=Actions.build(u)
  local g=love.graphics
- u.buttons={}
- g.push('all')
- Res.begin_ui()
- g.setColor(.077,.060,.047,1)
- g.rectangle('fill',0,0,1920,1080)
- local visual=OpponentScene.resolve(u.opponentId,OpponentScene.available)
- draw_room(visual.room)
- OpponentScene.draw_portrait(visual,layout,g)
- -- Keep both sides of the wager in one legible scorecard.
- panel(layout.score_panel,Art.rgba('surface',.93),border_ink,7)
- g.setColor(unpack(Art.rgba('border',.48)))
- g.setLineWidth(1)
- g.line(246,32,246,82)
- panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
- write_fitted('ASSICURATI',layout.secured_caption,17,12,paper_muted)
- write_fitted(s.bank..' pt',layout.secured_value,29,18,paper_ink)
- write_fitted('A RISCHIO',layout.risk_caption,17,12,paper_muted)
- write_fitted(s.pot..' pt',layout.risk_value,29,18,paper_warning)
  -- Keep the timber plaque small and never show an empty panel while
  -- the dice are rolling. Controls are actual actions, not placeholders.
  local visible_controls,has_context=0,false
@@ -287,14 +310,29 @@ local function draw_minimal(u)
   end
  end
  if visible_controls>0 then
-  panel(layout.footer,Art.rgba('earth_dark',.95),Art.rgba('timber',.64),6)
-  g.setColor(unpack(Art.rgba('ochre_light',.35)))
-  g.rectangle('fill',layout.footer_trim.x,layout.footer_trim.y,
-    layout.footer_trim.w,layout.footer_trim.h)
- end
- for _,a in ipairs(actions) do
-  if a.slot=='header' then
-   action_button(u,a,a.id=='help' and layout.help or layout.runmenu)
+  -- Walnut plaque hung from the table's front edge on two brass brackets.
+  local f=layout.footer
+  local brass=Art.rgba('ochre',.95)
+  g.setColor(unpack(Art.rgba('ink',.55)))
+  g.rectangle('fill',f.x+6,f.y+6,f.w,f.h,4)
+  for _,bx in ipairs({f.x+f.w*.12,f.x+f.w*.88}) do
+   g.setColor(unpack(Art.rgba('ochre_dark',.95)))
+   g.rectangle('fill',bx-9,f.y-10,18,16,2)
+  end
+  panel(f,Art.rgba('earth_dark',.98),Art.rgba('ink',.9),4)
+  g.setColor(unpack(Art.rgba('earth',.55)))
+  g.rectangle('fill',f.x+3,f.y+3,f.w-6,f.h*.35,3)
+  local trim=layout.footer_trim
+  g.setColor(unpack(Art.rgba('ochre_light',.45)))
+  g.rectangle('fill',trim.x,trim.y,trim.w,trim.h)
+  g.setColor(unpack(brass))
+  g.setLineWidth(1.5)
+  g.rectangle('line',f.x+6,f.y+6,f.w-12,f.h-12,3)
+  for _,p in ipairs({{f.x+13,f.y+13},{f.x+f.w-13,f.y+13},{f.x+13,f.y+f.h-13},{f.x+f.w-13,f.y+f.h-13}}) do
+   g.setColor(unpack(Art.rgba('ochre_light',.95)))
+   g.circle('fill',p[1],p[2],3.2)
+   g.setColor(unpack(Art.rgba('ink',.6)))
+   g.circle('line',p[1],p[2],3.2)
   end
  end
  -- Only real accepted dice are painted on this unobtrusive register.
@@ -332,6 +370,41 @@ local function draw_minimal(u)
    action_button(u,a,secondary)
   end
  end
+end
+local function draw_minimal(u)
+ local s=u.game
+ local layout=Layout.build('table_minimal')
+ local actions=Actions.build(u)
+ local g=love.graphics
+ u.buttons={}
+ g.push('all')
+ Res.begin_ui()
+ g.setColor(.077,.060,.047,1)
+ g.rectangle('fill',0,0,1920,1080)
+ local visual=OpponentScene.resolve(u.opponentId,OpponentScene.available)
+ local depth=scene_depth(u,g)
+ draw_room(visual.room,depth)
+ OpponentScene.draw_portrait(visual,layout,g,depth)
+ draw_table_shadow(g)
+ -- Keep both sides of the wager in one legible scorecard.
+ panel(layout.score_panel,Art.rgba('surface',.93),border_ink,7)
+ g.setColor(unpack(Art.rgba('border',.48)))
+ g.setLineWidth(1)
+ g.line(246,32,246,82)
+ panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
+ write_fitted('ASSICURATI',layout.secured_caption,17,12,paper_muted)
+ write_fitted(s.bank..' pt',layout.secured_value,29,18,paper_ink)
+ write_fitted('A RISCHIO',layout.risk_caption,17,12,paper_muted)
+ write_fitted(s.pot..' pt',layout.risk_value,29,18,paper_warning)
+ for _,a in ipairs(actions) do
+  if a.slot=='header' then
+   action_button(u,a,a.id=='help' and layout.help or layout.runmenu)
+  end
+ end
+ -- Register footer hitboxes now; V.overlay paints them above the 3D table.
+ g.setColorMask(false,false,false,false)
+ draw_minimal_footer(u,layout,actions)
+ g.setColorMask(true,true,true,true)
  Res.end_ui()
  g.pop()
 end
@@ -406,6 +479,22 @@ end
 -- stays in the shared modal presenter until a separate P4 redesign.
 function V.overlay(u,hits)
  u.hits=hits
+ if u.minimalHud then
+  local previous=modal_states[u]
+  if previous~=u.modal then
+   if u.modal then AudioManager.play_ui('menu_open')
+   elseif previous then AudioManager.play_ui('menu_close') end
+   modal_states[u]=u.modal
+  end
+ end
+ if u.minimalHud and u.game then
+  local g=love.graphics
+  g.push('all')
+  Res.begin_ui()
+  draw_minimal_footer(u,Layout.build('table_minimal'),Actions.build(u))
+  Res.end_ui()
+  g.pop()
+ end
  Indicators.draw(u,hits)
  Accepted.draw(u)
  if H.reward_active(u.game) or u.modal then

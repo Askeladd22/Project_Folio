@@ -204,7 +204,8 @@ Hud.draw(u)
 assert(u.buttons.roll.enabled and u.buttons.bank.enabled)
 assert(not footerNotice or not footerNotice:find('Scegli i dadi',1,true),
  'additional scoring dice are optional once the player may roll or bank')
-assert(Layout.overlap(layout.host,layout.tray)==0)
+-- Only the 40px pick headroom above the rear seam may overlap the room.
+assert(layout.host.y+layout.host.h-layout.tray.y==40)
 assert(Layout.overlap(layout.host,layout.shelf)==0)
 love=savedLove
 print('PASS compact player table: real hitboxes, statuses, contextual actions, accepted dice and three viewport sizes')

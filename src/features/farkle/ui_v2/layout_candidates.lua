@@ -46,12 +46,13 @@ function M.build(which)
    header=rect(44,20,1832,72),
    -- The rear seam is 44 virtual pixels lower at 1080p. This is
    -- a screen-space reframe, never a change to six-die world geometry.
-   host=rect(0,0,1920,382),
+    host=rect(0,0,1920,578),
+    portrait_lift=48,
    rear_span=1400,
    -- One unified scorecard: the risk total is not stranded below the table.
    score_panel=rect(44,20,414,72),
    -- Align the one-button state to the same axis as the real tray.
-   single_action=rect(763,948,394,68),
+  single_action=rect(763,976,394,68),
    secured_caption=rect(63,32,173,20),
    secured_value=rect(63,52,173,32),
    risk_caption=rect(258,32,178,20),
@@ -63,17 +64,19 @@ function M.build(which)
    -- A small command plaque, shown ONLY when controls are present.
    -- Sit immediately below the front apron. All UI and pick targets
    -- share the same virtual coordinates as the painted room.
-   footer=rect(445,938,1030,87),
-   footer_trim=rect(458,943,1004,2),
+  footer=rect(445,970,1030,78),
+  footer_trim=rect(458,975,1004,2),
    -- The accepted-dice register is just to the LEFT of the plaque.
-   shelf=rect(56,961,384,51),
+  shelf=rect(56,965,384,51),
    shelf_label=rect(58,935,382,25),
-   tray=rect(60,382,1800,550),
-   message=rect(650,1030,620,33),
-   idle_message=rect(650,940,620,36),
-   context_actions={rect(459,948,186,67),rect(459,1020,186,43)},
-   primary=rect(665,948,392,68),
-   secondary=rect(1076,948,383,68),
+   -- Starts 40px above the rear seam (host bottom) so the tops of dice
+   -- resting against the back rail stay inside the pick rectangle.
+  tray=rect(60,538,1800,426),
+  message=rect(650,1050,620,27),
+  idle_message=rect(650,972,620,36),
+  context_actions={rect(459,976,186,67),rect(459,1042,186,32)},
+  primary=rect(665,976,392,68),
+  secondary=rect(1076,976,383,68),
   }
  end
  local a=common()
@@ -215,7 +218,7 @@ function M.validate(layout)
     return false,'invalid minimal contextual action'
    end
   end
-  if layout.tray.w<1500 or layout.tray.h<540 then
+  if layout.tray.w<1500 or layout.tray.h<420 then
    return false,'physical table viewport too small'
   end
   if layout.primary.h<66 or layout.secondary.h<66 then

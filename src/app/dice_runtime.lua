@@ -525,7 +525,9 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
     if Scriptorium.minimalHud and fitted_scale then
         local _, highest = view.project(0, world_extents[3], DICE_SCENE_BOX_SCHEMA.height)
         local top = math.max(0, math.min(tray.y, math.floor(fitted_y + highest * fitted_scale)))
-        render_viewport = {x=tray.x, y=top, w=tray.w, h=tray.h + tray.y - top}
+        -- Paint down to the window edge so the table's front and legs show;
+        -- die hits remain limited to the tray rectangle below.
+        render_viewport = {x=tray.x, y=top, w=tray.w, h=love.graphics.getHeight() - top}
     end
     local draw_offset_x = region.x_center or 0
 

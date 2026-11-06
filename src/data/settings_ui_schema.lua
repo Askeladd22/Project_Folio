@@ -1,3 +1,5 @@
+local Art = require("src.data.art_palette")
+
 return {
     assets = {
         -- Manuzio printshop ships in the repository (from 0.1.9).
@@ -12,8 +14,8 @@ return {
     },
     colors = {
         -- Ink and ochre on the shared manuscript surface; sliders only.
-        title_gold = {0.57, 0.37, 0.13},
-        text_secondary = {0.64, 0.49, 0.31},
+        title_gold = Art.rgb("reward"),
+        text_secondary = Art.rgb("quiet"),
     },
     text = {
         branding_title = {

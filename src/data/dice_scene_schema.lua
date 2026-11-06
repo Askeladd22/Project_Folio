@@ -5,8 +5,8 @@ return {
     tray_camera = {
         locked = true,
         yaw = 0.00,
-        pitch = 0.64,
-        distance = 48,
+        pitch = 1.00,
+        distance = 52,
     },
     box = {
         half_x = 14.5,

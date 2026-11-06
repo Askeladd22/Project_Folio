@@ -62,14 +62,14 @@ vec3 aged_bone(vec2 uv, float distanceToPip) {
     vec2 seed = vec2(boneSeed * 3.17, boneSeed * 5.43);
     float mottling = bone_noise(uv * 5.0 + seed) - 0.5;
     float grain = bone_noise(uv * vec2(85.0, 15.0) + seed) - 0.5;
-    float pores = smoothstep(0.92, 0.995, bone_hash(floor(uv * 145.0) + seed));
-    float variation = sin(boneSeed * 1.7) * 0.018;
+    float pores = smoothstep(0.90, 0.992, bone_hash(floor(uv * 145.0) + seed));
+    float variation = sin(boneSeed * 1.7) * 0.026;
     vec3 bone = vec3(0.94, 0.87, 0.74) +
-                vec3(mottling * 0.065 + grain * 0.012 + variation);
-    bone -= vec3(0.07, 0.06, 0.04) * pores;
+                vec3(mottling * 0.09 + grain * 0.020 + variation);
+    bone -= vec3(0.10, 0.085, 0.060) * pores;
     float edge = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
-    float wear = 1.0 - smoothstep(0.0, 0.12, edge);
-    bone = mix(bone, vec3(0.73, 0.57, 0.37), wear * 0.10);
+    float wear = 1.0 - smoothstep(0.0, 0.15, edge);
+    bone = mix(bone, vec3(0.68, 0.50, 0.31), wear * 0.16);
     float aa = max(fwidth(distanceToPip), 0.001);
     float ring = 1.0 - smoothstep(0.006, 0.009 + aa,
                                 abs(distanceToPip - 0.072));

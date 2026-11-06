@@ -1,8 +1,9 @@
 local Typography=require('src.core.typography')
 local Presentation=require('src.features.farkle.presentation')
+local Art=require('src.data.art_palette')
 local F={}
 local fonts={}
-local colors={ink={.16,.20,.20},red={.66,.16,.19},green={.18,.39,.28},blue={.18,.34,.53},gold={.69,.49,.15}}
+local colors={ink=Art.rgb('ink'),red=Art.rgb('cinnabar'),green=Art.rgb('forest'),blue=Art.rgb('slate'),gold=Art.rgb('ochre_dark')}
 local words={'Lux','in','folio','manet','et','manus','opus','texit','hora','post','horam','memoria','crescit','inter','folia','silentia'}
 function F.draw(s,p,x,y,w,h,txt,target)
  local g=love.graphics
@@ -17,21 +18,21 @@ function F.draw(s,p,x,y,w,h,txt,target)
   g.setColor(rgb[1],rgb[2],rgb[3],alpha)
   return {rgb[1],rgb[2],rgb[3],alpha}
  end
- g.setColor(.06,.08,.07,.3);g.rectangle('fill',x+7,y+9,w,h,2)
- g.setColor(.96,.95,.88,1);g.rectangle('fill',x,y,w,h,2)
+ g.setColor(Art.rgba('ink',.3));g.rectangle('fill',x+7,y+9,w,h,2)
+ g.setColor(Art.rgba('surface',1));g.rectangle('fill',x,y,w,h,2)
  for strip=1,16 do
-  g.setColor(.64,.60,.46,.018+(strip%3)*.006)
+  g.setColor(Art.rgba('surface_recessed',.018+(strip%3)*.006))
   g.rectangle('fill',x,y+strip*h/17,w,h/34)
  end
- g.setColor(.56,.49,.32,.45);g.setLineWidth(1)
+ g.setColor(Art.rgba('border',.45));g.setLineWidth(1)
  g.rectangle('line',x+2,y+2,w-4,h-4,2)
- txt('FOLIO '..s.stage,x+w*.18,y+h*.045,w*.64,math.max(13,math.floor(w*.043)),{.38,.32,.24,1},'center')
+ txt('FOLIO '..s.stage,x+w*.18,y+h*.045,w*.64,math.max(13,math.floor(w*.043)),Art.rgba('text_muted',1),'center')
  local left,right,top,bottom=x+w*.20,x+w*.82,y+h*.17,y+h*.85
- g.setColor(.54,.47,.37,.15)
+ g.setColor(Art.rgba('earth',.15))
  g.line(left,y+h*.13,left,bottom);g.line(right,y+h*.13,right,bottom)
  for row=1,17 do
   local baseline=top+row*h*.036
-  g.setColor(.46,.48,.46,.13);g.setLineWidth(.7)
+  g.setColor(Art.rgba('quiet',.13));g.setLineWidth(.7)
   g.line(left,baseline,right,baseline)
   local rowLeft=row<5 and left+w*.18 or left
   local available=right-rowLeft
@@ -92,11 +93,11 @@ function F.draw(s,p,x,y,w,h,txt,target)
  end
  local pulse=p and p.conclusion and p.conclusion.kind=='bank' and 1-p.conclusion.age/Presentation.feedback_duration or 0
  if pulse>0 then
-  g.setColor(.86,.70,.29,pulse*.5);g.setLineWidth(2)
+  g.setColor(Art.rgba('ochre',pulse*.5));g.setLineWidth(2)
   g.rectangle('line',x+5,y+5,w-10,h-10,2)
  end
- txt(s.bank..' assicurati',x+w*.15,y+h*.90,w*.72,math.max(12,math.floor(w*.039)),{.15,.29,.24,1},'center')
- txt(s.pot..' a rischio',x+w*.15,y+h*.94,w*.72,math.max(12,math.floor(w*.039)),{.51,.25,.20,1},'center')
+ txt(s.bank..' assicurati',x+w*.15,y+h*.90,w*.72,math.max(12,math.floor(w*.039)),Art.rgba('forest',1),'center')
+ txt(s.pot..' a rischio',x+w*.15,y+h*.94,w*.72,math.max(12,math.floor(w*.039)),Art.rgba('risk',1),'center')
  g.setLineWidth(1)
  return {fixed=fixed,wet=wet}
 end

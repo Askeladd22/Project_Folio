@@ -1,4 +1,7 @@
+local Art = require("src.data.art_palette")
 local MenuParticles = {}
+local CORE = Art.rgb("paper")
+local HALO = Art.rgb("paper_mid")
 
 function MenuParticles.create_default(count)
     local total = math.max(1, tonumber(count) or 34)
@@ -42,9 +45,9 @@ function MenuParticles.draw(particles, width, height, ui_scale, high_contrast, a
         local core_radius = math.max(0.45, particle.size * scale * 0.90)
         local halo_radius = core_radius * 2.3
 
-        love.graphics.setColor(0.93, 0.87, 0.76, alpha)
+        love.graphics.setColor(CORE[1], CORE[2], CORE[3], alpha)
         love.graphics.circle("fill", px, py, core_radius)
-        love.graphics.setColor(0.86, 0.79, 0.66, alpha * 0.42)
+        love.graphics.setColor(HALO[1], HALO[2], HALO[3], alpha * 0.42)
         love.graphics.circle("fill", px, py, halo_radius)
     end
 end

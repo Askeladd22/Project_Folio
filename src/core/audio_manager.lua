@@ -6,6 +6,14 @@ local AudioManager = {}
 local sources = {}
 local music_sources = {}
 local runtime_audio_override = nil
+local sources_ready = false
+
+local ui_sample_paths={
+    click='resources/sounds/ButtonClick.wav',
+    hover='resources/sounds/ButtonHover.wav',
+    menu_open='resources/sounds/Menu ScrollMenuOpen .wav',
+    menu_close='resources/sounds/Menu ScrollMenuClose .wav',
+}
 
 local function clamp(v, min_v, max_v)
     if v < min_v then return min_v end
@@ -74,13 +82,24 @@ local function make_tone(freq, duration, amp)
     return love.audio.newSource(data, "static")
 end
 
+local function load_static(path)
+    if not (love and love.audio and love.audio.newSource) then return nil end
+    local ok, source = pcall(love.audio.newSource, path, "static")
+    return ok and source or nil
+end
+
 local function ensure_sources()
-    if sources.ui_move then return end
+    if sources_ready then return end
+    if not (love and love.audio and love.audio.newSource) then return end
+    sources_ready = true
     sources.ui_move = make_tone(760, 0.03, 0.20)
-    sources.ui_hover = make_tone(920, 0.02, 0.14)
-    sources.ui_toggle = make_tone(640, 0.04, 0.22)
-    sources.ui_confirm = make_tone(1180, 0.05, 0.26)
-    sources.ui_back = make_tone(520, 0.05, 0.24)
+    local click = load_static(ui_sample_paths.click)
+    sources.ui_hover = load_static(ui_sample_paths.hover) or make_tone(920, 0.02, 0.14)
+    sources.ui_toggle = click or make_tone(640, 0.04, 0.22)
+    sources.ui_confirm = click or make_tone(1180, 0.05, 0.26)
+    sources.ui_back = click or make_tone(520, 0.05, 0.24)
+    sources.ui_menu_open = load_static(ui_sample_paths.menu_open)
+    sources.ui_menu_close = load_static(ui_sample_paths.menu_close)
 end
 
 function AudioManager.play(name, opts)
@@ -106,11 +125,15 @@ function AudioManager.play_ui(event_name)
     elseif event_name == "hover" then
         return AudioManager.play("ui_hover", {volume_mul = 0.65})
     elseif event_name == "toggle" then
-        return AudioManager.play("ui_toggle", {volume_mul = 0.85})
+        return AudioManager.play("ui_toggle", {volume_mul = 0.80, pitch = 0.96})
     elseif event_name == "confirm" then
-        return AudioManager.play("ui_confirm", {volume_mul = 1.0})
+        return AudioManager.play("ui_confirm", {volume_mul = 0.9})
     elseif event_name == "back" then
-        return AudioManager.play("ui_back", {volume_mul = 0.9})
+        return AudioManager.play("ui_back", {volume_mul = 0.78, pitch = 0.92})
+    elseif event_name == "menu_open" then
+        return AudioManager.play("ui_menu_open", {volume_mul = 0.68})
+    elseif event_name == "menu_close" then
+        return AudioManager.play("ui_menu_close", {volume_mul = 0.62})
     end
     return false
 end

@@ -176,6 +176,8 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
  },':')
  if self.wall_signature~=rimkey then
   if self.floor_model and self.floor_model.mesh then self.floor_model.mesh:release() end
+  if self.table_prop and self.table_prop.mesh then self.table_prop.mesh:release() end
+  self.table_prop=nil
   if self.walls and self.walls.mesh then self.walls.mesh:release() end
   if self.lines and self.lines.mesh then self.lines.mesh:release() end
   if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
@@ -192,6 +194,20 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
     self.merchantWood:setMipmapFilter('linear')
    end
    floor_texture=self.merchantWood
+   -- Optional decorative GLB table; physics walls and picking never see it.
+   local prop=Scenery.table_prop
+   if love.filesystem.getInfo(prop.path,'file') then
+    self.table_prop=require('src.engine3d.glb_loader').load(self.g3d,prop.path,function(model)
+     if prop.remap then Scenery.remap_axes(model,prop.remap) end
+     Scenery.place_table(model,extents,.28)
+    end,prop)
+    self.table_shader=self.table_shader or g.newShader(prop.shader,'lib/g3d/g3d.vert')
+    self.table_shader:send('tableCenter',{
+     (extents[1]+extents[2])*.5,(extents[3]+extents[4])*.5})
+    self.table_shader:send('tableHalf',{
+     (extents[2]-extents[1])*.5,(extents[4]-extents[3])*.5})
+    self.table_prop.shader=self.table_shader
+   end
   end
   self.floor_model=self.g3d.newModel(
    Scenery.floor_vertices(self.mesh,extents,style),floor_texture)
@@ -300,7 +316,7 @@ function M:_draw_scene(args)
    -- Opaque floor writes depth first. Transparent shadows then test it
    -- without writing depth; the actual 3D walls and dice always occlude.
    g.setDepthMode('lequal',true)
-   self.floor_model:draw()
+   if self.table_prop then self.table_prop:draw() else self.floor_model:draw() end
    g.setDepthMode('lequal',false)
    -- A shadow may darken an opaque floor pixel, but cannot create tray pixels
    -- beyond its edge. Keep the receiver alpha when blending pure black.

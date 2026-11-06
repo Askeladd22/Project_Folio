@@ -1,6 +1,7 @@
 -- Data-driven visual layer only; never mutates Farkle or g3d geometry.
 -- The shipping composite JPEG already contains the Merchant. Other
 -- opponents REQUIRE a clean room, so two figures can never overlap.
+local Art=require('src.data.art_palette')
 local S={}
 S.default_id='merchant'
 S.room_path='resources/scenes/printshop-room.png'
@@ -37,16 +38,46 @@ end
 function S.portrait_bounds(w,h,layout)
  assert(w>0 and h>0 and layout and layout.tray,'invalid portrait/layout')
  -- All PNG opponents use one proportional envelope. The lower edge
- -- slips behind the g3d floor, avoiding floating or pasted-on figures.
- local bottom=layout.tray.y+35
+ -- slips behind the g3d table top, avoiding floating or pasted-on figures.
+ local bottom=(layout.host and layout.host.y+layout.host.h or layout.tray.y)+35
+  -(layout.portrait_lift or 0)
  local maxHeight=math.max(1,math.min(408,bottom-12))
  local scale=math.min(606/w,maxHeight/h)
  local outW,outH=w*scale,h*scale
  local x=layout.tray.x+layout.tray.w*.5-outW*.5
  return {x=x,y=bottom-outH,w=outW,h=outH}
 end
+-- 2.5D staging: the g3d table is the fixed pivot, farther planes drift
+-- more. Pixel values are in the 1920x1080 virtual UI space.
+S.depth={room=22,room_y=9,portrait=8,portrait_y=3,overscan=1.035,breath=.005}
+local view={x=0,y=0}
+function S.parallax(dt,nx,ny,t,reduced)
+ if reduced then
+  view.x,view.y=0,0
+ else
+  local tx=math.max(-1,math.min(1,nx))*.85+math.sin(t*.21)*.15
+  local ty=math.max(-1,math.min(1,ny))*.5+math.sin(t*.17+1.3)*.12
+  local k=1-math.exp(-math.max(0,math.min(dt,.1))*2.4)
+  view.x=view.x+(tx-view.x)*k
+  view.y=view.y+(ty-view.y)*k
+ end
+ return {x=view.x,y=view.y}
+end
+local silhouette_shader
+local function silhouette(g)
+ if silhouette_shader==nil then
+  silhouette_shader=false
+  if g.newShader then
+   local ok,shader=pcall(g.newShader,[[
+    vec4 effect(vec4 c,Image t,vec2 uv,vec2 sc){return vec4(c.rgb,c.a*Texel(t,uv).a);}
+   ]])
+   if ok then silhouette_shader=shader end
+  end
+ end
+ return silhouette_shader or nil
+end
 local image_cache={}
-function S.draw_portrait(selection,layout,g)
+function S.draw_portrait(selection,layout,g,depth)
  if not selection.portrait then return end
  local path=selection.portrait
  local sprite=image_cache[path]
@@ -55,9 +86,30 @@ function S.draw_portrait(selection,layout,g)
   sprite:setFilter('linear','linear')
   image_cache[path]=sprite
  end
- local bounds=S.portrait_bounds(sprite:getWidth(),sprite:getHeight(),layout)
+ local iw,ih=sprite:getWidth(),sprite:getHeight()
+ local bounds=S.portrait_bounds(iw,ih,layout)
+ local sx,sy=bounds.w/iw,bounds.h/ih
+ local x,y,lift=bounds.x,bounds.y,1
+ if depth then
+  x=x-depth.x*S.depth.portrait
+  y=y-depth.y*S.depth.portrait_y
+  lift=1+S.depth.breath*(depth.breath or 0)
+ end
+ -- Breathing grows upward from the hidden waist, never off the table.
+ local oy=ih
+ local shader=depth and silhouette(g)
+ if shader then
+  -- Cast shadow on the back wall separates the figure from the room.
+  local shade=Art.rgb('earth_dark')
+  g.setShader(shader)
+  g.setColor(shade[1],shade[2],shade[3],.30)
+  g.draw(sprite,x+bounds.w*.5+16-depth.x*(S.depth.room-S.depth.portrait),y+bounds.h+4,0,
+   sx*1.02,sy*1.015*lift,iw*.5,oy)
+  g.setShader()
+ end
+ -- Slightly warm, dimmed tint matches the printshop's candlelit grade.
+ if depth then g.setColor(.95,.92,.87,1) else g.setColor(1,1,1,1) end
+ g.draw(sprite,x+bounds.w*.5,y+bounds.h,0,sx,sy*lift,iw*.5,oy)
  g.setColor(1,1,1,1)
- g.draw(sprite,bounds.x,bounds.y,0,
-  bounds.w/sprite:getWidth(),bounds.h/sprite:getHeight())
 end
 return S

@@ -25,6 +25,7 @@ function T.fit(owner,tray,view,extents)
  end end
  local margin=(merchant and 0 or 18)*require('src.core.resolution_manager').get_scale()
  local target=math.min((tray.w-2*margin)/(maxx-minx),(tray.h-2*margin)/(maxy-miny))
+ local inset=0
  -- Merchant reframe reads the shared production layout. These fitted
  -- coordinates remain identical for g3d and projected die hit-testing,
  -- without moving the physical vertices throughout pickup or release.
@@ -35,7 +36,8 @@ function T.fit(owner,tray,view,extents)
   -- The anchor is the floor seam, not the top of an imaginary rear
   -- rail. Flight headroom is rendered above it by dice_runtime.
   local _,rear=view.project(0,extents[3],0)
-  target=math.min(tray.w/(maxx-minx),tray.h/(maxy-rear),
+  inset=(layout.host.y+layout.host.h-layout.tray.y)*tray.h/layout.tray.h
+  target=math.min(tray.w/(maxx-minx),(tray.h-inset)/(maxy-rear),
    tray.w*(layout.rear_span/layout.tray.w)/(right-left))
  end
  local scale=target
@@ -50,7 +52,7 @@ function T.fit(owner,tray,view,extents)
  local cy=tray.y+tray.h/2-(miny+maxy)*scale/2
  if merchant then
   local _,rear=view.project(0,extents[3],0)
-  cy=tray.y-rear*scale
+  cy=tray.y+inset-rear*scale
  end
  owner.trayProjection={cx=cx,cy=cy,scale=scale,points=points,rect=tray,pitch=view.pitch}
  local corners={}

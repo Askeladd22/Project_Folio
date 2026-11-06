@@ -21,7 +21,7 @@ end
 local portrait=S.portrait_bounds(700,1000,L)
 assert(portrait.w<=606 and portrait.h<=408 and portrait.h>350 and
  portrait.y>=9 and
- portrait.y+portrait.h==L.tray.y+35 and
+ portrait.y+portrait.h==L.host.h+35-L.portrait_lift and
  math.abs(portrait.x+portrait.w*.5-L.tray.x-L.tray.w*.5)<.01)
 local cache={images=0,draws=0,paths={}}
 local g={
