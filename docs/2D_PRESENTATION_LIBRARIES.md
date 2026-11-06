@@ -61,4 +61,4 @@ la resa in LÖVE 11.x. QA Windows e screenshot comparativi necessari
 prima di integrare miniature e post-processing nella UI di produzione.
 
 Vedere [README laboratorio](../experiments/miniature_2d_lab/README.md)
-e [tracker UI](UI_V2_STATUS.md).
+e [tracker UI](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/UI_V2_STATUS.md).

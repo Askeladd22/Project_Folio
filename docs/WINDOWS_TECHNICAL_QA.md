@@ -11,7 +11,7 @@ Farkle, fisica, RNG, g3d o assets per “far passare” un test.
 > bundle ZIP verificato e condividilo separatamente quando necessario.
 > Lo snapshot incompleto del 3 novembre, già tracciato, è mantenuto
 > per il rapporto storico. Vedere
-> [repository housekeeping](REPOSITORY_HOUSEKEEPING_2026_11_04.md).
+> [repository housekeeping](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/REPOSITORY_HOUSEKEEPING_2026_11_04.md).
 >
 ## Evidenze caricate su GitHub — verifica parziale del 3 novembre 2026
 
@@ -31,7 +31,7 @@ Il controllo non equivale a esaminare pixel/qualità grafica né a
 provare l'effettiva attivazione dei click.
 
 Rapporto e inventario preciso:
-[WINDOWS_QA_CAPTURE_REVIEW_20261103.md](WINDOWS_QA_CAPTURE_REVIEW_20261103.md).
+[WINDOWS_QA_CAPTURE_REVIEW_20261103.md](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/WINDOWS_QA_CAPTURE_REVIEW_20261103.md).
 La CI `main` dell'upload [41606048617](https://github.com/Askeladd22/Project_Folio/actions/runs/41606048617)
 era **FAIL** per mancato bump versione/changelog, non per errori nei
 test Lua (saltati per il gate iniziale). La v0.1.2 registra queste
