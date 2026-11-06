@@ -10,6 +10,22 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.35] - 2026-11-06
+
+### Aldine Aetna + Cardo: facsimile e fallback per glifo
+- Introdotto **Aldine Aetna Regular**, facsimile Source Library (2026) dei caratteri
+  romani di Francesco Griffo per il `De Aetna` stampato da Aldo Manuzio (1496).
+  Font e attestazione CC0 inclusi nei file del progetto.
+- **Cardo Regular**, carattere romano di supporto, e relativa licenza SIL OFL 1.1:
+  `Font:setFallbacks()` interviene sui glifi non coperti da Aetna, senza
+  sostituire interamente titoli, pulsanti o stringhe miste.
+- Centralizzato il caricamento in `src/core/typography.lua`; adeguati schema
+  menu, selezione campagna, impostazioni, splash e presentazione Farkle,
+  con verifica headless dei font e del fallback.
+- Nessuna modifica a Farkle, fisica, renderer dei dadi, HUD hitbox o salvataggi.
+- Da verificare otticamente su Windows soprattutto le maiuscole, gli accenti
+  italiani, i simboli e l'interlinea nei testi lunghi.
+
 ## [0.1.34] - 2026-11-06
 
 ### Carattere Antiqua e asset modulari per il Mercante
