@@ -1,3 +1,4 @@
+local Typography = require('src.core.typography')
 
 local Settings = {}
 local SettingsState = require("src.core.settings_state")
@@ -157,7 +158,7 @@ local function load_font(candidates, size)
         for _, path in ipairs(candidates) do
             if love.filesystem.getInfo(path) then
                 local ok, font = pcall(function()
-                    return love.graphics.newFont(path, size)
+                    return Typography.load(path, size)
                 end)
                 if ok and font then
                     return font

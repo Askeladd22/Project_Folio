@@ -1,3 +1,4 @@
+local Typography = require('src.core.typography')
 local MainMenu = {}
 local AudioManager = require("src.core.audio_manager")
 local I18n = require("src.core.i18n")
@@ -186,7 +187,7 @@ end
 local function load_font(candidates, size)
     for _, fname in ipairs(candidates) do
         if love.filesystem and love.filesystem.getInfo and love.filesystem.getInfo(fname) then
-            local ok, f = pcall(function() return love.graphics.newFont(fname, size) end)
+            local ok, f = pcall(function() return Typography.load(fname, size) end)
             if ok and f then
                 return f
             end
@@ -204,8 +205,8 @@ end
 local function ensure_fonts(view_h)
     local res_scale = get_resolution_text_scale(view_h)
     local sizes = {
-        -- The blackletter title is the sole decorative typographic accent.
-        -- Navigation uses readable late-medieval roman small capitals.
+        -- Reconstructed Aldine Roman serves all headings and menu text;
+        -- Cardo substitutes individual missing glyphs through LÖVE.
         title = RuntimeUI.sized((RuntimeUI.big_text() and 90 or 76) * res_scale),
         subtitle = RuntimeUI.sized((RuntimeUI.big_text() and 25 or 21) * res_scale),
         primary = RuntimeUI.sized((RuntimeUI.big_text() and 42 or 36) * res_scale),
