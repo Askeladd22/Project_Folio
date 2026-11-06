@@ -37,7 +37,7 @@ local function size(n)
 end
 local function font_px(px)
  if not fonts[px] then
-  fonts[px]=love.graphics.newFont('resources/font/IMFeENsc28P.ttf',px)
+  fonts[px]=love.graphics.newFont('resources/font/GoudyBookletter1911.ttf',px)
  end
  return fonts[px]
 end

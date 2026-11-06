@@ -10,7 +10,7 @@ local fonts={}
 local function font(n)
  local px=math.floor(n*(UI.big_text() and 1.15 or 1)+.5)
  if not fonts[px] then
-  fonts[px]=love.graphics.newFont('resources/font/IMFeENsc28P.ttf',px)
+  fonts[px]=love.graphics.newFont('resources/font/GoudyBookletter1911.ttf',px)
  end
  return fonts[px]
 end

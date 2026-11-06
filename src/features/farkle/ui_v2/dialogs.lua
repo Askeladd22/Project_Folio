@@ -26,7 +26,7 @@ local function sized(n)
 end
 local function face(px)
  fonts[px]=fonts[px] or
-  love.graphics.newFont('resources/font/IMFeENsc28P.ttf',px)
+  love.graphics.newFont('resources/font/GoudyBookletter1911.ttf',px)
  return fonts[px]
 end
 -- Body paragraphs must preserve their existing wraps and deliberate line

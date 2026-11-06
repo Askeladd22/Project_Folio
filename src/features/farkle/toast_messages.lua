@@ -19,7 +19,7 @@ local function instance()
  engine.style.backgroundColor={.13,.09,.065,.92}
  engine.style.textColor={.97,.85,.64,1}
  engine.style.font=love.graphics.newFont(
-  'resources/font/IMFeENsc28P.ttf',RuntimeUI.big_text() and 20 or 17)
+  'resources/font/GoudyBookletter1911.ttf',RuntimeUI.big_text() and 20 or 17)
  return engine
 end
 

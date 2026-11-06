@@ -36,10 +36,11 @@ function S.resolve(id,exists)
 end
 function S.portrait_bounds(w,h,layout)
  assert(w>0 and h>0 and layout and layout.tray,'invalid portrait/layout')
- local scale=math.min(540/w,300/h)
+ -- Lower edge slips behind the 3D table; gameplay and dice remain independent.
+ local scale=math.min(520/w,350/h)
  local outW,outH=w*scale,h*scale
  local x=layout.tray.x+layout.tray.w*.5-outW*.5
- local bottom=layout.tray.y-5
+ local bottom=layout.tray.y+35
  return {x=x,y=bottom-outH,w=outW,h=outH}
 end
 local image_cache={}

@@ -10,6 +10,14 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.34] - 2026-11-06
+
+### Carattere Antiqua e asset modulari per il Mercante
+- Sostituito l'uso del gotico nelle schermate di menu, selezione della commissione e impostazioni con **Goudy Bookletter 1911**, una romana Antiqua moderna di ispirazione umanistica (SIL OFL 1.1). Aggiornati anche splash, HUD, dialoghi, dadi accantonati e notifiche al medesimo font: non e' un carattere storico autentico di Griffo.
+- Ricalibrato il busto degli avversari come strato visivo 2D centrato sull'asse del tavolo, con la base parzialmente nascosta dal tavolo g3d.
+- Preparati `resources/scenes/printshop-room.png` e `resources/opponents/merchant.png` come **pacchetto grafico separato**, da estrarre nei percorsi gia' previsti dalla PR #97. Il codice passa automaticamente ai due strati se entrambi i file sono presenti; altrimenti resta la scena originale per il solo Mercante. I PNG **non** sono inclusi nella PR.
+- Aggiunti test per l'adozione uniforme di Antiqua e per l'ancoraggio della figura. Regole Farkle, dadi fisici, telecamera, input e salvataggi invariati.
+
 ## [0.1.33] - 2026-11-06
 
 ### Avversari con PNG intercambiabili
