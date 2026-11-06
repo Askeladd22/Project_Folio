@@ -58,7 +58,8 @@ function S.create(g)
  local ok,err=xpcall(function()
   g.origin()
   g.setCanvas(canvas)
-  g.clear(unpack(S.palette.leather),1)
+  local leather=S.palette.leather
+  g.clear(leather[1],leather[2],leather[3],1)
   -- Broad, low-contrast fibres: unlike photographed marquetry,
   -- this texture stays quiet while the dice move.
   for k=1,34 do
