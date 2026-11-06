@@ -29,46 +29,21 @@ local function corner_marks(x,y,r,extended)
  g.line(x-d,y+d-reach,x-d,y+d,x-d+reach,y+d)
  g.line(x+d-reach,y+d,x+d,y+d,x+d,y+d-reach)
 end
-local edgeInk={.18,.12,.065,.86}
-local function score_mark(m,colors,scale,floorEdge)
- local g=love.graphics
+local edgeInk={.18,.12,.065,.82}
+-- Passive eligibility is already a subtle tint on the g3d die faces.
+-- Score feedback draws only on the projected physical silhouette: there
+-- must be no dashes, ticks or glyphs detached below the dice.
+local function score_mark(m,colors,scale)
+ if not m.outline then return end
  local chosen=m.kind=='score' or m.kind=='partial' or m.kind=='invalid'
- -- Trace the actual cube contour for hover and selection. The ink backing
- -- keeps a hairline legible against both ivory and brightly lit wood.
- if m.outline and (m.hovered or chosen) then
-  local stroke=chosen and 2.5 or 1.4
-  g.setLineWidth((stroke+1.8)*scale);colour(edgeInk)
-  g.polygon('line',m.outline)
-  g.setLineWidth(stroke*scale)
-  colour(chosen and colors[m.kind] or m.kind=='neutral' and colors.neutral or colors.hover)
-  g.polygon('line',m.outline)
- end
- if m.kind=='neutral' then return end
- -- The anchor follows the lower (or, at the front rail, upper) hull edge
- -- so the mark never moves across the pips of a large foreground die.
- local low,high=m.y+m.r,m.y-m.r
- if m.outline then
-  low,high=-math.huge,math.huge
-  for i=2,#m.outline,2 do low=math.max(low,m.outline[i]);high=math.min(high,m.outline[i]) end
- end
- local y=low+4*scale
- if floorEdge and y>floorEdge-6*scale then y=high-6*scale end
- local x=m.x
- local function glyph()
-  if m.kind=='score' then
-   g.line(x-7*scale,y,x-2*scale,y+3*scale,x+7*scale,y-3*scale)
-  elseif m.kind=='invalid' then
-   g.line(x-3*scale,y-3*scale,x+3*scale,y+3*scale)
-   g.line(x+3*scale,y-3*scale,x-3*scale,y+3*scale)
-  elseif m.kind=='partial' then
-   g.line(x-8*scale,y,x-3*scale,y)
-   g.line(x+3*scale,y,x+8*scale,y)
-  else
-   g.line(x-8*scale,y,x+8*scale,y)
-  end
- end
- g.setLineWidth((chosen and 4.8 or 4)*scale);colour(edgeInk);glyph()
- g.setLineWidth((chosen and 2.5 or 2)*scale);colour(colors[m.kind]);glyph()
+ if not chosen and not m.hovered then return end
+ local g=love.graphics
+ local width=(chosen and 2.25 or 1.35)*scale
+ g.setLineWidth(width+1.5*scale);colour(edgeInk)
+ g.polygon('line',m.outline)
+ g.setLineWidth(width)
+ colour(chosen and colors[m.kind] or colors.hover)
+ g.polygon('line',m.outline)
 end
 function M.draw(u,hits)
  local hover
@@ -97,7 +72,7 @@ function M.draw(u,hits)
    g.setLineWidth(2.1*viewportScale)
    corner_marks(m.x,m.y,math.min(24,m.r),false)
   else
-   score_mark(m,colors,viewportScale,u.trayProjection and u.trayProjection.floorEnd)
+   score_mark(m,colors,viewportScale)
   end
  end
  if model.hand then
