@@ -71,7 +71,8 @@ for _,path in ipairs{
  'src/engine3d/physics.lua',
  'src/engine3d/g3d_live.lua',
  'resources/textures/wood.png',
- 'resources/merchant/wood-floor.jpg',
+ 'resources/scenes/printshop-room.png',
+ 'resources/opponents/merchant.png',
  'resources/dice/1.png',
  'experiments/physics_lab/fpslab.c',
 } do

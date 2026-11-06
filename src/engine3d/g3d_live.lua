@@ -181,17 +181,17 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
   -- The single opaque GPU floor replaces the historical overlaid 2D book
   -- ornaments. It participates in the SAME depth buffer as walls and dice.
-  if self.carving then self.carving.mesh:release();self.carving=nil end
+  -- Merchant imagery now lives in the independent 2D opponent layer.
+  -- The former floor and carving JPGs were deleted with that art split:
+  -- only the retained shared wood texture is part of the GPU tray.
   local floor_texture=self.white
   if style=='merchant' then
    if not self.merchantWood then
-    self.merchantWood=g.newImage('resources/merchant/wood-floor.jpg',{mipmaps=true})
+    self.merchantWood=g.newImage('resources/textures/wood.png',{mipmaps=true})
     self.merchantWood:setFilter('linear','linear')
     self.merchantWood:setMipmapFilter('linear')
    end
    floor_texture=self.merchantWood
-   self.carvingImage=self.carvingImage or g.newImage('resources/merchant/carving.jpg')
-   self.carving=self.g3d.newModel(Scenery.merchant_carving(extents,border),self.carvingImage)
   end
   self.floor_model=self.g3d.newModel(
    Scenery.floor_vertices(self.mesh,extents,style),floor_texture)
@@ -311,7 +311,6 @@ function M:_draw_scene(args)
    g.setColorMask(true,true,true,true)
    g.setDepthMode('lequal',true)
    self.walls:draw()
-   if self.carving then self.carving:draw() end
    if self.divider_model then self.divider_model:draw() end
    for _,item in ipairs(args.entries) do
     local models=self.models[item.index]
