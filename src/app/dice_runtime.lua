@@ -16,6 +16,7 @@ local Scriptorium = assert(..., "A dice game controller is required")
 local PageLayout = require("src.features.scriptorium.page_layout")
 local SettingsState = require("src.core.settings_state")
 local AudioManager = require("src.core.audio_manager")
+local DiceImpactAudio = require("src.core.dice_impact_audio")
 local Logger = require("src.core.logger")
 local DiceConfig = require("src.core.dice_config")
 local TrayLayout = require("src.data.tray_layout")
@@ -90,7 +91,6 @@ local DICE_THROW_JITTER = DICE_THROW_SCHEMA.jitter
 local DICE_THROW_ANGULAR_MAX = DICE_THROW_SCHEMA.angular_max
 local DICE_THROW_NOISE = DICE_THROW_SCHEMA.noise
 local DICE_THROW_NOISE_Z_MULT = DICE_THROW_SCHEMA.noise_z_mult
-local DICE_ROLL_CONFIRM_SFX = DICE_AUDIO_SCHEMA.roll_confirm
 local DICE_SETTLED_SFX = DICE_AUDIO_SCHEMA.settled
 
 local DICE_TEMPLATE_BY_KIND = {
@@ -671,8 +671,30 @@ local function draw_dice_tray_overlay()
     love.graphics.setBlendMode("alpha")
 end
 
+local impact_gate = DiceImpactAudio.new()
+
+-- The fixed-step solver owns the timing. Audio is a read-only subscriber:
+-- neither it nor this gate may alter a position, velocity or face result.
+local function play_physical_impact(kind, index, other, speed)
+    if not is_scriptorium_active() then return end
+    local entry = dice[index]
+    if not entry or entry.kept or entry.body._manual_pending then return end
+    if kind == "pair" then
+        local second = dice[other]
+        if not second or second.kept or second.body._manual_pending then return end
+    end
+    local strength = impact_gate:accept(kind, index, other, speed,
+        box.simulated_time or 0)
+    if strength then
+        AudioManager.play_dice("impact", {kind = kind, strength = strength})
+    end
+end
+
 local function configure_dice_box()
     box:configure(DICE_SCENE_BOX_SCHEMA)
+    box.on_contact = function(_, kind, first, second, speed)
+        play_physical_impact(kind, first, second, speed)
+    end
     box.after_step = function(_,dt)
         constrain_dice_to_regions()
         if physicalResolution then checkDiceSettled(dt) end
@@ -765,6 +787,10 @@ local function spawn_initial_dice()
                 entry.restPose[index] = {vertex[1], vertex[2], vertex[3]}
             end
             materials.apply(dice[die_index].body, materials.get("bone"))
+            local audio_index = die_index
+            entry.body.on_contact = function(_, kind, speed)
+                play_physical_impact(kind, audio_index, nil, speed)
+            end
             box[die_index] = dice[die_index].body
         end
     end
@@ -958,6 +984,7 @@ function love.resize(w, h)
 end
 
 function love.update(dt)
+    AudioManager.update_dice(dt)
     if game_manager then
         game_manager:update(dt)
     end
@@ -1304,11 +1331,8 @@ function rollAllDice(max_dice, roll_indices, recovery, technical, gesture)
         end
     end
     
-    -- Automatic/keyboard throws use the same physical OGG cues as manual
-    -- drops. Retain the original UI confirmation as a fallback only.
-    if not AudioManager.play_dice("throw", {count = #to_roll}) then
-        AudioManager.play_ui(DICE_ROLL_CONFIRM_SFX)
-    end
+    -- No full throw recording on launch: actual contact callbacks trigger
+    -- short bone-on-table transients on the relevant simulation steps.
     Logger.debug("[Dice] Rolled " .. #to_roll .. " dice")
 end
 
