@@ -30,7 +30,7 @@ function S.style_vertices(mesh,extents,height,style)
  local x1,x2,y1,y2=unpack(extents)
  -- Thin decorative housing; the underlying collision walls do not change.
  local width=style=='book' and .32 or style=='current' and .28
-  or style=='C' and .13 or .40
+  or style=='C' and .13 or style=='merchant' and .28 or .40
  local v=mesh.tray_border_vertices(x1,x2,y1,y2,width,height,8)
  local colors=PALETTE[style]
  -- All wall sections retain the same physical heights; only the skin changes.
