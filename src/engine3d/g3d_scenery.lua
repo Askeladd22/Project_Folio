@@ -2,7 +2,7 @@
 -- GPU scene remains independent from Farkle rules, fixed stepping and picking.
 local S={}
 local PALETTE={
- merchant={.45,.24,.105},book={.76,.67,.51},current={.35,.215,.12},
+ merchant={.34,.205,.135},book={.76,.67,.51},current={.35,.215,.12},
  A={.31,.18,.095},B={.48,.33,.20},C={.52,.43,.255},
 }
 -- Plain, non-textured floors keep the physical dice visually prominent.

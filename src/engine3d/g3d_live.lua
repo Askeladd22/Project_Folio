@@ -7,6 +7,7 @@ M.__index=M
 local Scenery=require('src.engine3d.g3d_scenery')
 local Materials=require('src.engine3d.g3d_materials')
 local Bevel=require('src.engine3d.g3d_bevel')
+local MerchantSurface=require('src.engine3d.merchant_table_surface')
 local shadow_vertices=require('src.engine3d.g3d_shadow')
 
 local function supported(entries)
@@ -30,6 +31,7 @@ function M.new()
   material_mode=mode,dice_shader=nil,
   bevel_enabled=true,bevel_fraction=Bevel.default_fraction,
   width=0,height=0,floor_model=nil,walls=nil,lines=nil,divider_model=nil,wall_signature=nil,
+  merchantLeather=nil,merchantWood=nil,
  },M)
 end
 
@@ -179,24 +181,28 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   if self.walls and self.walls.mesh then self.walls.mesh:release() end
   if self.lines and self.lines.mesh then self.lines.mesh:release() end
   if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
-  -- The single opaque GPU floor replaces the historical overlaid 2D book
-  -- ornaments. It participates in the SAME depth buffer as walls and dice.
-  -- Merchant imagery now lives in the independent 2D opponent layer.
-  -- The former floor and carving JPGs were deleted with that art split:
-  -- only the retained shared wood texture is part of the GPU tray.
+  -- The physically unchanged floor receives a matte, ink-coloured leather
+  -- texture. Old wood marquetry remains only on the thin 3D frame; the
+  -- playable centre has no competing ornaments or artificial die markers.
+  -- Two independent textures share one depth pass and the same UV geometry.
   local floor_texture=self.white
+  local rail_texture=self.white
   if style=='merchant' then
    if not self.merchantWood then
     self.merchantWood=g.newImage('resources/textures/wood.png',{mipmaps=true})
     self.merchantWood:setFilter('linear','linear')
     self.merchantWood:setMipmapFilter('linear')
    end
-   floor_texture=self.merchantWood
+   if not self.merchantLeather then
+    self.merchantLeather=MerchantSurface.create(g)
+   end
+   floor_texture=self.merchantLeather
+   rail_texture=self.merchantWood
   end
   self.floor_model=self.g3d.newModel(
    Scenery.floor_vertices(self.mesh,extents,style),floor_texture)
   self.walls=self.g3d.newModel(
-   Scenery.style_vertices(self.mesh,extents,border,style),floor_texture)
+   Scenery.style_vertices(self.mesh,extents,border,style),rail_texture)
   -- Do not overlay ruling lines across the play surface in the clean mode.
   self.lines=nil
   local divider_vertices=Scenery.divider_vertices(divider)

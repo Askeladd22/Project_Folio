@@ -10,6 +10,27 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.43] - 2026-11-07
+
+### Tavoliere più sobrio: prima fase dell'art direction illustrata
+
+- Sostituita **soltanto la texture del piano 3D del Mercante**
+  con una superficie procedurale in cuoio opaco color terra rossa;
+  doppia cornice sottile e motivi floreali limitati ai quattro angoli.
+- La vecchia texture `wood.png` rimane sul bordo ligneo 3D, separata
+  dal nuovo materiale del piano. Nessuna risorsa grafica esterna o
+  fallback legacy richiesti.
+- La texture viene generata **una sola volta** da un Canvas LÖVE,
+  senza `math.random` e senza passaggi di disegno per frame.
+- Render pass g3d, calcolo del rilievo, ombre, camera, ID/facce,
+  posizione e dimensione fisica dei dadi, collisioni e picking
+  non sono stati modificati.
+- Aggiornato il controllo sugli asset del Mercante e aggiunto test
+  headless per la generazione deterministica e la cache; aggiornata
+  la documentazione artistica.
+- Il restyling complessivo di bottega, ritratto e UI è ancora da
+  valutare tramite schermate Windows a 720p e 1080p.
+
 ## [0.1.42] - 2026-11-06
 
 ### Unificazione dei documenti: 12 → 7 file

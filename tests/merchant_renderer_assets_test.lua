@@ -15,8 +15,12 @@ for _,path in ipairs({
 end
 assert(renderer:find("g.newImage('resources/textures/wood.png'",1,true),
  'the real g3d tabletop must load a tracked and existing wood texture')
-assert(renderer:find('floor_texture=self.merchantWood',1,true),
- 'the Merchant floor still needs the wood texture binding')
+assert(renderer:find('floor_texture=self.merchantLeather',1,true),
+ 'Merchant game floor must use the subdued leather texture')
+assert(renderer:find('rail_texture=self.merchantWood',1,true),
+ 'Merchant wood texture belongs only on the thin 3D frame')
+assert(renderer:find('MerchantSurface.create(g)',1,true),
+ 'Merchant material must be built once, with no new external art dependency')
 for _,old in ipairs({
  'resources/merchant/wood-floor.jpg',
  'resources/merchant/carving.jpg',

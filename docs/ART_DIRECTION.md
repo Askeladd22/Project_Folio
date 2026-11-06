@@ -47,6 +47,28 @@ ricomposizione delle xilografie, **non** una barra da colorare per
 raggiungere una soglia di punti. Il sistema competitivo finale
 degli incontri non è ancora definito.
 
+## Tavoliere del Mercante — prima fase del redesign (0.1.43)
+
+Il tavolo di gioco conserva la **stessa mesh 3D, area fisica, camera,
+proiezione, picking, ombre e sei D6 in osso**. Cambia solo il materiale:
+una superficie di **cuoio opaco color terra rossa**, con un doppio
+filetto color ottone e piccoli ornamenti vegetali stampati ai
+quattro angoli. Il centro resta intenzionalmente libero e uniforme
+per rendere leggibili combinazioni e movimenti dei dadi.
+
+Il nuovo materiale è costruito *una volta sola* da
+`src/engine3d/merchant_table_surface.lua` come texture Canvas
+deterministica, **senza asset PNG esterni né casualità di gameplay**.
+`resources/textures/wood.png` è conservata esclusivamente per la
+cornice tridimensionale. La superficie e la cornice restano nello
+stesso pass di profondità g3d e mantengono le ombre dei dadi.
+
+Questa è **fase 1** della nuova direzione 2.5D illustrata:
+l'ambientazione notturna, il Mercante xilografico e la GUI rimangono
+invariati. La loro eventuale armonizzazione cromatica e incisoria
+sarà una fase successiva con confronto screenshot su Windows.
+Non dichiarare già implementato un rendering globale 2.5D.
+
 ## Palette canonica
 
 Il file autoritativo è `src/data/art_palette.lua`.
