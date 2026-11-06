@@ -54,6 +54,7 @@ end
 function U:shouldDrawTrayDie(index) return not (self.game and self.game.used[index]) end
 function U:reset(mode)
  if self.state=='rolling' then return end
+ Audio.stop_dice('shake',.045)
  Toasts.clear()
  self.minimalHud=true
  self.mouseThrow=nil
@@ -111,6 +112,7 @@ function U:request(rescue,gesture,manual)
  self.logicalRollId=(self.logicalRollId or 0)+1
  self.pending={};self.observed={};self.retry=nil;self:log(rescue and 'medal_retry' or 'roll',self.logicalRollId)
  self.lastLoss=nil;self.lastBank=nil
+ Audio.stop_dice('shake',.045)
  self.mouseThrow=nil
  if not manual then self.dragSelected=nil end
  self:begin_physical(s.active,nil,gesture,manual);return true
@@ -144,6 +146,7 @@ function U:activate_reference(indices)
  return true
 end
 function U:onPhysicalFailure(event)
+ Audio.stop_dice('shake',.045)
  self.manualRoll=nil
  self.mouseThrow=nil
  self.marquee=nil
@@ -160,11 +163,18 @@ end
 function U:update(dt)
  if self.mouseThrow then
   if not self.game or self.modal then
+   Audio.stop_dice('shake',.045)
    if self.mouseThrow.group then GroupThrow.cancel(self.mouseThrow)
    else MouseThrow.cancel(self.mouseThrow) end
    self.mouseThrow=nil
   else
-   if self.mouseThrow.group then GroupThrow.tick(self.mouseThrow,dt)
+   local held=self.mouseThrow
+   held.motion_idle=(held.motion_idle or 0)+math.max(0,dt or 0)
+   if held.sound_shaking and held.motion_idle>=.085 then
+    Audio.stop_dice('shake',.045)
+    held.sound_shaking=false
+   end
+   if held.group then GroupThrow.tick(held,dt)
    else MouseThrow.tick(self.mouseThrow,dt) end
   end
  end
@@ -271,6 +281,8 @@ function U:mousepressed(x,y,b)
   end
   -- One audible grab per successful gesture, even when 2–6 bodies are held.
   if self.mouseThrow then
+   self.mouseThrow.motion_idle=0
+   self.mouseThrow.sound_shaking=false
    Audio.play_dice('grab',{count=self.mouseThrow.group and #self.mouseThrow.held or 1})
   end
   return
@@ -301,6 +313,9 @@ function U:mousemoved(x,y)
  if self.marquee then Marquee.move(self.marquee,x,y) end
  if self.mouseThrow then
   local held=self.mouseThrow
+  -- Pointer jitter must not sustain the shake indefinitely.
+  local dx,dy=x-(held.x or x),y-(held.y or y)
+  if dx*dx+dy*dy>=4 then held.motion_idle=0 end
   local detector=held.group and held.shaker or held.shake
   local before=detector and detector.events or 0
   local move=held.group and GroupThrow.move or MouseThrow.move
@@ -311,7 +326,7 @@ function U:mousemoved(x,y)
   -- new reversal event. Dragging, pointer jitter and physics ticks are silent.
   if moved and detector and detector.events>before then
    local strength=held.group and detector.detector.strength or detector.strength
-   Audio.play_dice('shake',{
+   held.sound_shaking=Audio.play_dice('shake',{
      count=held.group and #held.held or 1,
      strength=strength
    })
@@ -341,6 +356,7 @@ function U:mousereleased(x,y,b)
  if b~=2 or not self.mouseThrow then return end
  local held=self.mouseThrow
  self.mouseThrow=nil
+ Audio.stop_dice('shake',.045)
  if not self.manualRoll then
   if held.group then GroupThrow.cancel(held) else MouseThrow.cancel(held) end
   return
@@ -369,11 +385,11 @@ function U:mousereleased(x,y,b)
    if self.manualRoll.count==0 then self.manualRoll=nil;self.dragSelected=nil end
   end
  end
- -- A multi-die throw is ONE real gesture: no stacking a sound per die.
- if valid_releases>0 then Audio.play_dice('throw',{count=valid_releases}) end
+ -- The actual physical impacts, not mouse release, own the throw audio.
 end
 function U:keypressed(k)
  if k=='escape' and self.mouseThrow then
+  Audio.stop_dice('shake',.045)
   if self.mouseThrow.group then GroupThrow.cancel(self.mouseThrow)
   else MouseThrow.cancel(self.mouseThrow) end
   self.mouseThrow=nil;return

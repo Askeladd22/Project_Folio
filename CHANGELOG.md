@@ -10,6 +10,24 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.38] - 2026-11-06
+
+### Audio dei dadi sincronizzato alla fisica
+- I contatti reali del solver (pavimento, bordi e coppie di dadi)
+  espongono callback di sola lettura, senza variare impulsi o geometria.
+- Un filtro per dado/superficie sopprime il crepitio da micro-urti;
+  il volume degli impatti dipende dalla velocità di avvicinamento.
+- La riproduzione di un lancio completo al rilascio del mouse o al
+  comando automatico è eliminata: brevi frammenti OGG partono
+  quando il dado colpisce davvero il tavolo.
+- Un unico suono di scuotimento per volta, con dissolvenza al mouse
+  fermo, su rilascio e annullamento; code degli impatti accorciate.
+- Varianti audio deterministiche separate dal RNG di gioco e limite
+  invariato di voci simultanee; conservati mute e volumi esistenti.
+- Aggiunti test headless per cooldown, attenuazione, fine scuotimento,
+  eventi di collisione e invarianza della fisica dei D6.
+- Nessuna modifica a regole Farkle, risultati, input, g3d o asset binari.
+
 ## [0.1.37] - 2026-11-06
 
 ### Refinement del tavolo del Mercante

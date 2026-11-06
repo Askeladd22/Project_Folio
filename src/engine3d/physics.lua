@@ -272,6 +272,11 @@ function box:update(dt)
               local invMassB = (b.mass ~= 0) and (1 / b.mass) or 0
               local denom = invMassA + invMassB
               if denom > 0 then
+              -- Read-only physical event: before applying the unchanged impulse.
+              -- Sound routing happens outside the solver.
+              if self.on_contact then
+                self.on_contact(self, "pair", A.idx, B.idx, -rel)
+              end
               local step_dt = self.dt or 0.0166667
               local relDisp = (b.velocity - a.velocity) * step_dt
               local relPos0 = (b.position - a.position) - relDisp
@@ -458,6 +463,12 @@ function body:wall(index, normal, restitution, friction)
     self.sleep_timer = 0
   end
   
+  -- Emit the approaching contact speed, never a positional correction.
+  -- This callback cannot modify the existing wall impulse calculation.
+  if s < -0.001 and self.on_contact then
+    self.on_contact(self, normal[3] > 0.5 and "floor" or "rim", -s)
+  end
+
   local cv,ca = self:effect(normal,d)
 
   local cs = ca^d + cv
