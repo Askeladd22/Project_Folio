@@ -44,10 +44,10 @@ function M.build(which)
   return {
    name=which,
    header=rect(44,20,1832,72),
-   -- Full-frame room painting: its far tabletop meets the real tray
-   -- at the bottom of this band, 210 px in from each side.
-   host=rect(0,0,1920,338),
-   rear_span=1500,
+   -- The rear seam is 44 virtual pixels lower at 1080p. This is
+   -- a screen-space reframe, never a change to six-die world geometry.
+   host=rect(0,0,1920,382),
+   rear_span=1400,
    -- One unified scorecard: the risk total is not stranded below the table.
    score_panel=rect(44,20,414,72),
    -- Align the one-button state to the same axis as the real tray.
@@ -68,7 +68,7 @@ function M.build(which)
    -- The accepted-dice register is just to the LEFT of the plaque.
    shelf=rect(56,961,384,51),
    shelf_label=rect(58,935,382,25),
-   tray=rect(60,338,1800,593),
+   tray=rect(60,382,1800,550),
    message=rect(650,1030,620,33),
    idle_message=rect(650,940,620,36),
    context_actions={rect(459,948,186,67),rect(459,1020,186,43)},
@@ -215,7 +215,7 @@ function M.validate(layout)
     return false,'invalid minimal contextual action'
    end
   end
-  if layout.tray.w<1500 or layout.tray.h<580 then
+  if layout.tray.w<1500 or layout.tray.h<540 then
    return false,'physical table viewport too small'
   end
   if layout.primary.h<66 or layout.secondary.h<66 then
