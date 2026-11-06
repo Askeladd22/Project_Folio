@@ -10,6 +10,27 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.37] - 2026-11-06
+
+### Refinement del tavolo del Mercante
+- Eliminati i piccoli glifi e trattini sotto i dadi: l'eleggibilità
+  è evidenziata sulle superfici g3d; hover e selezione seguono la
+  sagoma proiettata, senza toccare picking e punteggi.
+- Tavoliere visivamente meno invadente e spostato 44 px più in basso
+  nel riferimento 1920×1080; superficie fisica, collisori e coordinate
+  dei dadi sono rimasti identici.
+- Bordo anteriore e sponde decorative più sottili, senza alterare le pareti
+  di collisione della fisica.
+- PNG avversario più grande (circa +16%), ancorato dietro il tavolo
+  con logica condivisa e proporzioni native; il Mercante resta separato
+  dal fondale, sostituibile con altri avversari.
+- Fondo leggermente più caldo, attenuazione localizzata del torchio a
+  destra e due pannelli superiori meno dominanti; scorcio a sinistra conservato.
+- Aggiornati e aggiunti test della prospettiva, della gerarchia dei marker,
+  del posizionamento avversario e delle risoluzioni 720p, 1080p e ultrawide.
+- Immutati regole Farkle, fisica, input, accantonamento, dadi, renderer g3d,
+  salvataggi e font Aldine Aetna/Cardo.
+
 ## [0.1.36] - 2026-11-06
 
 ### Fix crash: caricamento di texture Merchant eliminate
