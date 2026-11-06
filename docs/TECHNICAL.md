@@ -37,11 +37,13 @@ illustrazioni rimangono elementi 2D.
 
 - `lib/g3d/` e `resources/shaders/dice_lit.glsl` forniscono il rendering.
 - `resources/dice/1.png` … `6.png` forniscono le facce D6.
-- `resources/merchant/` contiene ritratto, legno del tavolo e intaglio.
-- `resources/ui/menu_manuzio.png` è l'illustrazione prioritaria del menu;
-  `menu.png` è ancora una risorsa di compatibilità del caricatore condiviso.
+- `resources/scenes/printshop-room.png` è il fondale della bottega senza persone;
+  `resources/opponents/merchant.png` è il PNG indipendente del Mercante.
+- `resources/textures/wood.png` è la texture condivisa dal tavoliere 3D
+  e dal laboratorio g3d. I vecchi JPEG del Mercante per legno e intaglio
+  sono stati eliminati e non devono più essere caricati.
+- `resources/ui/menu_manuzio.png` è l'illustrazione attuale del menu.
 - `resources/ui/startup_splash/` e i relativi shader appartengono allo splash LÖVE.
-- `resources/textures/wood.png` è condivisa con il laboratorio g3d.
 - Licenze e attribuzioni si trovano in `third_party/` e nelle librerie.
 
 `geometry.lua` e `face_texture.lua` appartengono ancora alla catena

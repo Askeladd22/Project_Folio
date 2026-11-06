@@ -94,19 +94,6 @@ function S.style_vertices(mesh,extents,height,style)
  end
  return v
 end
-function S.merchant_carving(extents,height)
- -- Mount the relief on the outward-facing plank, just clear of its surface.
- local y=extents[4]+.40+.003
- local x=(extents[1]+extents[2])*.5
- local half=height*1.2
- local lower,upper=-height*.96,-height*.04
- local function point(dx,z,u,v)
-  return {x+dx,y,z,u,v,0,1,0,1,1,1,1}
- end
- local a,b=point(-half,upper,0,0),point(half,upper,1,0)
- local c,d=point(half,lower,1,1),point(-half,lower,0,1)
- return {a,b,c,a,c,d}
-end
 function S.divider_vertices(info)
  if not info then return nil end
  local x1,x2=assert(info.back_x),assert(info.front_x)

@@ -10,6 +10,23 @@ aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.36] - 2026-11-06
+
+### Fix crash: caricamento di texture Merchant eliminate
+- Eliminato il caricamento di `resources/merchant/wood-floor.jpg`,
+  rimosso durante la separazione degli asset grafici. Il tavolo g3d
+  ora usa la texture esistente `resources/textures/wood.png`.
+- Eliminato il secondo riferimento obsoleto a
+  `resources/merchant/carving.jpg`, il modello di intaglio 3D
+  associato e la sua geometria ormai priva di chiamanti.
+- Aggiornate le protezioni degli asset del repository in funzione della
+  scena moderna a livelli: `resources/scenes/printshop-room.png`
+  e `resources/opponents/merchant.png`. Rimosso dal test il
+  vecchio `resources/ui/menu.png` anch'esso eliminato in precedenza.
+- Aggiunta regressione specifica sul renderer per assicurare che
+  nessuna delle immagini JPG rimosse possa causare nuovamente un crash.
+  Immutati gameplay Farkle, fisica, camera, dadi, punteggi e input.
+
 ## [0.1.35] - 2026-11-06
 
 ### Aldine Aetna + Cardo: facsimile e fallback per glifo
