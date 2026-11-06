@@ -23,7 +23,14 @@ function U:getTrayProjection(tray,view,extents)
  return require('src.features.farkle.tray_view').fit(self,tray,view,extents)
 end
 function U:isDeskLayout() return true end
+-- Visual identity alone: scores, physics, turn state and buttons are unchanged.
+function U:setOpponentVisual(id)
+ self.opponentId=require('src.features.farkle.ui_v2.opponent_scene').validate_id(id)
+end
 function U:enter(params)
+ if params and (params.opponent_id or params.new_run) then
+  self:setOpponentVisual(params.opponent_id or 'merchant')
+ end
  if not self.game or (params and params.new_run) then
   self:reset('build')
  end
