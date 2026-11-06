@@ -113,9 +113,10 @@ UI.scale=function() return 1.25 end
 UI.big_text=function() return true end
 UI.high_contrast=function() return true end
 Overlay.draw(u,physical)
-assert(calls.line>0 and calls.circle==0 and calls.push==calls.pop,
- 'V2 markers must not use giant rings or leak graphics state')
--- Auxiliary scoring marks must stay compact, even at large text size.
+assert(calls.line==0 and calls.circle==0 and calls.push==calls.pop,
+ 'passive/selected dice must not receive detached under-die strokes')
+-- Synthetic hits without projected silhouettes must not sprout stray ticks.
+-- Screen-space accents are contour-only for real projected cubes.
 local mark=Model.build(u,physical).markers[1]
 assert(mark and mark.kind=='score' and mark.id==1)
 assert(mark.r<=30,'marker radius must not expand far beyond the die')
