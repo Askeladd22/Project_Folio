@@ -8,6 +8,9 @@ M.Rules = Rules
 
 local function rng(seed)
     local n = (math.floor(tonumber(seed) or 101) % 2147483646) + 1
+    -- Small consecutive seeds otherwise force the FIRST die to 1 for
+    -- thousands of games. Warm up this independent Park-Miller stream.
+    for _=1,12 do n = n * 16807 % 2147483647 end
     return function()
         n = n * 16807 % 2147483647
         return 1 + math.floor(n / 2147483647 * 6)
