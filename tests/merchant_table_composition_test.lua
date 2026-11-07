@@ -2,7 +2,8 @@
 local Layout=require('src.features.farkle.ui_v2.layout_candidates')
 local L=Layout.build('table_minimal')
 assert(Layout.validate(L))
-for _,r in ipairs{L.secured_caption,L.secured_value,L.risk_caption,L.risk_value} do
+for _,r in ipairs{L.secured_caption,L.secured_value,L.risk_caption,L.risk_value,
+                   L.objective_caption,L.objective_value,L.turns_caption,L.turns_value} do
  assert(Layout.contains(L.score_panel,r),'score metric detached from shared card')
  assert(Layout.overlap(L.tray,r)==0,'score metric obscures a real D6')
 end

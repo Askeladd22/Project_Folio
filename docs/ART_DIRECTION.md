@@ -28,6 +28,10 @@ Il **Tavolo del Mercante** è la composizione attualmente giocabile:
 sei D6 tridimensionali in osso, tavolo g3d, avversario illustrato
 oltre il piano e UI su livelli 2D separati. Evitare di sacrificare
 leggibilità e picking dei dadi a favore dell'ornamento.
+La composizione corrente privilegia il rivale: il ritratto è più
+presente sopra un tavolo compatto, mentre punteggio e comandi restano
+fissi sullo schermo. La prospettiva del tavolo e il picking condividono
+la stessa proiezione; il cambiamento è solo di inquadratura.
 
 - Fondale senza personaggi: `resources/scenes/printshop-room.png`.
 - Ritratto intercambiabile: `resources/opponents/<id>.png`.
@@ -37,9 +41,9 @@ leggibilità e picking dei dadi a favore dell'ornamento.
 - Font: **Aldine Aetna** con fallback **Cardo** (vedi
   [Tipografia](#tipografia-e-licenze)).
 
-Il possibile **2.5D** applica profondità, piani e composizione
-illustrata ai fondali e ai personaggi. Non sostituisce g3d o il
-solver dei dadi e non è un sistema già implementato.
+La scena applica una parallasse leggera a fondale e ritratto illustrati,
+con opzione di animazioni ridotte. Non sostituisce g3d o il solver
+dei dadi.
 
 Il **Folio** non è più una sidebar permanente della partita. Resta
 consultabile con **F** e rimane il perno narrativo della futura

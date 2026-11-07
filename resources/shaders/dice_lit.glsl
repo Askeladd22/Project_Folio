@@ -118,7 +118,12 @@ vec4 effect(vec4 color, Image texture, vec2 uv, vec2 screenCoords) {
 
     float key = max(dot(n, normalize(lightDirection)), 0.0);
     float fill = max(dot(n, normalize(fillDirection)), 0.0);
-    float lighting = clamp(ambientStrength + keyStrength * key + fillStrength * fill, 0.0, 1.15);
+    float directLight = keyStrength * key + fillStrength * fill;
+    if (debugMode == 4) {
+        float inkWash = floor(directLight * 4.0 + 0.5) / 4.0;
+        directLight = mix(directLight, inkWash, 0.32);
+    }
+    float lighting = clamp(ambientStrength + directLight, 0.0, 1.15);
     vec3 base = albedo.rgb * materialTint;
     vec3 lit = base * lighting;
 

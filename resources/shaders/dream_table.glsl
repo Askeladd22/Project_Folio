@@ -5,6 +5,12 @@ varying vec3 vertexNormal;
 
 vec4 effect(vec4 color, Image texture, vec2 uv, vec2 screenCoords) {
     vec4 stone = Texel(texture, uv) * color;
+    float luminance = dot(stone.rgb, vec3(0.299, 0.587, 0.114));
+    vec3 softened = mix(vec3(luminance), stone.rgb, 0.90);
+    softened = vec3(0.5) + (softened - vec3(0.5)) * 0.94;
+    vec3 printPalette = mix(vec3(0.30, 0.20, 0.14), vec3(0.88, 0.77, 0.61),
+                            smoothstep(0.08, 0.92, luminance));
+    stone.rgb = mix(softened, printPalette, 0.10);
     vec2 local = (worldPosition.xy - tableCenter) / tableHalf;
     float radius = max(abs(local.x), abs(local.y));
     float center = 1.0 - smoothstep(0.34, 0.78, radius);

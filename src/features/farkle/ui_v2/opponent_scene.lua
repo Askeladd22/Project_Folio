@@ -41,8 +41,8 @@ function S.portrait_bounds(w,h,layout)
  -- slips behind the g3d table top, avoiding floating or pasted-on figures.
  local bottom=(layout.host and layout.host.y+layout.host.h or layout.tray.y)+35
   -(layout.portrait_lift or 0)
- local maxHeight=math.max(1,math.min(408,bottom-12))
- local scale=math.min(606/w,maxHeight/h)
+ local maxHeight=math.max(1,math.min(580,bottom-12))
+ local scale=math.min(800/w,maxHeight/h)
  local outW,outH=w*scale,h*scale
  local x=layout.tray.x+layout.tray.w*.5-outW*.5
  return {x=x,y=bottom-outH,w=outW,h=outH}
@@ -63,18 +63,13 @@ function S.parallax(dt,nx,ny,t,reduced)
  end
  return {x=view.x,y=view.y}
 end
-local silhouette_shader
-local function silhouette(g)
- if silhouette_shader==nil then
-  silhouette_shader=false
-  if g.newShader then
-   local ok,shader=pcall(g.newShader,[[
-    vec4 effect(vec4 c,Image t,vec2 uv,vec2 sc){return vec4(c.rgb,c.a*Texel(t,uv).a);}
-   ]])
-   if ok then silhouette_shader=shader end
-  end
+local portrait_shader
+local function get_portrait_shader(g)
+ if not portrait_shader then
+  portrait_shader=assert(g.newShader('resources/shaders/woodcut_portrait.glsl'),
+   'Failed to create woodcut portrait shader')
  end
- return silhouette_shader or nil
+ return portrait_shader
 end
 local image_cache={}
 function S.draw_portrait(selection,layout,g,depth)
@@ -97,19 +92,23 @@ function S.draw_portrait(selection,layout,g,depth)
  end
  -- Breathing grows upward from the hidden waist, never off the table.
  local oy=ih
- local shader=depth and silhouette(g)
+ local shader=depth and get_portrait_shader(g)
  if shader then
   -- Cast shadow on the back wall separates the figure from the room.
   local shade=Art.rgb('earth_dark')
+  shader:send('shadowTexel',{1/iw,1/ih})
+  shader:send('shadowPass',1)
   g.setShader(shader)
-  g.setColor(shade[1],shade[2],shade[3],.30)
+  g.setColor(shade[1],shade[2],shade[3],.24)
   g.draw(sprite,x+bounds.w*.5+16-depth.x*(S.depth.room-S.depth.portrait),y+bounds.h+4,0,
    sx*1.02,sy*1.015*lift,iw*.5,oy)
-  g.setShader()
+  shader:send('shadowPass',0)
+  shader:send('inkTone',Art.rgb('ink'))
+  shader:send('paperTone',Art.rgb('paper'))
  end
- -- Slightly warm, dimmed tint matches the printshop's candlelit grade.
- if depth then g.setColor(.95,.92,.87,1) else g.setColor(1,1,1,1) end
+ g.setColor(1,1,1,1)
  g.draw(sprite,x+bounds.w*.5,y+bounds.h,0,sx,sy*lift,iw*.5,oy)
+ if shader then g.setShader() end
  g.setColor(1,1,1,1)
 end
 return S

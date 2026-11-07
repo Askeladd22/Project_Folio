@@ -44,19 +44,22 @@ function M.build(which)
   return {
    name=which,
    header=rect(44,20,1832,72),
-   -- The rear seam is 44 virtual pixels lower at 1080p. This is
-   -- a screen-space reframe, never a change to six-die world geometry.
-    host=rect(0,0,1920,578),
+   -- The rear seam leaves room for a larger illustrated opponent.
+    host=rect(0,0,1920,614),
     portrait_lift=48,
-   rear_span=1400,
+   rear_span=1280,
    -- One unified scorecard: the risk total is not stranded below the table.
-   score_panel=rect(44,20,414,72),
+   score_panel=rect(44,20,414,116),
    -- Align the one-button state to the same axis as the real tray.
   single_action=rect(763,976,394,68),
-   secured_caption=rect(63,32,173,20),
-   secured_value=rect(63,52,173,32),
-   risk_caption=rect(258,32,178,20),
-   risk_value=rect(258,52,178,32),
+   secured_caption=rect(63,25,173,18),
+   secured_value=rect(63,43,173,30),
+   risk_caption=rect(258,25,178,18),
+   risk_value=rect(258,43,178,30),
+   objective_caption=rect(63,82,173,18),
+   objective_value=rect(63,100,173,30),
+   turns_caption=rect(258,82,178,18),
+   turns_value=rect(258,100,178,30),
    help=rect(1510,32,145,46),
    runmenu=rect(1682,32,158,46),
    book=rect(44,107,1832,944),
@@ -69,7 +72,7 @@ function M.build(which)
    -- The accepted-dice register is just to the LEFT of the plaque.
   shelf=rect(56,965,384,51),
    shelf_label=rect(58,935,382,25),
-   -- Starts 40px above the rear seam (host bottom) so the tops of dice
+   -- Starts above the rear seam (host bottom) so the tops of dice
    -- resting against the back rail stay inside the pick rectangle.
   tray=rect(60,538,1800,426),
   message=rect(650,1050,620,27),
@@ -156,7 +159,8 @@ function M.validate(layout)
  if layout.name=='table_minimal' then
   local required={'header','book','page_main','shelf','tray','message',
    'primary','secondary','help','runmenu','secured_caption','secured_value',
-   'risk_caption','risk_value','shelf_label','score_panel',
+   'risk_caption','risk_value','objective_caption','objective_value',
+   'turns_caption','turns_value','shelf_label','score_panel',
    'footer','footer_trim','single_action','idle_message'}
   for _,name in ipairs(required) do
    local r=layout[name]
@@ -171,12 +175,22 @@ function M.validate(layout)
      not M.contains(layout.header,layout.runmenu) then
    return false,'invalid table containment'
   end
-  if not M.contains(layout.score_panel,layout.secured_caption) or
-     not M.contains(layout.score_panel,layout.secured_value) or
-     not M.contains(layout.score_panel,layout.risk_caption) or
-     not M.contains(layout.score_panel,layout.risk_value) or
-     M.overlap(layout.secured_caption,layout.risk_caption)>0 or
+  for _,metric in ipairs({
+   {layout.secured_caption,layout.secured_value},
+   {layout.risk_caption,layout.risk_value},
+   {layout.objective_caption,layout.objective_value},
+   {layout.turns_caption,layout.turns_value},
+  }) do
+   if not M.contains(layout.score_panel,metric[1]) or
+      not M.contains(layout.score_panel,metric[2]) or
+      M.overlap(metric[1],metric[2])>0 then
+    return false,'score metric outside or overlapping its scorecard'
+   end
+  end
+  if M.overlap(layout.secured_caption,layout.risk_caption)>0 or
      M.overlap(layout.secured_value,layout.risk_value)>0 or
+     M.overlap(layout.objective_caption,layout.turns_caption)>0 or
+     M.overlap(layout.objective_value,layout.turns_value)>0 or
      M.overlap(layout.score_panel,layout.help)>0 or
      not M.contains(layout.footer,layout.footer_trim) or
      layout.footer.h>110 or layout.footer.w>1160 or

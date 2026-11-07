@@ -7,12 +7,12 @@ local View=require('src.engine3d.view')
 local Tray=require('src.features.farkle.tray_view')
 local L=Layout.build('table_minimal')
 assert(Layout.validate(L))
-assert(L.host.y+L.host.h==L.tray.y+40,'rear framing must meet the room')
-assert(L.tray.y>=530 and L.tray.y<=550 and L.host.h-L.tray.y==40,
+assert(L.host.y+L.host.h==L.tray.y+76,'rear framing must meet the room')
+assert(L.tray.y>=530 and L.tray.y<=550 and L.host.h-L.tray.y==76,
  'grazing camera: lower rear seam with pick headroom above it')
 assert(L.tray.y+L.tray.h<=L.footer.y,'command rail clipped')
 local portrait=Opponent.portrait_bounds(700,1000,L)
-assert(portrait.h>350 and portrait.h<=408 and portrait.y>=9)
+assert(portrait.h>550 and portrait.h<=580 and portrait.y>=9)
 assert(math.abs(portrait.x+portrait.w*.5-L.tray.x-L.tray.w*.5)<.01)
 assert(portrait.y+portrait.h==L.host.h+35-L.portrait_lift,
  'opponent stays anchored while the table lowers')
@@ -52,7 +52,7 @@ for _,wh in ipairs{{1280,720},{1920,1080},{3440,1440}} do
  local left=select(1,View.project(-14.4,-6.05,0))
  local right=select(1,View.project(14.4,-6.05,0))
  local fraction=(right-left)*scale/(1920*factor)
- assert(fraction>.70 and fraction<.75,'board still dominates the scene')
+ assert(fraction>.63 and fraction<.70,'board should leave space for the rival')
 end
 dice=oldDice
 View.yaw,View.pitch,View.distance,View.projection=oldYaw,oldPitch,oldDistance,oldProjection

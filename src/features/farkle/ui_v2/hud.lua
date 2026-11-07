@@ -104,6 +104,10 @@ local function action_button(u,a,rect)
  u.buttons[a.id]={x=rect.x,y=rect.y,w=rect.w,h=rect.h,
     enabled=a.enabled,fn=a.fn,label=a.label}
 end
+local function turns_remaining(s,c)
+ return math.max(0,c.limit-s.turn+
+   ((s.phase=='ended' or H.commission_closed(s)) and 0 or 1))
+end
 local function header(u,s,layout,actions)
  local g=love.graphics
  local c=R.contracts[s.stage]
@@ -114,8 +118,7 @@ local function header(u,s,layout,actions)
  write_fitted('COMMISSIONE '..s.stage..'/3',
    readout.commission_tag,18,12,paper_gold)
  write_fitted(c.name,readout.commission_name,18,12,paper_ink)
- local remaining=math.max(0,c.limit-s.turn+
-     ((s.phase=='ended' or H.commission_closed(s)) and 0 or 1))
+ local remaining=turns_remaining(s,c)
  local values={
   {'OBIETTIVO',c.target..' pt'},
   {'ASSICURATI',s.bank..' pt'},
@@ -390,12 +393,18 @@ local function draw_minimal(u)
  panel(layout.score_panel,Art.rgba('surface',.93),border_ink,7)
  g.setColor(unpack(Art.rgba('border',.48)))
  g.setLineWidth(1)
- g.line(246,32,246,82)
+ g.line(246,27,246,129)
+ g.line(61,77,441,77)
  panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
  write_fitted('ASSICURATI',layout.secured_caption,17,12,paper_muted)
  write_fitted(s.bank..' pt',layout.secured_value,29,18,paper_ink)
  write_fitted('A RISCHIO',layout.risk_caption,17,12,paper_muted)
  write_fitted(s.pot..' pt',layout.risk_value,29,18,paper_warning)
+ local c=R.contracts[s.stage]
+ write_fitted('OBIETTIVO',layout.objective_caption,15,11,paper_muted)
+ write_fitted(c.target..' pt',layout.objective_value,25,16,paper_gold)
+ write_fitted('TURNI RIMASTI',layout.turns_caption,15,11,paper_muted)
+ write_fitted(turns_remaining(s,c),layout.turns_value,25,16,paper_ink)
  for _,a in ipairs(actions) do
   if a.slot=='header' then
    action_button(u,a,a.id=='help' and layout.help or layout.runmenu)

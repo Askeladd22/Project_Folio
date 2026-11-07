@@ -61,7 +61,8 @@ local file=assert(io.open(Material.shader_path,'r'))
 local shader=file:read('*a');file:close()
 for _,part in ipairs({'vec4 effect(', 'normalize(vertexNormal)',
   'debugMode == 2','debugMode == 4','Texel(texture, uv)',
-  'materialTint','return albedo;'}) do
+  'materialTint','directLight * 4.0','mix(directLight, inkWash, 0.32)',
+  'return albedo;'}) do
  assert(shader:find(part,1,true),'shader diagnostic/material step missing: '..part)
 end
 local file2=assert(io.open('src/engine3d/g3d_live.lua','r'))

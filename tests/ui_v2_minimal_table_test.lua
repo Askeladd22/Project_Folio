@@ -13,6 +13,10 @@ assert(layout.folio==nil and layout.context==nil and layout.sidebar_frame==nil)
 assert(Layout.contains(layout.score_panel,layout.risk_caption))
 assert(Layout.contains(layout.score_panel,layout.risk_value))
 assert(Layout.contains(layout.score_panel,layout.secured_value))
+assert(Layout.contains(layout.score_panel,layout.objective_caption))
+assert(Layout.contains(layout.score_panel,layout.objective_value))
+assert(Layout.contains(layout.score_panel,layout.turns_caption))
+assert(Layout.contains(layout.score_panel,layout.turns_value))
 assert(layout.risk_caption.y==layout.secured_caption.y)
 assert(layout.risk_value.y==layout.secured_value.y)
 assert(layout.footer.y>=layout.tray.y+layout.tray.h
@@ -91,7 +95,11 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  end
  local labels=table.concat(textDrawn,' | ')
  assert(labels:find('ASSICURATI',1,true) and
-   labels:find('A RISCHIO',1,true))
+   labels:find('A RISCHIO',1,true) and
+   labels:find('OBIETTIVO',1,true) and
+   labels:find('100 pt',1,true) and
+   labels:find('TURNI RIMASTI',1,true) and
+   labels:find('4',1,true))
  local function painted(target)
   for _,r in ipairs(rectangles) do
    if r.mode=='fill' and r.x==target.x and r.y==target.y and
@@ -102,8 +110,7 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  assert(painted(layout.score_panel),'shared scorecard not drawn')
  assert(painted(layout.footer),'compact command plaque not drawn')
  assert(painted(layout.footer_trim),'command plaque trim not drawn')
- for _,obsolete in ipairs{'COMMISSIONE','OBIETTIVO','TURNI',
-                           'MANOSCRITTO','STRUMENTI','FOLIO 1'} do
+ for _,obsolete in ipairs{'COMMISSIONE','MANOSCRITTO','STRUMENTI','FOLIO 1'} do
   assert(not labels:find(obsolete,1,true),
    'obsolete panel visible on player table: '..obsolete)
  end
@@ -112,6 +119,15 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  assert(#rectangles==before,
   'six empty accepted-dice boxes must not be permanently drawn')
 end
+game.stage=2
+game.turn=2
+textDrawn={}
+Hud.draw(u)
+local progress=table.concat(textDrawn,' | ')
+assert(progress:find('150 pt',1,true) and progress:find('4',1,true),
+ 'scorecard must follow the active commission and remaining turns')
+game.stage=1
+game.turn=1
 assert(R.start(game))
 -- A rolling turn must NOT retain a blank brown control panel.
 textDrawn,rectangles={},{}
@@ -204,8 +220,8 @@ Hud.draw(u)
 assert(u.buttons.roll.enabled and u.buttons.bank.enabled)
 assert(not footerNotice or not footerNotice:find('Scegli i dadi',1,true),
  'additional scoring dice are optional once the player may roll or bank')
--- Only the 40px pick headroom above the rear seam may overlap the room.
-assert(layout.host.y+layout.host.h-layout.tray.y==40)
+-- Keep pick headroom above the rear seam for physical dice in flight.
+assert(layout.host.y+layout.host.h-layout.tray.y==76)
 assert(Layout.overlap(layout.host,layout.shelf)==0)
 love=savedLove
 print('PASS compact player table: real hitboxes, statuses, contextual actions, accepted dice and three viewport sizes')
