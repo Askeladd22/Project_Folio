@@ -10,6 +10,37 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.54] - 2026-11-07
+
+**Stato:** prototipo asimmetrico P4ND0RA contro Farkle; solo laboratorio,
+non integrato nel gioco principale.
+
+### Corretto
+
+- Sostituite le carte di prova del giocatore con **sei D6 Farkle**,
+  accantonamento, rilancio, hot dice, Farkle e incasso.
+- Rimossi il deck sperimentale e i comandi di Combat senza dadi;
+  conservato il motore originale P4ND0RA per i test headless.
+- Corretto il pannello del sacchetto: conteggi ora riferiti
+  ai token effettivamente rimasti disponibili.
+
+### Aggiunto
+
+- Adattamento dichiarato: **5 punti Farkle incassati = 1 Combat**,
+  con possibilità di spendere 20/30 punti per neutralizzare/scartare
+  un token e EMP che riduce i dadi al tiro iniziale successivo.
+- Modulo Farkle basato sullo snapshot **identico byte per byte**
+  a `src/farkle/rules.lua`; controllo `cmp` in CI.
+- Test dedicati per seed, banking, Farkle, contromisure,
+  EMP, sincronizzazione e smoke del rendering LÖVE.
+
+### Limiti
+
+- La riproduzione 1:1 riguarda il comportamento del boss, non
+  le azioni del giocatore: il collegamento al Farkle è una
+  **nuova meccanica sperimentale** con dadi virtuali 2D.
+  Nessuna variazione intenzionale al gameplay di produzione.
+
 ## [0.1.53] - 2026-11-07
 
 **Stato:** prototipo opt-in “Il Correttore” nel Merchant Wager Lab; non attivo nel gioco.

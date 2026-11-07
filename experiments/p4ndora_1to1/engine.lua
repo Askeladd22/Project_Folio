@@ -1,5 +1,5 @@
--- P4ND0RA's scripted boss rules, extracted from the user-supplied Tabletop
--- Simulator Lua mod (2020). Standalone deterministic rules model, NOT Farkle.
+-- P4ND0RA boss actions follow the original TTS script. The optional Farkle
+-- bridge is explicitly an experimental adaptation, not Star Realms 1:1.
 -- TTS object spawning/animation and the Star Realms card engine are intentionally
 -- outside this module. See README for the exact abstraction boundaries.
 local M = {}
@@ -79,6 +79,7 @@ function M.new(options)
     local count = options.players or 1
     local difficulty = options.difficulty or "Normal"
     local stats = M.stats(difficulty, count)
+    local farkle = options.farkle and require("farkle_player").new(options.seed or 101, count) or nil
     local self = setmetatable({
         seed = options.seed or 101,
         random = rng(options.seed or 101),
@@ -93,11 +94,12 @@ function M.new(options)
         events = {}, last_event = "",
         bag_cycles = 0, upgrades = 0, exhausted_this_turn = false,
         players = {}, drawn_actions = {}, last_actions = {},
-        max_authority = 50, limit_authority = true,
+        max_authority = 50, limit_authority = true, farkle = farkle,
     }, Game)
     for i = 1, count do
         self.players[i] = {
-            color = M.COLORS[i], authority = 50, hand = 5, faction = 0,
+            color = M.COLORS[i], authority = 50,
+            hand = farkle and 0 or 5, faction = 0,
             bases = 0, alive = true,
         }
     end
@@ -205,6 +207,71 @@ function Game:adjust_resource(index, resource, amount)
     self:note(p.color .. " " .. resource .. " = " .. new_value)
 end
 
+-- The Farkle player uses the shipped six-D6 scoring/selection rules.
+-- Bridges are clearly marked experimental: 5 banked points = 1 Combat.
+function Game:roll_farkle(index)
+    assert(self.farkle and self:is_players_turn(), "Not the Farkle phase")
+    assert(self.players[index] and self.players[index].alive)
+    local status = self.farkle:roll(index)
+    if status == "farkle" then
+        self:note(self.players[index].color ..
+                  " FARKLE: zero points, boss turn follows when everyone finishes.")
+    else
+        self:note(self.players[index].color .. " rolls the dice.")
+    end
+    return status
+end
+
+function Game:toggle_farkle(index, die)
+    assert(self.farkle and self:is_players_turn())
+    assert(self.players[index] and self.players[index].alive)
+    return self.farkle:toggle(index,die)
+end
+
+function Game:take_farkle(index)
+    assert(self.farkle and self:is_players_turn())
+    local points = self.farkle:take(index)
+    self:note(self.players[index].color .. " sets aside scoring dice (" ..
+              points .. " provisional points).")
+    return points
+end
+
+-- Three explicit choices: damage, or trade 20/30 Farkle points for a
+-- one-token countermeasure (remainder still becomes Combat).
+-- Countermeasure costs are NOT original P4ND0RA or Star Realms rules.
+function Game:bank_farkle(index, choice)
+    assert(self.farkle and self:is_players_turn())
+    assert(self.players[index] and self.players[index].alive)
+    choice = choice or "attack"
+    local permitted, points = self.farkle:can_bank(index)
+    assert(permitted, "Select scoring dice or set them aside before banking")
+    local cost = choice == "blank" and 20 or choice == "discard" and 30 or 0
+    assert(choice=="attack" or choice=="blank" or choice=="discard")
+    assert(points>=cost, "Insufficient banked points for this countermeasure")
+    if choice == "blank" then
+        assert(self.blank_next < math.min(8,self.draw_power),
+               "All upcoming boss tokens already neutralized")
+    elseif choice == "discard" then
+        assert(#self.bag>0,"No token remains in bag")
+    end
+    local result=self.farkle:bank(index)
+    local damage = math.floor((result.points-cost)/5)
+    if choice == "blank" then
+        self.blank_next=self.blank_next+1
+        self:note("Farkle countermeasure: next boss token neutralized (20 points).")
+    elseif choice == "discard" then
+        local token=table.remove(self.bag,self.random(#self.bag))
+        self.discard[#self.discard+1]=token
+        self:note("Farkle countermeasure: random boss token removed (30 points).")
+        self:assert_tokens()
+    end
+    self:note(self.players[index].color .. " banks " .. result.points ..
+              " points = " .. damage .. " Combat" ..
+              (cost>0 and " after " .. cost .. " spent on defence." or "."))
+    if damage>0 then self:combat(index,damage) end
+    return result
+end
+
 function Game:discard_random_token(index)
     assert(self:is_players_turn())
     local p = assert(self.players[index])
@@ -213,6 +280,7 @@ function Game:discard_random_token(index)
         self:note("Bag empty; no token to discard.")
         return false
     end
+    assert(not self.farkle, "Farkle uses paid banking countermeasures")
     p.hand = p.hand - 1
     p.faction = math.min(p.faction, p.hand)
     local token = table.remove(self.bag, self.random(#self.bag))
@@ -225,6 +293,7 @@ end
 function Game:blank_token(index)
     assert(self:is_players_turn())
     local p = assert(self.players[index])
+    assert(not self.farkle, "Farkle uses paid banking countermeasures")
     assert(p.alive and p.bases > 0, "One base must be destroyed to blank a token")
     if self.blank_next >= self.draw_power then return false end
     p.bases = p.bases - 1
@@ -235,6 +304,12 @@ end
 
 function Game:begin_boss_turn()
     assert(self:is_players_turn(), "Players must act before P4ND0RA")
+    if self.farkle then
+        for i,p in ipairs(self.players) do
+            assert(not p.alive or self.farkle:is_finished(i),
+                   "All living players must bank or Farkle before the boss acts")
+        end
+    end
     self.phase = "boss"
     self.pending = nil
     self.queue = {}
@@ -286,16 +361,22 @@ function Game:begin_boss_turn()
 end
 
 function Game:apply_emp()
-    for _, p in ipairs(self.players) do
+    for i,p in ipairs(self.players) do
         if p.alive then
-            local discard = math.min(p.hand, self.stats.emp)
-            p.hand = p.hand - discard
-            if self.stats.faction_must and p.faction > 0 and discard > 0 then
-                p.faction = math.max(0, p.faction - 1)
+            if self.farkle then
+                local locked=self.farkle:apply_emp(i,self.stats.emp)
+                self:note(p.color .. " EMP: " .. locked ..
+                          " dice unavailable at the next turn's opening roll.")
+            else
+                local discard=math.min(p.hand,self.stats.emp)
+                p.hand=p.hand-discard
+                if self.stats.faction_must and p.faction>0 and discard>0 then
+                    p.faction=math.max(0,p.faction-1)
+                end
+                p.faction=math.min(p.faction,p.hand)
+                self:note(p.color .. " discards " .. discard .. " cards" ..
+                    (self.stats.faction_must and " (faction required if available)." or "."))
             end
-            p.faction = math.min(p.faction, p.hand)
-            self:note(p.color .. " discards " .. discard .. " cards" ..
-                      (self.stats.faction_must and " (faction required if available)." or "."))
         end
     end
 end
@@ -367,6 +448,11 @@ function Game:advance()
             shuffle(self.bag, self.random)
             self.bag_cycles = self.bag_cycles + 1
             self:note("End of boss turn: discard reshuffled into the bag.")
+        end
+        if self.farkle then
+            for i,p in ipairs(self.players) do
+                if p.alive then self.farkle:new_turn(i) end
+            end
         end
         self.phase = "players"
         self.round = self.round + 1
