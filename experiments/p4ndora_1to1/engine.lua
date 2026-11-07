@@ -79,6 +79,7 @@ function M.new(options)
     local count = options.players or 1
     local difficulty = options.difficulty or "Normal"
     local stats = M.stats(difficulty, count)
+    local demo = options.demo and require("demo_cards").new(options.seed or 101, count) or nil
     local self = setmetatable({
         seed = options.seed or 101,
         random = rng(options.seed or 101),
@@ -93,11 +94,12 @@ function M.new(options)
         events = {}, last_event = "",
         bag_cycles = 0, upgrades = 0, exhausted_this_turn = false,
         players = {}, drawn_actions = {}, last_actions = {},
-        max_authority = 50, limit_authority = true,
+        max_authority = 50, limit_authority = true, demo = demo,
     }, Game)
     for i = 1, count do
         self.players[i] = {
-            color = M.COLORS[i], authority = 50, hand = 5, faction = 0,
+            color = M.COLORS[i], authority = 50,
+            hand = demo and #demo:hand(i) or 5, faction = 0,
             bases = 0, alive = true,
         }
     end
@@ -205,6 +207,28 @@ function Game:adjust_resource(index, resource, amount)
     self:note(p.color .. " " .. resource .. " = " .. new_value)
 end
 
+-- Demo cards are intentionally generic and are NOT Star Realms cards.
+-- A card is physically consumed from the training deck before its effect.
+function Game:play_demo_card(index, position)
+    assert(self.demo and self:is_players_turn(), "Not a demo player's turn")
+    local p = assert(self.players[index], "player not found")
+    assert(p.alive, "Eliminated player cannot play cards")
+    local card = self.demo:play(index, position)
+    p.hand = #self.demo:hand(index)
+    if card.kind == "combat" then
+        self:combat(index, card.value)
+    elseif card.kind == "heal" then
+        self:heal(index, card.value)
+    elseif card.kind == "base" then
+        self:adjust_resource(index, "bases", card.value)
+    else
+        error("Unknown demo card effect")
+    end
+    self:note(p.color .. " plays " .. card.label .. " (" .. card.kind ..
+              " +" .. card.value .. ").")
+    return card
+end
+
 function Game:discard_random_token(index)
     assert(self:is_players_turn())
     local p = assert(self.players[index])
@@ -213,7 +237,12 @@ function Game:discard_random_token(index)
         self:note("Bag empty; no token to discard.")
         return false
     end
-    p.hand = p.hand - 1
+    if self.demo then
+        self.demo:discard_one(index)
+        p.hand = #self.demo:hand(index)
+    else
+        p.hand = p.hand - 1
+    end
     p.faction = math.min(p.faction, p.hand)
     local token = table.remove(self.bag, self.random(#self.bag))
     self.discard[#self.discard + 1] = token
@@ -235,6 +264,16 @@ end
 
 function Game:begin_boss_turn()
     assert(self:is_players_turn(), "Players must act before P4ND0RA")
+    if self.demo then
+        for i, p in ipairs(self.players) do
+            if p.alive then
+                -- Star Realms-style timing: prepare the next hand BEFORE EMP.
+                p.hand = self.demo:end_players_turn(i)
+                p.faction = math.min(p.faction, p.hand)
+                self:note(p.color .. " draws a new hand (" .. p.hand .. " cards).")
+            end
+        end
+    end
     self.phase = "boss"
     self.pending = nil
     self.queue = {}
@@ -286,10 +325,15 @@ function Game:begin_boss_turn()
 end
 
 function Game:apply_emp()
-    for _, p in ipairs(self.players) do
+    for _index, p in ipairs(self.players) do
         if p.alive then
             local discard = math.min(p.hand, self.stats.emp)
-            p.hand = p.hand - discard
+            if self.demo then
+                self.demo:discard_random(_index, discard)
+                p.hand = #self.demo:hand(_index)
+            else
+                p.hand = p.hand - discard
+            end
             if self.stats.faction_must and p.faction > 0 and discard > 0 then
                 p.faction = math.max(0, p.faction - 1)
             end
