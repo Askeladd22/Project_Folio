@@ -4,7 +4,8 @@ on:
     paths:
       - 'experiments/p4ndora_1to1/**'
       - 'tests/labs/p4ndora_original_test.lua'
-      - 'tests/labs/p4ndora_demo_test.lua'
+      - 'tests/labs/p4ndora_farkle_test.lua'
+      - 'src/farkle/rules.lua'
       - '.github/workflows/p4ndora_lab.yml'
   workflow_dispatch:
 
@@ -17,22 +18,25 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y lua5.4 luajit love xvfb
+      - name: Farkle rules are byte-identical to production
+        run: cmp src/farkle/rules.lua experiments/p4ndora_1to1/farkle_rules_snapshot.lua
       - name: Parse Lua sources
         run: |
-          luac5.4 -p experiments/p4ndora_1to1/demo_cards.lua
+          luac5.4 -p experiments/p4ndora_1to1/farkle_rules_snapshot.lua
+          luac5.4 -p experiments/p4ndora_1to1/farkle_player.lua
           luac5.4 -p experiments/p4ndora_1to1/engine.lua
           luac5.4 -p experiments/p4ndora_1to1/main.lua
           luac5.4 -p experiments/p4ndora_1to1/conf.lua
           luac5.4 -p tests/labs/p4ndora_original_test.lua
-          luac5.4 -p tests/labs/p4ndora_demo_test.lua
+          luac5.4 -p tests/labs/p4ndora_farkle_test.lua
       - name: Rules regression Lua 5.4
         run: |
           lua5.4 tests/labs/p4ndora_original_test.lua
-          lua5.4 tests/labs/p4ndora_demo_test.lua
+          lua5.4 tests/labs/p4ndora_farkle_test.lua
       - name: Rules regression LuaJIT
         run: |
           luajit tests/labs/p4ndora_original_test.lua
-          luajit tests/labs/p4ndora_demo_test.lua
+          luajit tests/labs/p4ndora_farkle_test.lua
       - name: LÖVE smoke with software OpenGL
         env:
           P4ND0RA_LAB_SMOKE: '1'
