@@ -5,6 +5,48 @@
 `STAR REALMS BOSS FIGHT CONCEPT` (script Lua condiviso dall'autore il
 30 ottobre 2026). Non è una conversione dei danni in punti Farkle.
 
+## Due modalità esplicite
+
+### Demo giocabile (predefinita)
+
+La **Demo giocabile** è una simulazione autonoma, **non** una copia delle
+carte commerciali di Star Realms. Serve a osservare il comportamento del
+boss in una partita con azioni realmente limitate dalle carte.
+
+Ogni giocatore riceve un mazzetto di **dieci carte di prova** (quattro
+`Colpo +3 Combat`, due `Assalto +5 Combat`, due `Ristoro +4 Authority`
+e due `Presidio +1 base`). Inizia con cinque carte in mano: cliccando
+la carta se ne esegue l'effetto e la carta viene consumata. Alla fine
+della fase giocatori viene distribuita **la mano del turno successivo
+prima** delle azioni di P4ND0RA: se il boss estrae EMP, le carte scartate
+vengono realmente tolte da questa nuova mano. Mazzo, scarti e mano
+conservano sempre le dieci carte di prova, con mescolamento deterministico
+a esaurimento del mazzo. Puoi sacrificare una carta per scartare un token
+dal sacchetto oppure una base per neutralizzarne uno.
+
+**Non sono riprodotti l'economia Trade, il mercato, le fazioni, il mazzo
+completo, l'acquisto e gli effetti combinati di Star Realms**; perciò
+questa modalità non va usata per certificare l'equilibrio del boss originale.
+
+### Regole originali / input manuale
+
+La modalità manuale conserva il comportamento preesistente: i pulsanti
+`Combat +1/+5/+10`, `Cura`, `+Base` e `+Carta` sono strumenti
+di **immissione manuale di effetti avvenuti fuori dal laboratorio**,
+non azioni guadagnate automaticamente giocando carte. Non esiste un mazzo
+dietro questi pulsanti. La mano iniziale e i decrementi EMP sono soltanto
+conteggi e per i round successivi l'operatore deve aggiornare i conteggi.
+La modalità manuale serve come banco di verifica del motore P4ND0RA,
+non come gioco autonomo.
+
+### Interfaccia del sacchetto
+
+I valori per ogni categoria ora indicano **caratteri rimasti nella
+cassa / quantità iniziale**. Il numero complessivo degli scarti e dei
+token in risoluzione è riportato separatamente. La vecchia UI mostrava
+erroneamente le quantità totali di tutte le pile come se fossero quelle
+rimaste disponibili.
+
 ## Che cosa significa «1:1» qui
 
 Riproduzione *a livello di regole e sequenze del boss*, non dei componenti
@@ -98,6 +140,13 @@ giocatore, **R** ripeti lo stesso setup/seed, **Esc** torna al setup.
 Per testare fedelmente gli effetti delle carte di Star Realms,
 la distribuzione e il calcolo devono rimanere **manuali**: il progetto
 non incorpora o riproduce il mazzo commerciale.
+
+
+Per provare la **demo** seleziona `Demo giocabile` nel setup, scegli
+un giocatore e avvia. Clicca sulle carte di prova della mano (oppure usa
+i tasti `1–5`), valuta le contromisure, quindi premi **Fine turno**.
+La nuova mano viene preparata prima del turno di P4ND0RA, quindi EMP
+può scartarne una parte. `Tab` cambia giocatore.
 
 ## Test
 
