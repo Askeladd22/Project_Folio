@@ -11,6 +11,24 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > La versione del documento di game design è indipendente da quella del software.
 
 
+## [0.1.49] - 2026-11-07
+
+### Aggiunto
+
+- Laboratorio isolato `experiments/p4ndora_1to1/`: simulazione
+  del boss P4ND0RA con venti token, difficoltà originali, quattro fasi,
+  abilità speciali, Authority/HP/scudi, contromisure, escalation e seed.
+- Interfaccia sperimentale LÖVE 11.x per avanzare manualmente le azioni
+  e risolvere il costo dei missili; nessuna modifica al Farkle di produzione.
+- Test di regressione headless per difficoltà, token, casualità riproducibile,
+  attacchi, EMP, missili, CQC, nucleare, upgrade ed esaurimento del sacchetto.
+
+### Limiti
+
+- Non è il client completo di Star Realms/Tabletop Simulator: gli effetti delle
+  carte e i conteggi delle basi restano input manuali. Le normalizzazioni
+  rispetto allo script originale sono documentate nel README del laboratorio.
+
 ## [0.1.48] - 2026-11-07
 
 ### Modificato
