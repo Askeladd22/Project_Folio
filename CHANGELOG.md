@@ -10,6 +10,28 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.54] - 2026-11-07
+
+**Stato:** laboratorio P4ND0RA autonomo con deck di prova opzionale; il gioco Farkle principale non cambia.
+
+### Corretto
+
+- Separata la modalità di verifica manuale delle regole originali da una
+  modalità dimostrativa con carte effettive, scarti, nuova mano e scelte di gioco.
+- L'EMP elimina ora carte effettive della mano successiva nella demo: il
+  laboratorio non rimane bloccato su `Mano 0` senza ricambio.
+- Il pannello del sacchetto mostra i token **rimasti nella cassa** anziché
+  presentare i totali originari come disponibilità corrente.
+
+### Aggiunto
+
+- Deck di prova originale di dieci carte per giocatore, con pesca e
+  consumo deterministici, senza copiare il mazzo commerciale Star Realms.
+- Input contestuali per giocare le carte nel laboratorio e test automatici
+  per mano, EMP, pesca, contromisure e conservazione delle carte.
+- Documentazione esplicita sui limiti della demo e della fedeltà 1:1
+  del solo comportamento del boss.
+
 ## [0.1.53] - 2026-11-07
 
 **Stato:** prototipo opt-in “Il Correttore” nel Merchant Wager Lab; non attivo nel gioco.
