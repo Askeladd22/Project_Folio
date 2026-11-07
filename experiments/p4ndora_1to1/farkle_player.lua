@@ -19,6 +19,7 @@ end
 
 local Match = {}
 Match.__index = Match
+Match.Rules = Rules -- Expose canonical rule queries to the native LÖVE HUD.
 
 local function get(self, index)
     return assert(self.states[index], "No player with this index")
