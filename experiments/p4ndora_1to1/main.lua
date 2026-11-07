@@ -21,6 +21,7 @@ local colors = {
 local state = {
     screen = "setup", players = 1, difficulty = "Normal", seed = 101,
     game = nil, selected = 1, buttons = {}, fonts = {}, error = nil,
+    demo = true,
     scale = 1, ox = 0, oy = 0, detailed = false,
 }
 local difficulty_order = {"Easy", "Normal", "Hard", "Nightmare"}
@@ -70,6 +71,7 @@ end
 local function start()
     state.game=Engine.new({
         players=state.players,difficulty=state.difficulty,seed=state.seed,
+        demo=state.demo,
     })
     state.selected=1
     state.screen="game"
@@ -110,9 +112,15 @@ local function draw_setup()
     end,true)
     text(state.seed,567,446,"title")
     button("+",674,435,55,50,function() state.seed=state.seed+1 end,true)
-    button("Avvia P4ND0RA",216,541,480,72,start,true,"green")
-    text("Mod Star Realms: HP, scudi, Authority e carte sono mantenuti.",216,629,"small","muted")
-    text("Le carte sono conteggi manuali: nessuna simulazione del deck.",216,653,"small","muted")
+    text("Modalita' (P4ND0RA conserva le regole originali)",216,502,"small","muted")
+    button("Demo giocabile",216,526,233,42,
+        function()state.demo=true end,true,state.demo and "blue" or nil)
+    button("Input manuale / debug",459,526,250,42,
+        function()state.demo=false end,true,not state.demo and "blue" or nil)
+    button("Avvia P4ND0RA",216,581,480,54,start,true,"green")
+    text("Demo: carte di prova originali, NON Star Realms.",716,583,"small","gold",348)
+    text("Manuale: inserisci tu gli effetti di carte giocate altrove.",716,607,"small","muted",348)
+    text("Non e' un adattamento di P4ND0RA al Farkle.",216,650,"small","muted")
 end
 
 local function stat(label,value,x,y,width,color)
@@ -137,17 +145,26 @@ end
 local function draw_bag()
     local g=state.game
     panel(804,106,447,202)
-    local token_count=g:count_tokens()
     text("Sacchetto di azioni",827,124,"title")
-    text("Cassa  "..#g.bag.."   /   Scarti  "..#g.discard..
-         "   /   Estratti  "..#g.drawn,828,163,"small","muted")
-    local keys={"attack","defense","repairs","oneStar","twoStar","threeStar","special","upgrade"}
-    for i,token in ipairs(keys) do
+    text("Rimasti "..#g.bag.."   /   Scartati "..#g.discard..
+         "   /   In risoluzione "..#g.drawn,828,163,"small","muted")
+    local present = {}
+    for _, token in ipairs(g.bag) do
+        present[token] = (present[token] or 0) + 1
+    end
+    local names = {
+        attack="Attacco",defense="Scudo",repairs="Ripara",
+        oneStar="Missili",twoStar="EMP",threeStar="CQC",
+        special="Nucleare",upgrade="Upgrade",
+    }
+    for i,token in ipairs(Engine.TOKEN_ORDER) do
         local col=(i-1)%4
         local row=math.floor((i-1)/4)
-        local x=828+col*103;local y=201+row*44
-        text(token,x,y,"small",token=="special" and "gold" or "text")
-        text(token_count[token],x+63,y,"small","muted")
+        local x=825+col*102
+        local y=204+row*42
+        text(names[token],x,y,"small",token=="special" and "gold" or "text")
+        text((present[token] or 0).."/"..Engine.TOKENS[token],
+            x,y+17,"small","muted")
     end
 end
 
@@ -170,35 +187,53 @@ local function draw_players()
     local g=state.game
     local p=current()
     panel(28,326,758,278)
-    text("Giocatori · fase cooperativa",49,345,"title")
+    text(g.demo and "Squadra · carte di prova" or
+         "Squadra · inserimento manuale",49,345,"title")
     for i,pl in ipairs(g.players) do
-        local w=166
-        player_card(pl,i,49+(i-1)*181,387,w)
+        player_card(pl,i,49+(i-1)*181,387,166)
     end
-    if g.phase=="players" then
-        text("Immetti gli effetti delle carte di Star Realms del giocatore selezionato.",
-            50,498,"small","muted")
-        button("Combat +1",49,532,112,44,action(function()
+    if g.phase~="players" then
+        text("Turno di P4ND0RA: i giocatori attendono la risoluzione.",
+            50,517,"body","muted",695)
+        return
+    end
+    if g.demo then
+        local cards=g.demo:hand(state.selected)
+        text("Gioca le tue carte: il Combat proviene solo da esse.",50,494,
+            "small","muted")
+        if #cards==0 then
+            text("Mano esaurita: termina il turno. L'EMP puo' ridurre la prossima mano.",
+                50,546,"body","gold",700)
+        end
+        for i,card in ipairs(cards) do
+            local caption=card.label.." +"..card.value
+            local accent=(card.kind=="combat" and "blue") or
+                         (card.kind=="heal" and "green") or "gold"
+            button(caption,49+(i-1)*142,525,132,52,action(function()
+                g:play_demo_card(state.selected,i)
+            end),p.alive,accent)
+        end
+    else
+        text("DEBUG: inserisci manualmente gli effetti di carte NON simulate.",
+            50,494,"small","gold")
+        button("Combat +1",49,531,112,44,action(function()
             g:combat(state.selected,1)
         end),p.alive,"blue")
-        button("Combat +5",168,532,112,44,action(function()
+        button("Combat +5",168,531,112,44,action(function()
             g:combat(state.selected,5)
         end),p.alive,"blue")
-        button("Combat +10",287,532,122,44,action(function()
+        button("Combat +10",287,531,122,44,action(function()
             g:combat(state.selected,10)
         end),p.alive,"blue")
-        button("Cura +5",417,532,105,44,action(function()
+        button("Cura +5",417,531,105,44,action(function()
             g:heal(state.selected,5)
         end),p.alive)
-        button("+ Base",531,532,106,44,action(function()
+        button("+ Base",531,531,106,44,action(function()
             g:adjust_resource(state.selected,"bases",1)
         end),p.alive)
-        button("+ Carta",646,532,114,44,action(function()
+        button("+ Carta",646,531,114,44,action(function()
             g:adjust_resource(state.selected,"hand",1)
         end),p.alive)
-    else
-        text("Le azioni dei giocatori sono concluse. Osserva la sequenza P4ND0RA.",
-            50,514,"body","muted",712)
     end
 end
 
@@ -242,7 +277,8 @@ local function draw_controls()
         return
     end
     if g.phase=="players" then
-        text("FASE GIOCATORI  ·  agiscono tutti, poi P4ND0RA",
+        text(g.demo and "GIOCA LE CARTE · poi P4ND0RA" or
+             "DEBUG MANUALE · poi P4ND0RA",
              49,638,"sub","blue")
         button("Scarta token (1 carta)",49,685,248,49,action(function()
             g:discard_random_token(state.selected)
@@ -250,7 +286,8 @@ local function draw_controls()
         button("Neutralizza (1 base)",309,685,229,49,action(function()
             g:blank_token(state.selected)
         end),current().alive and current().bases>0 and g.blank_next<g.draw_power)
-        button("Fase boss [Invio]",780,684,450,50,
+        button(g.demo and "Fine turno · Boss [Invio]" or
+               "Fase boss [Invio]",780,684,450,50,
             action(function()g:begin_boss_turn()end),true,"red")
     else
         local next_action=g.queue[1]
@@ -270,7 +307,8 @@ end
 
 local function draw_status()
     local g=state.game
-    text("P4ND0RA  /  ORIGINAL RULES LAB",29,21,"title","gold")
+    text("P4ND0RA  /  "..(g.demo and "DEMO AUTONOMA" or "REGOLE ORIGINALI · MANUALE"),
+        29,21,"title","gold")
     text("Round "..g.round.."   ·   seed "..g.seed.."   ·   "..
         g.player_count.." giocatore/i",676,27,"small","muted",560,"right")
     local phase=g.phase=="players" and "TURNO DEI GIOCATORI" or
@@ -372,11 +410,13 @@ function love.keypressed(key)
     elseif g.phase=="players" then
         if key=="return" or key=="kpenter" then
             attempt(function()g:begin_boss_turn()end)
-        elseif key=="1" then attempt(function()g:combat(state.selected,1)end)
-        elseif key=="5" then attempt(function()g:combat(state.selected,5)end)
-        elseif key=="0" then attempt(function()g:combat(state.selected,10)end)
-        elseif key=="h" then attempt(function()g:heal(state.selected,5)end)
-        elseif key=="b" then attempt(function()
+        elseif g.demo and tonumber(key) and tonumber(key)>=1 and tonumber(key)<=5 then
+            attempt(function()g:play_demo_card(state.selected,tonumber(key))end)
+        elseif not g.demo and key=="1" then attempt(function()g:combat(state.selected,1)end)
+        elseif not g.demo and key=="5" then attempt(function()g:combat(state.selected,5)end)
+        elseif not g.demo and key=="0" then attempt(function()g:combat(state.selected,10)end)
+        elseif not g.demo and key=="h" then attempt(function()g:heal(state.selected,5)end)
+        elseif not g.demo and key=="b" then attempt(function()
             g:adjust_resource(state.selected,"bases",1)end)
         elseif key=="d" then attempt(function()g:discard_random_token(state.selected)end)
         elseif key=="n" then attempt(function()g:blank_token(state.selected)end)
