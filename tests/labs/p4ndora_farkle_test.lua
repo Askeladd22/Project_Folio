@@ -53,6 +53,7 @@ check("uses the exact canonical production module API",function()
     assert(type(Rules.bank_turn)=="function")
     assert(type(Rules.settle)=="function")
     assert(Farkle.Rules==Rules)
+    assert(Farkle.new(101,1).Rules==Rules, "Rules must be visible to native HUD")
 end)
 
 check("six dice and stable seed produce identical faces",function()
