@@ -171,9 +171,10 @@ check("repairs capped at max HP; shield absorbs damage",function()
     equal(g.shield,0)
 end)
 
-check("multiple upgrade tokens trigger one upgrade",function()
+check("single original upgrade token strengthens all stats once",function()
     local g=Engine.new()
-    rig_bag(g,{"upgrade","upgrade"})
+    -- The real 20-token bag contains exactly ONE Upgrade token.
+    rig_bag(g,{"upgrade"})
     g:begin_boss_turn()
     equal(#g.queue,2)
     g:advance()
