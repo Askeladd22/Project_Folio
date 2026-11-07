@@ -10,6 +10,114 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.53] - 2026-11-07
+
+**Stato:** prototipo opt-in “Il Correttore” nel Merchant Wager Lab; non attivo nel gioco.
+
+### Aggiunto
+
+- Aggiunta una modalità autonoma con rivale a sei dadi, punteggio 4/5/6,
+  decisione forzata sotto 300 punti e decisione D6 da 300 punti.
+- Aggiunti acquisto di fogli a 500 punti, furti su Farkle, chiusura
+  dell'incontro, spareggio sui punti non spesi, feedback soggettivo e conteggio
+  delle opportunità decisive per confrontare la percezione con la soglia del 40%.
+- Aggiunti registri CSV versionati separati per partite, eventi e feedback,
+  oltre a test isolati del prototipo.
+
+### Verifiche
+
+- Passati i test isolati Correttore (logica e UI), V2 e V3 con il LuaJIT
+  incluso in LÖVE.
+- Suite Lua completa: 105/106 test file passati. L'unico fallimento è il
+  preesistente `fps_wall_bounds_test.lua`, che richiede la globale `arg`
+  assente nel runner standalone.
+- Il controllo visuale manuale con finestra LÖVE non è stato eseguito.
+
+## [0.1.52] - 2026-11-07
+
+**Stato:** redesign della UI opt-in V3 del Merchant Wager Lab; non attivo nel gioco.
+
+### Modificato
+
+- Ridisegnata la schermata V3 per rendere evidenti fase, mani vinte, offerta,
+  risultato da battere, rischio Farkle e dadi selezionati/accantonati.
+- Resi contestuali i comandi di gameplay; aggiunti riepiloghi leggibili per
+  mano/incontro, cronologia sintetica, dettagli espandibili della cassa e
+  scorciatoie per navigare la V3.
+
+### Corretto
+
+- Il click sul campo seed non viene più interpretato come una selezione di seed;
+  ora è possibile modificare manualmente il valore nel setup V2 e V3.
+
+### Verifiche
+
+- Passati i test mirati V2/V3, inclusi messaggi, azioni contestuali e viewport
+  per 1280×720, 1600×900 e 1920×1080.
+- Passato uno smoke test del ciclo di disegno LÖVE con backend grafico simulato
+  per setup, turno, controfferta, riepiloghi e dettagli cassa.
+- Passato il controllo sintattico Lua, `git diff --check` e il controllo
+  versione/changelog.
+- Non eseguito un test visivo manuale con finestra LÖVE; la suite completa ha
+  un test estraneo al laboratorio che richiede `arg` nel runner standalone.
+
+
+## [0.1.51] - 2026-11-07
+
+**Stato:** esperimento opt-in nel Merchant Wager Lab; non attivo nel gioco.
+
+### Aggiunto
+
+- Aggiunta la modalità V3 "cassa tipografica", separata dalle partite A/B/C,
+  con Farkle di produzione per l'Artista, cassa pubblica, controfferte e
+  incontro al meglio di tre mani.
+- Aggiunti CSV V3 indipendenti per incontro, mani, sequenza di decisioni e
+  feedback; i registri V2 e `runs.csv` restano separati.
+- Aggiunti test V3 per cassa, probabilità, flussi casuali indipendenti,
+  controfferte, tie-break, assegnazione dei fogli e registrazione.
+
+### Corretto
+
+- Resa esplicita nella UI la probabilità di sorpasso e la soglia deterministica
+  del Mercante prima di ogni controfferta.
+- Registrata la sequenza ordinata delle decisioni dell'Artista e del Mercante
+  invece di mantenere le decisioni soltanto in memoria.
+
+### Verifiche
+
+- Passati i test mirati V2 e V3 con la LuaJIT inclusa in LÖVE.
+- Passato il controllo sintattico dei file Lua V3 e `git diff --check`.
+- Suite completa Lua: 103/104 file; `fps_wall_bounds_test.lua` non passa nel
+  runner standalone perché si aspetta la globale `arg`. Lua 5.4 non è
+  disponibile; il runtime LuaJIT standalone non è installato.
+
+
+## [0.1.50] - 2026-11-07
+
+### Aggiunto
+
+- Esteso il Merchant Wager Lab con le condizioni A (controllo), B (30 punti
+  iniziali al Mercante) e C (4 fogli totali a testa), selezione di seed,
+  flussi casuali indipendenti, feedback soggettivo e analisi CSV per variante.
+- I nuovi risultati usano CSV versionati, senza sovrascrivere i registri
+  storici del laboratorio o il registro della modalità principale.
+
+### Corretto
+
+- Registrate in Git le rinomine che cambiavano solo maiuscole/minuscole
+  (`docs/*.md`, `lab*.md`, `results_2026_10_31.md`): su file system
+  sensibili alle maiuscole la CI vedeva ancora i vecchi nomi.
+
+## [0.1.49] - 2026-11-08
+
+### Aggiunto
+
+- Laboratorio isolato `experiments/merchant_wager_lab/` ("Il Mercante e la
+  posta"): incontro sperimentale Artista contro Mercante con posta di fogli
+  di prova, rialzo Alzo/Vedo/Passo, tre round, registro CSV dei playtest,
+  simulazione automatica e modello di feedback. Riusa senza modifiche il
+  regolamento Farkle di produzione; nessun modulo di `src` cambia.
+- Test `tests/labs/merchant_wager_lab_test.lua`.
 
 ## [0.1.49] - 2026-11-07
 
