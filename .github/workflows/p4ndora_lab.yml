@@ -1,0 +1,34 @@
+name: P4ND0RA lab standalone
+on:
+  pull_request:
+    paths:
+      - 'experiments/p4ndora_1to1/**'
+      - 'tests/labs/p4ndora_original_test.lua'
+      - '.github/workflows/p4ndora_lab.yml'
+  workflow_dispatch:
+
+jobs:
+  p4nd0ra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install runtimes and headless graphics
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit love xvfb
+      - name: Parse Lua sources
+        run: |
+          luac5.4 -p experiments/p4ndora_1to1/engine.lua
+          luac5.4 -p experiments/p4ndora_1to1/main.lua
+          luac5.4 -p experiments/p4ndora_1to1/conf.lua
+          luac5.4 -p tests/labs/p4ndora_original_test.lua
+      - name: Rules regression Lua 5.4
+        run: lua5.4 tests/labs/p4ndora_original_test.lua
+      - name: Rules regression LuaJIT
+        run: luajit tests/labs/p4ndora_original_test.lua
+      - name: LÖVE smoke with software OpenGL
+        env:
+          P4ND0RA_LAB_SMOKE: '1'
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          ALSOFT_DRIVERS: 'null'
+        run: timeout 40s xvfb-run -a -s '-screen 0 1280x800x24' love experiments/p4ndora_1to1
