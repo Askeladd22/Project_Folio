@@ -287,12 +287,36 @@ local function draw_status()
     end
 end
 
+local smoke_frames = 0
+local smoke_enabled = os.getenv("P4ND0RA_LAB_SMOKE") == "1"
+
 function love.load()
     lg.setDefaultFilter("linear","linear")
     state.fonts={
         headline=lg.newFont(55),title=lg.newFont(23),sub=lg.newFont(18),
         body=lg.newFont(16),small=lg.newFont(14),button=lg.newFont(15),
     }
+    if smoke_enabled then start() end
+end
+
+-- Dedicated CI smoke exercises actual LÖVE drawing, not only Lua syntax.
+function love.update(_dt)
+    if not smoke_enabled then return end
+    smoke_frames = smoke_frames + 1
+    local g = state.game
+    if smoke_frames == 2 then
+        g:begin_boss_turn()
+    elseif smoke_frames >= 3 and smoke_frames <= 28 then
+        if g.pending then
+            g:resolve_missile("authority")
+        elseif g.phase == "boss" then
+            g:advance()
+        elseif g.phase == "players" then
+            g:begin_boss_turn()
+        end
+    elseif smoke_frames == 30 then
+        love.event.quit()
+    end
 end
 
 function love.draw()
