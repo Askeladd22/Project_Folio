@@ -1,12 +1,12 @@
 -- Opt-in renderer diagnostic only; normal startup does not load lab code.
 if require('src.core.renderer_lab_boot').start() then return end
 -- Canonical source entry: run LOVE from this repository directory.
-local U=require('src.features.farkle.controller')
-local D=require('src.features.farkle.dice')
+local U=require('src.farkle.controller')
+local D=require('src.farkle.dice')
 -- The six D6 share the entire existing tray, without the legacy D6/D8 partition.
 U.tray_divided=false
-require('src.data.dice_roll_schema').pool={{kind='d6',count=6,sides=6}}
-assert(love.filesystem.load('src/app/dice_runtime.lua'))(U)
+require('src.data.dice_schema').roll.pool={{kind='d6',count=6,sides=6}}
+assert(love.filesystem.load('src/core/dice_runtime.lua'))(U)
 local engine_load,engine_update=love.load,love.update
 local box=require('src.engine3d.physics').box
 function love.load()

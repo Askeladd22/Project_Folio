@@ -41,7 +41,7 @@ From the root, with a LuaJIT interpreter and native C build support:
 Windows:
 
 ```powershell
-.\experiments\physics_lab\build-windows.ps1
+.\experiments\physics_lab\build_windows.ps1
 luajit experiments\physics_lab\test_grip.lua
 luajit experiments\physics_lab\run_grip.lua
 ```
@@ -49,7 +49,7 @@ luajit experiments\physics_lab\run_grip.lua
 Linux:
 
 ```bash
-bash experiments/physics_lab/build-linux.sh
+bash experiments/physics_lab/build_linux.sh
 luajit experiments/physics_lab/test_grip.lua
 luajit experiments/physics_lab/run_grip.lua
 ```

@@ -6,11 +6,11 @@ function love.errorhandler(e) say('FAIL '..tostring(e)..'\n'..debug.traceback())
 local GM=require('src.core.game_manager');local new=GM.new;local manager
 GM.new=function(...) manager=new(...);return manager end
 local N=require('src.core.navigation')
-local Menu=require('src.features.main_menu.module')
-local Settings=require('src.features.settings.module')
-local Choose=require('src.features.campaign_select.module')
-local U=require('src.features.farkle.controller')
-local State=require('src.core.settings_state')
+local Menu=require('src.screens.frontend').main_menu
+local Settings=require('src.screens.frontend').settings
+local Choose=require('src.screens.frontend').campaign_select
+local U=require('src.farkle.controller')
+local State=require('src.core.runtime_state').settings
 local assets={}
 for _,entry in ipairs{{love.graphics,'newImage'},{love.graphics,'newFont'},{love.graphics,'newShader'},{love.audio,'newSource'}} do
  local api,key=entry[1],entry[2];local original=api[key]
@@ -77,7 +77,9 @@ local co,pending,elapsed,frames
 function love.load()
  load0()
  if baseline then
-  for _,name in ipairs{'startup_splash','main_menu','settings','campaign_select'} do manager:register(name,require('src.features.'..name..'.module')) end
+  manager:register('startup_splash',require('src.screens.startup_splash'))
+  local frontend=require('src.screens.frontend')
+  for _,name in ipairs{'main_menu','settings','campaign_select'} do manager:register(name,frontend.modules[name]) end
   N.go('startup_splash')
  else assert(manager.current_name=='startup_splash','normal boot must start at splash') end
  if not baseline then

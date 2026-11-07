@@ -1,5 +1,5 @@
-local R=require('src.gameplay.farkle.rules')
-local D=require('src.features.farkle.dice')
+local R=require('src.farkle.rules')
+local D=require('src.farkle.dice')
 local expected={4,16,60,204,600,1080}
 for n=1,6 do
  local hand={};local bad=0;local total=0

@@ -1,6 +1,6 @@
 -- Real-time presentation capture. Never assigns physical outcomes.
-local U=require('src.features.farkle.controller')
-local R=require('src.gameplay.farkle.rules')
+local U=require('src.farkle.controller')
+local R=require('src.farkle.rules')
 local out=assert(os.getenv('MANUSCRIPT_AUDIT_OUT'))
 local load0,update0,draw0=love.load,love.update,love.draw
 local elapsed,lastCapture,frame=0,-1,0

@@ -1,9 +1,9 @@
 -- Adapted from audits/source-launch/integration.lua: restored frontend is permitted.
 -- External diagnostic: executes current source callbacks, never assigns physical results.
-local U=require('src.features.farkle.controller')
-local R=require('src.gameplay.farkle.rules')
-local D=require('src.features.farkle.dice')
-local F=require('src.engine3d.face_state')
+local U=require('src.farkle.controller')
+local R=require('src.farkle.rules')
+local D=require('src.farkle.dice')
+local F=require('src.engine3d.roll_resolution').face_state
 local P=require('src.engine3d.physics')
 local out=assert(os.getenv('MANUSCRIPT_AUDIT_OUT'))
 local load0,update0=love.load,love.update
@@ -73,7 +73,7 @@ function love.run()
     assert(U.game.hand[i]==faces[i],'medal changed retained result')
     for k=1,3 do assert(dice[i].body.position[k]==positions[i][k],'medal moved excluded die') end
    end
-   assert(require('src.gameplay.farkle.medals').remaining(U.game)==0)
+   assert(require('src.farkle.rules').medals.remaining(U.game)==0)
    say('PASS reference medal real selective reroll '..build..': retained faces/positions, visible result, single charge')
   end
   -- Controlled rule fixtures lead into genuine physical hot-dice and medal rolls.

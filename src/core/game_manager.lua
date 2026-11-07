@@ -1,4 +1,78 @@
-local EventBus = require("src.core.event_bus")
+local Bundle = {}
+Bundle.execution_order = (function()
+local Parts = {}
+
+-- Hook plan
+Parts.plan = (function()
+return {
+    pre_update = {
+        {name = "resolution_refresh", order = 100},
+        {name = "physics_step", order = 200},
+        {name = "dice_constrain_regions", order = 300},
+        {name = "dice_settle_check", order = 400},
+    },
+    post_update = {
+        {name = "tray_camera_control", order = 100},
+    },
+    pre_draw = {},
+    post_draw = {
+        {name = "tray_overlay", order = 100},
+    },
+}
+end)()
+
+-- Hook registration
+Parts.order = (function()
+local ExecutionOrderPlan = Parts.plan
+local ExecutionOrder = {}
+
+local PHASE_ORDER = {
+    "pre_update",
+    "post_update",
+    "pre_draw",
+    "post_draw",
+}
+
+local function copy_value(value)
+    if type(value) ~= "table" then
+        return value
+    end
+    local out = {}
+    for k, v in pairs(value) do
+        out[k] = copy_value(v)
+    end
+    return out
+end
+
+function ExecutionOrder.get_plan()
+    return copy_value(ExecutionOrderPlan)
+end
+
+---@param game_manager table
+---@param handlers table<string, function>
+function ExecutionOrder.register(game_manager, handlers)
+    assert(type(game_manager) == "table", "Game manager is required")
+    assert(type(handlers) == "table", "Hook handlers table is required")
+
+    local plan = ExecutionOrder.get_plan()
+    for _, phase in ipairs(PHASE_ORDER) do
+        local entries = plan[phase] or {}
+        for _, entry in ipairs(entries) do
+            local callback = handlers[entry.name]
+            assert(type(callback) == "function", "Missing hook handler: " .. tostring(entry.name))
+            game_manager:register_hook(phase, entry.name, callback, entry.order)
+        end
+    end
+end
+
+return ExecutionOrder
+end)()
+
+Parts.order.plan = Parts.plan
+return Parts.order
+end)()
+Bundle.manager = (function()
+local EventBus = require('src.core.engine_bridge').EventBus
 
 local GameManager = {}
 GameManager.__index = GameManager
@@ -225,3 +299,6 @@ function GameManager:wheelmoved(x, y)
 end
 
 return GameManager
+end)()
+Bundle.manager.execution_order = Bundle.execution_order
+return Bundle.manager

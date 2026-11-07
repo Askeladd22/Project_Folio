@@ -1,7 +1,7 @@
 -- Virtual-only experimental Farkle turn. All selections, scoring, roll
 -- settlement, banking, Farkle and hot dice use the actual production Rules.
 -- This cannot affect g3d/physics or become a game mode by importing a view.
-local Rules=require('src.gameplay.farkle.rules')
+local Rules=require('src.farkle.rules')
 local M={}
 local function best(state)
  local winner

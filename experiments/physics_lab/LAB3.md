@@ -24,7 +24,7 @@ contact normals; it is a diagnostic intervention, not a proposed fix.
 From the repository root with LuaJIT and the native library built:
 
 ```powershell
-.\experiments\physics_lab\build-windows.ps1
+.\experiments\physics_lab\build_windows.ps1
 luajit .\experiments\physics_lab\test_support.lua
 luajit .\experiments\physics_lab\run_support.lua 64 450
 ```

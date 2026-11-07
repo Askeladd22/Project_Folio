@@ -17,7 +17,7 @@ Open an **x64 Visual Studio Developer PowerShell** in the Manuscript
 repository, then:
 
 ```powershell
-.\experiments\physics_lab\build-windows.ps1
+.\experiments\physics_lab\build_windows.ps1
 luajit .\experiments\physics_lab\run.lua 6 450
 ```
 
@@ -29,7 +29,7 @@ CI job, which compiles FPS and invokes the comparison automatically.
 ## Run on Linux
 
 ```bash
-bash experiments/physics_lab/build-linux.sh
+bash experiments/physics_lab/build_linux.sh
 luajit experiments/physics_lab/run.lua 6 450
 ```
 
@@ -121,13 +121,13 @@ g3d rendering imports these experimental functions.
 
 ## Lab 4 — held-dice spring experiment
 
-See [LAB4_GRIP.md](LAB4_GRIP.md). This new, separate native experiment
+See [lab4_grip.md](lab4_grip.md). This new, separate native experiment
 tests how **six FPS rigid bodies dynamically chase the same hand target**
 under spring forces and die/die contact rather than occupying a fixed
 3D formation. It compares collisions on/off and stationary/moving hands.
 
 ```powershell
-.\experiments\physics_lab\build-windows.ps1
+.\experiments\physics_lab\build_windows.ps1
 luajit experiments\physics_lab\test_grip.lua
 luajit experiments\physics_lab\run_grip.lua
 ```
@@ -138,19 +138,19 @@ held-only trial; FPS still fails some official landing tests.
 
 ## Lab 5 — transfer from FPS gripping to original dice physics
 
-[LAB5_HANDOFF.md](LAB5_HANDOFF.md) describes the experimental
+[lab5_handoff.md](lab5_handoff.md) describes the experimental
 **world-space FPS -> local-space Manuscript D6** handoff. It preserves
 all eight physical vertices, numbered face identities, linear velocity
 and angular velocity, then reports 500 fixed steps of production
 physics after release.
 
 ```bash
-bash experiments/physics_lab/build-linux.sh
+bash experiments/physics_lab/build_linux.sh
 luajit experiments/physics_lab/run_handoff.lua 8
 ```
 
 Not part of gameplay. FPS landing remains unqualified.
 
 The measured 32-seed / 768-dice conclusions are in
-[LAB5_RESULTS.md](LAB5_RESULTS.md). **The compatible-repulsion variant
+[lab5_results.md](lab5_results.md). **The compatible-repulsion variant
 has a persistent floor-penetration failure and is not ready for production.**

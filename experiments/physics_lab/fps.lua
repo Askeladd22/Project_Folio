@@ -1,6 +1,6 @@
 -- LuaJIT FFI adapter, intentionally never imported by normal Manuscript.
 local ffi=require('ffi')
-local schema=require('src.data.dice_scene_schema').box
+local schema=require('src.data.dice_schema').scene.box
 ffi.cdef[[
 typedef struct fpslab fpslab;
 fpslab *fpslab_new(int n,const float *states,float edge,float hx,float hy,float rim,float gravity);

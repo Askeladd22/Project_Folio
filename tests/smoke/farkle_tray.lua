@@ -7,9 +7,9 @@ function M.install(U)
  function love.errorhandler(e) record('FAIL '..tostring(e)..'\n'..debug.traceback());log:close();return function() return 1 end end
  local load,update,draw=love.load,love.update,love.draw
  local elapsed,stage=0,0
- local checks={};local regions=require('src.data.dice_scene_schema').regions
+ local checks={};local regions=require('src.data.dice_schema').scene.regions
  local crossing=0;local crossingStart=0
- local originalBox=require('src.data.dice_scene_schema').box
+ local originalBox=require('src.data.dice_schema').scene.box
  local function split(y)
   local r=regions.unified;local t=(y-r.y_back)/(r.y_front-r.y_back)
   local half=r.half_back+(r.half_front-r.half_back)*t

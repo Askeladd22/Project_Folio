@@ -8,8 +8,8 @@ import shutil
 import stat
 
 ROOT = Path(__file__).resolve().parents[1]
-DIRECTORIES = ('src', 'resources', 'lib', 'third_party', 'scripts', 'tests', 'docs')
-ENTRY_FILES = ('Avvia.cmd', 'main.lua', 'core.lua', 'conf.lua', 'stylua.toml')
+DIRECTORIES = ('src', 'resources', 'lib', 'scripts', 'tests', 'docs')
+ENTRY_FILES = ('run_game.cmd', 'main.lua', 'conf.lua', 'stylua.toml')
 EXCLUDED = {'audits', 'backups', 'tmp', '__pycache__', '.git', '.venv', 'node_modules'}
 ARCHIVES = ('.zip', '.love', '.7z', '.rar', '.tar', '.gz', '.bz2', '.xz', '.bak')
 

@@ -1,6 +1,6 @@
 -- Canonical entry is already loaded by main.lua.
-local U=require('src.features.farkle.controller')
-local S=require('src.engine3d.spawn_clearance')
+local U=require('src.farkle.controller')
+local S=require('src.engine3d.bounds').spawn
 local P=require('src.engine3d.physics')
 local load0,update0=love.load,love.update
 local function copy(t) if type(t)~='table' then return t end;local r={};for k,v in pairs(t) do r[k]=copy(v) end;return setmetatable(r,getmetatable(t)) end
@@ -33,7 +33,7 @@ function love.run()
    end
    say('PASS subset '..table.concat(indices,',')..': kept bodies excluded, unchanged through settlement, margin respected')
   end
-  prepare({1},0);U.game.build='weighted';require('src.features.farkle.dice').install('weighted')
+  prepare({1},0);U.game.build='weighted';require('src.farkle.dice').install('weighted')
   U:begin_physical({1});local frames=0;while not result and frames<3900 do update0(1/60);frames=frames+1 end
   assert(result and #result==1 and result[1].index==1);say('PASS weighted die single-body physical reroll (acceptance rule tested separately)')
   prepare({1,3},0);local before={};for i,d in ipairs(dice) do before[i]=copy(d.body) end

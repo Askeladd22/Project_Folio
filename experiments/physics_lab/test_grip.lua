@@ -24,6 +24,6 @@ assert(not pcall(N.grip_step,world,{0/0,0,3},.005,23,8,0,true),
  'non-finite target must be rejected before FFI')
 assert(not pcall(N.grip_step,world,{0,0,3},-.005,23,8,0,true),
  'invalid dt must be rejected by native guard')
-assert(not package.loaded['src.features.farkle.controller'],
+assert(not package.loaded['src.farkle.controller'],
  'FPS test should never import production gameplay')
 print('PASS FPS Lab 4: native hand spring / held spin, FFI validation, isolated from Farkle')

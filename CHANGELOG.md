@@ -3,12 +3,170 @@
 Questo file è il **registro ufficiale e cumulativo** degli aggiornamenti del gioco.
 Ogni PR deve aggiungere una nuova sezione, collegata alla versione scritta in
 [`version.txt`](version.txt). La CI verifica che versione e changelog siano
-aggiornati insieme; le istruzioni sono in [`docs/VERSIONING.md`](docs/VERSIONING.md).
+aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning.md).
 
 > Le versioni precedenti al 31 ottobre 2026 non avevano un registro versionato
 > unico: gli interventi già integrati sono qui riepilogati come **baseline
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
+
+
+## [0.1.48] - 2026-11-07
+
+### Modificato
+
+- Uniformati i nomi dei file di documentazione e dei laboratori in
+  `snake_case` inglese; rinominati i launcher in `run_game.cmd`,
+  `run_lab.cmd` e `run_in_game.cmd`.
+- Il workflow CI usa `lua_tests.yml`; gli script di build FPS sono
+  `build_linux.sh` e `build_windows.ps1`.
+- Aggiornati tutti i riferimenti interni, i link Markdown, i test, i runner
+  e la mappa tecnica. I nomi richiesti da LÖVE, gli asset e i file vendor
+  restano invariati.
+
+## [0.1.47] - 2026-11-07
+
+### Modificato
+
+- Riorganizzate cartelle e sottocartelle per area, senza alias dei vecchi
+  percorsi. In `src` le cartelle passano da 11 a 6 (`core`, `data`,
+  `engine3d`, `engine3d/g3d`, `farkle`, `screens`): tutto il codice Farkle,
+  dalle regole all'HUD, sta in `src/farkle`; splash, menu e superfici del
+  folio in `src/screens`; il bootstrap `dice_runtime.lua` in `src/core`;
+  la traduzione inglese è `src/data/locale_en.lua`. Restano 30 file Lua.
+- I 102 test Lua sono divisi in `tests/<area>/` (core, data, engine3d,
+  farkle, hud, screens, repo, labs); i test Python stanno in `scripts/tests/`
+  e il runner LuaJIT si chiama `scripts/run_lua_tests.py`.
+- `core.lua` (vettori e prototipi) è passato in `lib/core.lua`, le licenze di
+  terzi in `lib/licenses/`, la shader `dice_glow.glsl` in `resources/shaders/`.
+- Aggiornati import, CI, runner, checkpoint, esperimenti e documentazione;
+  la mappa delle cartelle è in `docs/TECHNICAL.md` ed è verificata dal test
+  strutturale. Nessuna modifica intenzionale a gameplay, fisica o asset.
+
+### Rimosso
+
+- `probe_tmp.lua`, sonda temporanea non più funzionante che puntava a moduli
+  eliminati.
+
+## [0.1.46] - 2026-11-07
+
+### Modificato
+
+- Consolidati da **60 a 30** i file Lua di produzione sotto `src`, senza
+  alias di compatibilità: menu e impostazioni, superfici del folio, UI Farkle,
+  presentazione, tavolo e servizi condivisi sono raccolti per responsabilità.
+- Aggiornati import, registrazione dinamica delle schermate, test,
+  esperimenti, lint CI e documentazione. Rimosse le cartelle rimaste vuote.
+- Aggiunto un controllo dell'elenco esatto dei 30 sorgenti, delle API esportate
+  e del riuso della stessa superficie tra menu e folio.
+- Aggiornata la mappa tecnica con tutti i moduli e le rispettive sezioni.
+  Nessuna modifica intenzionale a gameplay, fisica, asset o salvataggi.
+
+### Corretto
+
+- Il caricamento delle texture delle geometrie avviene al disegno, evitando
+  di inizializzare la grafica negli import headless dei nuovi moduli accorpati.
+- Riallineati mock e controlli testuali alle sezioni consolidate; le verifiche
+  del menu restano limitate al menu, senza confonderlo con le impostazioni.
+
+### Verifiche
+
+- Sintassi LuaJIT verificata su **161/161** file di produzione, test e laboratori.
+- Luacheck 1.1.2 sui tre moduli previsti dalla CI: nessun avviso o errore.
+- Suite LuaJIT: **102/102** test con `arg` inizializzato come nel runtime CLI.
+  Il runner DLL del repository continua a dare **101/102** perché non
+  inizializza `arg` nel test preesistente `fps_wall_bounds_test`.
+- Passati gli smoke LÖVE del frontend, del lancio fisico dei sei dadi e della
+  UI V2 a **1920x1080 e 1280x720**, inclusi presa, annullamento, accessibilità,
+  pausa, folio e ricompense.
+- Il conteggio esclude librerie, test ed esperimenti. Restano aperti i tre
+  smoke diagnostici già documentati nella v0.1.45 (`partial`, `face-gate`,
+  `integration`); non sono stati rieseguiti in questo aggiornamento.
+
+## [0.1.45] - 2026-11-07
+
+### Modificato
+
+- Ridotti i sorgenti Lua di produzione da **89 a 60**, unificando moduli
+  affini di regole, interazioni, renderer, HUD, configurazioni e servizi.
+- Aggiornati chiamanti, test, laboratorio g3d, lint della CI e documentazione.
+  Le sezioni restano nominate e separate; regole, asset e formato dei
+  salvataggi non sono stati intenzionalmente modificati.
+- Resa accessibile dal README la mappa del codice, con collegamenti diretti
+  ai moduli principali e indicazioni sulle rispettive sezioni.
+
+### Corretto
+
+- Corretto l'accesso a `dice_schema.roll.pool` nel bootstrap; i test controllano
+  ora anche la compilazione del punto di avvio e i percorsi dei moduli nella CI.
+
+### Verifiche
+
+- Sintassi verificata su **191/191** file con LuaJIT e Lua 5.4.6; lint dei
+  moduli consolidati con Luacheck 1.1.2 senza avvisi o errori.
+- Suite LuaJIT: **100/102** test passati. I due fallimenti sono preesistenti:
+  il runner DLL non inizializza `arg` per `fps_wall_bounds_test` e il confronto
+  testuale di `ui_v2_visual_review_wiring_test` dipende dai terminatori LF.
+  Entrambi passano correggendo rispettivamente l'ambiente e i terminatori.
+- Suite Lua 5.4: **100/102** test passati. La baseline presenta gli stessi
+  problemi: il test GLB richiede `ffi` di LuaJIT, mentre il test della review
+  UI dipende dai terminatori LF. Il test GLB passa con LuaJIT.
+- Passati gli smoke LÖVE del frontend, del lancio sul vassoio, della UI V2 a
+  1920x1080 e 1280x720, dello shader GPU e dei sei ritratti dei dadi.
+  Identiche le 32 mappe hitbox confrontate; le immagini possono differire
+  per animazione e FPS.
+- Confrontati con la baseline **55.986** mani ordinate e **1.554** insiemi di
+  opzioni per ID fisici, senza differenze nei risultati.
+- Gli smoke diagnostici `partial`, `face-gate` e `integration` continuano a
+  fallire esattamente come sulla baseline isolata, rispettivamente per
+  `kept body changed`, `Technical failure has no usable actions` e
+  `love.graphics.getImage` assente.
+
+## [0.1.44] - 2026-11-07
+
+### Modificato
+
+- Ridotti di **7** i file di produzione unendo le particelle al loader dei
+  fondali, il filtro dei contatti all'audio manager, i dati campagne al loro
+  schema e le configurazioni di dadi e impostazioni in un unico schema per area.
+- Aggiornati chiamanti, test e laboratorio; valori, comportamento runtime,
+  salvataggi e asset sono rimasti invariati.
+
+### Verifiche
+
+- Passati 99/102 test LuaJIT: i tre fallimenti coincidono con la baseline
+  (`fps_wall_bounds_test`, `merchant_refinement_test`,
+  `ui_v2_visual_review_wiring_test`); 10 test mirati passano.
+- Passati gli scenari smoke LÖVE del frontend, del lancio fisico sul vassoio
+  e della UI V2 con presa reale a 1920x1080 e 1280x720. Una ripetizione del
+  frontend ha completato tutti gli scenari ma ha richiesto la chiusura manuale
+  della finestra di test rimasta aperta.
+
+## [0.1.43] - 2026-11-07
+
+### Aggiunto
+
+- Controllo strutturale delle nuove posizioni dei moduli e dell'assenza
+  di copie nei vecchi percorsi.
+
+### Modificato
+
+- Raggruppati il renderer g3d e i suoi componenti in `src/engine3d/g3d/`
+  e le interazioni fisiche dei dadi in `src/features/farkle/interaction/`.
+- Aggiornati import, test, laboratorio g3d e documentazione tecnica;
+  nessuna modifica a regole, fisica, resa grafica, asset o salvataggi.
+
+### Verifiche
+
+- Suite LuaJIT: 99/102 file superati; restano i tre fallimenti già presenti
+  prima del riordino (`fps_wall_bounds_test`, `merchant_refinement_test`,
+  `ui_v2_visual_review_wiring_test`). Il test FPS passa inizializzando
+  `arg`, assente nel runner basato sulla DLL.
+- Passati gli smoke LÖVE del frontend, della UI V2 a due risoluzioni,
+  della presa fisica, del vassoio e del renderer GPU; il laboratorio g3d
+  si avvia e si chiude correttamente.
+- Lo smoke HUD storico fallisce su `H.tray` assente anche sulla copia isolata
+  del commit precedente; la review della UI V2 corrente passa.
 
 ## [0.1.42] - 2026-11-06
 

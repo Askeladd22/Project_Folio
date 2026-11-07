@@ -5,14 +5,14 @@ Il laboratorio resta disponibile per il confronto con F9. Per mostrare
 anche l'etichetta diagnostica, lancia:
 
 ```cmd
-experiments\g3d_lab\Avvia-Nel-Gioco.cmd
+experiments\g3d_lab\run_in_game.cmd
 ```
 
 Oppure dalla radice, in CMD:
 
 ```cmd
 set MANUSCRIPT_G3D_DEBUG=1
-Avvia.cmd
+run_game.cmd
 ```
 
 Entra nello Scriptorium e usa **F9** per passare immediatamente da g3d

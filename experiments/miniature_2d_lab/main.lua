@@ -1,10 +1,10 @@
 -- Isolated Project Folio 2D-figure animation workshop, opt-in only.
 -- No physical D6, no tray mesh and no non-2D character are instantiated.
-local Figure=require('src.features.scriptorium.miniature_2d')
-local Ink=require('src.features.scriptorium.folio_ink_text')
-local PostFX=require('src.features.scriptorium.dream_postfx_2d')
-local Toasts=require('src.features.farkle.toast_messages')
-local Res=require('src.core.resolution_manager')
+local Figure=require('src.screens.folio_surface').miniature_2d
+local Ink=require('src.screens.folio_surface').folio_ink_text
+local PostFX=require('src.screens.folio_surface').dream_postfx_2d
+local Toasts=require('src.farkle.presentation').toast_messages
+local Res=require('src.core.navigation').resolution
 local g=love.graphics
 local state={reduced=false,visible=false,fx=nil,figure=nil,text=nil,
   heading=nil,caption=nil,sheet=nil}

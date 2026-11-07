@@ -5,7 +5,7 @@
 local Turn=require('experiments.signs_lab.farkle_turn')
 local Encounter=require('experiments.signs_lab.encounter')
 local Fixture=require('experiments.signs_lab.fixture')
-local Rules=require('src.gameplay.farkle.rules')
+local Rules=require('src.farkle.rules')
 local M={}
 M.policies={'prudent','audace','reattiva'}
 M.modes={'A','B','C0','C'}

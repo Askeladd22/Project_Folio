@@ -1,0 +1,120 @@
+name: Lua regression tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  lua-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require version bump and changelog for every update
+        env:
+          CHECK_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          CHECK_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          python3 scripts/tests/test_versioning.py
+          if [ -n "${CHECK_BASE_SHA}" ] && [ -n "${CHECK_HEAD_SHA}" ] &&
+             [ "${CHECK_BASE_SHA}" != "0000000000000000000000000000000000000000" ]; then
+            python3 scripts/check_versioning.py --base-sha "${CHECK_BASE_SHA}" --head-sha "${CHECK_HEAD_SHA}"
+          else
+            python3 scripts/check_versioning.py
+          fi
+      - name: Install Lua runtimes
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit lua-check love xvfb
+      - name: Static lint of consolidated gameplay, event and persistence modules
+        run: |
+          luacheck --no-config --std lua51 --no-max-line-length \
+            src/core/runtime_state.lua \
+            src/core/engine_bridge.lua \
+            src/farkle/rules.lua --globals love
+      - name: Lua 5.4 syntax check (headless source and tests)
+        run: |
+          set -eu
+          find src tests experiments/g3d_lab experiments/physics_lab -name '*.lua' -type f -print0 | xargs -0 -n 1 luac5.4 -p
+          luac5.4 -p main.lua conf.lua lib/core.lua
+      - name: Lua 5.4 headless tests
+        run: |
+          set -eu
+          for test in $(find tests -name '*_test.lua' | sort); do
+            echo "::group::$test"
+            # The shipping LOVE runtime uses LuaJIT/5.1's global unpack.
+            lua5.4 -e 'unpack=table.unpack' "$test"
+            echo "::endgroup::"
+          done
+      - name: LuaJIT headless tests
+        run: |
+          set -eu
+          for test in $(find tests -name '*_test.lua' | sort); do
+            echo "::group::$test"
+            luajit "$test"
+            echo "::endgroup::"
+          done
+      - name: Bone dice GPU smoke (Mesa)
+        env:
+          PROJECT_FOLIO_BONE_DICE_SMOKE: '1'
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          ALSOFT_DRIVERS: 'null'
+        run: timeout 60s xvfb-run -a love .
+      - name: Merchant table interaction and composition (Mesa)
+        env:
+          MANUSCRIPT_FARKLE_HUD_SMOKE: '1'
+          PROJECT_FOLIO_MERCHANT_REVIEW: '1'
+          MANUSCRIPT_AUDIT_OUT: ${{ runner.temp }}/merchant-table
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          ALSOFT_DRIVERS: 'null'
+        run: |
+          mkdir -p "$MANUSCRIPT_AUDIT_OUT"
+          timeout 75s xvfb-run -a -s '-screen 0 1920x1080x24' love . ||
+            { cat "$MANUSCRIPT_AUDIT_OUT/hud-smoke.log"; exit 1; }
+          cat "$MANUSCRIPT_AUDIT_OUT/hud-smoke.log"
+      - name: Save merchant table frames
+        uses: actions/upload-artifact@v4
+        with:
+          name: merchant-table
+          path: ${{ runner.temp }}/merchant-table/merchant-*.png
+          if-no-files-found: error
+      - name: Deterministic A/B/C signs benchmark (research only)
+        run: |
+          luajit experiments/signs_lab/run.lua 256 20261031
+      - name: Build and smoke-test isolated native FPS lab
+        run: |
+          set -eu
+          bash experiments/physics_lab/build_linux.sh
+          # Lab 4 is an isolated hold-only test; no production physics.
+          luajit experiments/physics_lab/test_grip.lua
+          luajit experiments/physics_lab/run_grip.lua > experiments/physics_lab/build/grip-ci.log
+          grep -E '^(GRIP |GRIP_COMPARE |NOTE:|PASS FPS Lab 4:)' experiments/physics_lab/build/grip-ci.log
+          # Lab 5: zero-discontinuity FPS held-body -> original Manuscript drop.
+          luajit experiments/physics_lab/run_handoff.lua 32 > experiments/physics_lab/build/handoff-ci.log
+          grep -E '^(HANDOFF |HANDOFF_MODE |PASS FPS Lab 5:)' experiments/physics_lab/build/handoff-ci.log
+          luajit experiments/physics_lab/run.lua 8 450
+          test -s experiments/physics_lab/build/results.csv
+          luajit experiments/physics_lab/test_floor_guard.lua
+          # Wider deterministic sample: 64 six-die rolls per solver.
+          luajit experiments/physics_lab/run.lua 64 450 lab2 > experiments/physics_lab/build/lab2-ci.log
+          grep -E '^(SUMMARY|CAUSES|GUARD|CSV:|NOTE:|WARNING:)' experiments/physics_lab/build/lab2-ci.log
+          test -s experiments/physics_lab/build/results-lab2.csv
+          test "$(wc -l < experiments/physics_lab/build/results-lab2.csv)" -eq 321
+          luajit experiments/physics_lab/test_support.lua
+          luajit experiments/physics_lab/run_support.lua 64 450 > experiments/physics_lab/build/lab3-ci.log
+          grep '^SUPPORT ' experiments/physics_lab/build/lab3-ci.log
+          test -s experiments/physics_lab/build/results-support.csv
+          test "$(wc -l < experiments/physics_lab/build/results-support.csv)" -eq 321
+          luajit experiments/physics_lab/run_contact_poses.lua
+          test "$(wc -l < experiments/physics_lab/build/results-contact-poses.csv)" -eq 19
+      - name: Python source tests
+        run: |
+          set -eu
+          python3 -m py_compile scripts/install_menu_art.py scripts/tests/test_menu_art_installer.py scripts/capture_ui_v2_baseline.py scripts/capture_ui_v2_review.py scripts/package_ui_v2_review.py scripts/tests/test_ui_v2_review.py scripts/tests/test_ui_v2_evidence.py scripts/run_smoke.py scripts/run_ui_v2_layout_study.py
+          PYTHONPATH=. python3 scripts/tests/test_checkpoint.py
+          PYTHONPATH=. python3 scripts/tests/test_capture_retention.py
+          PYTHONPATH=scripts python3 scripts/tests/test_menu_art_installer.py
+          PYTHONPATH=scripts python3 scripts/tests/test_ui_v2_review.py
+          PYTHONPATH=scripts python3 scripts/tests/test_ui_v2_evidence.py
+          PYTHONPATH=. python3 scripts/tests/test_love_runtime.py

@@ -1,12 +1,12 @@
 -- Standalone g3d-only geometry/camera/physics laboratory.
 -- Loaded only with MANUSCRIPT_G3D_LAB=1, not by normal gameplay.
-require('core')
-local Scene=require('src.data.dice_scene_schema')
+require('lib.core')
+local Scene=require('src.data.dice_schema').scene
 local Physics=require('src.engine3d.physics')
 local Geometry=require('src.engine3d.geometry')
 local View=require('src.engine3d.view')
-local Mesh=require('src.engine3d.g3d_mesh')
-local Camera=require('src.engine3d.g3d_camera')
+local Mesh=require('src.engine3d.g3d.scene').mesh
+local Camera=require('src.engine3d.g3d.scene').camera
 local Perf=require('experiments.g3d_lab.perf')
 local G3D=require('lib.g3d')
 

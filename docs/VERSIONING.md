@@ -6,12 +6,12 @@
   senza il prefisso `v`. È la fonte ufficiale della versione software.
 - **`CHANGELOG.md` (radice):** registro cronologico **dalla voce più
   recente alla più vecchia**, sempre aggiornato nello stesso PR.
-- **`src/core/version.lua`:** legge la versione dal file, senza
+- **`src/core/presentation.lua`, sezione `version`:** legge la versione dal file, senza
   duplicarla nell'applicazione. Il menu principale mostra `vX.Y.Z`
   senza un suffisso di sviluppo.
-- **`docs/PROJECT_VISION.md` e brainstorming fondativo:** versioni
+- **`docs/project_vision.md` e brainstorming fondativo:** versioni
   documentali indipendenti dalla SemVer ufficiale del gioco.
-- **`docs/TECHNICAL.md`:** comprende anche i controlli e gli stati della UI attiva;
+- **`docs/technical.md`:** comprende anche i controlli e gli stati della UI attiva;
   i piani della migrazione UI sono ora recuperabili dalla storia Git e
   non sostituiscono il changelog ufficiale del software.
 

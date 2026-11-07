@@ -8,14 +8,14 @@ scena g3d**, senza confronto A/B tra renderer.
 ## Avvio Windows
 
 ```cmd
-experiments\g3d_lab\Avvia.cmd
+experiments\g3d_lab\run_lab.cmd
 ```
 
 Oppure dalla radice del repository:
 
 ```cmd
 set MANUSCRIPT_G3D_LAB=1
-Avvia.cmd
+run_game.cmd
 ```
 
 Comandi: **Spazio** pausa/riprende, **R** ricrea i sei corpi,

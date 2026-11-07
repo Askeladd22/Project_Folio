@@ -1,6 +1,6 @@
 # Original FX lab
 
-Run `Avvia.cmd` or `love experiments/fx_lab` from the repository root. LOVE 11 required; no install, external assets, packaging or production changes. All drawing is original geometry with LOVE's default font. The die is a graphical proxy: physics is disabled.
+Run `experiments/fx_lab/run_lab.cmd` or `love experiments/fx_lab` from the repository root. LOVE 11 required; no install, external assets, packaging or production changes. All drawing is original geometry with LOVE's default font. The die is a graphical proxy: physics is disabled.
 
 Tabs 1–5 select die transfer, staged points, ink ornament, medal sheen and desk light. Left shows the final state without effects; right plays the selected effect. Space pauses/resumes, R restarts, B toggles the current effect, M toggles reduced motion. Left/right change duration; up/down change intensity. Repeat has its own button. Effect enablement is remembered independently per tab. Off/reduced motion immediately presents the final state. Sound is off; no audio module is loaded.
 
@@ -8,7 +8,7 @@ The pure Lua timeline uses elapsed time and clamped easing, with no fixed-delta 
 
 Model and syntax checks from repository root:
 
-`rtk proxy python scripts/test_luajit.py experiments/fx_lab/test.lua experiments/fx_lab/model_test.lua`
+`rtk proxy python scripts/run_lua_tests.py experiments/fx_lab/test.lua experiments/fx_lab/model_test.lua`
 
 `test.lua` was written and observed failing before model implementation, then passed. The provisional `tests/timeline_test.lua` assumed an unimplemented API and was removed; its timing/reduced/off cases are covered by the object-model tests. `model_test.lua` was adapted to the actual API.
 

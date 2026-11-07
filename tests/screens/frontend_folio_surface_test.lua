@@ -1,0 +1,134 @@
+-- Headless geometry and visual-contract tests for the ONE parchment frontend.
+-- Screenshot-level Windows QA is still needed. No real graphics or font files.
+local Surface=require('src.screens.folio_surface').menu_surface
+local oldLove=love
+local resolution={1920,1080}
+local drawings={push=0,pop=0,fill=0,line=0,diamond=0}
+local function font(size)
+ size=type(size)=='number' and size or 20
+ return {getHeight=function()return math.floor(size*1.12)end,
+   getWidth=function(_,s)return #tostring(s)*size*.57 end,
+   getWrap=function(_,s) return #tostring(s)*size*.57,{s} end}
+end
+local g={
+ getWidth=function()return resolution[1] end,
+ getHeight=function()return resolution[2] end,
+ getDimensions=function()return resolution[1],resolution[2] end,
+ getFont=function()return font(20)end,
+ newFont=function(a,b)return font(b or a)end,
+ push=function()drawings.push=drawings.push+1 end,
+ pop=function()drawings.pop=drawings.pop+1 end,
+ setColor=function()end,
+ rectangle=function(mode)drawings[mode]=drawings[mode]+1 end,
+ line=function()end,setLineWidth=function()end,
+ polygon=function()drawings.diamond=drawings.diamond+1 end,
+}
+love={graphics=g,filesystem={getInfo=function()return false end}}
+local function get_upvalue(f,name)
+ for i=1,100 do
+  local n,v=debug.getupvalue(f,i)
+  if not n then break end
+  if n==name then return v end
+ end
+ error('missing '..name)
+end
+local Main=require('src.screens.frontend').main_menu
+local Campaign=require('src.screens.frontend').campaign_select
+local build_main=get_upvalue(Main.draw,'compute_layout')
+local build_campaign=get_upvalue(Campaign.draw,'build_layout')
+local campaigns=require('src.data.frontend_schema').campaign.campaigns
+local mainSchema=require('src.data.frontend_schema').menu
+local expectedMenuCount=#mainSchema.menu_items
+assert(expectedMenuCount>=2,'menu schema must retain navigation controls')
+for i=1,70 do
+ local name=debug.getupvalue(build_campaign,i)
+ if name=='campaigns' then debug.setupvalue(build_campaign,i,campaigns);break end
+end
+local function inside(outer,inner)
+ return Surface.contains(outer,inner.x,inner.y) and
+   Surface.contains(outer,inner.x+inner.w,inner.y+inner.h)
+end
+for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
+ resolution=size
+ local w,h=size[1],size[2]
+ local m=build_main(w,h)
+ assert(Surface.within(m.frame,w,h),'menu page outside viewport')
+ assert(#m.item_rects==expectedMenuCount,
+  'must render exactly the menu items defined by current schema')
+ assert(inside(m.frame,m.mute_rect),'music mute outside folio page')
+ for i,item in ipairs(m.item_rects) do
+  assert(Surface.within(item,w,h),'menu action outside viewport')
+  assert(inside(m.frame,item),'menu action outside parchment')
+  if i>1 then
+   assert(item.y>=m.item_rects[i-1].y+m.item_rects[i-1].h,
+    'main actions overlap')
+  end
+ end
+ assert(m.footer_y>m.item_rects[#m.item_rects].y+
+   m.item_rects[#m.item_rects].h-1)
+ local c=build_campaign()
+ assert(Surface.within(c.frame,w,h),'commission page outside viewport')
+ assert(#c.items==#campaigns+1,'only valid campaigns and Back')
+ for i,item in ipairs(c.items) do
+  assert(inside(c.frame,item),'campaign action outside page')
+  assert(Surface.within(item,w,h))
+  if i>1 then
+   assert(item.y>=c.items[i-1].y+c.items[i-1].h,
+    'commission rows overlap')
+  end
+ end
+ Surface.backdrop(w,h,false,1)
+ -- Both visual vocabularies remain available; only the main menu uses
+ -- quiet editorial styling, so campaign/settings preserve their art.
+ Surface.panel(m.frame,{high_contrast=false,style="editorial"})
+ Surface.panel(c.frame,{high_contrast=true})
+ local old_diamonds=drawings.diamond
+ Surface.rule(m.menu_x,m.divider_y,m.menu_w,1,{quiet=true})
+ assert(drawings.diamond==old_diamonds,'editorial menu reintroduced gold lozenges')
+ Surface.rule(c.frame.x+20,c.frame.y+90,c.frame.w-40,1)
+ assert(drawings.diamond==old_diamonds+1,
+  'campaign/settings still need their original optional ornamental rule')
+ Surface.item(m.item_rects[2],{active=true,primary=true,style="editorial"})
+ Surface.item(m.item_rects[1],{disabled=true,style="editorial"})
+ Surface.item(c.items[1],{disabled=true})
+end
+assert(drawings.push==drawings.pop,'shared menu surfaces leaked graphics state')
+assert(drawings.fill>20 and drawings.line>=12 and drawings.diamond>0)
+local module_paths={
+ 'src/screens/frontend.lua',
+ 'src/screens/frontend.lua',
+ 'src/farkle/ui.lua'
+}
+for _,path in ipairs(module_paths) do
+ local f=assert(io.open(path,'rb'));local source=f:read('*a');f:close()
+ assert(source:find('src.screens.folio_surface',1,true),
+  'front-facing page is not on the shared manuscript theme: '..path)
+ assert(not source:find("MANUSCRIPT_UI_V2_EXPERIMENT",1,true))
+ assert(not source:find("hud_minimal",1,true))
+end
+local function read(path)
+ local f=assert(io.open(path,'rb'));local s=f:read('*a');f:close();return s
+end
+local frontend=read('src/screens/frontend.lua')
+local a=assert(frontend:match('Bundle%.main_menu = %(function%(%)(.-)Bundle%.campaign_select ='))
+assert(a:find('style="editorial"',1,true),
+ 'live main menu must use its understated native visual language')
+assert(not a:find('get_footer_alpha_label',1,true),
+ 'do not display alpha/development copy beside the release number')
+assert(a:find('title_x = cached_layout.menu_x',1,true),
+ 'blackletter title must have a real paper margin')
+local wishlist
+for _,item in ipairs(mainSchema.menu_items) do
+ if item.id=='wishlist' then wishlist=item.label.default end
+end
+assert(wishlist=='Wishlist',
+ 'remove the generic sales CTA wording while preserving the action')
+local c=assert(frontend:match('Bundle%.campaign_select = %(function%(%)(.-)Bundle%.settings ='))
+for _,obsolete in ipairs{"w * 0.52","w * 0.24","h * 0.16","h * 0.84"} do
+ assert(not a:find(obsolete,1,true) and not c:find(obsolete,1,true),
+  'legacy black letterbox overlay returned: '..obsolete)
+end
+assert(a:find("MainMenu:activate",1,true))
+assert(c:find("start_campaign(campaign.id)",1,true))
+love=oldLove
+print('PASS unified parchment frontend: current menu actions, Back, mute and card bounds at 720p/1080p/1440p')

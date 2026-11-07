@@ -53,7 +53,7 @@ degli incontri non è ancora definito.
 
 ## Palette canonica
 
-Il file autoritativo è `src/data/art_palette.lua`.
+Il file autoritativo è `src/data/frontend_schema.lua`, sezione `palette`.
 Toni opachi, contrasti funzionali, superfici artigianali:
 
 | Ruolo | HEX |
@@ -113,7 +113,7 @@ Progetto: https://github.com/google/fonts/tree/main/ofl/cardo
 ### Comportamento in LÖVE
 
 Tutte le schermate di produzione caricano i font tramite
-`src/core/typography.lua`. La chiamata `Typography.load(path, pixelSize)`
+`src/core/presentation.lua`, sezione `typography`. La chiamata `Typography.load(path, pixelSize)`
 crea il font Aetna e un'istanza Cardo della **stessa dimensione**, poi
 chiama `Font:setFallbacks(cardoFont)` sul font principale.
 
@@ -174,10 +174,10 @@ il rapporto d'aspetto.
 ```lua
 require('src.core.navigation').go('scriptorium',{opponent_id='merchant'})
 -- Oppure nella scena corrente:
-require('src.features.farkle.controller'):setOpponentVisual('merchant')
+require('src.farkle.controller'):setOpponentVisual('merchant')
 ```
 
-Il modulo `src/features/farkle/ui_v2/opponent_scene.lua` risolve
+Il modulo `src/farkle/ui.lua`, sezione `opponent_scene`, risolve
 fondale e ritratto. Un ID non disponibile non deve mostrare il
 Mercante dietro a un altro personaggio: in assenza dell'immagine
 richiesta il loader segnala l'errore esplicitamente.
@@ -188,5 +188,5 @@ per creare nuovi avversari.
 
 **Confine di design:** sostituire un PNG non crea un bot, una
 scommessa o un encounter competitivo. Quei sistemi restano aperti
-nella [visione](PROJECT_VISION.md). I ritratti e la stanza non
+nella [visione](project_vision.md). I ritratti e la stanza non
 devono alterare le hitbox o la fisica dei dadi.

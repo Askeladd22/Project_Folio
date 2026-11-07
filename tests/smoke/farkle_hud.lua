@@ -1,8 +1,8 @@
 local M={}
 function M.install(U)
- local R=require('src.gameplay.farkle.rules')
- local H=require('src.features.farkle.hud_model')
- local Res=require('src.core.resolution_manager')
+ local R=require('src.farkle.rules')
+ local H=require('src.farkle.presentation').hud_model
+ local Res=require('src.core.navigation').resolution
  local Bridge=require('src.core.engine_bridge')
  local root=assert(os.getenv('MANUSCRIPT_AUDIT_OUT'))..'/'
  local log=assert(io.open(root..'hud-smoke.log','w'))
@@ -60,7 +60,7 @@ function M.install(U)
   assert(U.marquee,'P0 physical marquee did not start')
   U:mousemoved(x1,y1)
   U:mousereleased(x1,y1,1)
-  local count=require('src.features.farkle.marquee_selection').count
+  local count=require('src.farkle.interaction').selection.count
   assert(count(U.dragSelected)==6,'P0 marquee failed to select every real D6')
   assert(U.game.phase=='fresh','P0 physical select must not spend a roll')
   shot(prefix..'marquee-six')
@@ -99,7 +99,7 @@ function M.install(U)
     big_text=true,high_contrast=true,reduced_animations=true
   }
   state.apply_settings(extended)
-  local UI=require('src.core.runtime_ui')
+  local UI=require('src.core.runtime_state').ui
   assert(UI.big_text() and UI.high_contrast() and
          UI.reduced_animations() and UI.scale()>1,
          'P0 accessibility test settings were not activated')
@@ -138,7 +138,7 @@ function M.install(U)
    big_text=true,high_contrast=true,reduced_animations=true
   }
   settingsState.apply_settings(copy)
-  local ui=require('src.core.runtime_ui')
+  local ui=require('src.core.runtime_state').ui
   assert(ui.big_text() and ui.high_contrast() and ui.reduced_animations(),
    'UI V2 review accessibility flags did not apply')
   shot(prefix..'accessibility-on')
@@ -201,7 +201,7 @@ function M.install(U)
   assert(love.window.setMode(w,h,{resizable=true,vsync=0}))
   love.resize(w,h)
   U:reset('build')
-  local faceState=require('src.engine3d.face_state')
+  local faceState=require('src.engine3d.roll_resolution').face_state
   local rows={{3,-3,-.9,.20},{3,-.5,-1.45,-.27},{3,1.8,-.7,.43},
    {5,3.2,1.3,-.14},{2,-2.2,1.35,.51},{6,.3,1.75,-.38}}
   local hand={}
@@ -300,16 +300,16 @@ function M.install(U)
     U.game.medal='retry'
     feed({[4]=2,[5]=3,[6]=4})
     assert(U.game.phase=='rescue' and U.game.pot==50)
-    local bank,pot=require('src.features.farkle.presentation').folio_values(U.presentation,U.game)
+    local bank,pot=require('src.farkle.presentation').folio_values(U.presentation,U.game)
     assert(bank==30 and pot==50,'rescue must preserve provisional folio')
     shot(prefix..'rescue');click('fail');U:keypressed('tab')
-    bank,pot=require('src.features.farkle.presentation').folio_values(U.presentation,U.game)
+    bank,pot=require('src.farkle.presentation').folio_values(U.presentation,U.game)
     assert(bank==30 and pot==0,'definitive loss must preserve banked work')
     shot(prefix..'loss')
     U:reset('build');assert(U:equip_reference('bank_multiplier_gold'))
     feed({1,1,1,2,3,4});for index=1,3 do U:keypressed(tostring(index)) end
     assert(U:activate_reference());U:keypressed('tab')
-    bank,pot=require('src.features.farkle.presentation').folio_values(U.presentation,U.game)
+    bank,pot=require('src.farkle.presentation').folio_values(U.presentation,U.game)
     assert(bank==150 and pot==0 and U.game.phase=='upgrade','folio must reflect resolved medal bonus')
     shot(prefix..'bonus');record('PASS '..w..' folio rescue, definitive loss and resolved medal bonus')
    end
@@ -328,9 +328,9 @@ function M.install(U)
    shot(prefix..'final-hot');bounds()
    U:reset('build');feed({2,2,3,3,4,6});shot(prefix..'final-farkle');bounds()
    U:reset('build');feed({1,5,2,3,4,6});click('die1');click('die2');shot(prefix..'layout-selected');click('take')
-   assert(require('src.features.farkle.presentation').contributing_dice(U.presentation)[1])
+   assert(require('src.farkle.presentation').contributing_dice(U.presentation)[1])
    shot(prefix..'causal-groups');U:keypressed('tab')
-   assert(not next(require('src.features.farkle.presentation').contributing_dice(U.presentation)))
+   assert(not next(require('src.farkle.presentation').contributing_dice(U.presentation)))
    U:reset('build');assert(U:equip_reference('bank_multiplier_gold'));feed({1,1,1,2,3,4})
    for i=1,3 do click('die'..i) end
    assert(U:activate_reference());assert(U.presentation.bonus==75 and U.game.bank==150)
@@ -367,7 +367,7 @@ function M.install(U)
   for n=1,6 do
    U:reset('build');feed({1,1,1,1,1,1})
    for i=1,n do click('die'..i) end;click('take')
-   require('src.features.farkle.presentation').finish(U.presentation)
+   require('src.farkle.presentation').finish(U.presentation)
    shot(prefix..'shelf-'..n)
    assert(#U.hits==6-n,'wrong visible dice count')
    for i=1,n do assert(U.presentation.shelf[i].id==i and U.presentation.shelf[i].value==1) end
@@ -415,7 +415,7 @@ function M.install(U)
   local old={};for i=2,6 do old[i]={unpack(dice[i].body.position)} end
   click('activate');shot(prefix..'reference-rolling');wait()
   for i=2,6 do for k=1,3 do assert(dice[i].body.position[k]==old[i][k],'excluded die moved during medal roll') end end
-  assert(require('src.gameplay.farkle.medals').remaining(U.game)==0)
+  assert(require('src.farkle.rules').medals.remaining(U.game)==0)
   shot(prefix..'reference-result');click('medaluse');shot(prefix..'reference-spent');click('close')
   U:reset('build');assert(U:equip_reference('bank_multiplier_gold'));feed({1,1,1,2,3,4})
   for i=1,3 do click('die'..i) end;click('medaluse');shot(prefix..'reference-bank-preview');click('activate')

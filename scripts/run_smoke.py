@@ -33,7 +33,7 @@ for case in cases:
   env['MANUSCRIPT_SOURCE_CASE']=case
   if case=='face-gate':env['MANUSCRIPT_FACE_GATE']='1'
   name={'partial':'partial.txt','face-gate':'observations.txt','integration':'integration.txt'}[case];success='PASS'
- command=['cmd.exe','/c',str(ROOT/'Avvia.cmd')] if case=='frontend' else [find_love(),'.']
+ command=['cmd.exe','/c',str(ROOT/'run_game.cmd')] if case=='frontend' else [find_love(),'.']
  log=out/name
  if log.exists():log.unlink()
  p=subprocess.run(command,cwd=ROOT,env=env,timeout=200)

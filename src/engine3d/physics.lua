@@ -1,6 +1,5 @@
 
-require"core"
-local Logger = require("src.core.logger")
+require('lib.core')local Logger = require('src.core.engine_bridge').logger
 
 local materials = {}
 

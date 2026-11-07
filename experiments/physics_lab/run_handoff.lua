@@ -5,7 +5,7 @@ local N=require('experiments.physics_lab.fps')
 local O=require('experiments.physics_lab.old')
 local H=require('experiments.physics_lab.handoff')
 local M=require('experiments.physics_lab.metrics')
-local schema=require('src.data.dice_scene_schema').box
+local schema=require('src.data.dice_schema').scene.box
 local function input(seed)
  local rows={}
  for i=1,6 do

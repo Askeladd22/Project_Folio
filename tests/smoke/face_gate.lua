@@ -6,7 +6,7 @@ local log=assert(io.open(out..(focused and '/focused.txt' or '/observations.txt'
 local function say(s) log:write(s..'\n');log:flush() end
 local P=require('src.engine3d.physics')
 local G=require('src.engine3d.geometry')
-local U=require('src.features.farkle.controller')
+local U=require('src.farkle.controller')
 local B=require('src.core.engine_bridge')
 local box=P.box
 local load0,update0,draw0=love.load,love.update,love.draw
@@ -78,7 +78,7 @@ local function runthrow(seed,dt,reset)
  end
  local retries,ambiguous,timeouts=0,0,0
  local invalid,mismatch=0,0
- local F=require('src.engine3d.face_state')
+ local F=require('src.engine3d.roll_resolution').face_state
  for _,v in ipairs(result or {}) do local e=dice[v.index];local q=F.inspect(e)
   if not q.valid then invalid=invalid+1 end
   if (e.die.faceValueMap or e.die.pipMap)[q.face]~=v.value then mismatch=mismatch+1 end
@@ -118,7 +118,7 @@ local function graphics_tests()
   summary('update_'..wh[1],updates);summary('draw_submit_'..wh[1],draws);summary('present_'..wh[1],presents)
   love.graphics.origin();love.graphics.clear();draw0();capture(wh[1]..'-settled')
   if U.game.phase=='ready' then
-   local R=require('src.gameplay.farkle.rules')
+   local R=require('src.farkle.rules')
    for mask=1,63 do local hand,ids={},{};for i=1,6 do if math.floor(mask/2^(i-1))%2==1 then hand[#hand+1]=U.game.hand[i];ids[#ids+1]=i end end
     if R.score(hand) then for _,i in ipairs(ids) do local h=hits[i];U:mousepressed(h.x,h.y,1) end;break end
    end

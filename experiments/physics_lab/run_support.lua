@@ -6,7 +6,7 @@ local F=require('experiments.physics_lab.fixtures')
 local M=require('experiments.physics_lab.metrics')
 local Old=require('experiments.physics_lab.old')
 local FPS=require('experiments.physics_lab.fps')
-local schema=require('src.data.dice_scene_schema').box
+local schema=require('src.data.dice_schema').scene.box
 local runs=tonumber(arg and arg[1]) or 64
 local steps=tonumber(arg and arg[2]) or 450
 assert(runs>=1 and runs<=200 and runs%1==0,'runs must be 1..200')

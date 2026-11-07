@@ -6,15 +6,15 @@ I dadi, il tray 3D g3d, la fisica e lo scoring Farkle non sono caricati.
 
 ## Avvio Windows
 
-Aprire `experiments/miniature_2d_lab/Avvia.cmd`, oppure dalla radice:
+Aprire `experiments/miniature_2d_lab/run_lab.cmd`, oppure dalla radice:
 
 ```powershell
 $env:PROJECT_FOLIO_MINIATURE_LAB="1"
-.\Avvia.cmd
+.\run_lab.cmd
 ```
 
 `PROJECT_FOLIO_MINIATURE_LAB` **non** viene attivata dal menu di gioco:
-il normale `Avvia.cmd` continua ad aprire Project Folio.
+il normale `run_game.cmd` continua ad aprire Project Folio.
 
 | Tasto | Funzione |
 |---|---|

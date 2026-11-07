@@ -42,12 +42,12 @@ components**. The numeric continuity gate is at most `1e-5` world units.
 From the project root after a native lab build:
 
 ```bash
-bash experiments/physics_lab/build-linux.sh
-lua5.4 tests/physics_handoff_test.lua
+bash experiments/physics_lab/build_linux.sh
+lua5.4 tests/engine3d/physics_handoff_test.lua
 luajit experiments/physics_lab/run_handoff.lua 32
 ```
 
-Windows: build using `experiments/physics_lab/build-windows.ps1`
+Windows: build using `experiments/physics_lab/build_windows.ps1`
 and substitute `luajit`.
 
 The native experiment uses 32 seeded starting arrangements, with both
@@ -80,7 +80,7 @@ explicitly opt-in Windows prototype.
 
 ## Measured outcome
 
-[LAB5_RESULTS.md](LAB5_RESULTS.md) records the CI-backed 768-die
+[lab5_results.md](lab5_results.md) records the CI-backed 768-die
 comparison of baseline FPS contacts versus an experimental soft
 pairwise repulsion during the hold. Full transform/velocity conversion
 was exact in both; the original solver still moved some dice during

@@ -6,8 +6,8 @@ function M.install(U)
  local function record(s) log:write(s..'\n');log:flush() end
  function love.errorhandler(e) record('FAIL '..tostring(e)..'\n'..debug.traceback());log:close();return function() return 1 end end
  local load,update,draw=love.load,love.update,love.draw
- local R=require('src.gameplay.farkle.rules')
- local Res=require('src.core.resolution_manager')
+ local R=require('src.farkle.rules')
+ local Res=require('src.core.navigation').resolution
  local Bridge=require('src.core.engine_bridge')
  local function signature(v,seen)
   if type(v)~='table' then return tostring(v) end
@@ -19,7 +19,7 @@ function M.install(U)
  end
  local function invariant()
   local bodies={};for i,d in ipairs(dice) do bodies[i]={body=d.body,kept=d.kept} end
-  return signature({game=U.game,bodies=bodies,config=require('src.data.dice_scene_schema'),
+  return signature({game=U.game,bodies=bodies,config=require('src.data.dice_schema').scene,
    rng=love.math.getRandomState(),view=require('src.engine3d.view'),hits=U.hits})
  end
  local function click(id)
@@ -81,7 +81,7 @@ function M.install(U)
   record('PASS '..w..' hot dice clears collection and physically relaunches six dice')
  end
  function love.load()
-  load();W=require('src.features.farkle.tray_workshop')
+  load();W=require('src.farkle.tabletop').tray_workshop
   co=coroutine.create(function()
    scenario(1920,1080);scenario(1280,720)
    record('PASS all workshop scenarios; rendering and F8 preserve gameplay, bodies, RNG, camera, configuration and picking')

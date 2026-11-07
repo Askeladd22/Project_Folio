@@ -43,7 +43,7 @@ Il commit di riferimento precedente a questo piano è
 `main@dddd6b5e54dae2aa0df69c33d0b040a5f5de5bff` (v0.1.0).
 GitHub Actions [run 41603525911](https://github.com/Askeladd22/Project_Folio/actions/runs/41603525911)
 è **SUCCESS** su Ubuntu: gate versione/changelog, sintassi Lua 5.4,
-**85 file `tests/*_test.lua`** eseguiti sia con Lua 5.4 sia con LuaJIT,
+**85 file `tests/**/*_test.lua`** eseguiti sia con Lua 5.4 sia con LuaJIT,
 benchmark deterministico di ricerca Incontri/Segni, laboratorio FPS
 *isolato* compilato e provato, e test Python. Non significa che siano stati
 eseguiti test GPU LÖVE, audio, input o FPS su Windows.
@@ -61,7 +61,7 @@ presentazione e **non provano la correttezza di 50 tiri fisici reali**.
 
 Requisiti: **Windows 10/11**, LÖVE 11.x funzionante, Git, Python 3.9+
 nel PATH e driver GPU aggiornato. Per i soli test Lua, usare il runtime
-disponibile; `scripts/test_luajit.py` cerca per default
+disponibile; `scripts/run_lua_tests.py` cerca per default
 `C:\Program Files (x86)\LOVE\lua51.dll`. Se la DLL è altrove,
 impostare `LOVE_LUA_DLL` esplicitamente.
 
@@ -77,7 +77,7 @@ python --version
 Get-Command git, python
 # Solo se love.exe non è nel PATH o nelle directory Program Files:
 $env:LOVE_EXE = 'C:\Program Files\LOVE\love.exe'
-.\Avvia.cmd
+.\run_game.cmd
 ```
 
 **PASS:** lo splash LÖVE (rosa/azzurro con cuore) appare, poi il menu
@@ -91,11 +91,11 @@ Annotare `git status --short`: le modifiche locali devono essere note.
 
 ```powershell
 # Richiede LuaJIT/lua51.dll fornita da LÖVE oppure LOVE_LUA_DLL.
-python scripts/test_luajit.py
+python scripts/run_lua_tests.py
 
 # Test del rilevamento del runtime e del sistema di cattura.
-python scripts/test_love_runtime.py
-python scripts/test_ui_v2_review.py
+python scripts/tests/test_love_runtime.py
+python scripts/tests/test_ui_v2_review.py
 
 # Smoke di gameplay con LÖVE reale e profili di salvataggio isolati.
 python scripts/run_smoke.py all --out audits/windows-qa/smoke
@@ -164,7 +164,7 @@ Non sostituire l'uno all'altro. Fare ulteriori controlli manuali a
 
 ## 4. Sessione manuale reale — minimo 50 lanci
 
-Avviare normalmente con `.\Avvia.cmd` dopo gli smoke. La sessione
+Avviare normalmente con `.\run_game.cmd` dopo gli smoke. La sessione
 deve usare le vere mesh/facce/risoluzioni: **non** forzare un seed di
 scoring o un risultato tramite test fixture. Registrare i progressivi
 dei lanci e un log essenziale PASS/FAIL:
@@ -251,7 +251,7 @@ presente audit documentale.
 introdotto con `0.1.0-dev.15`, confermato per la serie `0.1.x`.
 La precedente procedura [P0 legacy](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/UI_V2_BASELINE_CAPTURE.md) è
 documentazione storica. Questa cattura automatica è **un passaggio**
-della [checklist tecnica Windows](WINDOWS_TECHNICAL_QA.md), che comprende
+della [checklist tecnica Windows](windows_technical_qa.md), che comprende
 anche controlli manuali di input, OpenGL, audio, 50 lanci e FPS.
 
 ### Avvio
@@ -286,7 +286,7 @@ All'avvio normale di Project Folio non modifica HUD, logica, 3D o impostazioni.
   **all'esterno** della directory acquisita, contenente tutti i
   32 PNG, i 32 TSV, manifesto, galleria, checklist, log e un indice
   SHA-256. La creazione del pacchetto fallisce se mancano file:
-  [procedura e comandi](WINDOWS_TECHNICAL_QA.md). Il bundle non
+  [procedura e comandi](windows_technical_qa.md). Il bundle non
   include `appdata`, non sostituisce la revisione manuale e non
   modifica la simulazione fisica.
 - `gallery.html` apre una galleria locale di tutte le immagini,

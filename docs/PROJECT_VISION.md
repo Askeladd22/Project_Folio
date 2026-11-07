@@ -3,7 +3,7 @@
 **Stato:** principi approvati il 4 novembre 2026, integrati il 6 novembre. Le ipotesi restano ipotesi, non istruzioni di implementazione.
 **Non è una descrizione delle feature implementate.**
 Per la build corrente consultare [README](../README.md),
-[regole Farkle](FARKLE_RULES.md), sorgenti e test.
+[regole Farkle](farkle_rules.md), sorgenti e test.
 
 ## Ambientazione e incipit — confermati
 

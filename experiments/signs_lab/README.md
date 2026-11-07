@@ -11,7 +11,7 @@ senza confonderla con il **duello Farkle simmetrico contro il Monaco**
 già giocabile nella beta.
 
 **Risultati di regressione estesa (256 semi):**
-[rapporto sperimentale con evidenze CI](RESULTS_2026_10_31.md).
+[rapporto sperimentale con evidenze CI](results_2026_10_31.md).
 Il campione non dimostra che i bonus C migliorino le scelte:
 l'ablazione C0 va leggermente meglio per tutte le politiche.
 
@@ -114,7 +114,7 @@ Non scrive file né cambia impostazioni o salvataggi del gioco.
 
 | Modalità | Condizione sperimentale | Limite |
 |---|---|---|
-| **A — controllo Farkle** | Prima commissione esistente, obiettivo 100 punti incassati | **4 mani**, come in `commission_progress.lua` |
+| **A — controllo Farkle** | Prima commissione esistente, obiettivo 100 punti incassati | **4 mani**, come nella sezione `progress` di [rules.lua](../../src/farkle/rules.lua) |
 | **B — progresso lineare** | Obiettivo sperimentale di 100 punti cumulativi, senza avversario | **6 mani**, per confrontare il ritmo di una risorsa semplice |
 | **C — Poste / Leone** | Prima a 3 marche fra copista e figura; i Segni sono estratti senza reinserimento | **6 mani**, con possibile parità |
 
@@ -192,7 +192,7 @@ difficile» non equivale a «più interessante».
 
 ### Gate di isolamento
 
-`tests/signs_encounter_lab_test.lua` verifica anche che
+`tests/labs/signs_encounter_lab_test.lua` verifica anche che
 nessun modulo `experiments.signs_lab` sia importato da
 `main.lua` o dal controller Farkle. Il sacchetto non
 riceve eventi `dice.physical_settled`: un Segno si risolve

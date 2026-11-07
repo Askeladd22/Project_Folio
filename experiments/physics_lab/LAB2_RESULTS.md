@@ -10,7 +10,7 @@ g3d renderer change** is involved. Source: upstream FPS 1.2.5, pinned at
 From the repository root with LuaJIT and the native FPS lab built:
 
 ```powershell
-.\experiments\physics_lab\build-windows.ps1
+.\experiments\physics_lab\build_windows.ps1
 luajit .\experiments\physics_lab\test_floor_guard.lua
 luajit .\experiments\physics_lab\run.lua 64 450 lab2
 ```

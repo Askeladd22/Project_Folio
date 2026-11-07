@@ -7,12 +7,12 @@ La cartella `docs/` contiene **7 documenti**, uno per argomento;
 
 | Documento | Contenuto |
 |---|---|
-| [Visione e brainstorming](PROJECT_VISION.md) | Storia, artista ispirato a Dürer, Farkle come centro, tre pilastri, Folio, avversari, scommesse, idee studiate e problemi aperti |
-| [Regole Farkle](FARKLE_RULES.md) | Combinazioni, turni, dadi, accantonamento, rischio e commissioni provvisorie |
-| [Architettura e controlli](TECHNICAL.md) | Componenti Lua, rendering g3d, suoni fisici, mouse/tastiera, modali e stati della UI |
-| [Direzione artistica](ART_DIRECTION.md) | Venezia manuziana, tavolo del Mercante, palette, Aetna/Cardo, licenze e PNG degli avversari |
-| [QA Windows](WINDOWS_TECHNICAL_QA.md) | Collaudo con 50 lanci, GPU/audio, catture UI e hitbox, limiti della CI |
-| [Versionamento](VERSIONING.md) | Regole SemVer, aggiornamento changelog e gate delle PR |
+| [Visione e brainstorming](project_vision.md) | Storia, artista ispirato a Dürer, Farkle come centro, tre pilastri, Folio, avversari, scommesse, idee studiate e problemi aperti |
+| [Regole Farkle](farkle_rules.md) | Combinazioni, turni, dadi, accantonamento, rischio e commissioni provvisorie |
+| [Architettura e controlli](technical.md) | Componenti Lua, rendering g3d, suoni fisici, mouse/tastiera, modali e stati della UI |
+| [Direzione artistica](art_direction.md) | Venezia manuziana, tavolo del Mercante, palette, Aetna/Cardo, licenze e PNG degli avversari |
+| [QA Windows](windows_technical_qa.md) | Collaudo con 50 lanci, GPU/audio, catture UI e hitbox, limiti della CI |
+| [Versionamento](versioning.md) | Regole SemVer, aggiornamento changelog e gate delle PR |
 | [Indice](README.md) | Questa pagina |
 
 Il brainstorming v0.3 completo e i vecchi documenti confluiti

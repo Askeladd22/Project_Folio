@@ -1,8 +1,8 @@
 -- Optional P1 wireframe-over-game diagnostic. Not a playable HUD.
 -- Enabled only by MANUSCRIPT_UI_V2_LAYOUT_STUDY=1 in main.lua.
 -- This never changes the actual tray, g3d physics or any button hitbox.
-local Layout=require('src.features.farkle.ui_v2.layout_candidates')
-local Res=require('src.core.resolution_manager')
+local Layout=require('src.farkle.ui').layout
+local Res=require('src.core.navigation').resolution
 local M={}
 function M.install()
  local oldLoad=love.load

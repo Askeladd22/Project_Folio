@@ -26,7 +26,7 @@ Sei D6. Un singolo 1 vale **10**, un singolo 5 **5**; 2, 3, 4 e 6 non valgono si
 | Full house: quattro uguali e una coppia di altro valore | 200 |
 | Due tris di valori distinti | 250 |
 
-**Convenzione dichiarata:** poker, cinquina e sestina seguono la progressione provvisoria indicata dall'utente. I valori intermedi non sono una trascrizione completa di una fonte esterna. La tabella modificabile è `points` in [scoring.lua](../src/gameplay/farkle/scoring.lua); riavviare il gioco dopo una modifica, poiché il valutatore conserva risultati in cache.
+**Convenzione dichiarata:** poker, cinquina e sestina seguono la progressione provvisoria indicata dall'utente. I valori intermedi non sono una trascrizione completa di una fonte esterna. La tabella modificabile è `points` nella sezione `scoring` di [rules.lua](../src/farkle/rules.lua); riavviare il gioco dopo una modifica, poiché il valutatore conserva risultati in cache.
 
 ## Selezione, accantonamento e alternative
 
@@ -50,7 +50,7 @@ Tutte e tre sono eseguibili. Se si prende prima A e poi B nello stesso lancio, i
 
 Prima di rilanciare o incassare dopo ogni tiro valido bisogna accantonare almeno una selezione valida **di quel tiro**. Il pulsante Incassa può accantonare la selezione corrente e concludere il turno in un'unica azione. Dopo un nuovo tiro non si può ignorarne tutti i dadi per incassare soltanto il provvisorio precedente.
 
-Ogni commissione configura due soglie distinte in [rules.lua](../src/gameplay/farkle/rules.lua):
+Ogni commissione configura due soglie distinte in [rules.lua](../src/farkle/rules.lua):
 
 - `entry_min`: minimo del primo incasso della commissione, raggiunto interamente nello stesso turno.
 - `bank_min`: minimo di ogni incasso successivo, dopo l'ingresso.
@@ -89,7 +89,7 @@ Le attuali commissioni (Salterio/Libro di ore/Codice) con target, limiti e sogli
 - **Pesato:** filtro esistente di accettazione delle proposte fisiche: 1 sempre accettato, altri valori con probabilità 1/2; un rifiuto provoca un rilancio fisico visibile del solo dado interessato. Con proposte IID uniformi i pesi ideali sono 2:1:1:1:1:1, non una misura della simulazione né una massa eccentrica. Con proposte stazionarie q, la distribuzione accettata è proporzionale a qᵢaᵢ. Attesa potenzialmente lunga, senza alterazione invisibile della faccia.
 - **Correttore:** una volta per commissione, dopo Farkle, rilancia gli stessi dadi liberi conservando provvisori e requisiti in attesa. Un ulteriore Farkle li perde; si può rinunciare e conservare la medaglia per un altro turno. Non cambia facce o probabilità.
 
-Il recupero tecnico A/B non è una medaglia e non assegna risultati numerici: vedere [contratti tecnici](TECHNICAL.md).
+Il recupero tecnico A/B non è una medaglia e non assegna risultati numerici: vedere [contratti tecnici](technical.md).
 
 ## Verifica quantitativa preliminare
 
@@ -122,11 +122,10 @@ Con soglie azzerate, politica valore: 167/400, 203/400, 202/400 rispettivamente.
 
 ## Test, limiti e decisioni aperte
 
-La suite copre tutte le combinazioni, ID disgiunti, selezione parziale, tiri separati, soglie e ingresso, hot ottenuti/incassati, Farkle, commissioni, medaglia e mapping. Gli smoke storici del 15 ottobre coprono avvio, selezione e rilancio fisico, inciso/pesato, A/B e HUD 1280×720/1920×1080; gli stati rari dell'HUD usano anche fixture numeriche, le cui pose 3D possono provenire dal tiro precedente. Non sono prove di uniformità fisica. Comandi dei test e dei laboratori in [TECHNICAL.md](TECHNICAL.md).
+La suite copre tutte le combinazioni, ID disgiunti, selezione parziale, tiri separati, soglie e ingresso, hot ottenuti/incassati, Farkle, commissioni, medaglia e mapping. Gli smoke storici del 15 ottobre coprono avvio, selezione e rilancio fisico, inciso/pesato, A/B e HUD 1280×720/1920×1080; gli stati rari dell'HUD usano anche fixture numeriche, le cui pose 3D possono provenire dal tiro precedente. Non sono prove di uniformità fisica. Comandi dei test e dei laboratori in [technical.md](technical.md).
 
 Restano da valutare con giocatori: taratura degli incarichi, leggibilità della selezione diretta, influenza delle soglie sulle scelte forzate, convenienza relativa delle build. Incassare quando la consegna è soddisfatta domina il rischio senza premio aggiuntivo; equipaggiare gratuitamente una medaglia opzionale amplia le possibilità senza costo. Con sei dadi normali e Correttore disponibile, due Farkle IID consecutivi hanno probabilità circa 0,0536%: quel singolo tentativo può essere quasi privo di rischio, ma consuma il salvataggio. Non si certificano divertimento, equilibrio o assenza di strategie dominanti.
 
 ### Note architetturali (ottobre 2026)
 
-La progressione delle tre commissioni è isolata in `src/gameplay/farkle/commission_progress.lua`. Il codice pubblico continua a esporre `R.contracts`, e l'estrazione **non cambia** obiettivi, limiti di turni, combinazioni, medaglie o ricompense. Soltanto i risultati fisici **accettati** dal controller vengono pubblicati come `dice.roll_accepted`: i ritentativi tecnici non sono tiri di Farkle aggiuntivi.
-
+La progressione delle tre commissioni è nella sezione `progress` di `src/farkle/rules.lua`. Il codice pubblico continua a esporre `R.contracts`, e il consolidamento **non cambia** obiettivi, limiti di turni, combinazioni, medaglie o ricompense. Soltanto i risultati fisici **accettati** dal controller vengono pubblicati come `dice.roll_accepted`: i ritentativi tecnici non sono tiri di Farkle aggiuntivi.

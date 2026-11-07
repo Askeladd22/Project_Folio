@@ -1,11 +1,11 @@
 -- Adapt the existing, unmodified physics.lua to the shared fixture.
-require('core')
+require('lib.core')
 love=love or {graphics={}}
 love.graphics=love.graphics or {}
 love.graphics.newImage=love.graphics.newImage or function()return nil end
 local P=require('src.engine3d.physics')
 local G=require('src.engine3d.geometry')
-local scene=require('src.data.dice_scene_schema')
+local scene=require('src.data.dice_schema').scene
 local O={}
 function O.new(rows)
  local world=clone(P.box,{timeleft=0,log_buffer={}})
