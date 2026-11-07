@@ -1,6 +1,5 @@
--- P4ND0RA isolated 1:1 boss-rules lab. Love 11.x.
--- The original mod's Star Realms players provide combat/Authority/cards/bases
--- manually here; no Farkle, no invented conversion into dice damage.
+-- Project Folio laboratory: canonical six-D6 Farkle against P4ND0RA.
+-- An experimental bridge, NOT a reproduction of Star Realms player rules.
 local Engine = require("engine")
 local lg = love.graphics
 
@@ -21,7 +20,7 @@ local colors = {
 local state = {
     screen = "setup", players = 1, difficulty = "Normal", seed = 101,
     game = nil, selected = 1, buttons = {}, fonts = {}, error = nil,
-    demo = true,
+    -- Six-D6 Farkle is the only playable player mode.
     scale = 1, ox = 0, oy = 0, detailed = false,
 }
 local difficulty_order = {"Easy", "Normal", "Hard", "Nightmare"}
@@ -71,7 +70,7 @@ end
 local function start()
     state.game=Engine.new({
         players=state.players,difficulty=state.difficulty,seed=state.seed,
-        demo=state.demo,
+        farkle=true,
     })
     state.selected=1
     state.screen="game"
@@ -88,39 +87,36 @@ local function action(fn)
 end
 
 local function draw_setup()
-    text("P4ND0RA",48,45,"headline","gold")
-    text("Original boss-rules laboratory  /  Project Folio",50,104,"sub","muted")
-    panel(170,176,940,503)
-    text("Configura lo scontro",216,205,"title")
-    text("Difficolta'",216,270,"sub","muted")
+    text("PROJECT FOLIO / P4ND0RA",48,45,"headline","gold")
+    text("Sei dadi Farkle contro il sacchetto di P4ND0RA",50,105,"sub","muted")
+    panel(170,175,940,505)
+    text("Configura la sfida",216,205,"title")
+    text("Difficolta' del boss",216,270,"sub","muted")
     for i,name in ipairs(difficulty_order) do
         button(name,216+(i-1)*207,307,186,52,
             function() state.difficulty=name end,true,
             name==state.difficulty and "blue" or nil)
     end
-    text("Giocatori cooperativi",216,395,"sub","muted")
-    button("-",218,435,55,50,function()
+    text("Giocatori Farkle",216,392,"sub","muted")
+    button("-",218,432,55,50,function()
         state.players=math.max(1,state.players-1)
     end,state.players>1)
-    text(state.players,296,446,"title")
-    button("+",344,435,55,50,function()
+    text(state.players,296,443,"title")
+    button("+",344,432,55,50,function()
         state.players=math.min(4,state.players+1)
     end,state.players<4)
-    text("Seed",493,395,"sub","muted")
-    button("-",496,435,55,50,function()
+    text("Seed",493,392,"sub","muted")
+    button("-",496,432,55,50,function()
         state.seed=math.max(1,state.seed-1)
     end,true)
-    text(state.seed,567,446,"title")
-    button("+",674,435,55,50,function() state.seed=state.seed+1 end,true)
-    text("Modalita' (P4ND0RA conserva le regole originali)",216,502,"small","muted")
-    button("Demo giocabile",216,526,233,42,
-        function()state.demo=true end,true,state.demo and "blue" or nil)
-    button("Input manuale / debug",459,526,250,42,
-        function()state.demo=false end,true,not state.demo and "blue" or nil)
-    button("Avvia P4ND0RA",216,581,480,54,start,true,"green")
-    text("Demo: carte di prova originali, NON Star Realms.",716,583,"small","gold",348)
-    text("Manuale: inserisci tu gli effetti di carte giocate altrove.",716,607,"small","muted",348)
-    text("Non e' un adattamento di P4ND0RA al Farkle.",216,650,"small","muted")
+    text(state.seed,567,443,"title")
+    button("+",674,432,55,50,function()state.seed=state.seed+1 end,true)
+    button("Gioca con sei dadi [Invio]",216,528,497,65,start,true,"green")
+    text("Incasso: ogni 5 punti Farkle = 1 Combat.",216,610,"small","gold")
+    text("EMP: blocca temporaneamente dadi nel lancio iniziale successivo.",
+        216,633,"small","muted",830)
+    text("Adattamento sperimentale; non e' Star Realms 1:1.",
+        216,656,"small","muted",830)
 end
 
 local function stat(label,value,x,y,width,color)
@@ -171,70 +167,64 @@ end
 local function player_card(p,i,x,y,w)
     local g=state.game
     local selected=state.selected==i
-    use(selected and "blue" or "panel2");lg.rectangle("fill",x,y,w,91,6,6)
-    if not p.alive then
-        text("ELIMINATO",x+8,y+7,"small","red")
-    else
-        text(p.color,x+8,y+7,"sub")
-    end
-    text("Authority "..p.authority,x+8,y+34,"body",p.authority<=10 and "red" or "text")
-    text("Base "..p.bases.."  Mano "..p.hand,x+8,y+65,"small","muted")
-    state.buttons[#state.buttons+1]={x=x,y=y,w=w,h=91,
+    use(selected and "blue" or "panel2")
+    lg.rectangle("fill",x,y,w,89,6,6)
+    text(p.alive and p.color or "ELIMINATO",x+8,y+6,"sub",
+         p.alive and "text" or "red")
+    text("Resistenza "..p.authority,x+8,y+32,"small",
+         p.authority<=10 and "red" or "text")
+    local finished=g.farkle:is_finished(i)
+    text(not p.alive and "Fuori gioco" or finished and "Turno concluso" or
+         "Farkle: in corso",x+8,y+62,"small","muted")
+    state.buttons[#state.buttons+1]={x=x,y=y,w=w,h=89,
         fn=function()state.selected=i end}
 end
 
 local function draw_players()
     local g=state.game
     local p=current()
+    local f=g.farkle
+    local turn=f.states[state.selected]
     panel(28,326,758,278)
-    text(g.demo and "Squadra · carte di prova" or
-         "Squadra · inserimento manuale",49,345,"title")
+    text("Incisore · sei dadi Farkle",49,345,"title")
     for i,pl in ipairs(g.players) do
-        player_card(pl,i,49+(i-1)*181,387,166)
+        player_card(pl,i,49+(i-1)*181,385,166)
     end
-    if g.phase~="players" then
-        text("Turno di P4ND0RA: i giocatori attendono la risoluzione.",
-            50,517,"body","muted",695)
-        return
-    end
-    if g.demo then
-        local cards=g.demo:hand(state.selected)
-        text("Gioca le tue carte: il Combat proviene solo da esse.",50,494,
-            "small","muted")
-        if #cards==0 then
-            text("Mano esaurita: termina il turno. L'EMP puo' ridurre la prossima mano.",
-                50,546,"body","gold",700)
+    local selectable=g.phase=="players" and p.alive and
+        not f:is_finished(state.selected) and turn.phase=="ready"
+    for id=1,6 do
+        local x=49+(id-1)*118
+        local y=487
+        local selected=not not turn.selected[id]
+        local spent=not not turn.used[id]
+        local locked=turn.penalty>0 and id<=turn.penalty
+        use(locked and "red" or selected and "blue" or
+            spent and "gold" or "panel2")
+        lg.rectangle("fill",x,y,108,64,7,7)
+        text(turn.hand[id] or "-",x+1,y+10,"title","text",106,"center")
+        text(locked and "EMP" or spent and "Accant." or
+             selected and "Scelto" or "Dado "..id,
+             x+1,y+41,"small","text",106,"center")
+        if selectable and not spent and turn.hand[id] then
+            state.buttons[#state.buttons+1]={x=x,y=y,w=108,h=64,
+                fn=action(function()g:toggle_farkle(state.selected,id)end)}
         end
-        for i,card in ipairs(cards) do
-            local caption=card.label.." +"..card.value
-            local accent=(card.kind=="combat" and "blue") or
-                         (card.kind=="heal" and "green") or "gold"
-            button(caption,49+(i-1)*142,525,132,52,action(function()
-                g:play_demo_card(state.selected,i)
-            end),p.alive,accent)
-        end
-    else
-        text("DEBUG: inserisci manualmente gli effetti di carte NON simulate.",
-            50,494,"small","gold")
-        button("Combat +1",49,531,112,44,action(function()
-            g:combat(state.selected,1)
-        end),p.alive,"blue")
-        button("Combat +5",168,531,112,44,action(function()
-            g:combat(state.selected,5)
-        end),p.alive,"blue")
-        button("Combat +10",287,531,122,44,action(function()
-            g:combat(state.selected,10)
-        end),p.alive,"blue")
-        button("Cura +5",417,531,105,44,action(function()
-            g:heal(state.selected,5)
-        end),p.alive)
-        button("+ Base",531,531,106,44,action(function()
-            g:adjust_resource(state.selected,"bases",1)
-        end),p.alive)
-        button("+ Carta",646,531,114,44,action(function()
-            g:adjust_resource(state.selected,"hand",1)
-        end),p.alive)
     end
+    local selection_points=select(1,f.Rules.selection(turn)) or 0
+    local potential=turn.pot+selection_points
+    local prompt
+    if g.phase=="finished" then prompt="Incontro concluso."
+    elseif g.phase=="boss" then
+        prompt="Turno di P4ND0RA: attendi la risoluzione dei token."
+    elseif f:is_finished(state.selected) then
+        local result=f:result(state.selected)
+        prompt=result.farkle and "FARKLE: 0 punti. Attendi il boss." or
+            ("Incassati "..result.points.." punti. Attendi il boss.")
+    else prompt=turn.last end
+    text("Provvisorio "..potential.." pt  ·  Selezione "..selection_points..
+         " pt  ·  Dadi liberi "..f.Rules.count_free(turn),
+         49,559,"small","gold",705)
+    text(prompt,49,579,"small","muted",705)
 end
 
 local function draw_events()
@@ -255,60 +245,80 @@ local function draw_controls()
     local g=state.game
     panel(28,619,1223,149)
     if g.result then
-        text(g.result=="players_win" and "VITTORIA DEI GIOCATORI" or
+        text(g.result=="players_win" and "VITTORIA DELL'INCISORE" or
              "P4ND0RA HA VINTO",49,642,"title",
              g.result=="players_win" and "green" or "red")
-        button("Nuova partita [R]",49,698,247,47,start,true,"blue")
-        button("Impostazioni [Esc]",308,698,214,47,
-            function()state.screen="setup" end,true)
+        button("Ricomincia [R]",49,697,247,47,start,true,"blue")
+        button("Impostazioni [Esc]",308,697,214,47,
+            function()state.screen="setup"end,true)
         return
     end
     if g.pending then
         local index=g.pending.targets[g.pending.current]
         local p=g.players[index]
-        text("RAFFICA DI MISSILI  ·  "..p.color.." decide come reagire",
-            49,642,"title","gold")
-        button("Distruggi 1 base",49,693,248,52,action(function()
-            g:resolve_missile("base")
-        end),p.bases>0,"red")
-        button("Perdi "..g.stats.missile.." Authority",309,693,265,52,
-            action(function() g:resolve_missile("authority") end),
-            true,"gold")
+        text("MISSILI: "..p.color.." perde "..g.stats.missile..
+             " Resistenza",49,641,"title","gold")
+        button("Subisci l'attacco [A]",49,691,300,52,
+            action(function()g:resolve_missile("authority")end),true,"red")
         return
     end
     if g.phase=="players" then
-        text(g.demo and "GIOCA LE CARTE · poi P4ND0RA" or
-             "DEBUG MANUALE · poi P4ND0RA",
-             49,638,"sub","blue")
-        button("Scarta token (1 carta)",49,685,248,49,action(function()
-            g:discard_random_token(state.selected)
-        end),current().alive and current().hand>0 and #g.bag>0)
-        button("Neutralizza (1 base)",309,685,229,49,action(function()
-            g:blank_token(state.selected)
-        end),current().alive and current().bases>0 and g.blank_next<g.draw_power)
-        button(g.demo and "Fine turno · Boss [Invio]" or
-               "Fase boss [Invio]",780,684,450,50,
-            action(function()g:begin_boss_turn()end),true,"red")
+        local f=g.farkle
+        local turn=f.states[state.selected]
+        local alive=current().alive
+        local finished=f:is_finished(state.selected)
+        local bankable,total=f:can_bank(state.selected)
+        local can_roll=alive and not finished and f.Rules.can_roll(turn)
+        local selected=alive and not finished and
+            f.Rules.selection_option(turn)~=nil
+        local all_done=true
+        for i,p in ipairs(g.players) do
+            if p.alive and not f:is_finished(i) then all_done=false end
+        end
+        text("FASE FARKLE · accantona, rischia o incassa",
+            49,638,"sub","blue")
+        text("Incasso: "..(bankable and total or 0)..
+             " pt = "..math.floor((bankable and total or 0)/5)..
+             " Combat  |  Neutralizza 20 pt · Scarta 30 pt",
+            49,664,"small","muted",1158)
+        button("Lancia [Spazio]",49,688,165,48,
+            action(function()g:roll_farkle(state.selected)end),can_roll,"blue")
+        button("Accantona [A]",223,688,166,48,
+            action(function()g:take_farkle(state.selected)end),selected)
+        button("Incassa [I]",398,688,175,48,
+            action(function()g:bank_farkle(state.selected,"attack")end),
+            alive and bankable,"green")
+        button("Neutralizza",582,688,161,48,
+            action(function()g:bank_farkle(state.selected,"blank")end),
+            alive and bankable and total>=20 and
+            g.blank_next<math.min(8,g.draw_power))
+        button("Scarta token",752,688,152,48,
+            action(function()g:bank_farkle(state.selected,"discard")end),
+            alive and bankable and total>=30 and #g.bag>0)
+        button("Fase boss [Invio]",913,688,317,48,
+            action(function()g:begin_boss_turn()end),all_done,"red")
     else
         local next_action=g.queue[1]
         local stage=next_action and next_action.phase or "end"
-        text("FASE BOSS  ·  "..string.upper(stage)..
-             "  ·  round "..g.round,49,638,"sub","gold")
+        text("FASE P4ND0RA · "..string.upper(stage)..
+             " · round "..g.round,49,638,"sub","gold")
         local actions={}
-        for _, token in ipairs(g.drawn_actions) do actions[#actions+1]=token end
-        text("Token: "..(#actions>0 and table.concat(actions,", ") or "(nessuno)"),
-            49,666,"small","muted",685)
-        text("Scudi azzerati all'inizio del turno; i token risolvono in ordine.",
-            49,705,"small","muted",685)
-        button("Risolvi azione [Spazio]",780,684,450,52,
+        for _,token in ipairs(g.drawn_actions) do
+            actions[#actions+1]=token
+        end
+        text("Token estratti: "..(#actions>0 and table.concat(actions,", ")
+                                or "(nessuno)"),
+             49,667,"small","muted",690)
+        text("Il boss pesca, esegue abilita', attacca, ripara e migliora.",
+            49,709,"small","muted",690)
+        button("Risolvi token [Spazio]",780,685,450,51,
             action(function()g:advance()end),true,"gold")
     end
 end
 
 local function draw_status()
     local g=state.game
-    text("P4ND0RA  /  "..(g.demo and "DEMO AUTONOMA" or "REGOLE ORIGINALI · MANUALE"),
-        29,21,"title","gold")
+    text("PROJECT FOLIO / FARKLE vs P4ND0RA",29,21,"title","gold")
     text("Round "..g.round.."   ·   seed "..g.seed.."   ·   "..
         g.player_count.." giocatore/i",676,27,"small","muted",560,"right")
     local phase=g.phase=="players" and "TURNO DEI GIOCATORI" or
@@ -337,22 +347,40 @@ function love.load()
     if smoke_enabled then start() end
 end
 
--- Dedicated CI smoke exercises actual LÖVE drawing, not only Lua syntax.
+-- Dedicated CI exercises Farkle roll, bank and boss without GUI clicks.
 function love.update(_dt)
     if not smoke_enabled then return end
-    smoke_frames = smoke_frames + 1
-    local g = state.game
-    if smoke_frames == 2 then
-        g:begin_boss_turn()
-    elseif smoke_frames >= 3 and smoke_frames <= 28 then
+    smoke_frames=smoke_frames+1
+    local g=state.game
+    if smoke_frames>=2 and smoke_frames<=68 and not g.result then
         if g.pending then
             g:resolve_missile("authority")
-        elseif g.phase == "boss" then
+        elseif g.phase=="players" then
+            local f=g.farkle
+            local active
+            for i,p in ipairs(g.players) do
+                if p.alive and not f:is_finished(i) then active=i;break end
+            end
+            if active then
+                local turn=f.states[active]
+                if f.Rules.can_roll(turn) then
+                    g:roll_farkle(active)
+                elseif turn.phase=="ready" then
+                    local option=f.Rules.options(turn)[1]
+                    if option then
+                        for _,id in ipairs(option.ids) do
+                            g:toggle_farkle(active,id)
+                        end
+                        g:bank_farkle(active,"attack")
+                    end
+                end
+            else
+                g:begin_boss_turn()
+            end
+        elseif g.phase=="boss" then
             g:advance()
-        elseif g.phase == "players" then
-            g:begin_boss_turn()
         end
-    elseif smoke_frames == 30 then
+    elseif smoke_frames==72 then
         love.event.quit()
     end
 end
@@ -405,23 +433,23 @@ function love.keypressed(key)
     end
     if g.result then return end
     if g.pending then
-        if key=="a" then attempt(function()g:resolve_missile("authority")end) end
-        if key=="b" then attempt(function()g:resolve_missile("base")end) end
+        if key=="a" then attempt(function()
+            g:resolve_missile("authority")
+        end) end
     elseif g.phase=="players" then
         if key=="return" or key=="kpenter" then
             attempt(function()g:begin_boss_turn()end)
-        elseif g.demo and tonumber(key) and tonumber(key)>=1 and tonumber(key)<=5 then
-            attempt(function()g:play_demo_card(state.selected,tonumber(key))end)
-        elseif not g.demo and key=="1" then attempt(function()g:combat(state.selected,1)end)
-        elseif not g.demo and key=="5" then attempt(function()g:combat(state.selected,5)end)
-        elseif not g.demo and key=="0" then attempt(function()g:combat(state.selected,10)end)
-        elseif not g.demo and key=="h" then attempt(function()g:heal(state.selected,5)end)
-        elseif not g.demo and key=="b" then attempt(function()
-            g:adjust_resource(state.selected,"bases",1)end)
-        elseif key=="d" then attempt(function()g:discard_random_token(state.selected)end)
-        elseif key=="n" then attempt(function()g:blank_token(state.selected)end)
+        elseif key=="space" then attempt(function()
+            g:roll_farkle(state.selected)end)
+        elseif key=="a" then attempt(function()
+            g:take_farkle(state.selected)end)
+        elseif key=="i" then attempt(function()
+            g:bank_farkle(state.selected,"attack")end)
+        elseif key=="n" then attempt(function()
+            g:bank_farkle(state.selected,"blank")end)
+        elseif key=="d" then attempt(function()
+            g:bank_farkle(state.selected,"discard")end)
         end
-    elseif key=="space" then
-        attempt(function()g:advance()end)
+    elseif key=="space" then attempt(function()g:advance()end)
     end
 end
