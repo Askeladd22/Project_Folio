@@ -186,6 +186,7 @@ Ogni laboratorio dispone del proprio README e viene avviato esplicitamente.
 | [Miniature 2D](../experiments/miniature_2d_lab/README.md) | Animazione di figure, testo ed effetti 2D |
 | [FX](../experiments/fx_lab/README.md) | Prototipi di effetti grafici |
 | [Segni](../experiments/signs_lab/README.md) | Simulazioni numeriche di encounter |
+| [Mercante e posta](../experiments/merchant_wager_lab/README.md) | Test giocabile A/B/C: punteggio iniziale o posta diversa |
 
 Il rapporto della [QA del 3 novembre](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/WINDOWS_QA_CAPTURE_REVIEW_20261103.md)
 descrive le acquisizioni presenti in `audits/ui-v2-review/`.
