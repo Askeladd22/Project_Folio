@@ -1306,27 +1306,9 @@ function love.keypressed(key)
   if key=='r' then press('money_replay');return end
   if key=='e' then press('money_ledger');return end
   local m=lab.money
-  if key:match('^[1-6](lab.duel,key,lab.box_expanded)
-  if action=='toggle_die' then Duel.toggle(lab.duel,id)
-  elseif action=='box_details' then lab.box_expanded=not lab.box_expanded
-  elseif action then press(action) end
-  return
- end
- if lab.screen=='corrector' then
-  local map={space='cr_roll',a='cr_take',i='cr_bank',c='cr_buy',o='cr_opponent',escape='cr_close',r='cr_replay'}
-  if map[key] then press(map[key]);return end
-  local i=tonumber(key)
-  if i and i>=1 and i<=6 then Corrector.toggle_player_die(lab.corrector,i) end
-  return
- end
- local i=tonumber(key)
- if i and i>=1 and i<=6 and lab.timer<=0 then Match.toggle(lab.match,i);return end
- local map={space='roll',a='take',i='bank',v='see',p='pass',r='replay'}
- if map[key] then press(map[key]) end
- if key=='escape' then lab.screen='setup' end
-end
-) and MoneyDuel.can_toggle(m,tonumber(key)) then
-   MoneyDuel.toggle(m,tonumber(key));return
+  local die=tonumber(key)
+  if die and die>=1 and die<=6 and MoneyDuel.can_toggle(m,die) then
+   MoneyDuel.toggle(m,die);return
   end
   local map={space='money_roll',a='money_take',i='money_bank',
    p='money_fold',c='money_advance',n='money_next'}
