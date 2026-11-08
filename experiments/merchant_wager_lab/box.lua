@@ -16,6 +16,9 @@ M.profiles={
  high={20,35,50,70},
  spread={5,15,30,65},
  swing={5,15,25,80},
+ tail={10,20,25,55},
+ tail_plus={10,20,30,55},
+ tail_strong={15,20,25,55},
 
 }
 function M.for_profile(profile)
