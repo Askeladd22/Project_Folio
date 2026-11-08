@@ -185,25 +185,37 @@ function E.split(s,delta)
  s.left=amount
  return true
 end
-function E.resolve_offer(s)
- if s.mode~='A' or s.phase~='offer' then return false end
- local pair=E.PAIRS[s.pair]
- local x,y=s.left,s.offered_marks-s.left
- local first=offer_utility(s,pair[1],x)
- local second=offer_utility(s,pair[2],y)
+-- Public preview: the rival always chooses the better offer according
+-- to visible priorities. The proposer receives +1 fixed initiative seal
+-- for surrendering the first pick. Not a comeback or skill-based modifier.
+function E.preview_offer(s,pair_id,left)
+ if s.mode~='A' or s.phase~='offer' then return nil end
+ pair_id=pair_id or s.pair;left=left or s.left
+ local pair=E.PAIRS[pair_id]
+ if not pair or left<1 or left>=s.offered_marks then return nil end
+ local right=s.offered_marks-left
+ local first=offer_utility(s,pair[1],left)
+ local second=offer_utility(s,pair[2],right)
  local chosen=first>=second and 1 or 2
- local rival_id=pair[chosen]
- local player_id=pair[3-chosen]
- local rival_marks=chosen==1 and x or y
- local player_marks=chosen==1 and y or x
- s.lanes[rival_id].rival=s.lanes[rival_id].rival+rival_marks
- s.lanes[player_id].player=s.lanes[player_id].player+player_marks
- log(s,'offer',('pair=%d,%d; split=%d,%d; rival=%d; player=%d'):format(
-  pair[1],pair[2],x,y,rival_id,player_id))
- end_round(s,('Il rivale sceglie %s (+%d), tu ottieni %s (+%d).'):format(
-  s.lanes[rival_id].name,rival_marks,s.lanes[player_id].name,player_marks))
+ return {rival_id=pair[chosen],player_id=pair[3-chosen],
+  rival_marks=chosen==1 and left or right,
+  player_marks=(chosen==1 and right or left)+1,
+  base_player_marks=chosen==1 and right or left}
+end
+function E.resolve_offer(s)
+ local preview=E.preview_offer(s)
+ if not preview then return false end
+ local r,p=preview.rival_id,preview.player_id
+ s.lanes[r].rival=s.lanes[r].rival+preview.rival_marks
+ s.lanes[p].player=s.lanes[p].player+preview.player_marks
+ local pair=E.PAIRS[s.pair]
+ log(s,'offer',('pair=%d,%d; split=%d,%d; rival=%d; player=%d; initiative=1'):format(
+  pair[1],pair[2],s.left,s.offered_marks-s.left,r,p))
+ end_round(s,('Il rivale sceglie %s (+%d); tu %s (+%d, inclusa iniziativa).'):format(
+  s.lanes[r].name,preview.rival_marks,s.lanes[p].name,preview.player_marks))
  return true
 end
+
 function E.claim(s,lane_id)
  if s.mode~='C' or s.phase~='claim' or type(lane_id)~='number' or
    lane_id%1~=0 or lane_id<1 or lane_id>3 or s.lanes[lane_id].owner then return false end

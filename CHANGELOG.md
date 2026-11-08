@@ -23,6 +23,8 @@ fisica del gioco principale non modificati.
   strategica del Rivale e due obiettivi necessari per vincere.
 - Interfaccia LÖVE 2D navigabile A/C, uso del Farkle canonico,
   seed ripetibili, test, simulazioni A/C e workflow di regressione.
+- Ribilanciata la regola A: il proponente ottiene 1 sigillo fisso di
+  iniziativa e una previsione pubblica della scelta del Rivale;
 
 ### Verifiche
 

@@ -47,10 +47,32 @@ function S.play(mode,seed,policy)
     else assert(E.take(s)) end
    end
   elseif s.phase=='offer' then
-   local lane=preferred_lane(s,policy)
-   if lane==3 then E.pair_next(s);E.pair_next(s)
-   elseif lane==2 then E.pair_next(s) end
-   if policy=='daring' then E.split(s,1) end
+   -- Evaluate all visible splits. A good player anticipates the rival pick.
+   local best,best_score
+   for pair=1,3 do
+    for left=1,s.offered_marks-1 do
+     local o=assert(E.preview_offer(s,pair,left))
+     local player_lane=s.lanes[o.player_id]
+     local rival_lane=s.lanes[o.rival_id]
+     local before_player=player_lane.player-player_lane.rival
+     local after_player=before_player+o.player_marks
+     local before_rival=rival_lane.player-rival_lane.rival
+     local after_rival=before_rival-o.rival_marks
+     local score=(after_player>=1 and 12 or 0)+
+       (before_player<1 and after_player>=1 and 8 or 0)+
+       (after_rival>=0 and 5 or 0)+
+       (before_rival>=0 and after_rival<0 and -8 or 0)+
+       o.player_marks*2-o.rival_marks
+     if policy=='prudent' then score=score+o.player_marks*2
+     elseif policy=='daring' then score=score+math.max(0,after_player)*2 end
+     if not best or score>best_score then
+      best={pair=pair,left=left};best_score=score
+     end
+    end
+   end
+   while s.pair~=best.pair do assert(E.pair_next(s)) end
+   while s.left<best.left do assert(E.split(s,1)) end
+   while s.left>best.left do assert(E.split(s,-1)) end
    assert(E.resolve_offer(s))
   elseif s.phase=='claim' then
    assert(E.claim(s,assert(preferred_lane(s,policy))))

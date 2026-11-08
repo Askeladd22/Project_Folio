@@ -46,10 +46,12 @@ check('A: split and opponent chooses exactly one competing offer',function()
  while s.left>1 do assert(E.split(s,-1)) end
  assert(not E.split(s,-1))
  local left=s.left
+ local preview=assert(E.preview_offer(s))
+ assert(preview.player_marks>=2 and preview.rival_marks>=1)
  assert(E.resolve_offer(s))
  local player=s.lanes[pair[1]].player+s.lanes[pair[2]].player
  local rival=s.lanes[pair[1]].rival+s.lanes[pair[2]].rival
- assert(player+rival==total)
+ assert(player+rival==total+1,'fixed proposer seal must be conserved')
  assert(player>0 and rival>0)
  assert(left==1)
  assert(not E.resolve_offer(s))

@@ -100,9 +100,12 @@ local function draw_left(s)
   61,497,app.font.body,selection and P.green or P.soft,706)
  if s.phase=='offer' then
   local p=E.PAIRS[s.pair]
+  local preview=E.preview_offer(s)
   txt(('%d sigilli: %s +%d / %s +%d'):format(s.offered_marks,
    s.lanes[p[1]].name,s.left,s.lanes[p[2]].name,s.offered_marks-s.left),
-   61,540,app.font.small,P.ink,702)
+   61,528,app.font.small,P.ink,702)
+  txt(('Il rivale sceglierebbe %s · tua iniziativa +1'):format(
+   s.lanes[preview.rival_id].name),61,550,app.font.small,P.green,702)
  elseif s.phase=='claim' then
   txt(('Hai %d sigilli: scegli una prova disponibile.'):format(s.claim_marks),
     61,540,app.font.small,P.green,700)

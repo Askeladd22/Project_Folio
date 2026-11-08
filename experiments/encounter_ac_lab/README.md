@@ -33,7 +33,9 @@ I punti INCASSATI generano un'offerta da dividere fra due prove diverse:
 Il giocatore sceglie una coppia fra le tre possibili e distribuisce
 almeno un sigillo per parte. Il Rivale sceglie per sé una delle due
 offerte, considerando quantità, valori fissi e situazione pubblica
-della partita; all'Incisore va l'altra. **La scelta del rivale ha una
+della partita; all'Incisore va l'altra **con 1 sigillo fisso di iniziativa**
+per aver rinunciato alla prima scelta. L'interfaccia mostra in anticipo
+quale offerta il rivale sceglierebbe, così la scelta rimane leggibile. **La scelta del rivale ha una
 conseguenza, non è una risposta casuale di punteggio.**
 
 Se esce Farkle, il Rivale avanza di un sigillo su una categoria.
