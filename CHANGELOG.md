@@ -27,6 +27,14 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 - Aggiunta simulazione a seed appaiati per tre policy Farkle e
   con/senza rialzi, senza selezione del profilo dal menu di gioco.
 
+## [0.1.57] - 2026-11-08
+
+### Corretto
+
+- Test della nuova plancia Merchant Duel V4: selezione del seed 202
+  mediante il centro del pulsante anziché lo spazio fra i pulsanti.
+- Nessuna modifica a gameplay, asset, valuta, cassa o controlli.
+
 ## [0.1.56] - 2026-11-08
 
 **Stato:** redesign del Merchant Duel Lab e rimozione prototipi scartati.
