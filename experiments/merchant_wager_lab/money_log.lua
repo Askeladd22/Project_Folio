@@ -4,6 +4,7 @@ M.MATCHES='merchant_v4_matches.csv'
 M.HANDS='merchant_v4_hands.csv'
 M.LEDGER='merchant_v4_transactions.csv'
 M.POLICY='merchant_v4_policy.csv'
+M.DECISIONS='merchant_v4_dice_decisions.csv'
 local match_keys={'id','seed','raises_enabled','winner','reason','hands',
  'artist_hands','merchant_hands','artist_denari','merchant_denari','pot_denari','raises','folds'}
 local hand_keys={'id','seed','hand','winner','reason','award_denari','raised',
@@ -11,6 +12,8 @@ local hand_keys={'id','seed','hand','winner','reason','award_denari','raised',
  'artist_result','artist_farkle','artist_rerolls'}
 local ledger_keys={'match','seed','step','hand','actor','action','amount',
  'balance_before','balance_after','pot_before','pot_after','reason'}
+local decision_keys={'id','seed','step','hand','actor','action','provisional','dice_available',
+ 'offer','player_result','probability','threshold','outcome','symbol','raised','pot_awarded_denari'}
 local policy_keys={'id','seed','step','hand','actor','action','offer','chance',
  'artist_wins','merchant_wins','artist_balance','merchant_balance','reason'}
 local function safe(v)
@@ -63,6 +66,15 @@ function M.save(fs,m)
   for k,v in pairs(p) do x[k]=v end
   x.id=m.id;x.seed=m.seed
   return x
+ end))
+ append(fs,M.DECISIONS,decision_keys,rows(decision_keys,m.base.decisions,function(d)
+  local record={}
+  for k,v in pairs(d) do record[k]=v end
+  record.id=m.id;record.seed=m.seed
+  local hand=m.wager.hands[d.hand]
+  record.raised=hand and (hand.raised and 'yes' or 'no') or ''
+  record.pot_awarded_denari=hand and hand.award or 0
+  return record
  end))
  append(fs,M.MATCHES,match_keys,row(match_keys,outcome))
  m.saved=true
