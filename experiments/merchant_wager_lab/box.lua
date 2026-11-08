@@ -14,6 +14,9 @@ M.profiles={
  legacy={10,20,30,40},
  mid={15,30,45,60},
  high={20,35,50,70},
+ spread={5,15,30,65},
+ swing={5,15,25,80},
+
 }
 function M.for_profile(profile)
  profile=profile or 'legacy'
