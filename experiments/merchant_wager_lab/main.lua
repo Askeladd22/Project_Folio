@@ -328,115 +328,7 @@ local function press(id)
  local m=app.money
  if id=='close' then app.overlay=nil;return end
  if app.overlay=='settings' then
-  local pick=id:match('^seed_(%d+)
- if id=='ledger' then app.overlay='ledger';return end
- if id=='box' then app.overlay='box';return end
- if id=='replay' then new_game(app.seed);return end
- if id=='accept' then Money.accept(m)
- elseif id=='raise' then Money.propose(m)
- elseif id=='start' then Money.start_dice(m)
- elseif id=='fold' then Money.fold(m)
- elseif id=='roll' then Money.roll(m)
- elseif id=='take' then Money.take(m)
- elseif id=='bank' then Money.bank(m)
- elseif id=='advance' then Money.advance_merchant(m)
- elseif id=='next' then Money.next_hand(m)
- end
-end
-function love.load(args)
- local sim_count,sim_seed,seed
- for i,a in ipairs(args or {}) do
-  if a=='--seed' then seed=tonumber(args[i+1]) end
-  if a=='--money-simulate' then sim_count=tonumber(args[i+1]) or 100 end
- end
- if sim_count then
-  print((Sim.report(sim_count,seed or 1)));love.event.quit(0);return
- end
- app.seed=seed or 101
- font.title=asset_font('resources/font/AldineAetna-Regular.ttf',38)
- font.head=asset_font('resources/font/AldineAetna-Regular.ttf',31)
- font.big=asset_font('resources/font/AldineAetna-Regular.ttf',63)
- font.body=asset_font('resources/font/Cardo-Regular.ttf',20)
- font.label=asset_font('resources/font/Cardo-Regular.ttf',19)
- font.small=asset_font('resources/font/Cardo-Regular.ttf',16)
- art.room=asset_image('resources/scenes/printshop-room.png')
- art.merchant=asset_image('resources/opponents/merchant.png')
- new_game(app.seed)
-end
-function love.update(dt)
- if not app.money then return end
- if app.money.phase=='over' and not app.saved then
-  local ok,err=pcall(Log.save,love.filesystem,app.money)
-  app.saved=true
-  app.save_note=ok and 'Partita registrata.' or ('Registro non salvato: '..tostring(err))
- end
- if os.getenv('MERCHANT_V4_SMOKE')=='1' then
-  app.frames=app.frames+1
-  if app.frames>=30 then love.event.quit(0) end
- end
-end
-function love.draw()
- if not app.money then return end
- local g=love.graphics
- local ww,hh=g.getDimensions()
- local scale=math.min(ww/W,hh/H)
- view.scale=scale;view.x=(ww-W*scale)/2;view.y=(hh-H*scale)/2
- g.clear(P.shadow)
- g.push()
- g.translate(view.x,view.y);g.scale(scale)
- draw_backdrop()
- local m=app.money
- draw_header(m)
- draw_offer(m)
- draw_merchant(m)
- draw_dice(m)
- draw_wallet(m)
- draw_controls(m)
- if m.phase=='hand_end' or m.phase=='over' then draw_result(m) end
- if app.overlay then
-  app.buttons={}
-  draw_overlay(m)
- end
- g.pop()
-end
-function love.mousepressed(x,y,button_id)
- if button_id~=1 or not app.money then return end
- x=(x-view.x)/view.scale;y=(y-view.y)/view.scale
- for _,b in ipairs(app.buttons) do
-  if b.enabled and x>=b.x and x<=b.x+b.w and y>=b.y and y<=b.y+b.h then
-   press(b.id);return
-  end
- end
- if app.overlay then return end
- for _,d in ipairs(app.dice) do
-  if x>=d.x and x<=d.x+d.s and y>=d.y and y<=d.y+d.s then
-   Money.toggle(app.money,d.id);return
-  end
- end
-end
-function love.keypressed(key)
- local m=app.money
- if not m then return end
- if app.overlay then
-  if key=='escape' or key=='e' or key=='b' then app.overlay=nil
-  elseif (key=='return' or key=='kpenter') and app.overlay=='settings' then
-   press('start_settings')
-  end
-  return
- end
- if key=='s' then press('settings');return end
- if key=='e' then press('ledger');return end
- if key=='b' then press('box');return end
- if key=='r' then press('replay');return end
- if key=='escape' then return end
- if key:match('^[1-6]$') then Money.toggle(m,tonumber(key));return end
- local keys={space='roll',a='take',i='bank',p='fold',c='advance',n='next'}
- if key=='return' or key=='kpenter' then
-  if m.phase=='raise_pending' then press('accept')
-  elseif m.phase=='betting' then press('start') end
- elseif keys[key] then press(keys[key]) end
-end
-)
+  local pick=id:match('^seed_(%d+)$')
   if pick then app.settingsSeed=tonumber(pick);return end
   if id=='toggle_raises' then app.settingsRaises=not app.settingsRaises;return end
   if id=='start_settings' then
@@ -538,9 +430,13 @@ function love.keypressed(key)
  local m=app.money
  if not m then return end
  if app.overlay then
-  if key=='escape' or key=='e' or key=='b' then app.overlay=nil end
+  if key=='escape' or key=='e' or key=='b' then app.overlay=nil
+  elseif (key=='return' or key=='kpenter') and app.overlay=='settings' then
+   press('start_settings')
+  end
   return
  end
+ if key=='s' then press('settings');return end
  if key=='e' then press('ledger');return end
  if key=='b' then press('box');return end
  if key=='r' then press('replay');return end
