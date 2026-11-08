@@ -74,7 +74,7 @@ local function open_hand(m,number)
 end
 function M.new(seed,id,opts)
  opts=opts or {}
- local b=Duel.new(seed,id)
+ local b=Duel.new(seed,id,opts.box_profile)
  local m={seed=seed,id=id or 1,base=b,
   wager=Wager.new(seed,id),raises_enabled=opts.raises_enabled~=false,
   policy_log={},phase=nil,message='',winner=nil,end_reason=nil,saved=false}
