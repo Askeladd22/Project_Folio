@@ -15,6 +15,7 @@ local Presentation=require('experiments.merchant_wager_lab.presentation')
 local MoneyDuel=require('experiments.merchant_wager_lab.money_duel')
 local MoneyLog=require('experiments.merchant_wager_lab.money_log')
 local Currency=require('experiments.merchant_wager_lab.currency')
+local MoneySim=require('experiments.merchant_wager_lab.money_simulate')
 
 local W,H=1280,720
 local C={
@@ -938,10 +939,11 @@ local function save_corrector_feedback()
 end
 
 function love.load(args)
- local seed,simulate,analyze
+ local seed,simulate,analyze,money_simulate
  for i,a in ipairs(args or {}) do
   if a=='--seed' then seed=tonumber(args[i+1]) end
   if a=='--simulate' then simulate=tonumber(args[i+1]) or 500 end
+  if a=='--money-simulate' then money_simulate=tonumber(args[i+1]) or 100 end
   if a=='--analyze' then analyze=true end
   if a=='--capture' then lab.capture={step=0,frames=0,shots=0} end
  end
@@ -950,6 +952,9 @@ function love.load(args)
  end
  if simulate then
   print((Simulate.report(simulate,seed or 1)));love.event.quit(0);return
+ end
+ if money_simulate then
+  print((MoneySim.report(money_simulate,seed or 1)));love.event.quit(0);return
  end
  fonts.small=love.graphics.newFont(14);fonts.body=love.graphics.newFont(17)
  fonts.section=love.graphics.newFont(19);fonts.head=love.graphics.newFont(22)
@@ -986,7 +991,7 @@ function love.update(dt)
  if lab.screen=='money' and lab.money then
   if lab.money.phase=='over' and not lab.saved then
    local ok,err=pcall(MoneyLog.save,love.filesystem,lab.money)
-   lab.saved=ok
+   lab.saved=true -- Do not auto-retry partial CSV writes on every frame.
    lab.save_note=ok and 'V4: denari, mani e decisioni registrati.' or
     ('Salvataggio V4 non riuscito: '..tostring(err))
   end
