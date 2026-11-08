@@ -12,6 +12,9 @@ local Config=require('experiments.merchant_wager_lab.config')
 local Duel=require('experiments.merchant_wager_lab.duel')
 local Box=require('experiments.merchant_wager_lab.box')
 local Presentation=require('experiments.merchant_wager_lab.presentation')
+local MoneyDuel=require('experiments.merchant_wager_lab.money_duel')
+local MoneyLog=require('experiments.merchant_wager_lab.money_log')
+local Currency=require('experiments.merchant_wager_lab.currency')
 
 local W,H=1280,720
 local C={
@@ -23,7 +26,8 @@ local C={
 local fonts={}
 local lab={match=nil,duel=nil,id=1,saved=false,timer=0,completed=0,message='',buttons={},dice={},v3dice={},capture=nil,
  screen='mode',mode=nil,variant='A',seed_text='101',seed_focused=false,
- box_expanded=false,
+ box_expanded=false,money=nil,v4dice={},money_ledger_expanded=false,
+ money_raises_enabled=true,
  corrector=nil,corrector_dice={},corrector_notes_focused=false,
  corrector_feedback={decision_changes='',threat=nil,notes=''},corrector_feedback_saved=false,
  feedback={pressure=nil,banking=nil,influence=nil,notes=''},feedback_saved=false,
@@ -91,6 +95,16 @@ local function new_duel(seed)
  lab.v3_feedback={counteroffer_rerolls=nil,banked_below_estimate=nil,merchant_decisions_clear=nil,
   felt_competitive=nil,loss_cause=nil,notes=''}
  lab.seed_text=tostring(lab.duel.seed);lab.timer=0;lab.box_expanded=false
+end
+
+local function new_money_duel(seed)
+ lab.id=MoneyLog.next_id(love.filesystem)
+ lab.money=MoneyDuel.new(seed or love.math.random(1,2147483646),lab.id,
+  {raises_enabled=lab.money_raises_enabled})
+ lab.duel=nil;lab.match=nil;lab.corrector=nil
+ lab.mode='money';lab.screen='money';lab.saved=false;lab.seed_focused=false
+ lab.seed_text=tostring(lab.money.seed);lab.money_ledger_expanded=false
+ lab.save_note=nil
 end
 
 local function new_corrector(seed)
@@ -246,8 +260,9 @@ local function draw_mode()
   hitbox(card.id,card.id=='mode_v2' and 'Scegli A / B / C' or
    card.id=='mode_v3' and 'Gioca la V3' or 'Avvia il prototipo',card.x+22,425,326,54,true)
  end
- text('Ogni modalità mantiene le proprie regole e telemetria; nessuna modifica il gameplay principale.',
-  60,575,fonts.body,C.dim,1150)
+ hitbox('mode_money','V4 — Duello monetario · lira, soldo e denaro',360,545,560,48,true)
+ text('La V4 usa sei dadi Farkle e la cassa V3; puntate separate, nessun cambio dei punteggi.',
+  60,618,fonts.small,C.dim,1150)
 end
 
 local function draw_setup()
@@ -330,6 +345,32 @@ local function draw_v3_setup()
  70,475,fonts.body,valid and C.dim or C.merchant,850)
  hitbox('start_v3','Inizia V3',900,500,280,60,valid)
  hitbox('back_mode','Torna a V2 / V3',70,590,230,48,true)
+end
+
+local function draw_money_setup()
+ lab.buttons={}
+ text('V4 — Il Mercante e la posta',60,44,fonts.big,C.text)
+ text('Dadi Farkle + cassa tipografica V3 + lira di piccoli veneziana.',60,110,fonts.body,C.dim,1130)
+ text('1 lira a testa. Ante 2 soldi; un rialzo di 2 soldi per mano, prima del lancio.',60,183,fonts.head,C.pot,1120)
+ text('1 lira = 20 soldi = 240 denari. Il punteggio Farkle NON viene convertito in denaro.',
+  60,234,fonts.body,C.text,1150)
+ text('Seed numerico',70,332,fonts.head,C.text)
+ color(C.panel);love.graphics.rectangle('fill',260,326,240,45,6)
+ color(lab.seed_focused and C.select or C.line)
+ love.graphics.rectangle('line',260,326,240,45,6)
+ text(lab.seed_text..(lab.seed_focused and '|' or ''),272,335,fonts.body,C.text,225)
+ lab.buttons[#lab.buttons+1]={id='seed_field',x=260,y=326,w=240,h=45,active=true}
+ for i,seed in ipairs(Config.seeds) do
+  hitbox('seed_'..seed,tostring(seed),270+(i-1)*118,405,100,42,true,lab.seed_text==tostring(seed))
+ end
+ hitbox('money_toggle_raises',lab.money_raises_enabled and 'Rialzi: ATTIVI' or 'Rialzi: DISATTIVATI',
+  660,405,280,43,true,lab.money_raises_enabled)
+ local seed=tonumber(lab.seed_text)
+ local valid=seed and seed%1==0 and seed>=1 and seed<2147483647
+ hitbox('start_money','Avvia V4',875,530,305,60,valid)
+ hitbox('back_mode','Torna agli esperimenti',70,542,290,50,true)
+ text('Il Mercante può proporre, chiamare o rifiutare il rialzo: solo informazioni pubbliche.',
+  60,640,fonts.small,C.dim,1100)
 end
 
 local function draw_feedback()
@@ -722,6 +763,130 @@ local function draw_v3()
   end
  end
  if lab.box_expanded then draw_v3_details(d) end
+end
+
+local function draw_money()
+ local m=lab.money;local d=m.base;local h=d.hand;local w=m.wager;local t=d.turn
+ lab.buttons={};lab.v4dice={}
+ panel(40,14,1200,82,nil,C.line)
+ text('MERCHANT DUEL · V4 / LIRA DI PICCOLI',58,26,fonts.title,C.text)
+ text('Mano '..h.number..'/3 · Incisore '..d.hands_won.artist..
+  ' – '..d.hands_won.merchant..' Mercante',58,61,fonts.small,C.pot)
+ text('seed '..m.seed..' · '..(m.raises_enabled and 'rialzi attivi' or 'senza rialzi'),
+  880,40,fonts.small,C.dim,334,'right')
+ panel(40,109,790,425,'INCISORE · 6 D6 Farkle',C.player)
+ text('Punti provvisori',62,158,fonts.small,C.dim)
+ text(tostring(t.pot),62,180,fonts.big,C.pot)
+ local selection=Rules.selection(t)
+ text('Selezione '..(selection and ('+'..selection) or '—'),
+  230,169,fonts.head,selection and C.select or C.dim)
+ text('Da battere: '..h.offer..' punti',540,177,fonts.head,C.merchant,263,'right')
+ for i=1,6 do
+  local x=65+(i-1)*124
+  local state=t.used[i] and 'kept' or t.selected[i] and 'selected' or 'free'
+  die(x,263,76,t.hand[i],state)
+  text(t.used[i] and 'Accantonato' or t.selected[i] and 'Selezionato' or
+   t.hand[i] and 'Libero' or 'Da lanciare',x-12,347,fonts.small,C.dim,102,'center')
+  lab.v4dice[i]={x=x,y=263,s=76}
+ end
+ local phase_names={betting='PUNTATA INIZIALE',raise_pending='RIALZO DEL MERCANTE',
+  player='TURNO FARKLE',merchant_decision='CONTROFFERTA',
+  hand_end='MANO CONCLUSA',over='INCONTRO CONCLUSO'}
+ text(phase_names[m.phase] or m.phase,62,387,fonts.head,C.pot,740)
+ local message
+ if m.phase=='raise_pending' then message='Il Mercante rilancia: accetta +2 soldi oppure ritirati.'
+ elseif m.phase=='betting' then message='Puoi proporre un rialzo, oppure iniziare a lanciare.'
+ elseif m.phase=='player' then
+  message=t.phase=='fresh' and 'Lancia i dadi: il Mercante ha gia formulato la sua offerta.' or
+   'Seleziona dadi validi, accantona e rilancia oppure incassa.'
+ elseif m.phase=='merchant_decision' then
+  local preview=Duel.preview_decision(d)
+  message=('Possibilita pubblica di sorpasso %.1f%%; soglia IA %.0f%%.'):format(
+   preview.chance*100,preview.threshold*100)
+ else message=(h.end_reason or m.end_reason or 'Risultato definito') end
+ text(message,62,434,fonts.body,C.text,735)
+ text('Patrimonio: '..Currency.format(w.wallet.artist),
+  62,479,fonts.head,C.player,740)
+ panel(850,109,390,191,'MERCANTE · CASSA',C.merchant)
+ text('Offerta '..h.offer..' punti',870,155,fonts.head,C.pot)
+ text('Iniziale '..h.initial_offer..' · estratti '..table.concat(h.symbols,' '),
+  870,186,fonts.small,C.text,345)
+ local counts=Box.remaining(d.box)
+ text(('Rimasti: V10 %d · V20 %d · V30 %d'):format(counts[1],counts[2],counts[3]),
+  870,217,fonts.small,C.dim,340)
+ text(('V40 %d · X %d · scarti %d'):format(counts[4],counts[5],#d.box.discard),
+  870,242,fonts.small,C.dim,340)
+ panel(850,312,390,222,'POSTA · ECONOMIA',C.pot)
+ text('Piatto: '..Currency.format(w.pot),870,354,fonts.head,C.pot,348)
+ text('Mercante: '..Currency.format(w.wallet.merchant),
+  870,394,fonts.body,C.merchant,350)
+ text('Artista: '..Currency.format(w.wallet.artist),
+  870,428,fonts.body,C.player,350)
+ text('Ante 2 soldi · Rialzo 2 soldi',870,461,fonts.small,C.dim,348)
+ text('Fogli: '..d.hands_won.artist..' / '..d.hands_won.merchant..
+  ' · Ultima transazione: '..((w.ledger[#w.ledger] or {}).action or 'nessuna'),
+  870,486,fonts.small,C.dim,350)
+ local actions={}
+ local function add(id,label,active)
+  actions[#actions+1]={id=id,label=label,active=active~=false}
+ end
+ if m.phase=='betting' then
+  add('money_raise','Rialza · 2 soldi',MoneyDuel.can_propose(m))
+  add('money_start','Lancia la mano',true)
+  add('money_fold','Ritirati',true)
+ elseif m.phase=='raise_pending' then
+  add('money_accept','Accetta · 2 soldi',w.wallet.artist>=MoneyDuel.Wager.RAISE)
+  add('money_fold','Rifiuta e ritirati',true)
+ elseif m.phase=='player' then
+  add('money_roll',t.phase=='fresh' and 'Lancia [Spazio]' or 'Rilancia [Spazio]',MoneyDuel.can_roll(m))
+  add('money_take','Accantona [A]',MoneyDuel.can_take(m))
+  add('money_bank','Incassa [I]',MoneyDuel.can_bank(m))
+  add('money_fold','Ritirati [P]',true)
+ elseif m.phase=='merchant_decision' then
+  add('money_advance','Risolvi controfferta [C]',true)
+ elseif m.phase=='hand_end' then
+  add('money_next','Prossima mano [N]',true)
+ elseif m.phase=='over' then
+  add('money_replay','Nuovo incontro [R]',true)
+ end
+ local width=math.min(255,math.floor((1160-(#actions-1)*13)/#actions))
+ local left=(W-(width*#actions+13*(#actions-1)))/2
+ for i,a in ipairs(actions) do
+  hitbox(a.id,a.label,left+(i-1)*(width+13),552,width,52,a.active)
+ end
+ hitbox('money_ledger',lab.money_ledger_expanded and 'Chiudi registro [E]' or 'Registro [E]',
+  42,633,230,42,true)
+ hitbox('money_replay','Rigioca [R]',898,633,150,42,true)
+ hitbox('back_mode','Esperimenti [Esc]',1058,633,180,42,true)
+ if m.phase=='hand_end' or m.phase=='over' then
+  color(C.bg,0.95);love.graphics.rectangle('fill',210,190,860,250,8)
+  color(h.winner=='artist' and C.good or C.danger)
+  love.graphics.rectangle('line',210,190,860,250,8)
+  local victor=m.phase=='over' and m.winner or h.winner
+  text(victor=='artist' and 'VINCE L INCISORE' or 'VINCE IL MERCANTE',
+   235,222,fonts.big,victor=='artist' and C.good or C.danger,812,'center')
+  text('Posta assegnata · '..Currency.format((w.hands[#w.hands] or {}).award or 0),
+   235,294,fonts.head,C.pot,812,'center')
+  text('Mani '..d.hands_won.artist..' – '..d.hands_won.merchant..
+   ' · '..(m.end_reason or h.end_reason or ''),235,352,fonts.body,C.text,812,'center')
+  if m.phase=='over' then
+   text(lab.save_note or 'Registro salvato alla conclusione dell incontro.',
+    235,393,fonts.small,C.dim,812,'center')
+  end
+ end
+ if lab.money_ledger_expanded then
+  color(C.bg,0.97);love.graphics.rectangle('fill',245,104,790,432,8)
+  color(C.pot);love.graphics.rectangle('line',245,104,790,432,8)
+  text('LIBRO MASTRO · transazioni in denari',270,128,fonts.head,C.pot)
+  local first=math.max(1,#w.ledger-11)
+  for i=first,#w.ledger do
+   local event=w.ledger[i]
+   text(('%d. %s · %s · %s · saldo %s · piatto %s'):format(
+    event.hand,event.actor,event.action,Currency.format(event.amount),
+    Currency.format(event.balance_after),Currency.format(event.pot_after)),
+    270,171+(i-first)*28,fonts.small,C.text,730)
+  end
+ end
 end
 
 local function save_feedback()
