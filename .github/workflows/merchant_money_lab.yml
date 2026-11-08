@@ -30,6 +30,7 @@ jobs:
           lua5.4 tests/labs/merchant_duel_money_test.lua
           lua5.4 tests/labs/merchant_wager_aldine_ui_test.lua
           lua5.4 -e "print((require('experiments.merchant_wager_lab.money_simulate').report(5,101)))"
+          lua5.4 -e "print((require('experiments.merchant_wager_lab.money_simulate').calibration_report(200,101)))"
       - name: Existing V3 and V4 rules — LuaJIT
         run: |
           luajit tests/labs/merchant_wager_v3_test.lua
