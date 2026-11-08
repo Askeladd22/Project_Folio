@@ -957,6 +957,7 @@ function love.load(args)
  love.math.setRandomSeed(os.time())
  if seed then lab.seed_text=tostring(seed) end
  if lab.capture then new_match(seed or 2,'A') end
+ if os.getenv('MERCHANT_V4_SMOKE')=='1' then new_money_duel(seed or 101) end
 end
 
 local function capture_update()
@@ -980,7 +981,21 @@ local function capture_update()
  if m.phase=='merchant' then lab.timer=0.3 end
 end
 
+local money_smoke_frames=0
 function love.update(dt)
+ if lab.screen=='money' and lab.money then
+  if lab.money.phase=='over' and not lab.saved then
+   local ok,err=pcall(MoneyLog.save,love.filesystem,lab.money)
+   lab.saved=ok
+   lab.save_note=ok and 'V4: denari, mani e decisioni registrati.' or
+    ('Salvataggio V4 non riuscito: '..tostring(err))
+  end
+  if os.getenv('MERCHANT_V4_SMOKE')=='1' then
+   money_smoke_frames=money_smoke_frames+1
+   if money_smoke_frames==30 then love.event.quit() end
+  end
+  return
+ end
  if lab.screen=='corrector' or lab.screen=='corrector_feedback' then
   save_corrector_if_over()
   return
@@ -1026,10 +1041,12 @@ function love.draw()
  if lab.screen=='setup' then draw_setup();love.graphics.pop();return end
  if lab.screen=='corrector_setup' then draw_corrector_setup();love.graphics.pop();return end
  if lab.screen=='v3_setup' then draw_v3_setup();love.graphics.pop();return end
+ if lab.screen=='money_setup' then draw_money_setup();love.graphics.pop();return end
  if lab.screen=='feedback' then draw_feedback();love.graphics.pop();return end
  if lab.screen=='corrector' then draw_corrector(lab.corrector);love.graphics.pop();return end
  if lab.screen=='corrector_feedback' then draw_corrector_feedback();love.graphics.pop();return end
  if lab.screen=='v3' then draw_v3();love.graphics.pop();return end
+ if lab.screen=='money' then draw_money();love.graphics.pop();return end
  if lab.screen=='v3_feedback' then draw_v3_feedback();love.graphics.pop();return end
  local m=lab.match
  text(('Variante %s — %s  ·  partita #%d  ·  seed %d  ·  round %d/%d  ·  soglia %d  ·  rialzo da %d'):format(
@@ -1056,22 +1073,41 @@ local function press(id)
  if lab.screen=='mode' then
   if id=='mode_v2' then lab.mode='v2';lab.screen='setup'
   elseif id=='mode_v3' then lab.mode='v3';lab.screen='v3_setup'
+  elseif id=='mode_money' then lab.mode='money';lab.screen='money_setup'
   elseif id=='mode_corrector' then lab.mode='corrector';lab.screen='corrector_setup' end
  elseif id=='back_mode' then lab.screen='mode'
- elseif lab.screen=='setup' or lab.screen=='v3_setup' or lab.screen=='corrector_setup' then
+ elseif lab.screen=='setup' or lab.screen=='v3_setup' or lab.screen=='money_setup' or lab.screen=='corrector_setup' then
   if id=='start' then
    local seed=tonumber(lab.seed_text)
    if seed and seed%1==0 and seed>=1 and seed<2147483647 then new_match(seed,lab.variant) end
   elseif id=='start_v3' then
    local seed=tonumber(lab.seed_text)
    if seed and seed%1==0 and seed>=1 and seed<2147483647 then new_duel(seed) end
-  elseif id=='start_corrector' then
+  elseif id=='start_money' then
+    local seed=tonumber(lab.seed_text)
+    if seed and seed%1==0 and seed>=1 and seed<2147483647 then new_money_duel(seed) end
+   elseif id=='money_toggle_raises' then lab.money_raises_enabled=not lab.money_raises_enabled
+   elseif id=='start_corrector' then
    local seed=tonumber(lab.seed_text)
    if seed and seed%1==0 and seed>=1 and seed<2147483647 then new_corrector(seed) end
   elseif id=='seed_field' then lab.seed_focused=true;lab.notes_focused=false
   elseif id and id:match('^variant_') then lab.variant=id:sub(9)
   elseif id and id:match('^seed_') then lab.seed_text=id:sub(6);lab.seed_focused=false
   end
+ elseif lab.screen=='money' then
+  local m=lab.money
+  if id=='money_raise' then MoneyDuel.propose(m)
+  elseif id=='money_accept' then MoneyDuel.accept(m)
+  elseif id=='money_start' then MoneyDuel.start_dice(m)
+  elseif id=='money_fold' then MoneyDuel.fold(m)
+  elseif id=='money_roll' then MoneyDuel.roll(m)
+  elseif id=='money_take' then MoneyDuel.take(m)
+  elseif id=='money_bank' then MoneyDuel.bank(m)
+  elseif id=='money_advance' then MoneyDuel.advance_merchant(m)
+  elseif id=='money_next' then MoneyDuel.next_hand(m)
+  elseif id=='money_ledger' then lab.money_ledger_expanded=not lab.money_ledger_expanded
+  elseif id=='money_replay' then new_money_duel(m.seed)
+  elseif id=='back_mode' then lab.screen='mode' end
  elseif lab.screen=='v3' then
   local d=lab.duel
   if id=='v3_roll' then Duel.roll(d)
@@ -1148,7 +1184,7 @@ local function press(id)
 end
 
 function love.textinput(value)
- if (lab.screen=='setup' or lab.screen=='v3_setup' or lab.screen=='corrector_setup') and lab.seed_focused then
+ if (lab.screen=='setup' or lab.screen=='v3_setup' or lab.screen=='money_setup' or lab.screen=='corrector_setup') and lab.seed_focused then
   if value:match('^%d+$') and #lab.seed_text+#value<=10 then lab.seed_text=lab.seed_text..value end
  elseif lab.screen=='feedback' and lab.notes_focused then
   if #lab.feedback.notes+#value<=500 then lab.feedback.notes=lab.feedback.notes..value end
@@ -1166,6 +1202,22 @@ end
 function love.mousepressed(x,y,button)
  if button~=1 then return end
  x=(x-view.x)/view.s;y=(y-view.y)/view.s
+ if lab.screen=='money' then
+  for _,b in ipairs(lab.buttons) do
+   if x>=b.x and x<=b.x+b.w and y>=b.y and y<=b.y+b.h then
+    if b.active~=false then press(b.id) end
+    return
+   end
+  end
+  if not lab.money_ledger_expanded then
+   for i,d in ipairs(lab.v4dice) do
+    if x>=d.x and x<=d.x+d.s and y>=d.y and y<=d.y+d.s then
+     MoneyDuel.toggle(lab.money,i);return
+    end
+   end
+  end
+  return
+ end
  if lab.screen=='v3' then
   for _,b in ipairs(lab.buttons) do
    if x>=b.x and x<=b.x+b.w and y>=b.y and y<=b.y+b.h then
@@ -1199,7 +1251,7 @@ function love.mousepressed(x,y,button)
     return
    end
   end
-  if lab.screen=='setup' or lab.screen=='v3_setup' or lab.screen=='corrector_setup' then lab.seed_focused=false end
+  if lab.screen=='setup' or lab.screen=='v3_setup' or lab.screen=='money_setup' or lab.screen=='corrector_setup' then lab.seed_focused=false end
   if lab.screen=='feedback' or lab.screen=='v3_feedback' then lab.notes_focused=false end
   if lab.screen=='corrector_feedback' then lab.corrector_notes_focused=false end
   return
@@ -1214,7 +1266,7 @@ end
 function love.keypressed(key)
  if lab.screen=='mode' then
   if key=='a' or key=='2' then press('mode_v2') elseif key=='v' or key=='3' then press('mode_v3')
-  elseif key=='c' then press('mode_corrector') end
+  elseif key=='c' then press('mode_corrector') elseif key=='4' or key=='m' then press('mode_money') end
   return
  elseif lab.screen=='corrector_setup' then
   if key=='escape' then lab.seed_focused=false
@@ -1228,6 +1280,11 @@ function love.keypressed(key)
   elseif key=='a' then lab.variant='A'
   elseif key=='b' then lab.variant='B'
   elseif key=='c' then lab.variant='C' end
+  return
+ elseif lab.screen=='money_setup' then
+  if key=='escape' then lab.screen='mode';lab.seed_focused=false
+  elseif key=='backspace' and lab.seed_focused then lab.seed_text=lab.seed_text:sub(1,-2)
+  elseif key=='return' or key=='kpenter' then press('start_money') end
   return
  elseif lab.screen=='v3_setup' then
   if key=='escape' then lab.screen='mode';lab.seed_focused=false
@@ -1243,6 +1300,40 @@ function love.keypressed(key)
   if key=='escape' and lab.v3_feedback_saved then lab.screen='mode'
   elseif key=='backspace' and lab.notes_focused then lab.v3_feedback.notes=lab.v3_feedback.notes:sub(1,-2)
   elseif key=='r' and lab.v3_feedback_saved then press('replay_v3') end
+  return
+ elseif lab.screen=='money' then
+  if key=='escape' then press('back_mode');return end
+  if key=='r' then press('money_replay');return end
+  if key=='e' then press('money_ledger');return end
+  local m=lab.money
+  if key:match('^[1-6](lab.duel,key,lab.box_expanded)
+  if action=='toggle_die' then Duel.toggle(lab.duel,id)
+  elseif action=='box_details' then lab.box_expanded=not lab.box_expanded
+  elseif action then press(action) end
+  return
+ end
+ if lab.screen=='corrector' then
+  local map={space='cr_roll',a='cr_take',i='cr_bank',c='cr_buy',o='cr_opponent',escape='cr_close',r='cr_replay'}
+  if map[key] then press(map[key]);return end
+  local i=tonumber(key)
+  if i and i>=1 and i<=6 then Corrector.toggle_player_die(lab.corrector,i) end
+  return
+ end
+ local i=tonumber(key)
+ if i and i>=1 and i<=6 and lab.timer<=0 then Match.toggle(lab.match,i);return end
+ local map={space='roll',a='take',i='bank',v='see',p='pass',r='replay'}
+ if map[key] then press(map[key]) end
+ if key=='escape' then lab.screen='setup' end
+end
+) and MoneyDuel.can_toggle(m,tonumber(key)) then
+   MoneyDuel.toggle(m,tonumber(key));return
+  end
+  local map={space='money_roll',a='money_take',i='money_bank',
+   p='money_fold',c='money_advance',n='money_next'}
+  if key=='return' or key=='kpenter' then
+   if m.phase=='betting' then press('money_start')
+   elseif m.phase=='raise_pending' then press('money_accept') end
+  elseif map[key] then press(map[key]) end
   return
  elseif lab.screen=='v3' then
   local action,id=Presentation.keyboard_action(lab.duel,key,lab.box_expanded)
