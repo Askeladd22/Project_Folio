@@ -74,7 +74,9 @@ local function open_hand(m,number)
 end
 function M.new(seed,id,opts)
  opts=opts or {}
- local b=Duel.new(seed,id,opts.box_profile)
+ -- The V4 default is the playtested equal-expectation 'tail' profile.
+ -- Legacy scores remain available only for isolated historical comparisons.
+ local b=Duel.new(seed,id,opts.box_profile or 'tail')
  local m={seed=seed,id=id or 1,base=b,
   wager=Wager.new(seed,id),raises_enabled=opts.raises_enabled~=false,
   policy_log={},phase=nil,message='',winner=nil,end_reason=nil,saved=false}
