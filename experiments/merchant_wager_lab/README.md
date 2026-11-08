@@ -53,6 +53,7 @@ il contenuto dagli scarti. Non ci sono carte per il giocatore.
 - **E** — Libro mastro monetario.
 - **B** — Dettagli della cassa pubblica.
 - **R** — Rigioca lo stesso seed.
+- **S** — Nuovo incontro: scegli seed (101/202/303) e rialzi attivi/disattivati.
 
 L'interfaccia si ispira alle risorse già presenti in Project Folio:
 `resources/scenes/printshop-room.png` (bottega),
