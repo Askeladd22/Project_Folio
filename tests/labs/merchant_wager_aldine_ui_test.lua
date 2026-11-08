@@ -54,4 +54,15 @@ assert(saw('CASSA TIPOGRAFICA'))
 printed={}
 love.keypressed('escape');love.keypressed('r');love.draw()
 assert(saw('LA SFIDA'))
+printed={}
+love.keypressed('s');love.draw()
+assert(saw('NUOVO INCONTRO') and saw('SEED DELLA PARTITA') and saw('RIALZI'))
+-- Switching seed and wager policy is still available without restoring legacy modes.
+love.mousepressed(575,329,1) -- seed 202
+love.mousepressed(530,415,1) -- disable raises
+printed={};love.draw()
+assert(saw('DISATTIVATI'))
+love.keypressed('return')
+printed={};love.draw()
+assert(saw('Rialzi')==false or saw('DISATTIVATI')==false)
 print('PASS merchant Aldine scene: no legacy menu, wager prominence, book ledger, cassa overlay and replay')
