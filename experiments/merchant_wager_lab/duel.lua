@@ -202,6 +202,23 @@ function M.advance_merchant(m)
  return true
 end
 
+-- Additional opt-in actions consumed only by the money experiment.
+-- V3 does not show these controls; its behavior and legacy logs stay unchanged.
+function M.fold_artist(m)
+ if m.phase~='player' then return false end
+ m.hand.player_result=0
+ record_player(m,'ritirata',m.turn.pot,Rules.count_free(m.turn),'Concede la prova')
+ finish_hand(m,'merchant','artist_fold')
+ return true
+end
+function M.fold_merchant(m)
+ if m.phase~='player' then return false end
+ m.hand.player_result=0
+ m.last_merchant_action='Il Mercante rinuncia alla prova.'
+ finish_hand(m,'artist','merchant_fold')
+ return true
+end
+
 function M.next_hand(m)
  if m.phase~='hand_end' then return false end
  begin_hand(m,#m.completed_hands+1)
