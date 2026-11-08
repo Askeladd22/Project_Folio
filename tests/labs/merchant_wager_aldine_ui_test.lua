@@ -6,7 +6,7 @@ end
 local font={getHeight=function()return 20 end}
 local graphics={}
 for _,name in ipairs({'setColor','rectangle','circle','line','setLineWidth','clear',
- 'push','pop','translate','scale','setScissor','draw'}) do
+ 'push','pop','translate','scale','setScissor','draw','setFont'}) do
  graphics[name]=function() end
 end
 graphics.newFont=function() return font end
