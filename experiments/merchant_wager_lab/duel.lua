@@ -67,14 +67,14 @@ local function begin_hand(m,number)
  end
 end
 
-function M.new(seed,id)
+function M.new(seed,id,box_profile)
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed<2147483647,
   'seed must be integer 1..2147483646')
  local player_rng=RNG.new_rng(seed)
  local merchant_seed=1+((seed*48271)%2147483646)
  local merchant_rng=RNG.new_rng(merchant_seed)
  local m={id=id or 1,seed=seed,player_rng=player_rng,merchant_rng=merchant_rng,
-  box=Box.new(merchant_rng),phase='player',round=1,score={player=0,merchant=0},
+  box=Box.new(merchant_rng,box_profile),phase='player',round=1,score={player=0,merchant=0},
   hands_won={artist=0,merchant=0},reserve={artist=4,merchant=4},
   deposited={artist=1,merchant=1},pot=2,initial_pot=2,max_pot=2,
   completed_hands={},decisions={},counteroffers=0,merchant_withdrawals=0,x_draws=0,
