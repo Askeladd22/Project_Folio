@@ -187,6 +187,7 @@ Ogni laboratorio dispone del proprio README e viene avviato esplicitamente.
 | [FX](../experiments/fx_lab/README.md) | Prototipi di effetti grafici |
 | [Segni](../experiments/signs_lab/README.md) | Simulazioni numeriche di encounter |
 | [Mercante e posta](../experiments/merchant_wager_lab/README.md) | Test giocabile A/B/C: punteggio iniziale o posta diversa |
+| [Encounter Research A/C](../experiments/encounter_ac_lab/README.md) | Offerte divise A e prove contese C, prototipi isolati con Farkle canonico |
 
 Il rapporto della [QA del 3 novembre](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/WINDOWS_QA_CAPTURE_REVIEW_20261103.md)
 descrive le acquisizioni presenti in `audits/ui-v2-review/`.

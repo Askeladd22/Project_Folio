@@ -10,6 +10,27 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.60] - 2026-11-08
+
+**Stato:** ricerca isolata per un sistema di encounter; gameplay e
+fisica del gioco principale non modificati.
+
+### Aggiunto
+
+- Laboratorio A: offerte divise fra due prove, scelta del Rivale,
+  distribuzione della posta e maggioranze su tre obiettivi.
+- Laboratorio C: tre prove contese, sigilli progressivi, risposta
+  strategica del Rivale e due obiettivi necessari per vincere.
+- Interfaccia LÖVE 2D navigabile A/C, uso del Farkle canonico,
+  seed ripetibili, test, simulazioni A/C e workflow di regressione.
+- Ribilanciata la regola A: il proponente ottiene 1 sigillo fisso di
+  iniziativa e una previsione pubblica della scelta del Rivale;
+
+### Verifiche
+
+- Test Lua 5.4, LuaJIT, simulazioni e smoke grafico affidati alla CI.
+- Da valutare playtest umani, strategie dominanti e bilanciamento.
+
 ## [0.1.59] - 2026-11-08
 
 **Stato:** semplificazione della posta nel Merchant Duel Lab V4;
