@@ -29,6 +29,10 @@ Non attivo nel gioco principale.
   non chiamato, blocchi contro doppi trasferimenti e controllo di conservazione.
 - UI e libro mastro dedicati, CSV V4 separati e confronto con/senza rialzi.
 - Test isolati, verifica della V3 originale e LÖVE smoke.
+- Simulatore A/B accoppiato con tre policy Farkle, report headless, CSV
+  delle decisioni sui dadi e delle controfferte della V4.
+- Corretto un duplicato preesistente del titolo 0.1.49 nel changelog:
+  la nota storica sul Merchant Wager non viene più conteggiata come release autonoma.
 
 ### Invariato
 
@@ -165,7 +169,7 @@ non integrato nel gioco principale.
   (`docs/*.md`, `lab*.md`, `results_2026_10_31.md`): su file system
   sensibili alle maiuscole la CI vedeva ancora i vecchi nomi.
 
-## [0.1.49] - 2026-11-08
+### Nota retrospettiva non versionata — Merchant Wager Lab (2026-11-08)
 
 ### Aggiunto
 
