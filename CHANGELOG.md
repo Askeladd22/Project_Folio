@@ -16,9 +16,14 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 
 - Avviato confronto di bilanciamento tra punteggi Farkle e valori dei token
   del Mercante, senza cambiare le regole dei dadi né la posta monetaria.
-- Introdotti profili sperimentali legacy (10/20/30/40),
-  mid (15/30/45/60) e high (20/35/50/70), con la stessa cassa da
-  venti token e tre X; nessuna variante è ancora stata approvata.
+- Confrontati profili iniziali e varianti a elevata dispersione dei
+  valori, mantenendo venti token totali e tre X.
+- Selezionato per la V4 il profilo tail: V10×6, V20×5, V25×4,
+  V55×2 e X×3. Il punteggio medio dell'offerta iniziale resta vicino
+  all'originale, mentre la massima offerta iniziale passa da 80 a 110.
+- Nella simulazione preliminare a 200 seed, la policy balanced ha
+  registrato 50% vittorie Incisore senza rialzi e 51,5% con rialzi.
+  I valori sono diagnostici, non un giudizio definitivo sul bilanciamento.
 - Aggiunta simulazione a seed appaiati per tre policy Farkle e
   con/senza rialzi, senza selezione del profilo dal menu di gioco.
 
