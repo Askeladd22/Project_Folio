@@ -58,7 +58,7 @@ printed={}
 love.keypressed('s');love.draw()
 assert(saw('NUOVO INCONTRO') and saw('SEED DELLA PARTITA') and saw('RIALZI'))
 -- Switching seed and wager policy is still available without restoring legacy modes.
-love.mousepressed(575,329,1) -- seed 202
+love.mousepressed(500,329,1) -- seed 202
 love.mousepressed(530,415,1) -- disable raises
 printed={};love.draw()
 assert(saw('DISATTIVATI'))
