@@ -132,6 +132,68 @@ La V3 scrive file separati nello stesso percorso LÖVE indicato sopra:
 storico o `runs.csv` viene sovrascritto. È un test di game design, non una
 validazione dell'equilibrio o prova statistica.
 
+## V4 — Lira, soldo e denaro: Merchant Duel con scommesse
+
+**Modalità sperimentale isolata.** Dalla schermata iniziale seleziona
+**V4 — Duello monetario** (tasto **4**) e il seed; puoi abilitare o
+disabilitare i rialzi per confrontare il comportamento delle due varianti.
+L'esperimento V3 originale resta disponibile e non cambia.
+
+- **Incisore:** Farkle canonico con sei D6 (clic o tasti 1–6 per
+  selezionare, Spazio per lanciare, A per accantonare, I per incassare).
+- **Mercante:** usa soltanto la cassa V3 con **20 caratteri**
+  (`V10×6, V20×5, V30×4, V40×2, X×3`); l'IA può proporre,
+  accettare o rifiutare un rialzo pre-roll secondo offerta iniziale,
+  quantità residua pubblica e stato dell'incontro.
+- **Valuta:** 1 lira = 20 soldi = 240 denari. Tutti gli importi sono
+  **interi in denari**; la lira è una moneta di conto.
+  Non esiste alcun cambio punti Farkle → soldi.
+- **Patrimonio:** 1 lira ciascuno; ante iniziale 2 soldi ciascuno per
+  ogni mano (piatto 4 soldi). Un rialzo, solo prima del primo tiro,
+  aggiunge 2 soldi ciascuno al piatto (8 soldi).
+  Non sono ammessi controrilanci, crediti, debiti o all-in.
+- **Rifiuto e restituzione:** se una proposta non viene chiamata,
+  il versamento aggiuntivo del proponente è restituito e il
+  rifiutante perde soltanto la propria quota iniziale nel piatto.
+  Ritiro volontario durante il turno Farkle disponibile con **P**.
+- **Esito:** il punteggio incassato e l'offerta determinano il vincitore
+  della mano, come in V3. Il vincitore ottiene il piatto. Primo a due
+  mani su tre conquista l'incontro; insolvenza all'ante successiva
+  provoca una sconfitta anticipata.
+- **Registro:** tasto **E** per aprire/chiudere il libro mastro,
+  con trasferimenti, saldi e piatto. Tasto **R** per rigiocare lo
+  stesso seed e **Esc** per tornare agli esperimenti.
+
+Il giocatore può proporre un rialzo prima di iniziare il lancio;
+il Mercante risponde automaticamente secondo una policy
+**deterministica e verificabile**. Quando è il Mercante a proporre,
+l'Incisore vede **Accetta** o **Rifiuta e ritirati**.
+Nessuna informazione futura del RNG dei dadi viene letta dalla policy.
+
+### Trasparenza e test
+
+Le soglie della policy sono **sperimentali**, non dimostrazioni di equilibrio.
+Conserviamo la logica V3 del sacchetto, le sue controfferte e il
+Farkle di produzione. Nessun file del gioco principale viene modificato.
+
+CSV dedicati (nella cartella save del laboratorio):
+`merchant_v4_matches.csv`, `merchant_v4_hands.csv`,
+`merchant_v4_transactions.csv`, `merchant_v4_policy.csv`.
+I CSV V2, V3 e Correttore non vengono sovrascritti.
+
+Controlli:
+
+```sh
+lua5.4 tests/labs/merchant_wager_v3_test.lua
+lua5.4 tests/labs/merchant_duel_money_test.lua
+luajit tests/labs/merchant_duel_money_test.lua
+```
+
+La workflow GitHub `.github/workflows/merchant_money_lab.yml`
+esegue gli stessi test e un avvio LÖVE automatizzato. Le somme
+devono sempre soddisfare l'invariante
+`wallet_artista + wallet_mercante + piatto = 480 denari`.
+
 ## Dati e riepilogo
 
 In Windows i file sono nella cartella di salvataggio LÖVE
