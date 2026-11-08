@@ -178,7 +178,8 @@ Farkle di produzione. Nessun file del gioco principale viene modificato.
 
 CSV dedicati (nella cartella save del laboratorio):
 `merchant_v4_matches.csv`, `merchant_v4_hands.csv`,
-`merchant_v4_transactions.csv`, `merchant_v4_policy.csv`.
+`merchant_v4_transactions.csv`, `merchant_v4_policy.csv` e
+`merchant_v4_dice_decisions.csv`.
 I CSV V2, V3 e Correttore non vengono sovrascritti.
 
 Controlli:
@@ -188,6 +189,20 @@ lua5.4 tests/labs/merchant_wager_v3_test.lua
 lua5.4 tests/labs/merchant_duel_money_test.lua
 luajit tests/labs/merchant_duel_money_test.lua
 ```
+
+### Confronto A/B riproducibile
+
+```bat
+experiments\\merchant_wager_lab\\run_lab.cmd --money-simulate 100 --seed 101
+```
+
+Il simulatore usa gli stessi seed per confrontare partite con e
+senza rialzi e tre policy del giocatore: prudente, equilibrata e audace.
+Riporta vittorie, denari finali, rialzi, ritiri, mani medie e
+controfferte del Mercante che ribaltano il risultato. Le policy sono
+approssimazioni programmatiche, non equivalenti a playtest umani:
+il rapporto fra valore della posta e banking effettivo deve essere
+verificato anche con sessioni reali.
 
 La workflow GitHub `.github/workflows/merchant_money_lab.yml`
 esegue gli stessi test e un avvio LÖVE automatizzato. Le somme
