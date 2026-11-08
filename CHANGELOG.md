@@ -10,6 +10,14 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.57] - 2026-11-08
+
+### Corretto
+
+- Test della nuova plancia Merchant Duel V4: selezione del seed 202
+  mediante il centro del pulsante anziché lo spazio fra i pulsanti.
+- Nessuna modifica a gameplay, asset, valuta, cassa o controlli.
+
 ## [0.1.56] - 2026-11-08
 
 **Stato:** redesign del Merchant Duel Lab e rimozione prototipi scartati.
