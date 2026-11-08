@@ -91,7 +91,7 @@ function M.probability_to_exceed(box,target,current)
     else
      local next_counts={c[1],c[2],c[3],c[4],c[5]}
      next_counts[i]=next_counts[i]-1
-     chance=solve(next_counts,total+box.symbols[i].points,can_refill)
+     chance=solve(next_counts,total+(box.symbols or M.symbols)[i].points,can_refill)
     end
     p=p+c[i]/remaining*chance
    end
