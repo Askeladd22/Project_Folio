@@ -10,6 +10,23 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.58] - 2026-11-08
+
+### Ricerca
+
+- Avviato confronto di bilanciamento tra punteggi Farkle e valori dei token
+  del Mercante, senza cambiare le regole dei dadi né la posta monetaria.
+- Confrontati profili iniziali e varianti a elevata dispersione dei
+  valori, mantenendo venti token totali e tre X.
+- Selezionato per la V4 il profilo tail: V10×6, V20×5, V25×4,
+  V55×2 e X×3. Il punteggio medio dell'offerta iniziale resta vicino
+  all'originale, mentre la massima offerta iniziale passa da 80 a 110.
+- Nella simulazione preliminare a 200 seed, la policy balanced ha
+  registrato 50% vittorie Incisore senza rialzi e 51,5% con rialzi.
+  I valori sono diagnostici, non un giudizio definitivo sul bilanciamento.
+- Aggiunta simulazione a seed appaiati per tre policy Farkle e
+  con/senza rialzi, senza selezione del profilo dal menu di gioco.
+
 ## [0.1.57] - 2026-11-08
 
 ### Corretto

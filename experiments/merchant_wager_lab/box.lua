@@ -8,7 +8,30 @@ M.symbols={
  {id='X',label='X',points=0,count=3},
 }
 local counts={6,5,4,2,3}
-local values={10,20,30,40,0}
+-- Research profiles only: no new token types, all retain 20 characters.
+-- Default remains the historical V3 set until comparative data is reviewed.
+M.profiles={
+ legacy={10,20,30,40},
+ mid={15,30,45,60},
+ high={20,35,50,70},
+ spread={5,15,30,65},
+ swing={5,15,25,80},
+ tail={10,20,25,55},
+ tail_plus={10,20,30,55},
+ tail_strong={15,20,25,55},
+
+}
+function M.for_profile(profile)
+ profile=profile or 'legacy'
+ local points=assert(M.profiles[profile],'unknown Merchant offer profile')
+ local symbols={}
+ for i,n in ipairs(counts) do
+  local value=points[i] or 0
+  local id=value==0 and 'X' or 'V'..value
+  symbols[#symbols+1]={id=id,label=id,points=value,count=n}
+ end
+ return symbols
+end
 local function shuffled(cards,random)
  for i=#cards,2,-1 do
   local j=random(1,i)
@@ -16,9 +39,9 @@ local function shuffled(cards,random)
  end
  return cards
 end
-local function full_box()
+local function full_box(symbols)
  local cards={}
- for kind,symbol in ipairs(M.symbols) do
+ for kind,symbol in ipairs(symbols) do
   for _=1,symbol.count do cards[#cards+1]={id=symbol.id,kind=kind,points=symbol.points} end
  end
  return cards
@@ -29,9 +52,12 @@ local function counts_of(cards)
  return result
 end
 
-function M.new(random)
+function M.new(random,profile)
  assert(type(random)=='function','box requires its seeded random stream')
- return {random=random,draw_pile=shuffled(full_box(),random),discard={},drawn={},reshuffles=0}
+ profile=profile or 'legacy'
+ local symbols=M.for_profile(profile)
+ return {random=random,profile=profile,symbols=symbols,
+  draw_pile=shuffled(full_box(symbols),random),discard={},drawn={},reshuffles=0}
 end
 
 function M.draw(box)
@@ -71,7 +97,7 @@ function M.probability_to_exceed(box,target,current)
     else
      local next_counts={c[1],c[2],c[3],c[4],c[5]}
      next_counts[i]=next_counts[i]-1
-     chance=solve(next_counts,total+values[i],can_refill)
+     chance=solve(next_counts,total+(box.symbols or M.symbols)[i].points,can_refill)
     end
     p=p+c[i]/remaining*chance
    end
@@ -82,9 +108,9 @@ function M.probability_to_exceed(box,target,current)
  return solve(start,current or 0,true)
 end
 
-function M.description()
+function M.description(box)
  local out={}
- for _,symbol in ipairs(M.symbols) do
+ for _,symbol in ipairs(box and box.symbols or M.symbols) do
   out[#out+1]=('%s × %d%s'):format(symbol.label,symbol.count,
    symbol.points>0 and (' (+'..symbol.points..')') or ' (fallimento)')
  end

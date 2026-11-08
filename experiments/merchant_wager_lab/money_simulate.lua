@@ -19,8 +19,8 @@ local function best(turn)
  end
  return found
 end
-local function play(seed,raises,policy)
- local m=Money.new(seed,seed,{raises_enabled=raises})
+local function play(seed,raises,policy,box_profile)
+ local m=Money.new(seed,seed,{raises_enabled=raises,box_profile=box_profile})
  local actions=0
  local raised_by_player=false
  for _=1,300 do
@@ -133,4 +133,40 @@ function M.report(count,seed)
  end
  return table.concat(result,'\n'),data
 end
+-- Paired Merchant-offer research with the same dice/box RNG stream per seed.
+-- Profile comparisons are diagnostic; none is activated by this function.
+function M.calibration_report(count,seed)
+ assert(type(count)=='number' and count%1==0 and count>=1 and count<=1500)
+ assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed+count-1<2147483647)
+ local profiles={'legacy','mid','high','spread','swing','tail','tail_plus','tail_strong'}
+ local out={('20-token calibration | %d matched seeds from %d'):format(count,seed),
+  'Profile | Player policy | Raises | Artist wins | Merchant wins | Artist win % | Merchant avg opening bid | X openings'}
+ for _,profile in ipairs(profiles) do
+  for _,policy_name in ipairs({'prudent','balanced','daring'}) do
+   local policy=M.policies[policy_name]
+   for _,with_raise in ipairs({false,true}) do
+    local wins={artist=0,merchant=0}
+    local opening_total,n_opening,initial_x=0,0,0
+    for offset=0,count-1 do
+     local match=play(seed+offset,with_raise,policy,profile)
+     wins[match.winner]=wins[match.winner]+1
+     for _,h in ipairs(match.base.completed_hands) do
+      if h.x_count>0 and h.end_reason=='initial_x' then
+       initial_x=initial_x+1
+      else
+       opening_total=opening_total+h.initial_offer
+       n_opening=n_opening+1
+      end
+     end
+    end
+    out[#out+1]=('%s | %s | %s | %d | %d | %.1f | %.1f | %d'):format(
+     profile,policy_name,with_raise and 'yes' or 'no',
+     wins.artist,wins.merchant,100*wins.artist/count,
+     n_opening>0 and opening_total/n_opening or 0,initial_x)
+   end
+  end
+ end
+ return table.concat(out,'\n')
+end
+
 return M

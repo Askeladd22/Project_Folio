@@ -4,6 +4,7 @@ on:
     paths:
       - 'experiments/merchant_wager_lab/**'
       - 'tests/labs/merchant_duel_money_test.lua'
+      - 'tests/labs/merchant_offer_calibration_test.lua'
       - 'tests/labs/merchant_wager_v3_test.lua'
       - 'tests/labs/merchant_wager_aldine_ui_test.lua'
       - '.github/workflows/merchant_money_lab.yml'
@@ -21,19 +22,22 @@ jobs:
           sudo apt-get install -y lua5.4 luajit love xvfb
       - name: Parse V4 and unchanged V3 sources
         run: |
-          for file in experiments/merchant_wager_lab/{main,duel,box,money_duel,currency,wager,money_log,money_simulate,rng}.lua tests/labs/merchant_duel_money_test.lua tests/labs/merchant_wager_aldine_ui_test.lua tests/labs/merchant_wager_v3_test.lua; do
+          for file in experiments/merchant_wager_lab/{main,duel,box,money_duel,currency,wager,money_log,money_simulate,rng}.lua tests/labs/merchant_duel_money_test.lua tests/labs/merchant_offer_calibration_test.lua tests/labs/merchant_wager_aldine_ui_test.lua tests/labs/merchant_wager_v3_test.lua; do
             luac5.4 -p "$file"
           done
       - name: Existing V3 and V4 rules — Lua 5.4
         run: |
           lua5.4 tests/labs/merchant_wager_v3_test.lua
           lua5.4 tests/labs/merchant_duel_money_test.lua
+          lua5.4 tests/labs/merchant_offer_calibration_test.lua
           lua5.4 tests/labs/merchant_wager_aldine_ui_test.lua
           lua5.4 -e "print((require('experiments.merchant_wager_lab.money_simulate').report(5,101)))"
+          lua5.4 -e "print((require('experiments.merchant_wager_lab.money_simulate').calibration_report(200,101)))"
       - name: Existing V3 and V4 rules — LuaJIT
         run: |
           luajit tests/labs/merchant_wager_v3_test.lua
           luajit tests/labs/merchant_duel_money_test.lua
+          luajit tests/labs/merchant_offer_calibration_test.lua
           luajit tests/labs/merchant_wager_aldine_ui_test.lua
       - name: Standalone UI smoke with software OpenGL
         env:

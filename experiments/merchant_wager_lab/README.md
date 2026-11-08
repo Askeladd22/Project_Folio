@@ -20,9 +20,35 @@ experiments\merchant_wager_lab\run_lab.cmd --money-simulate 100 --seed 101
 
 L'Incisore gioca sempre con **sei D6 e il regolamento Farkle canonico**
 di `src/farkle/rules.lua`. Il Mercante usa una cassa pubblica di
-20 token: V10×6, V20×5, V30×4, V40×2, X×3.
+20 token: **V10×6, V20×5, V25×4, V55×2, X×3**.
+Le due tessere V55 sono volutamente rare: consentono al Mercante
+controfferte più forti senza aumentare molto l'offerta media.
+La precedente distribuzione **V10/V20/V30/V40** rimane disponibile
+come riferimento nel simulatore, non è più il profilo predefinito V4.
 La cassa pesca senza reinserimento fino all'esaurimento e poi ricostituisce
 il contenuto dagli scarti. Non ci sono carte per il giocatore.
+
+## Bilanciamento del confronto Farkle / token
+
+La V4 utilizza il profilo **tail** scelto dopo un confronto preliminare
+a seed appaiati (200 partite per combinazione). Con la policy Farkle
+`balanced`, l'Incisore ha vinto 50% degli incontri senza rialzi e
+51,5% con rialzi. I token comuni sono da 10/20/25 punti;
+il raro da 55 punti aumenta l'ampiezza delle offerte possibili
+(prima 80 punti massimo nei primi due token; ora 110)
+senza alterare i 20 token né il numero di X.
+
+Attenzione: i valori dei token NON devono imitare il massimo di una
+combinazione Farkle. L'avversario può sommare estrazioni e
+controfferte; risultati Farkle eccezionali devono restare premianti.
+La probabilità di un X iniziale resta circa 28,4% e oggi fa vincere
+direttamente la mano all'Incisore: è una **regola separata da
+rivalutare** e un limite di questo test. Non interpretare il tasso
+globale di vittorie come prova definitiva di equità.
+
+`money_simulate.calibration_report(N,seed)` consente di confrontare
+altri profili di ricerca mantenendo fissi i seed; i profili non
+compaiono nel menu per evitare un'interfaccia diagnostica.
 
 ## Valuta e duello
 
