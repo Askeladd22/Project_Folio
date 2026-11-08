@@ -1,7 +1,7 @@
 -- V3 asymmetrical best-of-three Merchant duel; the production Farkle module
 -- remains the sole authority for the Artist's six-die turns.
 local Rules=require('src.farkle.rules')
-local Match=require('experiments.merchant_wager_lab.match')
+local RNG=require('experiments.merchant_wager_lab.rng')
 local Box=require('experiments.merchant_wager_lab.box')
 local M={}
 
@@ -70,9 +70,9 @@ end
 function M.new(seed,id)
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed<2147483647,
   'seed must be integer 1..2147483646')
- local player_rng=Match.new_rng(seed)
+ local player_rng=RNG.new_rng(seed)
  local merchant_seed=1+((seed*48271)%2147483646)
- local merchant_rng=Match.new_rng(merchant_seed)
+ local merchant_rng=RNG.new_rng(merchant_seed)
  local m={id=id or 1,seed=seed,player_rng=player_rng,merchant_rng=merchant_rng,
   box=Box.new(merchant_rng),phase='player',round=1,score={player=0,merchant=0},
   hands_won={artist=0,merchant=0},reserve={artist=4,merchant=4},
