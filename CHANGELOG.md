@@ -10,6 +10,18 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.58] - 2026-11-08
+
+### Ricerca
+
+- Avviato confronto di bilanciamento tra punteggi Farkle e valori dei token
+  del Mercante, senza cambiare le regole dei dadi né la posta monetaria.
+- Introdotti profili sperimentali legacy (10/20/30/40),
+  mid (15/30/45/60) e high (20/35/50/70), con la stessa cassa da
+  venti token e tre X; nessuna variante è ancora stata approvata.
+- Aggiunta simulazione a seed appaiati per tre policy Farkle e
+  con/senza rialzi, senza selezione del profilo dal menu di gioco.
+
 ## [0.1.56] - 2026-11-08
 
 **Stato:** redesign del Merchant Duel Lab e rimozione prototipi scartati.
