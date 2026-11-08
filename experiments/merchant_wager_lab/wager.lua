@@ -57,7 +57,7 @@ end
 function M.start_hand(s,number)
  if not M.can_start(s) or s.pending or s.pot~=0 then return false end
  if M.insolvent(s) then return false end
- assert(number==s.hand+1 and number<=3,'hands must be sequential')
+ if number~=s.hand+1 or number>3 then return false end
  s.hand=number;s.raised=false;s.pending=nil;s.winner=nil;s.reason=nil
  s.phase='betting'
  transfer_to_pot(s,'artist','ANTE',M.ANTE,'Initial two soldi ante')
