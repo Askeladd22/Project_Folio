@@ -15,27 +15,6 @@ local function note(m,actor,decision,reason)
  m.message=reason
  return entry
 end
-local function merchant_policy(m,action)
- local b=m.base;local w=m.wager
- local chance=Box.probability_to_exceed(b.box,60,b.hand.offer)
- local critical=b.hands_won.merchant<b.hands_won.artist
- local solvent=w.wallet.artist>=Wager.RAISE and w.wallet.merchant>=Wager.RAISE
- if action=='propose' then
-  local yes=m.raises_enabled and solvent and b.hand.offer>=40 and
-    (chance>=0.45 or critical)
-  local why=('Rialzo %s: offerta %d; probabilita pubblica contro 60 pt %.1f%%; %s; fondi %s.'):format(
-   yes and 'proposto' or 'non proposto',b.hand.offer,100*chance,
-   critical and 'inseguimento' or 'situazione ordinaria',
-   solvent and 'sufficienti' or 'insufficienti')
-  note(m,'merchant',yes and 'propose_raise' or 'hold',why)
-  return yes
- end
- local yes=solvent and (b.hand.offer>=30 or chance>=0.60 or critical)
- note(m,'merchant',yes and 'accept_raise' or 'reject_raise',
-  ('Risposta a rialzo: offerta %d; probabilita pubblica %.1f%%; %s.'):format(
-   b.hand.offer,chance*100,yes and 'accetta' or 'non accetta'))
- return yes
-end
 local function sync(m)
  local b=m.base
  if b.hand.winner then
@@ -66,10 +45,6 @@ local function open_hand(m,number)
   return true
  end
  m.phase='betting'
- if merchant_policy(m,'propose') then
-  assert(Wager.propose(m.wager,'merchant','Policy based on current public offer'))
-  m.phase='raise_pending'
- end
  return true
 end
 function M.new(seed,id,opts)
@@ -89,22 +64,9 @@ function M.can_propose(m)
 end
 function M.propose(m)
  if not M.can_propose(m) then return false end
- assert(Wager.propose(m.wager,'artist','Player raises before first roll'))
- m.phase='raise_pending'
- if merchant_policy(m,'accept') then
-  assert(Wager.accept(m.wager,'merchant','Merchant calls posted raise'))
-  m.phase='betting'
- else
-  assert(Wager.fold(m.wager,'merchant','Merchant declines the player raise'))
-  assert(Duel.fold_merchant(m.base))
-  sync(m)
- end
- return true
-end
-function M.accept(m)
- if m.phase~='raise_pending' or m.wager.pending~='merchant' then return false end
- if not Wager.accept(m.wager,'artist','Player accepts merchant raise') then return false end
- m.phase='betting'
+ assert(Wager.raise(m.wager,'artist','Player raises before first roll'))
+ note(m,'artist','voluntary_raise',
+  ('Rialzo volontario di 2 soldi, pareggiato dal Mercante. Offerta: %d punti.'):format(m.base.hand.offer))
  return true
 end
 function M.start_dice(m)
@@ -113,8 +75,7 @@ function M.start_dice(m)
  return true
 end
 function M.fold(m)
- if m.phase~='raise_pending' and m.phase~='betting' and m.phase~='player' then return false end
- if m.phase~='raise_pending' and m.wager.pending then return false end
+ if m.phase~='betting' and m.phase~='player' then return false end
  if not Wager.fold(m.wager,'artist','Player withdraws from this proof') then return false end
  assert(Duel.fold_artist(m.base))
  sync(m)
