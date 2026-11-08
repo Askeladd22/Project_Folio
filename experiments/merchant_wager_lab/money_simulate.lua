@@ -138,7 +138,7 @@ end
 function M.calibration_report(count,seed)
  assert(type(count)=='number' and count%1==0 and count>=1 and count<=1500)
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed+count-1<2147483647)
- local profiles={'legacy','mid','high'}
+ local profiles={'legacy','mid','high','spread','swing'}
  local out={('20-token calibration | %d matched seeds from %d'):format(count,seed),
   'Profile | Player policy | Raises | Artist wins | Merchant wins | Artist win % | Merchant avg opening bid | X openings'}
  for _,profile in ipairs(profiles) do
