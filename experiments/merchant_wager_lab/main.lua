@@ -97,9 +97,9 @@ local function button(id,label,x,y,w,h,style,enabled)
   style=='danger' and P.wine or
   style=='quiet' and P.paperShade or P.paperLight
  fillrect(x,y,w,h,bg,3,enabled and 1 or 0.38)
- stroke(x,y,w,h,style=='primary' or style=='danger' and P.shadow or P.soft,3,1)
+ stroke(x,y,w,h,(style=='primary' or style=='danger') and P.shadow or P.soft,3,1)
  printat(label,x+8,y+math.max(6,(h-font.body:getHeight())/2),font.body,
-  style=='primary' or style=='danger' and P.ivory or P.ink,w-16,'center')
+  (style=='primary' or style=='danger') and P.ivory or P.ink,w-16,'center')
 end
 local function die(x,y,size,face,selected,used,enabled)
  local bg=used and P.paperShade or selected and P.highlight or P.paperLight
