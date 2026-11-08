@@ -123,10 +123,8 @@ local function new_game(seed)
  app.saved=false;app.save_note='';app.overlay=nil;app.mode='play'
 end
 local function phase_help(m)
- if m.phase=='raise_pending' then
-  return 'Il Mercante ha aggiunto 2 soldi. Accetta per giocare, oppure concedigli la mano.'
- elseif m.phase=='betting' then
-  return 'Le puntate iniziali sono sul tavolo. Puoi alzare la posta prima del primo lancio.'
+ if m.phase=='betting' then
+  return 'Gioca con la posta base o alzala volontariamente: il Mercante pareggia sempre.'
  elseif m.phase=='player' then
   return 'Scegli i dadi da accantonare. Incassa o rilancia: un Farkle azzera il provvisorio.'
  elseif m.phase=='merchant_decision' then
@@ -183,13 +181,11 @@ local function draw_offer(m)
  rule(433,174,1,P.paperShade)
  printat('POSTA SUL TAVOLO',477,171,font.small,P.soft)
  printat(format_cash(w.pot),477,196,font.head,P.gold,438)
- if m.phase=='raise_pending' then
-  printat('4 soldi iniziali + 2 soldi rilanciati dal Mercante',476,246,font.small,P.soft,448)
-  printat('Se accetti: il piatto sale a 8 soldi. Se rifiuti: perdi i 2 già impegnati.',
-   56,294,font.body,P.wine,865)
- elseif m.phase=='betting' then
-  printat('2 soldi a testa già depositati',476,246,font.small,P.soft,448)
-  printat('Un solo rialzo per mano, sempre prima di lanciare i dadi.',
+ if m.phase=='betting' then
+  printat(w.raised and '4 soldi iniziali + 2 soldi a testa di rialzo' or
+   '2 soldi a testa già depositati',476,246,font.small,P.soft,448)
+  printat(w.raised and 'Posta concordata: ora lancia i dadi.' or
+   'Il rialzo è facoltativo: il Mercante lo pareggia senza interrompere la prova.',
    56,294,font.body,P.ink,855)
  elseif m.phase=='player' then
   printat('La posta è già concordata: ora contano i dadi.',477,246,font.small,P.soft,438)
@@ -223,22 +219,16 @@ end
 local function draw_wallet(m)
  fillrect(35,596,915,26,P.shadow,2,0.75)
  printat('IL TUO PATRIMONIO  '..format_cash(m.wager.wallet.artist),51,599,font.small,P.ivory)
- local phrase=(m.wager.pending=='merchant') and 'Rialzo in attesa di risposta' or
-  (m.phase=='betting' and 'Decidi prima di giocare' or
-  m.phase=='player' and 'Incassa o rischia un altro lancio' or 'Duello in corso')
+ local phrase=m.phase=='betting' and 'Scegli la posta e lancia' or
+  (m.phase=='player' and 'Incassa o rischia un altro lancio' or 'Duello in corso')
  printat(phrase,578,599,font.small,P.paper,360,'right')
 end
 local function draw_controls(m)
  app.buttons={}
  local y=639
- if m.phase=='raise_pending' then
-  button('accept','ACCETTA · +2 SOLDI',48,y,350,48,'primary',true)
-  button('fold','RIFIUTA · PERDI 2 SOLDI',414,y,354,48,'danger',true)
- elseif m.phase=='betting' then
-  button('raise','ALZA LA POSTA · 2 SOLDI',48,y,312,48,'quiet',
-   Money.can_propose(m))
-  button('start','LANCIA I DADI',373,y,340,48,'primary',true)
-  button('fold','RITIRATI',723,y,203,48,'danger',true)
+ if m.phase=='betting' then
+  button('raise','ALZA LA POSTA · +2 SOLDI',48,y,380,48,'quiet',Money.can_propose(m))
+  button('start','LANCIA I DADI',446,y,480,48,'primary',true)
  elseif m.phase=='player' then
   button('roll',m.base.turn.phase=='fresh' and 'LANCIA [SPAZIO]' or
    'RILANCIA [SPAZIO]',48,y,218,48,'primary',Money.can_roll(m))
@@ -344,8 +334,7 @@ local function press(id)
  if id=='ledger' then app.overlay='ledger';return end
  if id=='box' then app.overlay='box';return end
  if id=='replay' then new_game(app.seed);return end
- if id=='accept' then Money.accept(m)
- elseif id=='raise' then Money.propose(m)
+ if id=='raise' then Money.propose(m)
  elseif id=='start' then Money.start_dice(m)
  elseif id=='fold' then Money.fold(m)
  elseif id=='roll' then Money.roll(m)
@@ -444,7 +433,6 @@ function love.keypressed(key)
  if key:match('^[1-6]$') then Money.toggle(m,tonumber(key));return end
  local keys={space='roll',a='take',i='bank',p='fold',c='advance',n='next'}
  if key=='return' or key=='kpenter' then
-  if m.phase=='raise_pending' then press('accept')
-  elseif m.phase=='betting' then press('start') end
+  if m.phase=='betting' then press('start') end
  elseif keys[key] then press(keys[key]) end
 end

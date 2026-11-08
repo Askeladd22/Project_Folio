@@ -26,11 +26,7 @@ local function play(seed,raises,policy,box_profile)
  for _=1,300 do
   if m.phase=='over' then return m end
   actions=actions+1
-  if m.phase=='raise_pending' then
-   -- A fixed public heuristic, not an oracle or prediction of future dice.
-   if m.base.hand.offer>=80 then assert(Money.fold(m))
-   else assert(Money.accept(m)) end
-  elseif m.phase=='betting' then
+  if m.phase=='betting' then
    if raises and Money.can_propose(m) and m.base.hand.offer<=30
        and not raised_by_player then
     raised_by_player=true
@@ -69,8 +65,7 @@ M.play=play
 local function bucket()
  return {matches=0,artist_wins=0,merchant_wins=0,player_money=0,
   merchant_money=0,hands=0,raises=0,folds=0,banks=0,rerolls=0,
-  merchant_reversals=0,insolvent=0,player_proposals=0,merchant_proposals=0,
-  declined_raises=0}
+  merchant_reversals=0,insolvent=0,player_proposals=0}
 end
 local function add(summary,m)
  local r=Money.record(m)
@@ -84,10 +79,9 @@ local function add(summary,m)
  summary.folds=summary.folds+r.folds
  if r.reason=='insolvent' then summary.insolvent=summary.insolvent+1 end
  for _,event in ipairs(m.wager.ledger) do
-  if event.action=='RAISE' then
-   if event.actor=='artist' then summary.player_proposals=summary.player_proposals+1
-   else summary.merchant_proposals=summary.merchant_proposals+1 end
-  elseif event.action=='REFUND' then summary.declined_raises=summary.declined_raises+1 end
+  if event.action=='RAISE' and event.actor=='artist' then
+   summary.player_proposals=summary.player_proposals+1
+  end
  end
  for _,h in ipairs(m.base.completed_hands) do
   summary.rerolls=summary.rerolls+(h.player_rerolls or 0)

@@ -10,6 +10,25 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.59] - 2026-11-08
+
+**Stato:** semplificazione della posta nel Merchant Duel Lab V4;
+nessuna modifica al Farkle principale né alla fisica del gioco.
+
+### Modificato
+
+- Eliminate le scelte obbligate «Accetta / Rifiuta» e i rialzi
+  imposti dal Mercante prima del lancio.
+- Il giocatore può aumentare la posta da 4 a 8 soldi a sua scelta;
+  il Mercante pareggia immediatamente e non blocca la mano.
+- Aggiornati interfaccia, logica, simulazione, test e registro monetario;
+  non esistono più rialzi in sospeso o restituzioni per rifiuto.
+- Risultati di bilanciamento con la vecchia meccanica da ricalibrare.
+
+### Verifica
+
+- Test Lua 5.4, LuaJIT, calibrazione e smoke LÖVE da eseguire in CI.
+
 ## [0.1.58] - 2026-11-08
 
 ### Ricerca

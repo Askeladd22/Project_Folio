@@ -32,8 +32,10 @@ il contenuto dagli scarti. Non ci sono carte per il giocatore.
 
 La V4 utilizza il profilo **tail** scelto dopo un confronto preliminare
 a seed appaiati (200 partite per combinazione). Con la policy Farkle
-`balanced`, l'Incisore ha vinto 50% degli incontri senza rialzi e
-51,5% con rialzi. I token comuni sono da 10/20/25 punti;
+`balanced`, nella simulazione precedente l'Incisore aveva vinto 50%
+senza rialzi e 51,5% con il vecchio sistema. Questi risultati **non
+misurano il nuovo rialzo volontario**, che richiede ricalibrazione.
+I token comuni sono da 10/20/25 punti;
 il raro da 55 punti aumenta l'ampiezza delle offerte possibili
 (prima 80 punti massimo nei primi due token; ora 110)
 senza alterare i 20 token né il numero di X.
@@ -55,10 +57,11 @@ compaiono nel menu per evitare un'interfaccia diagnostica.
 - 1 lira = 20 soldi = 240 denari: lira come unità di conto veneziana.
 - Ciascuno parte con 1 lira, registrata come 240 denari interi.
 - Ogni mano: **2 soldi a testa**, piatto iniziale **4 soldi**.
-- **Un solo rialzo**, prima del lancio: +2 soldi per contendente;
-  dopo l'accettazione il piatto vale **8 soldi**.
-- Il proponente versa subito il rialzo. Se viene rifiutato, il rialzo
-  *non chiamato* viene restituito: il vincitore incassa solo le ante.
+- **Un solo rialzo volontario del giocatore** prima del lancio:
+  +2 soldi per contendente, pareggiati subito dal Mercante, per
+  un piatto da **8 soldi**. Senza rialzo, il piatto resta da **4 soldi**.
+- Il Mercante non impone rialzi e non impedisce l'inizio del duello
+  con richieste di accettazione. Nessuna puntata resta in attesa.
 - Un'offerta numerica del Mercante e il punteggio Farkle incassato
   decidono il vincitore della mano; **i punti non sono denaro**.
 - Il Mercante può eseguire una controfferta secondo la cassa pubblica
@@ -72,8 +75,9 @@ compaiono nel menu per evitare un'interfaccia diagnostica.
 - **1–6 / clic** — Seleziona un dado.
 - **A** — Accantona la combinazione selezionata.
 - **I** — Incassa e lascia rispondere il Mercante.
-- **Invio** — Inizia la mano oppure accetta un rialzo proposto.
-- **P** — Ritirati e concedi la prova.
+- **Invio** — Inizia la mano senza rialzare.
+- **P** — Ritirati e concedi la prova durante il turno di dadi.
+- **Alza la posta** — Pulsante facoltativo; pareggio automatico.
 - **C** — Risolvi la controfferta automatica.
 - **N** — Mano successiva.
 - **E** — Libro mastro monetario.
@@ -99,8 +103,8 @@ Nel save separato LÖVE `project-folio-merchant-wager-lab`:
 - `merchant_v4_policy.csv`
 - `merchant_v4_dice_decisions.csv`
 
-Il libro mastro rende leggibili deposito, rialzo, accettazione,
-restituzione, ritiro e vincita. I dettagli numerici della cassa
+Il libro mastro mostra deposito, rialzo volontario, pareggio automatico,
+ritiro e vincita. I dettagli numerici della cassa
 si aprono su richiesta, non rimangono esposti nella scena principale.
 
 ## Diagnostica e limiti
@@ -111,8 +115,8 @@ lua5.4 tests/labs/merchant_duel_money_test.lua
 luajit tests/labs/merchant_duel_money_test.lua
 ```
 
-`--money-simulate N --seed S` confronta con/senza rialzi usando seed
-accoppiati e tre policy giocatore. Queste policy non rappresentano
+`--money-simulate N --seed S` confronta posta base e rialzo volontario
+usando seed accoppiati e tre policy giocatore. Queste policy non rappresentano
 giocatori umani: la qualità della scelta fra rilancio e incasso va
 verificata tramite playtest.
 

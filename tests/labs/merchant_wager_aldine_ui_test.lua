@@ -44,6 +44,8 @@ assert(saw('OFFERTA DEL MERCANTE'))
 assert(saw('6 D6'))
 assert(saw('IL TUO PATRIMONIO'))
 assert(not saw('V2 —') and not saw('Il Correttore'),'removed prototypes must not be in the UI')
+assert(not saw('ACCETTA ·') and not saw('RIFIUTA ·'),'no forced acceptance buttons')
+assert(not saw('Accetta per giocare'),'no mandatory acceptance prompt')
 printed={}
 love.keypressed('e');love.draw()
 assert(saw('LIBRO MASTRO'))
