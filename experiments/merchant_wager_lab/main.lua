@@ -313,7 +313,7 @@ local function draw_overlay(m)
    253,573,font.small,P.olive,740)
  else
   local remaining=Box.remaining(m.base.box)
-  local values=Box.symbols
+  local values=m.base.box.symbols
   for i=1,5 do
    local card=values[i]
    printat(('%s   +%d pt   %d / %d ancora in cassa'):format(
