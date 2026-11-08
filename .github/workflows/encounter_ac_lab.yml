@@ -1,0 +1,39 @@
+name: Encounter Research A/C
+on:
+  pull_request:
+    paths:
+      - 'experiments/encounter_ac_lab/**'
+      - 'tests/labs/encounter_ac_test.lua'
+      - 'tests/labs/encounter_ac_ui_test.lua'
+      - '.github/workflows/encounter_ac_lab.yml'
+      - 'src/farkle/rules.lua'
+  workflow_dispatch:
+jobs:
+  encounter-ac:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua, LuaJIT and LÖVE
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit love xvfb
+      - name: Parse lab sources
+        run: |
+          for file in experiments/encounter_ac_lab/{engine,simulate,main,conf}.lua tests/labs/encounter_ac_{test,ui_test}.lua; do
+            luac5.4 -p "$file"
+          done
+      - name: Headless rules and UI regression (Lua 5.4)
+        run: |
+          lua5.4 tests/labs/encounter_ac_test.lua
+          lua5.4 tests/labs/encounter_ac_ui_test.lua
+          lua5.4 -e "print(require('experiments.encounter_ac_lab.simulate').report(40,101))"
+      - name: Headless rules and UI regression (LuaJIT)
+        run: |
+          luajit tests/labs/encounter_ac_test.lua
+          luajit tests/labs/encounter_ac_ui_test.lua
+      - name: LÖVE smoke with software OpenGL
+        env:
+          ENCOUNTER_AC_SMOKE: '1'
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          ALSOFT_DRIVERS: 'null'
+        run: timeout 40s xvfb-run -a -s '-screen 0 1280x720x24' love experiments/encounter_ac_lab
