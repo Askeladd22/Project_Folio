@@ -10,6 +10,32 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.55] - 2026-11-08
+
+**Stato:** prototipo opt-in Merchant Duel V4: valuta veneziana e puntate.
+Non attivo nel gioco principale.
+
+### Aggiunto
+
+- V4 del Merchant Wager Lab basata sulla V3, con Farkle canonico a sei D6
+  e cassa del Mercante invariata (20 token).
+- Lira di piccoli come moneta di conto: 1 lira = 20 soldi = 240 denari;
+  tutti i valori monetari memorizzati in denari interi.
+- Patrimonio iniziale di 1 lira per contendente, ante di 2 soldi a testa per
+  mano e unico rialzo opzionale di 2 soldi per contendente prima del primo tiro.
+- Decisione autonoma e documentata del Mercante su proposta, chiamata
+  e rifiuto del rialzo, basata su offerta e cassa pubbliche.
+- Piatto liquidato dopo ogni mano, ritiri, restituzione del rialzo
+  non chiamato, blocchi contro doppi trasferimenti e controllo di conservazione.
+- UI e libro mastro dedicati, CSV V4 separati e confronto con/senza rialzi.
+- Test isolati, verifica della V3 originale e LÖVE smoke.
+
+### Invariato
+
+- Punteggi e RNG Farkle di produzione, fisica 3D, regole e composizione
+  della cassa V3, tutte le altre modalità sperimentali.
+- Nessun acquisto, prestito, all-in o economia permanente.
+
 ## [0.1.54] - 2026-11-07
 
 **Stato:** prototipo asimmetrico P4ND0RA contro Farkle; solo laboratorio,
