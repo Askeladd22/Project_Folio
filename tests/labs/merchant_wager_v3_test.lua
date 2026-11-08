@@ -65,7 +65,7 @@ force.hand.offer=10
 force.hand.player_result=20
 force.box.draw_pile={card(5),card(4)}
 local p=Duel.preview_decision(force)
-assert(p.chance==1 and p.action=='continue')
+assert(p.chance==0.5 and p.action=='continue')
 assert(Duel.advance_merchant(force))
 assert(force.hand.winner=='merchant' and force.hand.offer==50)
 local decline=fresh()
