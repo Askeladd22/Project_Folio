@@ -10,6 +10,35 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.56] - 2026-11-08
+
+**Stato:** redesign del Merchant Duel Lab e rimozione prototipi scartati.
+Nessuna modifica al gameplay principale.
+
+### Cambiato
+
+- Laboratorio avvia direttamente l'unica modalità giocabile V4. Rimossa la
+  selezione dei prototipi V2, V3 standalone e Il Correttore.
+- Ridisegnata la plancia LÖVE riutilizzando gli asset Project Folio:
+  printshop-room.png, merchant.png, Aldine Aetna e Cardo.
+- Separata la gerarchia di offerta in punti e piatto in soldi: spiegazione
+  del rialzo non ancora chiamato (6 soldi, 8 dopo accettazione).
+- Dadi e patrimonio più evidenti; cassa dettagliata e libro mastro sono
+  pannelli opzionali richiamabili durante la partita.
+
+### Rimosso
+
+- Codice V2/Correttore, UI e registri V3 come modalità autonoma, insieme
+  ai test dei prototipi ritirati. L'offerta, la cassa e la policy V3 restano
+  nel motore perché sono utilizzate dalla V4.
+- Comandi CLI --simulate e --analyze dei prototipi scartati.
+
+### Verifica
+
+- Generatore deterministico estratto in rng.lua senza alterarne la sequenza.
+- Nuovo test di scena e mantenimento dei test monetari e del motore V3.
+- Smoke LÖVE e controlli Lua 5.4/LuaJIT dedicati.
+
 ## [0.1.55] - 2026-11-08
 
 **Stato:** prototipo opt-in Merchant Duel V4: valuta veneziana e puntate.
