@@ -29,6 +29,12 @@ a gameplay, fisica, asset o codice eseguibile.
 - docs/README.md indirizza al nuovo indice di ricerca e segnala
   che il precedente corpus non è presente in main.
 
+### Corretto
+
+- CI: il test del loader GLB (dipendente da LuaJIT FFI) viene eseguito
+  nel blocco LuaJIT, non nel blocco incompatibile Lua 5.4; loader e
+  gameplay non sono modificati.
+
 ### Verifiche
 
 - Esaminati README, documenti canonici, script simulazioni, test e workflow
