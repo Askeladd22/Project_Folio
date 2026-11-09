@@ -1,7 +1,7 @@
 # Project Folio — documentazione essenziale
 
-La cartella `docs/` contiene **7 documenti**, uno per argomento;
-`research/` conserva le ricerche non canoniche. La versione è in
+La cartella `docs/` contiene **7 documenti** canonici, uno per argomento;
+`research/` ospita il nuovo laboratorio R&D, separato dal gameplay. La versione è in
 [`version.txt`](../version.txt) e lo storico nel
 [changelog](../CHANGELOG.md).
 
@@ -21,6 +21,6 @@ nei file canonici sono recuperabili nella
 Le parti esplorative **non** sono regole approvate né funzionalità
 necessariamente implementate.
 
-Per gli studi separati di **Incontri e Segni**, medaglie,
-Tabletop Simulator e i PDF sui giochi storici:
-[Indice della ricerca](../research/README.md).
+Per ricerca, fonti, comparazioni, protocolli numerici e decisioni:
+[Research & Development Lab](../research/README.md).
+Gli studi precedenti di **Incontri e Segni**, medaglie, Tabletop Simulator e PDF storici citati nella documentazione non risultano presenti nella main esaminata il 9 novembre 2026: recuperarli dalla cronologia solo quando necessario, senza trattarli come file attuali.

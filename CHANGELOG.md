@@ -10,6 +10,32 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.61] - 2026-11-09
+
+**Stato:** istituzione del laboratorio R&D documentale; nessuna modifica
+a gameplay, fisica, asset o codice eseguibile.
+
+### Aggiunto
+
+- Cartella research/ con indice, protocollo di ricerca e gate di revisione;
+  inventario comparativo dei prototipi, prima domanda RQ-001 e registro decisioni.
+- Brief Deep research, istruzioni per Progetto ChatGPT, protocollo simulazioni
+  e schede per fonti, esperimenti e playtest.
+- Distinzione esplicita tra dati simulati, playtest umani e risultati
+  precedenti non replicati; niente promozione automatica di prototipi.
+
+### Modificato
+
+- docs/README.md indirizza al nuovo indice di ricerca e segnala
+  che il precedente corpus non è presente in main.
+
+### Verifiche
+
+- Esaminati README, documenti canonici, script simulazioni, test e workflow
+  esistenti sul commit di base 2239cd55; non sono state eseguite
+  simulazioni, regressioni o playtest per questa PR.
+- Da verificare: GitHub Actions della PR e prima esecuzione del baseline RQ-001.
+
 ## [0.1.60] - 2026-11-08
 
 **Stato:** ricerca isolata per un sistema di encounter; gameplay e
