@@ -51,7 +51,8 @@ function M.new(seed,id,opts)
  opts=opts or {}
  -- The V4 default is the playtested equal-expectation 'tail' profile.
  -- Legacy scores remain available only for isolated historical comparisons.
- local b=Duel.new(seed,id,opts.box_profile or 'tail')
+ local b=Duel.new(seed,id,opts.box_profile or 'tail',
+  {opening_x_mode=opts.opening_x_mode})
  local m={seed=seed,id=id or 1,base=b,
   wager=Wager.new(seed,id),raises_enabled=opts.raises_enabled~=false,
   policy_log={},phase=nil,message='',winner=nil,end_reason=nil,saved=false}

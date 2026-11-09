@@ -43,21 +43,34 @@ end
 local function begin_hand(m,number)
  m.hand={number=number,initial_symbols={},symbols={},initial_offer=0,offer=0,
   player_result=nil,player_farkle=false,player_rerolls=0,char_draws=0,
-  counteroffers=0,x_count=0,merchant_decisions={},merchant_continues=0,
+  counteroffers=0,x_count=0,opening_x_discarded=0,opening_draw_count=0,
+  opening_numeric_symbols={},merchant_decisions={},merchant_continues=0,
   merchant_withdrawals=0,player_decisions={}}
- for _=1,INITIAL_DRAW do
+ -- EX-001 opt-in experimental opening. Baseline unchanged by default.
+ local numerics=0
+ repeat
   local card=Box.draw(m.box)
-  m.hand.initial_symbols[#m.hand.initial_symbols+1]=card.id
-  m.hand.symbols[#m.hand.symbols+1]=card.id
-  m.hand.char_draws=m.hand.char_draws+1
+  local h=m.hand
+  h.initial_symbols[#h.initial_symbols+1]=card.id
+  h.symbols[#h.symbols+1]=card.id
+  h.char_draws=h.char_draws+1
+  h.opening_draw_count=h.opening_draw_count+1
   if card.id=='X' then
-   m.hand.x_count=m.hand.x_count+1;m.x_draws=m.x_draws+1
-  else m.hand.initial_offer=m.hand.initial_offer+card.points end
- end
+   h.x_count=h.x_count+1;m.x_draws=m.x_draws+1
+   if m.opening_x_mode=='redraw' then
+    h.opening_x_discarded=h.opening_x_discarded+1
+   end
+  else
+   numerics=numerics+1
+   h.opening_numeric_symbols[#h.opening_numeric_symbols+1]=card.id
+   h.initial_offer=h.initial_offer+card.points
+  end
+ until (m.opening_x_mode=='redraw' and numerics==INITIAL_DRAW)
+    or (m.opening_x_mode=='baseline' and m.hand.opening_draw_count==INITIAL_DRAW)
  m.hand.offer=m.hand.initial_offer
  m.turn=Rules.new('control')
  m.phase='player'
- if m.hand.x_count>0 then
+ if m.hand.x_count>0 and m.opening_x_mode=='baseline' then
   m.hand.player_result=0
   m.last_merchant_action='Offerta iniziale fallita: è uscito X.'
   finish_hand(m,'artist','initial_x')
@@ -67,14 +80,18 @@ local function begin_hand(m,number)
  end
 end
 
-function M.new(seed,id,box_profile)
+function M.new(seed,id,box_profile,opts)
+ opts=opts or {}
+ local opening_x_mode=opts.opening_x_mode or 'baseline'
+ assert(opening_x_mode=='baseline' or opening_x_mode=='redraw','invalid EX-001 opening X mode')
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed<2147483647,
   'seed must be integer 1..2147483646')
  local player_rng=RNG.new_rng(seed)
  local merchant_seed=1+((seed*48271)%2147483646)
  local merchant_rng=RNG.new_rng(merchant_seed)
  local m={id=id or 1,seed=seed,player_rng=player_rng,merchant_rng=merchant_rng,
-  box=Box.new(merchant_rng,box_profile),phase='player',round=1,score={player=0,merchant=0},
+  box=Box.new(merchant_rng,box_profile),opening_x_mode=opening_x_mode,
+  phase='player',round=1,score={player=0,merchant=0},
   hands_won={artist=0,merchant=0},reserve={artist=4,merchant=4},
   deposited={artist=1,merchant=1},pot=2,initial_pot=2,max_pot=2,
   completed_hands={},decisions={},counteroffers=0,merchant_withdrawals=0,x_draws=0,
