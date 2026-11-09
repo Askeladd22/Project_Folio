@@ -42,6 +42,11 @@ jobs:
         run: |
           set -eu
           for test in $(find tests -name '*_test.lua' | sort); do
+            # GLB loader depends on LuaJIT FFI; the following LuaJIT step runs it.
+            if [ "$test" = "tests/engine3d/glb_loader_test.lua" ]; then
+              echo "SKIP under Lua 5.4: GLB loader requires LuaJIT FFI"
+              continue
+            fi
             echo "::group::$test"
             # The shipping LOVE runtime uses LuaJIT/5.1's global unpack.
             lua5.4 -e 'unpack=table.unpack' "$test"
