@@ -1,0 +1,40 @@
+name: RQ-001 EX-TP-001 finite reserve pilot
+on:
+  push:
+    branches:
+      - experiments/rq001-tre-prove-riserva-finita
+
+jobs:
+  tp-001:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua 5.4 and LuaJIT
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit
+      - name: Syntax check headless lab
+        run: |
+          luac5.4 -p experiments/tre_prove_reserve_lab/engine.lua
+          luac5.4 -p experiments/tre_prove_reserve_lab/simulate.lua
+          luac5.4 -p experiments/tre_prove_reserve_lab/run.lua
+          luac5.4 -p tests/labs/tre_prove_reserve_test.lua
+      - name: Test canonical rules and invariants (Lua 5.4)
+        run: lua5.4 tests/labs/tre_prove_reserve_test.lua
+      - name: Test canonical rules and invariants (LuaJIT)
+        run: luajit tests/labs/tre_prove_reserve_test.lua
+      - name: Run preregistered 54000-match pilot
+        run: |
+          mkdir -p tp-results
+          lua5.4 experiments/tre_prove_reserve_lab/run.lua 1001 1000 tp-results
+          test "$(wc -l < tp-results/tp_matches.csv)" -eq 54001
+          sha256sum tp-results/tp_matches.csv tp-results/report.txt > tp-results/SHA256SUMS
+          grep -q 'PAIRED' tp-results/report.txt
+      - name: Archive full raw outcomes, summaries and hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rq001-tp001-finite-reserve-pilot
+          path: tp-results/
+          if-no-files-found: warn
