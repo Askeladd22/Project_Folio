@@ -136,7 +136,8 @@ local function rival_score(s,policy,id,amount)
   if policy=='aggressive' then
     return 14*close+4*amount+2*l.rival+1.8*l.player-0.1*amount
   elseif policy=='conserve' then
-    return 20*close+3*l.player+1.5*l.rival+1.0*amount-9*amount+\n      (l.player>=3 and 12 or 0)
+    return 20*close+3*l.player+1.5*l.rival+1.0*amount-9*amount+
+      (l.player>=3 and 12 or 0)
   elseif policy=='balanced' then
     return 16*close+3*amount+1.2*l.player+0.8*l.rival-
       amount*(3.8+12*scarcity+0.3*(M.MAX_ROUNDS-s.round))
