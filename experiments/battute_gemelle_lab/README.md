@@ -154,11 +154,20 @@ i CSV come artefatti CI; non altera il gioco.
 
 - **G0:** fonti e SHA della baseline documentati.
 - **G1:** regole isolate e invarianti definiti; review ancora aperta.
-- **G2:** codice/test scritti; esecuzione Lua e CI da verificare.
-- **G3:** pilot e controfattuale da eseguire; risultati NON
-  ancora dichiarati.
+- **G2:** PASS; 11 casi Lua 5.4 e 11 LuaJIT, workflow CI verde
+  sul commit `16a48c3c163811170ae50c3f4d2c3a8cccdef277`.
+- **G3a:** NON SUPERATO; nessuna condizione raggiunge 8/80 stati
+  CONTINUE decisivi (massimo 7/80).
+- **G3b:** NON SUPERATO; 0/160 inversioni decisive cambiando
+  policy del Rispondente.
 - **G4:** playtest umano non eseguito.
-- **G5:** nessuna decisione di integrazione.
+- **G5:** decisione provvisoria: sospendere questa forma minima,
+  non integrare. Nessuna approvazione canonica.
+
+**Risultati, limiti e dati grezzi:** [scheda EX-BG-001](../../research/EX-BG-001.md),
+[CI #42783312311](https://github.com/Askeladd22/Project_Folio/actions/runs/42783312311),
+[CSV e report](https://github.com/Askeladd22/Project_Folio/actions/runs/42783312311/artifacts/13746373235).
+Le soglie preregistrate sopra non sono state cambiate dopo i risultati.
 
 Non modificare `src/` e non aprire una PR di integrazione
 senza decisione esplicita e aggiornamento version.txt/CHANGELOG.md
