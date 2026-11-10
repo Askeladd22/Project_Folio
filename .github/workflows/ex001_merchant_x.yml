@@ -1,0 +1,35 @@
+name: EX-001 Merchant X experimental pilot
+on:
+  push:
+    branches:
+      - experiments/ex001-merchant-opening-x
+jobs:
+  ex001:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua interpreters
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit
+      - name: Existing Merchant tests
+        run: |
+          lua5.4 tests/labs/merchant_wager_v3_test.lua
+          lua5.4 tests/labs/merchant_duel_money_test.lua
+          luajit tests/labs/merchant_duel_money_test.lua
+      - name: EX-001 isolated deterministic checks
+        run: |
+          lua5.4 tests/labs/ex001_merchant_x_test.lua
+          luajit tests/labs/ex001_merchant_x_test.lua
+      - name: EX-001 paired pilot 1000-1999
+        run: |
+          mkdir -p /tmp/ex001
+          lua5.4 experiments/ex001_merchant_x_lab/run.lua 1000 1999 /tmp/ex001 | tee /tmp/ex001/summary.txt
+          test "$(wc -l < /tmp/ex001/ex001_matches.csv)" -eq 8001
+      - name: Preserve raw CSV and printed summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ex001-pilot-1000-1999
+          path: /tmp/ex001/*
+          if-no-files-found: error

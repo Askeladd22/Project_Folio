@@ -10,6 +10,23 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.62] - 2026-11-09
+
+Status: EX-001 standalone Merchant V4 research. No shipping Farkle, physics, assets, or UI changes.
+
+### Added
+- Opt-in initial X redraw variant, separate seeded 4-policy pilot and raw CSV reports under experiments/.
+- Deterministic EX-001 regression checks and a branch-only CI pilot workflow.
+- Frozen EX-001 experimental protocol; no champion was selected.
+
+### Modified
+- Merchant lab now accepts an opt-in opening_x_mode; default remains original V4.
+
+### Verification
+- Prior exact enumeration: 27/95 opening auto-win on the full box.
+- New Lua/CI pilot test results: pending branch push and workflow execution.
+- Human playtests, confirmatory holdout and gameplay integration: not performed.
+
 ## [0.1.61] - 2026-11-09
 
 **Stato:** istituzione del laboratorio R&D documentale; nessuna modifica
