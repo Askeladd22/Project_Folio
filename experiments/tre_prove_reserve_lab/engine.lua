@@ -63,9 +63,9 @@ function M.place(s,actor,id,amount)
   if actor~='player' and actor~='rival' then return false end
   if not valid_int(id,1,3) or not valid_int(amount,1,3) then return false end
   local l=s.lanes[id]
-  if l.owner or l[actor]+amount>4 then return false end
+  if l.owner then return false end
   if actor=='rival' and amount>s.cap then return false end
-  l[actor]=l[actor]+amount
+  l[actor]=math.min(M.TARGET,l[actor]+amount)
   if l[actor]==M.TARGET then l.owner=actor;log(s,'close_'..actor,id,amount) end
   return true
 end
@@ -136,7 +136,7 @@ local function rival_score(s,policy,id,amount)
   if policy=='aggressive' then
     return 14*close+4*amount+2*l.rival+1.8*l.player-0.1*amount
   elseif policy=='conserve' then
-    return 20*close+3*l.player+1.5*l.rival+1.0*amount-9*amount
+    return 20*close+3*l.player+1.5*l.rival+1.0*amount-9*amount+\n      (l.player>=3 and 12 or 0)
   elseif policy=='balanced' then
     return 16*close+3*amount+1.2*l.player+0.8*l.rival-
       amount*(3.8+12*scarcity+0.3*(M.MAX_ROUNDS-s.round))
@@ -209,7 +209,7 @@ function M.next_round(s)
   assert(s.round<=M.MAX_ROUNDS)
   s.turn=Rules.new('control')
   s.dice_rng=rng(M.round_seed(s.seed,s.round))
-  s.phase='dice';s.last_rival_lane=nil
+  s.phase='dice' -- retain previous rival response for next-round bait diagnostic
   return true
 end
 return M
