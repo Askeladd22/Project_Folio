@@ -1,0 +1,39 @@
+name: RQ-001 Battute Gemelle headless pilot
+on:
+  push:
+    branches:
+      - experiments/rq001-battute-gemelle-headless
+
+jobs:
+  bg-001:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua runtimes
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit
+      - name: Syntax checks
+        run: |
+          luac5.4 -p experiments/battute_gemelle_lab/engine.lua
+          luac5.4 -p experiments/battute_gemelle_lab/simulate.lua
+          luac5.4 -p experiments/battute_gemelle_lab/run.lua
+          luac5.4 -p tests/labs/battute_gemelle_test.lua
+      - name: Canonical rules and duel invariants (Lua 5.4)
+        run: lua5.4 tests/labs/battute_gemelle_test.lua
+      - name: Canonical rules and duel invariants (LuaJIT)
+        run: luajit tests/labs/battute_gemelle_test.lua
+      - name: Frozen 1000-seed pilot and STOP/CONTINUE counterfactual
+        run: |
+          mkdir -p bg-results
+          lua5.4 experiments/battute_gemelle_lab/run.lua 1000 1001 bg-results | tee bg-results/report.txt
+          test "$(wc -l < bg-results/bg_matches.csv)" -eq 10001
+          test "$(wc -l < bg-results/bg_states.csv)" -eq 321
+      - name: Archive raw results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rq001-bg001-headless-results
+          path: bg-results/
+          if-no-files-found: warn
