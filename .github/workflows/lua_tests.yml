@@ -36,7 +36,7 @@ jobs:
       - name: Lua 5.4 syntax check (headless source and tests)
         run: |
           set -eu
-          find src tests experiments/g3d_lab experiments/physics_lab -name '*.lua' -type f -print0 | xargs -0 -n 1 luac5.4 -p
+          find src tests experiments -name '*.lua' -type f -print0 | xargs -0 -n 1 luac5.4 -p
           luac5.4 -p main.lua conf.lua lib/core.lua
       - name: Merchant table geometry contract (independent gate)
         run: |
@@ -89,35 +89,6 @@ jobs:
           name: merchant-table
           path: ${{ runner.temp }}/merchant-table/merchant-*.png
           if-no-files-found: error
-      - name: Deterministic A/B/C signs benchmark (research only)
-        run: |
-          luajit experiments/signs_lab/run.lua 256 20261031
-      - name: Build and smoke-test isolated native FPS lab
-        run: |
-          set -eu
-          bash experiments/physics_lab/build_linux.sh
-          # Lab 4 is an isolated hold-only test; no production physics.
-          luajit experiments/physics_lab/test_grip.lua
-          luajit experiments/physics_lab/run_grip.lua > experiments/physics_lab/build/grip-ci.log
-          grep -E '^(GRIP |GRIP_COMPARE |NOTE:|PASS FPS Lab 4:)' experiments/physics_lab/build/grip-ci.log
-          # Lab 5: zero-discontinuity FPS held-body -> original Manuscript drop.
-          luajit experiments/physics_lab/run_handoff.lua 32 > experiments/physics_lab/build/handoff-ci.log
-          grep -E '^(HANDOFF |HANDOFF_MODE |PASS FPS Lab 5:)' experiments/physics_lab/build/handoff-ci.log
-          luajit experiments/physics_lab/run.lua 8 450
-          test -s experiments/physics_lab/build/results.csv
-          luajit experiments/physics_lab/test_floor_guard.lua
-          # Wider deterministic sample: 64 six-die rolls per solver.
-          luajit experiments/physics_lab/run.lua 64 450 lab2 > experiments/physics_lab/build/lab2-ci.log
-          grep -E '^(SUMMARY|CAUSES|GUARD|CSV:|NOTE:|WARNING:)' experiments/physics_lab/build/lab2-ci.log
-          test -s experiments/physics_lab/build/results-lab2.csv
-          test "$(wc -l < experiments/physics_lab/build/results-lab2.csv)" -eq 321
-          luajit experiments/physics_lab/test_support.lua
-          luajit experiments/physics_lab/run_support.lua 64 450 > experiments/physics_lab/build/lab3-ci.log
-          grep '^SUPPORT ' experiments/physics_lab/build/lab3-ci.log
-          test -s experiments/physics_lab/build/results-support.csv
-          test "$(wc -l < experiments/physics_lab/build/results-support.csv)" -eq 321
-          luajit experiments/physics_lab/run_contact_poses.lua
-          test "$(wc -l < experiments/physics_lab/build/results-contact-poses.csv)" -eq 19
       - name: Python source tests
         run: |
           set -eu

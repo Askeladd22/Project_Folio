@@ -74,7 +74,6 @@ local modules={
  'src/core/game_manager.lua',
  'src/core/navigation.lua',
  'src/core/presentation.lua',
- 'src/core/renderer_lab_boot.lua',
  'src/core/runtime_state.lua',
  'src/data/dice_schema.lua',
  'src/data/frontend_schema.lua',
@@ -98,7 +97,7 @@ local modules={
  'src/farkle/ui.lua',
  'src/screens/startup_splash.lua',
 }
-assert(#modules==30,'production allowlist must contain exactly 30 Lua files')
+assert(#modules==29,'production allowlist must contain exactly 29 Lua files')
 local expected={}
 for _,path in ipairs(modules) do
  local current=assert(io.open(path,'rb'),'missing consolidated module: '..path)
@@ -114,7 +113,7 @@ for path in listing:lines() do
  count=count+1
 end
 assert(listing:close(),'cannot enumerate production modules')
-assert(count==30,'expected exactly 30 production Lua files, found '..count)
+assert(count==29,'expected exactly 29 production Lua files, found '..count)
 
 local function exists(path)
  local command=windows and ('if exist "'..path:gsub('/','\\')..'" (exit 0) else (exit 1)')
@@ -132,15 +131,11 @@ for _,path in ipairs{'lib/core.lua','lib/licenses','resources/shaders/dice_glow.
  'scripts/run_lua_tests.py','scripts/tests/test_versioning.py','run_game.cmd',
  '.github/workflows/lua_tests.yml','docs/art_direction.md','docs/farkle_rules.md',
  'docs/project_vision.md','docs/technical.md','docs/versioning.md',
- 'docs/windows_technical_qa.md','experiments/fx_lab/run_lab.cmd',
- 'experiments/g3d_lab/run_lab.cmd','experiments/g3d_lab/run_in_game.cmd',
- 'experiments/physics_lab/build_linux.sh','experiments/physics_lab/build_windows.ps1'} do
+ 'docs/windows_technical_qa.md'} do
  assert(exists(path),'missing relocated path: '..path)
 end
 for _,path in ipairs{'Avvia.cmd','.github/workflows/lua-tests.yml',
- 'experiments/fx_lab/Avvia.cmd','experiments/g3d_lab/Avvia.cmd',
- 'experiments/g3d_lab/Avvia-Nel-Gioco.cmd','experiments/physics_lab/build-linux.sh',
- 'experiments/physics_lab/build-windows.ps1'} do
+} do
  assert(not exists(path),'old filename still present: '..path)
 end
 local doc_listing=assert(io.popen(windows and 'dir /b docs' or "find docs -maxdepth 1 -type f -printf '%f\\n'"))
@@ -217,4 +212,9 @@ assert(type(require('src.core.config').schema.expect_string)=='function')
 assert(type(require('src.core.game_manager').execution_order.register)=='function')
 assert(type(require('src.core.engine_bridge').EventBus.new)=='function')
 assert(not package.loaded['lib.g3d'],'shared UI and frontend must remain GPU-lazy')
-print('PASS source structure: exactly 30 modules, shared APIs and lazy GPU loading')
+local entry=assert(io.open('main.lua','rb'))
+local startup=entry:read('*a');entry:close()
+assert(not startup:find('src.core.renderer_lab_boot',1,true)
+ and not startup:find('experiments.',1,true),
+ 'normal startup must not dispatch into unavailable experiment modules')
+print('PASS source structure: exactly 29 modules, shared APIs, lazy GPU and isolated startup')
