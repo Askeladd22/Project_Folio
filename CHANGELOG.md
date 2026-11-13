@@ -10,6 +10,19 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.67] - 2026-11-13
+
+**Stato:** fix immediato della regressione di identità del layout introdotta durante la rimozione del selettore nella PR #123.
+
+### Corretto
+- `layout.build()` produce nuovamente `name='table_minimal'`, richiesto dalla validazione ufficiale.
+- Un controllo dedicato impedisce che l'identificatore del layout rimanga non inizializzato.
+
+### Verifiche
+- Baseline prima della correzione: CI PR #123 fallita nel gate `tests/hud/ui_v2_layout_contract_test.lua:6` (`shipping Merchant table layout is invalid`).
+- Test Lua 5.4 e LuaJIT, smoke GPU LÖVE, test Python e Windows: in attesa di verifica su questa nuova revisione.
+- Nessun cambiamento a Farkle, lancio fisico o g3d.
+
 ## [0.1.66] - 2026-11-13
 
 **Stato:** consolidamento della UI del Mercante sul solo percorso visuale `table_minimal`.

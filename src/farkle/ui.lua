@@ -120,7 +120,7 @@ function M.build(which)
   -- Production Farkle table: preserve a large 3D viewport, without the
   -- legacy commission/folio/tools sidebar.
   return {
-   name=which,
+   name='table_minimal',
    header=rect(44,20,1832,72),
    -- The rear seam leaves room for a larger illustrated opponent.
     host=rect(0,0,1920,614),
