@@ -10,6 +10,25 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.64] - 2026-11-13
+
+**Stato:** simplification del laboratorio grafico P1, senza cambiamenti al Tavolo del Mercante in produzione.
+
+### Rimosso
+- Layout alternativo sperimentale `open_codex` e API di confronto `layout.comparison()` / `layout.variants`, privi di consumatori gameplay attivi.
+- Overlay A/B di wireframe P1, relativo flag `MANUSCRIPT_UI_V2_LAYOUT_STUDY` e script di lancio.
+- Test del confronto visivo scartato e riferimento Python alla sua utilità dismessa.
+
+### Modificato
+- Il test di geometria verifica ora l'attuale layout `table_minimal` alle risoluzioni supportate e la non selezionabilità di `open_codex`.
+- Il test del vecchio `single_folio` non dipende più dall'alternativa `open_codex`; rimane temporaneamente per proteggere contratti ancora presenti.
+- Aggiornata la descrizione tecnica dello stato dei layout.
+
+### Verifica e limiti
+- Verifiche statiche in fase di preparazione: nomi rimossi, riferimenti residui e mantenimento del ramo `table_minimal`.
+- Test Lua/LuaJIT, smoke g3d Windows e verifica CI: non eseguiti localmente; attendono esecuzione nella pipeline e collaudo umano.
+- Farkle, medaglie, Folio accessibile, interazioni dadi, g3d, salvataggi e regolamento non modificati.
+
 ## [0.1.63] - 2026-11-13
 
 **Stato:** semplificazione interna della UI di produzione; nessuna modifica al gameplay Farkle, ai dadi fisici o al rendering g3d.

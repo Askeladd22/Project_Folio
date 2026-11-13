@@ -76,7 +76,10 @@ dei dadi. La prospettiva e il picking passano da
 `src/farkle/interaction.lua` (`projection`) e
 `src/engine3d/g3d/scene.lua` (`camera`). Per la geometria esatta
 consultare quei sorgenti e i test di proiezione, che seguono l'evoluzione
-dell'inquadratura.
+dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
+`MANUSCRIPT_UI_V2_LAYOUT_STUDY` sono stati ritirati. Il codice del layout
+`single_folio` resta per ora solo come riferimento di regressione, non
+è selezionabile nel gameplay normale.
 
 ## Rendering e risorse
 
