@@ -134,8 +134,7 @@ for _,path in ipairs{'lib/core.lua','lib/licenses','resources/shaders/dice_glow.
  'docs/windows_technical_qa.md'} do
  assert(exists(path),'missing relocated path: '..path)
 end
-for _,path in ipairs{'Avvia.cmd','.github/workflows/lua-tests.yml',
-} do
+for _,path in ipairs{'Avvia.cmd','.github/workflows/lua-tests.yml'} do
  assert(not exists(path),'old filename still present: '..path)
 end
 local doc_listing=assert(io.popen(windows and 'dir /b docs' or "find docs -maxdepth 1 -type f -printf '%f\\n'"))
