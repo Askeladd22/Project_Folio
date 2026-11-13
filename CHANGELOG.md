@@ -10,6 +10,26 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.69] - 2026-11-13
+
+**Stato:** simplification dell'inquadratura del Tavolo del Mercante.
+
+### Rimosso
+- Il flag interno `minimalHud`, costantemente true per il controller di produzione.
+- Il ramo non più utilizzato della camera ortografica e lo zoom elastico `interaction.projection` del vecchio HUD.
+- Il test del solo zoom non più raggiungibile dal gameplay, lasciando la verifica di presa e inquadratura nel test camera reale.
+
+### Conservato
+- Prospettiva g3d, formula di scala, seam del tavolo, selezione, lancio, picking e resa dei sei D6.
+- Proiezione ortografica matematica del motore generale `engine3d.view`, non legata al selettore HUD.
+- Varianti grafiche F8 esistenti, Folio modale e ricompense.
+
+### Verifiche e limiti
+- Baseline `main@2631b3c9` (0.1.68): CI completa Linux PASS.
+- **CI Linux PASS** sul commit `557681681f5b1fb19e78985bf88fccad9cde4104`: versionamento, lint e sintassi Lua, geometria HUD, suite complete Lua 5.4 e LuaJIT, GPU smoke LÖVE/Mesa per dadi e composizione Mercante, salvataggio frame e test Python ([run 43500967902](https://github.com/Askeladd22/Project_Folio/actions/runs/43500967902)).
+- Collaudo manuale Windows di prospettiva/picking/presa non eseguito.
+- Gameplay Farkle, solver, salvataggi e RNG invariati.
+
 ## [0.1.68] - 2026-11-13
 
 **Stato:** regressione dell'inventario UI dopo l'integrazione prematura delle PR #123 e #124.

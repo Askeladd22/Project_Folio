@@ -75,7 +75,7 @@ local Hud=require('src.farkle.ui').hud
 local game=require('src.farkle.rules').new()
 for _,wh in ipairs{{1920,1080},{3440,1440},{1280,1024}} do
  Res.refresh(wh[1],wh[2]); images={}
- Hud.draw({game=game,minimalHud=true})
+ Hud.draw({game=game})
  local expected=0
  for _,r in ipairs(images) do
   expected=expected+r.w*r.h

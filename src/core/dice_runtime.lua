@@ -222,7 +222,7 @@ local function get_mouse_delta()
 end
 
 local function apply_tray_camera_lock()
-    view.projection = Scriptorium.minimalHud and 'perspective' or nil
+    view.projection = 'perspective'
     view.yaw = TRAY_CAMERA.yaw
     view.pitch = TRAY_CAMERA.pitch
     view.distance = TRAY_CAMERA.distance
@@ -521,7 +521,7 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
     -- Keep the interaction rect on the tabletop, but draw airborne bodies
     -- in the transparent band above its rear rail.
     local render_viewport = tray
-    if Scriptorium.minimalHud and fitted_scale then
+    if fitted_scale then
         local _, highest = view.project(0, world_extents[3], DICE_SCENE_BOX_SCHEMA.height)
         local top = math.max(0, math.min(tray.y, math.floor(fitted_y + highest * fitted_scale)))
         -- Paint down to the window edge so the table's front and legs show;
@@ -576,7 +576,7 @@ local function draw_single_tray(tray, tray_layout, region, die_predicate, usable
         local x1, x2, y1, y2 = world_extents[1], world_extents[2], world_extents[3], world_extents[4]
         local gpu_candidates = {}
         local gpu_style = require('src.farkle.tabletop').tray_workshop.current
-        if Scriptorium.minimalHud and gpu_style == 'book' then gpu_style = 'merchant' end
+        if gpu_style == 'book' then gpu_style = 'merchant' end
         local gpu_divider = nil
         if draw_divider then
             local inset = math.max(0, tonumber(tray_layout.divider_y_inset) or 0)

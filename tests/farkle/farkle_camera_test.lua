@@ -1,18 +1,19 @@
 local V=require('src.engine3d.view')
 local T=require('src.farkle.tabletop').tray_view
-package.loaded['src.core.navigation']={resolution={get_scale=function() return 1 end}}
 dice={{body={position={0,0,0},{1,1,1}}}}
 local owner={};local rect={x=40,y=230,w=1370,h=550}
 local x,y,k=T.fit(owner,rect,V,{-7.2,7.2,-3.4,3.4})
+assert(V.projection=='perspective','shipping camera must remain perspective')
 for z=0,9 do
  dice[1].body.position={z*.3,-z*.2,z}
  local a,b,c=T.fit(owner,rect,V,{-7.2,7.2,-3.4,3.4})
- assert(x==a and y==b and k==c,'moving dice must not move the view')
- local a1=V.project(0,0,z);local b1=V.project(1,0,z)
- assert(math.abs((b1-a1)-V.cos_yaw*V.focus/V.distance)<1e-12,'orthographic width changes with height')
+ assert(x==a and y==b and k==c,'moving dice must not move the table')
+ assert(V.projection=='perspective')
 end
+-- Orthographic math is still supported by engine3d.view, not the HUD.
+V.projection='orthographic'
 local a,b,c=V.to_camera(0,0,0);local d,e,f=V.to_camera(5,4,7)
-assert(a==d and b==e and c==f,'parallel viewing rays required for orthographic culling')
+assert(a==d and b==e and c==f,'orthographic math must remain available')
 local diceSchema=require('src.data.dice_schema')
 local scene=diceSchema.scene
 local roll=diceSchema.roll
@@ -25,7 +26,7 @@ for _,width in ipairs{1280,1920,2560} do
  local factor=width/1920
  local tray={}
  for k,v in pairs(layout.tray) do tray[k]=v*factor end
- local owner={minimalHud=true}
+ local owner={}
  local cx,cy,k=T.fit(owner,tray,V,extents)
  local _,rear=V.project(0,extents[3],0)
  local left=V.project(extents[1]-.4,extents[3]-.4,scene.box.border_height)
@@ -76,4 +77,11 @@ V.yaw=originalYaw;V.cos_yaw=math.cos(V.yaw);V.sin_yaw=math.sin(V.yaw)
 local eyeX,eyeY,eyeZ=V.get()
 V.projection=nil
 local g,h,i=V.to_camera(5,4,7);assert(g==eyeX-5 and h==eyeY-4 and i==eyeZ-7)
-print('PASS stable tray framing, orthographic scale and projection-aware culling')
+local source=assert(io.open('src/farkle/tabletop.lua','rb'))
+local tabletop=source:read('*a');source:close()
+assert(not tabletop:find('minimalHud',1,true)
+ and not tabletop:find('Zoom.advance',1,true),
+ 'production table must not branch into retired HUD projection')
+assert(not require('src.farkle.interaction').projection,
+ 'elastic HUD zoom must not remain exported')
+print('PASS fixed perspective table, stable grip framing, and orthographic engine math')
