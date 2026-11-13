@@ -10,6 +10,32 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.65] - 2026-11-13
+
+**Stato:** eliminazione dei contratti orfani verso laboratori grafici/fisici già assenti dal repository; nessuna nuova meccanica o modifica ai solver di produzione.
+**PR:** [#122](https://github.com/Askeladd22/Project_Folio/pull/122).
+
+### Rimosso
+- Bootstrap opzionale di `experiments.g3d_lab` / `experiments.miniature_2d_lab`, che faceva riferimento a file non più presenti.
+- Quattro test headless dipendenti esclusivamente da laboratori rimossi (FPS handoff, metriche FPS, g3d performance e Segni) e test del bootstrap ritirato.
+- Step CI per il benchmark Segni e la compilazione del vecchio FPS Lab, che non potevano più essere eseguiti.
+- Configurazione e controlli di repository basati su file di laboratorio scomparsi.
+
+### Modificato
+- La sintassi Lua viene verificata per `src/`, `tests/` e per i sei laboratori attualmente presenti in `experiments/`.
+- L'inventario dei sorgenti di produzione passa da 30 a 29 file; il test di struttura protegge ora direttamente l'isolamento dello startup.
+- Documentazione tecnica aggiornata ai laboratori effettivamente presenti, con storia conservata in Git.
+
+### Corretto
+- Ripristinata la licenza MIT originaria (Copyright 2024 Dice) del codice FPS-derived rimasto in `src/engine3d/bounds.lua`, copiandola dal commit storico `5a4e60a3` in `lib/licenses/LICENSE_fps`; corretto il riferimento al file scomparso e aggiunto un gate di regressione.
+
+### Verifiche
+- Verificata via albero Git la non esistenza dei laboratori ritirati e censiti i relativi consumatori statici.
+- Prima della modifica, `main@99d0e33` falliva in `tests/engine3d/physics_handoff_test.lua` per il modulo assente `experiments.physics_lab.old`.
+- **CI Linux PASS** sulla revisione `0305a9aa56a4d77f80565324f8364cb2f4874881`: versionamento, lint Lua, sintassi sorgenti/test/laboratori attivi, gate geometrico, suite complete Lua 5.4 e LuaJIT, smoke GPU dei dadi, interazione/composizione Tavolo del Mercante, acquisizione frame e test Python ([run 43457355719](https://github.com/Askeladd22/Project_Folio/actions/runs/43457355719)).
+- Collaudo manuale Windows/LÖVE non eseguito; non sostituito da Mesa. I benchmark dei laboratori rimossi non sono stati eseguiti perché i loro sorgenti non esistono più.
+- Preservati la fisica del gioco, g3d, sei D6 e i laboratori di ricerca ancora presenti.
+
 ## [0.1.64] - 2026-11-13
 
 **Stato:** simplification del laboratorio grafico P1, senza cambiamenti al Tavolo del Mercante in produzione.

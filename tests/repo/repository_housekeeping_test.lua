@@ -29,8 +29,6 @@ local ignore=f:read('*a');f:close()
 for _,pattern in ipairs{
  '/audits/ui-v2-review/',
  '/audits/windows-qa/',
- '/experiments/physics_lab/build/',
- '/experiments/g3d_lab/build/',
 } do
  assert(ignore:find(pattern,1,true),'missing generated-output ignore: '..pattern)
 end

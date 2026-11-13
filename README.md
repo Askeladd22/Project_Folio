@@ -12,7 +12,7 @@ Premi **Spazio** per lanciare, clicca sui dadi per selezionarli, premi **A** per
 
 ## Dove trovare il codice
 
-La produzione è raccolta in **30 file Lua** sotto `src`. I principali punti
+La produzione è raccolta in **29 file Lua** sotto `src`. I principali punti
 di ingresso sono [controller](src/farkle/controller.lua),
 [interfaccia](src/farkle/ui.lua),
 [tavolo](src/farkle/tabletop.lua),

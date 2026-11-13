@@ -38,10 +38,9 @@ selezione della partita e impostazioni. La navigazione apre prima
 | [`src/core/game_manager.lua`](../src/core/game_manager.lua) | Ciclo di vita schermate e ordine degli hook (`execution_order`) |
 | [`src/core/engine_bridge.lua`](../src/core/engine_bridge.lua) | Collegamento al runtime, eventi (`EventBus`, `roll_events`) e logging (`logger`) |
 | [`src/core/audio_manager.lua`](../src/core/audio_manager.lua) | Musica, effetti UI, scuotimento e contatti fisici |
-| [`src/core/renderer_lab_boot.lua`](../src/core/renderer_lab_boot.lua) | Avvio esplicito dei laboratori, esclusi dal gioco ordinario |
 
-La produzione contiene **esattamente 30 file Lua sotto `src`**:
-9 in `core`, 3 in `data`, 8 in `engine3d` (di cui 3 in `g3d`),
+La produzione contiene **esattamente 29 file Lua sotto `src`**:
+8 in `core`, 3 in `data`, 8 in `engine3d` (di cui 3 in `g3d`),
 7 in `farkle` e 3 in `screens`. Librerie, test ed esperimenti non
 rientrano nel conteggio.
 Nei file accorpati, i nomi tra parentesi indicano le sezioni o sottotabelle
@@ -163,7 +162,6 @@ for test in $(find tests -name '*_test.lua' | sort); do
   luajit "$test" || exit 1
 done
 
-luajit experiments/signs_lab/run.lua 256 20261031
 ```
 
 Su Windows `scripts/test.ps1` richiama la suite Lua;
@@ -180,17 +178,16 @@ multipla, rilascio, collisioni, audio, dadi accantonati e ridimensionamento.
 
 ## Laboratori e archivio
 
-Ogni laboratorio dispone del proprio README e viene avviato esplicitamente.
+I laboratori presenti sono isolati dal gioco e conservano ciascuno il proprio README. I vecchi studi FPS, g3d, FX, Miniature 2D e Segni non sono più nell'albero attuale: le loro versioni storiche restano recuperabili tramite Git.
 
-| Laboratorio | Scopo |
+| Laboratorio attuale | Scopo |
 |---|---|
-| [g3d](../experiments/g3d_lab/README.md) | Geometria, camera, texture e misure CPU di disegno |
-| [FPS](../experiments/physics_lab/README.md) | Confronti isolati fra solver, presa, supporto e handoff |
-| [Miniature 2D](../experiments/miniature_2d_lab/README.md) | Animazione di figure, testo ed effetti 2D |
-| [FX](../experiments/fx_lab/README.md) | Prototipi di effetti grafici |
-| [Segni](../experiments/signs_lab/README.md) | Simulazioni numeriche di encounter |
-| [Mercante e posta](../experiments/merchant_wager_lab/README.md) | Test giocabile A/B/C: punteggio iniziale o posta diversa |
-| [Encounter Research A/C](../experiments/encounter_ac_lab/README.md) | Offerte divise A e prove contese C, prototipi isolati con Farkle canonico |
+| [Battute Gemelle](../experiments/battute_gemelle_lab/README.md) | Valutazione headless del rischio STOP/CONTINUE in RQ-001 |
+| [Encounter Research A/C](../experiments/encounter_ac_lab/README.md) | Offerte divise e prove contese, senza modificare il Farkle canonico |
+| [EX-001 Merchant X](../experiments/ex001_merchant_x_lab/README.md) | A/B del ridisegno iniziale X del Mercante |
+| [Mercante e posta](../experiments/merchant_wager_lab/README.md) | Duello asimmetrico V4, isolato dalla produzione |
+| [P4ND0RA](../experiments/p4ndora_1to1/README.md) | Confronto tra Farkle a sei D6 e sacchetto del rivale |
+| [Tre Prove / Riserva finita](../experiments/tre_prove_reserve_lab/README.md) | Esperimento EX-TP-001 a riserva pubblica limitata |
 
 Il rapporto della [QA del 3 novembre](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/WINDOWS_QA_CAPTURE_REVIEW_20261103.md)
 descrive le acquisizioni presenti in `audits/ui-v2-review/`.

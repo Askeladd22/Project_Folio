@@ -9,8 +9,6 @@ for _,path in ipairs{
  'src/core/dice_runtime.lua',
  'src/farkle/ui.lua',
  'src/farkle/tabletop.lua',
- 'src/farkle/tabletop.lua',
- 'experiments/g3d_lab/main.lua',
 } do
  local s=read(path)
  assert(not s:find('src.engine3d.render',1,true),path..' imports retired painter')

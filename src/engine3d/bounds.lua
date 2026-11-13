@@ -28,7 +28,7 @@ end)()
 -- Body footprint
 Parts.fps = (function()
 -- XY component of fps_part_boundary_update, Free Physics Solver 1.2.5.
--- Copyright (c) 2025 Dice, MIT. See experiments/physics_lab/vendor/LICENSE.
+-- Copyright (c) 2024 Dice, MIT. See lib/licenses/LICENSE_fps.
 -- The solver stores each corner already rotated and scaled about the body
 -- origin. Translation is applied by the caller when testing the four walls.
 local Bounds = {}

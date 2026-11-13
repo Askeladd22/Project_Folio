@@ -53,18 +53,6 @@ for _,path in ipairs{
   assert(not s:find(module,1,true),'retired module referenced: '..path)
  end
 end
-for i=1,5 do
- for _,resolution in ipairs{'1280x720','1920x1080'} do
-  for _,state in ipairs{'animated','disabled'} do
-   local path=('experiments/fx_lab/audit/effect-%d-%s-%s.png')
-       :format(i,resolution,state)
-   assert(io.open(path,'rb')==nil,'generated FX snapshot checked in: '..path)
-  end
- end
-end
-local ignore=read('.gitignore')
-assert(ignore:find('/experiments/fx_lab/audit/*.png',1,true),
- 'reproducible FX screenshots must be ignored')
 -- Keep the current physics and authentic D6 textures, not the old painter.
 for _,path in ipairs{
  'src/engine3d/physics.lua',
@@ -73,9 +61,16 @@ for _,path in ipairs{
  'resources/scenes/printshop-room.png',
  'resources/opponents/merchant.png',
  'resources/dice/1.png',
- 'experiments/physics_lab/fpslab.c',
 } do
  local f=assert(io.open(path,'rb'),'active engine asset deleted: '..path)
  f:close()
 end
-print('PASS retired chromatic desk/painter code and generated FX PNGs absent; active Farkle, g3d and physics preserved')
+-- Production FPS-derived footprint logic keeps its original MIT notice.
+local license=read('lib/licenses/LICENSE_fps')
+assert(license:find('MIT License',1,true) and
+       license:find('Copyright (c) 2024 Dice',1,true) and
+       license:find('Permission is hereby granted',1,true),
+ 'retained FPS-derived code must ship with the original license')
+assert(read('src/engine3d/bounds.lua'):find('lib/licenses/LICENSE_fps',1,true),
+ 'FPS attribution must point to the retained license')
+print('PASS retired desk/painter absent; production Farkle, g3d and physics assets preserved')
