@@ -25,7 +25,8 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 - Aggiornata la descrizione tecnica dello stato dei layout.
 
 ### Verifica e limiti
-- Verifiche statiche in fase di preparazione: nomi rimossi, riferimenti residui e mantenimento del ramo `table_minimal`.
+- Verifiche statiche completate: nomi rimossi, riferimenti residui e mantenimento del ramo `table_minimal`.
+- Gate CI mirato per il contratto geometrico in Lua 5.4 e LuaJIT, prima della suite generale (che aveva già un errore di baseline nel test fisico `physics_handoff_test.lua`).
 - Test Lua/LuaJIT, smoke g3d Windows e verifica CI: non eseguiti localmente; attendono esecuzione nella pipeline e collaudo umano.
 - Farkle, medaglie, Folio accessibile, interazioni dadi, g3d, salvataggi e regolamento non modificati.
 
