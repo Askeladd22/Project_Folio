@@ -13,6 +13,7 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 ## [0.1.65] - 2026-11-13
 
 **Stato:** eliminazione dei contratti orfani verso laboratori grafici/fisici già assenti dal repository; nessuna nuova meccanica o modifica ai solver di produzione.
+**PR:** [#122](https://github.com/Askeladd22/Project_Folio/pull/122).
 
 ### Rimosso
 - Bootstrap opzionale di `experiments.g3d_lab` / `experiments.miniature_2d_lab`, che faceva riferimento a file non più presenti.
@@ -28,7 +29,8 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 ### Verifiche
 - Verificata via albero Git la non esistenza dei laboratori ritirati e censiti i relativi consumatori statici.
 - Prima della modifica, `main@99d0e33` falliva in `tests/engine3d/physics_handoff_test.lua` per il modulo assente `experiments.physics_lab.old`.
-- Sintassi Lua, suite Lua 5.4 / LuaJIT, smoke LÖVE e controlli Windows della nuova revisione: da verificare in CI; nessun collaudo locale dichiarato.
+- **CI Linux PASS** sulla revisione `0305a9aa56a4d77f80565324f8364cb2f4874881`: versionamento, lint Lua, sintassi sorgenti/test/laboratori attivi, gate geometrico, suite complete Lua 5.4 e LuaJIT, smoke GPU dei dadi, interazione/composizione Tavolo del Mercante, acquisizione frame e test Python ([run 43457355719](https://github.com/Askeladd22/Project_Folio/actions/runs/43457355719)).
+- Collaudo manuale Windows/LÖVE non eseguito; non sostituito da Mesa. I benchmark dei laboratori rimossi non sono stati eseguiti perché i loro sorgenti non esistono più.
 - Preservati la fisica del gioco, g3d, sei D6 e i laboratori di ricerca ancora presenti.
 
 ## [0.1.64] - 2026-11-13
