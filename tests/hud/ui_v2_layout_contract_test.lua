@@ -3,6 +3,7 @@ local Layout=require('src.farkle.ui').layout
 local Res=require('src.core.navigation').resolution
 
 local layout=Layout.build()
+assert(layout.name=='table_minimal','shipping Merchant layout must have its canonical identity')
 assert(Layout.validate(layout),'shipping Merchant table layout is invalid')
 assert(layout.tray.x==60 and layout.tray.y==538
  and layout.tray.w==1800 and layout.tray.h==426,
