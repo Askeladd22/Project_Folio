@@ -17,7 +17,7 @@ local Toasts=require('src.farkle.presentation').toast_messages
 local U={state='waiting',buttons={},dice_results={}}
 function U:getTrayRect()
  local t=require('src.farkle.ui').layout
-    .build(self.minimalHud and 'table_minimal' or 'single_folio').tray
+    .build().tray
  local x,y=Res.to_screen(t.x,t.y);return {x=x,y=y,w=t.w*Res.get_scale(),h=t.h*Res.get_scale()}
 end
 function U:getTrayProjection(tray,view,extents)

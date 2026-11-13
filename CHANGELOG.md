@@ -10,6 +10,22 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.66] - 2026-11-13
+
+**Stato:** consolidamento della UI del Mercante sul solo percorso visuale `table_minimal`.
+
+### Rimosso
+- Il layout geometrico e il rendering alternativi `single_folio`, il vecchio pannello laterale e le relative verifiche di una variante non selezionabile.
+- Biforcazioni di azione e registro dei dadi accantonati dipendenti dalla modalità di HUD.
+
+### Conservato
+- Folio con tasto [F], dialoghi, ricompense, contatti fisici, pulsanti e medaglie: sempre gestiti dai moduli di produzione.
+- Il controller e la camera non cambiano comportamento; gli ulteriori residui del flag `minimalHud` nella proiezione 3D saranno trattati come gate distinto.
+
+### Verifiche
+- Revisione statica dei consumatori del vecchio layout e dei test che ne dipendono; CI e smoke GPU del nuovo branch ancora da eseguire.
+- Nessuna modifica ai punteggi Farkle, ai sei D6, ai salvataggi o alla fisica.
+
 ## [0.1.65] - 2026-11-13
 
 **Stato:** eliminazione dei contratti orfani verso laboratori grafici/fisici già assenti dal repository; nessuna nuova meccanica o modifica ai solver di produzione.
