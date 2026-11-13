@@ -10,6 +10,20 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.68] - 2026-11-13
+
+**Stato:** regressione dell'inventario UI dopo l'integrazione prematura delle PR #123 e #124.
+
+### Corretto
+- Il test `ui_v2_interaction_inventory_test.lua` non richiede più un pulsante Folio sempre presente sulla vecchia sidebar, che non è parte del Tavolo del Mercante.
+- Il controllo strutturale verifica l'effettiva creazione della tabella `u.buttons`, senza dipendere da un commento eliminato durante il refactor.
+- Il tasto [F] del controller viene verificato esplicitamente come ingresso al Folio modale.
+
+### Verifiche
+- Baseline `main@bcb1862`: CI fallita sul vecchio controllo `actions button lost: 'folio'`, benché il percorso Folio modale sia ancora presente.
+- Nuova revisione: test Lua 5.4/LuaJIT, smoke GPU, test Python e controllo Windows da verificare; non dichiarare superato alcun gate prima del suo esito.
+- Nessuna variazione a Farkle, g3d, sei dadi o salvataggi.
+
 ## [0.1.67] - 2026-11-13
 
 **Stato:** fix immediato della regressione di identità del layout introdotta durante la rimozione del selettore nella PR #123.

@@ -27,7 +27,7 @@ local function exact(source,fragment,where)
  assert(source:find(fragment,1,true),where..' lost: '..fragment)
 end
 local buttons={
- actions={"'help'","'runmenu'","'folio'","'roll'","'take'",
+ actions={"'help'","'runmenu'","'roll'","'take'",
       "'bank'","'next'","'rescue'","'fail'","'retryphysical'",
       "'medaluse'"},
  modals={"'weighted'","'engraved'","'medal'","'none'","'close'",
@@ -88,7 +88,8 @@ for _,key in ipairs({"'f10'","'f11'"}) do
 end
 assert(not sources.runtime:find("key=='f9'",1,true),
  'F9 CPU painter shortcut was intentionally retired')
-exact(sources.hud,'u.buttons={} -- a single authoritative hitbox table','single active V2 button table')
+exact(sources.hud,'u.buttons={}','single active V2 button table')
+exact(sources.controller,"if k=='f' then self.modal='folio'",'Folio keyboard and modal entry')
 exact(sources.modals,'u.modalButtons={}','modal-specific active button table')
 exact(sources.indicators,'u.dragSelected and u.dragSelected[id]',
  'group-grab highlight distinct from scoring selection')
