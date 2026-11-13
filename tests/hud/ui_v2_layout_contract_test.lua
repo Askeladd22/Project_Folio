@@ -2,7 +2,7 @@
 local Layout=require('src.farkle.ui').layout
 local Res=require('src.core.navigation').resolution
 
-local layout=Layout.build('table_minimal')
+local layout=Layout.build()
 assert(Layout.validate(layout),'shipping Merchant table layout is invalid')
 assert(layout.tray.x==60 and layout.tray.y==538
  and layout.tray.w==1800 and layout.tray.h==426,
@@ -41,14 +41,14 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1080},
   end
  end
 end
-local invalid=Layout.build('table_minimal')
+local invalid=Layout.build()
 invalid.primary={x=invalid.tray.x,y=invalid.tray.y,w=300,h=76}
 assert(not Layout.validate(invalid),'button overlapping D6 must be rejected')
-local outside=Layout.build('table_minimal')
+local outside=Layout.build()
 outside.tray={x=-1,y=538,w=1800,h=426}
 assert(not Layout.validate(outside),'off-screen 3D tray must be rejected')
-assert(not pcall(Layout.build,'open_codex'),
- 'retired P1 alternative must not be selectable')
+assert(not pcall(Layout.build,'single_folio'),
+ 'retired sidebar layout must not be selectable')
 assert(not pcall(Layout.build,'unknown'),'invalid layout names must fail')
 Res.refresh(1920,1080)
 print('PASS active Merchant table geometry and viewport mapping without P1 A/B layout')

@@ -29,7 +29,7 @@ assert(hud:find("Accepted.draw(u)",1,true))
 assert(hud:find("Indicators.draw(u,hits)",1,true))
 assert(not hud:find("F6: torna",1,true))
 
-local base=Layout.build('single_folio')
+local base=Layout.build()
 local slots=Shelf.slots(base)
 assert(#slots==6)
 for i=1,6 do
@@ -64,8 +64,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1080}} do
  assert(state.hand[1]==original and state.used[1])
  assert(strokes.push==strokes.pop,'shelf graphics stack leaked')
 end
-assert(strokes.rect>=36 and strokes.text>=18,
- 'six shelf slots must render at each resolution')
+assert(strokes.rect>=6 and strokes.text>=3,
+ 'only accepted dice should render, not six empty shelf boxes')
 love=previousLove
 dice=previousDice
 print('PASS V2 sole HUD: removed fallback, aligned six-die register, no scorer mutation and viewport graphics stack')

@@ -1,6 +1,6 @@
 -- Headless structural QA for the table wager, footer and true D6 size.
 local Layout=require('src.farkle.ui').layout
-local L=Layout.build('table_minimal')
+local L=Layout.build()
 assert(Layout.validate(L))
 for _,r in ipairs{L.secured_caption,L.secured_value,L.risk_caption,L.risk_value,
                    L.objective_caption,L.objective_value,L.turns_caption,L.turns_value} do

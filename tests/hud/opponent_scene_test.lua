@@ -1,5 +1,5 @@
 local S=require('src.farkle.ui').opponent_scene
-local L=require('src.farkle.ui').layout.build('table_minimal')
+local L=require('src.farkle.ui').layout.build()
 local room,merchant,monk=S.room_path,S.portrait_path('merchant'),S.portrait_path('monk')
 local function exists(paths) return function(p) return paths[p] or false end end
 local legacy=S.resolve(nil,exists({}))

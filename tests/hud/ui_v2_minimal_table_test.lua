@@ -5,10 +5,10 @@ local P=require('src.farkle.presentation')
 local Res=require('src.core.navigation').resolution
 local A=require('src.farkle.ui').hud.actions
 local Accepted=require('src.farkle.ui').hud.accepted
-local layout=Layout.build('table_minimal')
+local layout=Layout.build()
 assert(Layout.validate(layout))
-assert(layout.tray.w>Layout.build('single_folio').tray.w,
- 'normal physical playing field must reclaim old sidebar area')
+assert(layout.tray.w>=1700,
+ 'physical playing field must keep its reclaimed full width')
 assert(layout.folio==nil and layout.context==nil and layout.sidebar_frame==nil)
 assert(Layout.contains(layout.score_panel,layout.risk_caption))
 assert(Layout.contains(layout.score_panel,layout.risk_value))
@@ -37,7 +37,7 @@ assert(layout.message.y>=layout.primary.y+layout.primary.h,
  'status must stay below the main actions')
 local buttons={}
 local game=R.new()
-local u={game=game,presentation=P.new(game),minimalHud=true}
+local u={game=game,presentation=P.new(game)}
 local actions=A.build(u)
 for _,a in ipairs(actions) do buttons[a.id]=a end
 assert(buttons.roll and buttons.bank and buttons.help and buttons.runmenu)

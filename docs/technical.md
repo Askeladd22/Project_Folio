@@ -77,8 +77,8 @@ dei dadi. La prospettiva e il picking passano da
 consultare quei sorgenti e i test di proiezione, che seguono l'evoluzione
 dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `MANUSCRIPT_UI_V2_LAYOUT_STUDY` sono stati ritirati. Il codice del layout
-`single_folio` resta per ora solo come riferimento di regressione, non
-è selezionabile nel gameplay normale.
+`single_folio` non fa più parte della geometria o del rendering della UI;
+il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
 ## Rendering e risorse
 

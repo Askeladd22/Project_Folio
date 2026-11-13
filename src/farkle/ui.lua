@@ -115,36 +115,8 @@ local function rect(x,y,w,h)
  return {x=x,y=y,w=w,h=h}
 end
 
-local function common()
- return {
-  header=rect(48,18,1824,76),
-  -- Readout geometry is visual-only; it does not change any button
-  -- positions or enlarge the physical tray's interaction footprint.
-  header_readout={
-   commission_tag=rect(70,26,408,22),
-   commission_name=rect(70,51,408,31),
-   metrics={
-    {caption=rect(520,27,195,21),value=rect(520,50,195,36)},
-    {caption=rect(744,27,195,21),value=rect(744,50,195,36)},
-    {caption=rect(970,27,195,21),value=rect(970,50,195,36)},
-    {caption=rect(1190,27,195,21),value=rect(1190,50,195,36)},
-   },
-   dividers={500,730,954,1177,1420},
-   help=rect(1510,33,155,49),
-   runmenu=rect(1682,33,156,49),
-  },
-  -- The status line and the two large contextual actions are outside
-  -- the playable surface, so a six-die throw cannot hit the buttons.
-  message=rect(100,910,1720,34),
-  primary=rect(308,956,610,76),
-  secondary=rect(1002,956,610,76),
- }
-end
-
 function M.build(which)
- assert(which=='single_folio' or which=='table_minimal',
-        'unknown HUD layout')
- if which=='table_minimal' then
+ assert(which==nil,'HUD layout is fixed to the Merchant table')
   -- Production Farkle table: preserve a large 3D viewport, without the
   -- legacy commission/folio/tools sidebar.
   return {
@@ -187,31 +159,6 @@ function M.build(which)
   primary=rect(665,976,392,68),
   secondary=rect(1076,976,383,68),
   }
- end
- local a=common()
- -- Retained single-folio geometry for compatibility coverage.
- -- A broad physical playing folio and a narrower on-desk work ledger.
-  a.book=rect(48,108,1444,784)
-  a.shelf=rect(140,136,1252,64)
-  a.tray=rect(68,216,1402,666)
-  a.folio=rect(1512,128,352,562)
-  a.context=rect(1512,724,352,152)
-  -- Decorative composition only: these rectangles do not alter the
-  -- camera, the 3D tray, the existing folio click region or game buttons.
-  a.sidebar_frame=rect(1498,104,380,788)
-  a.sidebar_caption=rect(1526,105,324,20)
-  a.sidebar_divider=rect(1518,707,340,1)
-  a.context_caption=rect(1525,730,326,20)
-  a.context_actions={
-   rect(1524,755,328,52),
-   rect(1524,814,328,52),
-  }
-  a.shelf_caption=rect(140,113,1252,20)
-  a.shelf_divider=rect(140,208,1252,1)
-  a.page_main=rect(60,120,1420,764)
-  a.page_info=nil
- a.name=which
- return a
 end
 
 function M.contains(outer,inner)
@@ -236,7 +183,7 @@ end
 
 function M.validate(layout)
  local bounds=rect(0,0,M.virtual_w,M.virtual_h)
- if layout.name=='table_minimal' then
+ if layout.name~='table_minimal' then return false,'unknown HUD layout' end
   local required={'header','book','page_main','shelf','tray','message',
    'primary','secondary','help','runmenu','secured_caption','secured_value',
    'risk_caption','risk_value','objective_caption','objective_value',
@@ -319,74 +266,6 @@ function M.validate(layout)
    return false,'main table actions too short'
   end
   return true
- end
- local required={'header','book','page_main','tray','shelf','folio',
-                 'context','message','primary','secondary'}
- for _,name in ipairs(required) do
-  local r=layout[name]
-  if not r or r.w<=0 or r.h<=0 or not M.contains(bounds,r) then
-   return false,'invalid or off-screen '..name
-  end
- end
- if layout.page_info and not M.contains(layout.book,layout.page_info) then
-  return false,'second folio page outside book'
- end
- if not M.contains(layout.book,layout.page_main) then
-  return false,'main folio page outside book'
- end
- if not M.contains(layout.book,layout.tray) then
-  return false,'physical tray must be inside book'
- end
- if M.overlap(layout.tray,layout.folio)>0 then
-  return false,'playable dice surface obscured by info folio'
- end
- if M.overlap(layout.tray,layout.shelf)>0 then
-  return false,'scoring shelf obscures the dice throwing surface'
- end
- for _,id in ipairs({'header','message','primary','secondary','context'}) do
-  if M.overlap(layout.tray,layout[id])>0 then
-   return false,id..' obscures the 3D dice surface'
-  end
- end
- if layout.sidebar_frame then
-  for _,name in ipairs({'folio','context','sidebar_caption','sidebar_divider',
-    'context_caption'}) do
-   if not layout[name] or not M.contains(layout.sidebar_frame,layout[name]) then
-    return false,'sidebar element outside the decorative frame: '..name
-   end
-  end
-  if M.overlap(layout.sidebar_frame,layout.tray)>0 then
-   return false,'decorative sidebar overlaps physical D6 tray'
-  end
-  if M.overlap(layout.sidebar_divider,layout.folio)>0
-   or M.overlap(layout.sidebar_divider,layout.context)>0 then
-   return false,'sidebar ornament overlaps interactive areas'
-  end
-  for _,r in ipairs(layout.context_actions or {}) do
-   if not M.contains(layout.context,r) then
-    return false,'context action outside manuscript tools panel'
-   end
-  end
-  if not M.contains(layout.book,layout.shelf_caption)
-   or not M.contains(layout.book,layout.shelf_divider)
-   or M.overlap(layout.shelf_caption,layout.shelf)>0
-   or M.overlap(layout.shelf_divider,layout.tray)>0 then
-   return false,'shelf ornaments cover 3D dice or accepted slots'
-  end
- end
- if M.overlap(layout.primary,layout.secondary)>0 then
-  return false,'contextual actions overlap'
- end
- -- Minimum 3D footprint for six full-size D6 at 1920x1080.
- if layout.tray.w<1100 or layout.tray.h<570 then
-  return false,'dice tray too small for the existing 3D presentation'
- end
- -- 76px action height is usable at the 1.18x big-text typography scale,
- -- while old click code may need further font fitting at implementation.
- if layout.primary.h<72 or layout.secondary.h<72 then
-  return false,'contextual actions below target height'
- end
- return true
 end
 return M
 end)()
@@ -1131,11 +1010,7 @@ function M.build(u)
  if H.reward_active(s) then return a end
  add('help','Regole [?]',not block,function() u.modal='help' end,'header')
  add('runmenu','Pausa [Esc]',not block,function() u.modal='run' end,'header')
- -- The page remains accessible via F; the large always-clickable folio
- -- card is not part of the normal table. The comparison layout still exposes this action.
- if not u.minimalHud then
-  add('folio','Apri folio [F]',not block,function() u.modal='folio' end,'folio')
- end
+ -- Folio remains accessible with [F] via the modal dispatcher.
  if s.medal~='none' then
   local d=Medals.get(s.medal)
   local uses=Medals.remaining(s)
@@ -1169,15 +1044,14 @@ function M.build(u)
      or (H.can_complete(s) and 'Completa la combinazione' or 'Selezione non valida')
    add('take',label,
      pts~=nil,function() u:act('take',function() return R.take(s) end) end,
-     'primary',u.minimalHud and '[A] · Aggiungi ai punti a rischio'
-       or '[A] · Convalida la combinazione')
+     'primary','[A] · Aggiungi ai punti a rischio')
   else
    local can=R.can_roll(s) and u.manualRoll==nil
    local label=s.hot and 'Rilancia sei dadi' or
      (s.phase=='fresh' and 'Lancia i sei dadi' or
        'Rilancia '..R.count_free(s)..' dadi')
-   if not u.minimalHud or can then
-    add('roll',label,can,function() u:request() end,
+   if can then
+    add('roll',label,true,function() u:request() end,
      'primary','[Spazio] · Destro: presa fisica')
    end
   end
@@ -1186,9 +1060,8 @@ function M.build(u)
   -- directly, without forcing a separate Set aside action first.
   add('bank','Incassa '..total..' pt',ok,
    function() u:act('bank',function() return R.bank_turn(s) end) end,
-   'secondary',u.minimalHud and
-      (min>0 and ('[Invio] · Soglia '..min..' pt') or '[Invio] · Metti al sicuro')
-      or ('[Invio] · minimo '..min..' pt'))
+   'secondary',min>0 and ('[Invio] · Soglia '..min..' pt')
+      or '[Invio] · Metti al sicuro')
  end
  return a
 end
@@ -1228,7 +1101,7 @@ local function font(n)
  return fonts[px]
 end
 function M.slots(layout)
- local area=(layout or Layout.build('single_folio')).shelf
+ local area=(layout or Layout.build()).shelf
  local result={}
  local gutter=12
  local step=(area.w-gutter*2)/6
@@ -1243,16 +1116,15 @@ function M.draw(u)
  local s=u and u.game
  if not s or not s.used then return end
  local g=love.graphics
- local minimal=u.minimalHud==true
- local slots=M.slots(Layout.build(minimal and 'table_minimal' or 'single_folio'))
+ local slots=M.slots(Layout.build())
  local p=u.presentation
  local contributors=p and Presentation.contributing_dice(p) or {}
  g.push('all')
  Res.begin_ui()
  for i,rect in ipairs(slots) do
   local used=s.used[i] and true or false
-  -- No permanent row of six blank boxes on the minimal player table.
-  if not minimal or used then
+  -- Draw only dice actually set aside.
+  if used then
   local active=contributors[i] and true or false
   local high=UI.high_contrast()
   -- The register should read as six inset parchment tokens rather than
@@ -1305,7 +1177,6 @@ local R=require('src.farkle.rules')
 local H=require('src.farkle.presentation').hud_model
 local Res=require('src.core.navigation').resolution
 local UI=require('src.core.runtime_state').ui
-local Folio=require('src.farkle.presentation').folio_view
 local Accepted=Parts.accepted
 local Dialogs=Bundle.dialogs
 local Indicators=Bundle.overlay
@@ -1318,11 +1189,7 @@ local V={}
 local fonts={}
 local modal_states=setmetatable({},{__mode='k'})
 local unpack=table.unpack or unpack
-local function rgba(r,g,b,a) return {r,g,b,a or 1} end
-local ink=Art.rgba('text')
 local pale=Art.rgba('surface')
-local muted=Art.rgba('quiet')
-local highlight=Art.rgba('ochre_light')
 -- UI surfaces use the same palette as the menu; the physical 3D dice
 -- and their underlying renderer/materials remain untouched.
 local parchment=Art.rgba('surface',.98)
@@ -1343,12 +1210,6 @@ local function font_px(px)
 end
 local function font(n)
  return font_px(size(n))
-end
-local function write(label,x,y,w,pt,color,align)
- local g=love.graphics
- g.setFont(font(pt))
- g.setColor(unpack(color or pale))
- g.printf(tostring(label),x,y,w,align or 'left')
 end
 -- One measured line per visual cell: no wraps behind other controls.
 -- Use font metrics (not string length), with UTF-8-safe abbreviation only
@@ -1404,81 +1265,6 @@ end
 local function turns_remaining(s,c)
  return math.max(0,c.limit-s.turn+
    ((s.phase=='ended' or H.commission_closed(s)) and 0 or 1))
-end
-local function header(u,s,layout,actions)
- local g=love.graphics
- local c=R.contracts[s.stage]
- local readout=layout.header_readout
- panel(layout.header,parchment,border_ink,7)
- -- The commission name and the four numbers occupy measured cells:
- -- long campaign titles and large-text settings cannot wrap into stats.
- write_fitted('COMMISSIONE '..s.stage..'/3',
-   readout.commission_tag,18,12,paper_gold)
- write_fitted(c.name,readout.commission_name,18,12,paper_ink)
- local remaining=turns_remaining(s,c)
- local values={
-  {'OBIETTIVO',c.target..' pt'},
-  {'ASSICURATI',s.bank..' pt'},
-  {'A RISCHIO',s.pot..' pt'},
-  {'TURNI',tostring(remaining)}
- }
- g.setLineWidth(1)
- g.setColor(border_ink[1],border_ink[2],border_ink[3],
-   UI.high_contrast() and .70 or .34)
- for _,x in ipairs(readout.dividers) do
-  g.line(x,30,x,82)
- end
- for i,v in ipairs(values) do
-  local cell=readout.metrics[i]
-  write_fitted(v[1],cell.caption,13,10,paper_muted)
-  write_fitted(v[2],cell.value,24,15,
-   i==3 and paper_warning or paper_ink)
- end
- for _,a in ipairs(actions) do
-  if a.slot=='header' then
-   action_button(u,a,a.id=='help' and readout.help or readout.runmenu)
-  end
- end
-end
-local function work_surface(layout)
- local g=love.graphics
- g.setColor(.077,.060,.047,1)
- g.rectangle('fill',0,0,1920,1080)
- -- A broad opened working leaf; the actual 3D tray floor and dice are
- -- rendered over this by the unchanged engine with the same projection.
- panel(layout.book,Art.rgba('earth'),Art.rgba('ink'),10)
- panel(layout.page_main,Art.rgba('surface_alt',.88),Art.rgba('border',.70),5)
- g.setColor(unpack(Art.rgba('border',.42)))
- g.setLineWidth(2)
- g.line(layout.page_main.x+15,layout.page_main.y+15,
-        layout.page_main.x+15,layout.page_main.y+layout.page_main.h-15)
- -- Never draw over the 3D throw rectangle. Ornamentation lives
- -- only in the book margins between the six accepted slots and tray.
- if layout.shelf_caption then
-  -- A narrow illuminated rubric stays legible across the leather/paper
-  -- seam at the top of the leaf, above every accepted-die rectangle.
-  panel(layout.shelf_caption,Art.rgba('surface',.98),nil,4)
-  write_fitted('REGISTRO DEI DADI ACCANTONATI',layout.shelf_caption,
-   14,11,paper_ink,'center')
-  g.setColor(unpack(Art.rgba('border',UI.high_contrast() and .90 or .52)))
-  g.setLineWidth(1)
-  g.line(layout.shelf_divider.x,layout.shelf_divider.y,
-   layout.shelf_divider.x+layout.shelf_divider.w,
-   layout.shelf_divider.y)
- end
- -- A restrained bookbinding frame joins the working leaf and notes
- -- without changing the folio's actual geometry or interaction.
- if layout.sidebar_frame then
-  local side=layout.sidebar_frame
-  panel(side,Art.rgba('earth_dark'),Art.rgba('timber',.97),9)
-  g.setColor(unpack(Art.rgba('ochre_light',UI.high_contrast() and .86 or .40)))
-  g.setLineWidth(1)
-  g.rectangle('line',side.x+7,side.y+7,side.w-14,side.h-14,6)
-  for _,y in ipairs({side.y+22,side.y+side.h-22}) do
-   g.line(side.x+9,y,side.x+17,y)
-   g.line(side.x+side.w-17,y,side.x+side.w-9,y)
-  end
- end
 end
 local function compact_status(u)
  local s=u.game
@@ -1595,7 +1381,7 @@ local function scene_depth(u,g)
  depth.breath=reduced and 0 or math.sin(t*1.3)
  return depth
 end
-local function draw_minimal_footer(u,layout,actions)
+local function draw_table_footer(u,layout,actions)
  local s=u.game
  local g=love.graphics
  -- Keep the timber plaque small and never show an empty panel while
@@ -1671,9 +1457,10 @@ local function draw_minimal_footer(u,layout,actions)
   end
  end
 end
-local function draw_minimal(u)
+function V.draw(u)
+ if not u or not u.game then return end
  local s=u.game
- local layout=Layout.build('table_minimal')
+ local layout=Layout.build()
  local actions=Actions.build(u)
  local g=love.graphics
  u.buttons={}
@@ -1709,73 +1496,8 @@ local function draw_minimal(u)
  end
  -- Register footer hitboxes now; V.overlay paints them above the 3D table.
  g.setColorMask(false,false,false,false)
- draw_minimal_footer(u,layout,actions)
+ draw_table_footer(u,layout,actions)
  g.setColorMask(true,true,true,true)
- Res.end_ui()
- g.pop()
-end
-
-function V.draw(u)
- if u.minimalHud then return draw_minimal(u) end
- local s=u.game
- if not s then return end
- local layout=Layout.build('single_folio')
- local actions=Actions.build(u)
- u.buttons={} -- a single authoritative hitbox table for controller.lua
- local g=love.graphics
- g.push('all')
- Res.begin_ui()
- work_surface(layout)
- header(u,s,layout,actions)
- if layout.sidebar_caption then
-  write_fitted('MANOSCRITTO',layout.sidebar_caption,17,13,
-   Art.rgba('ochre_light'), 'center')
- end
- Folio.draw(s,u.presentation,layout.folio.x,layout.folio.y,
-            layout.folio.w,layout.folio.h,write,R.contracts[s.stage].target)
- for _,a in ipairs(actions) do
-  if a.slot=='folio' then
-   local r=layout.folio
-   -- The folio itself is the clickable action, not an overlay button.
-   u.buttons[a.id]={x=r.x,y=r.y,w=r.w,h=r.h,
-                     enabled=a.enabled,fn=a.fn,label=a.label}
-  end
- end
- if layout.sidebar_divider then
-  MenuSurface.rule(layout.sidebar_divider.x,layout.sidebar_divider.y,
-   layout.sidebar_divider.w,UI.high_contrast() and 1 or .82)
- end
- panel(layout.context,parchment,border_ink,5)
- write_fitted('STRUMENTI',layout.context_caption,14,11,paper_gold,'center')
- local c=0
- for _,a in ipairs(actions) do
-  if a.slot=='context' then
-   c=c+1
-   -- Exactly the same input geometry as before; it is now named and
-   -- validated alongside the decorative folio/sidebar proportions.
-   local rect=assert(layout.context_actions[c],
-    'missing visual-only contextual button slot')
-   action_button(u,a,rect)
-  end
- end
- if c==0 then
-  write_fitted('Consulta la pagina [F]',
-    {x=layout.context.x+12,y=layout.context.y+53,
-     w=layout.context.w-24,h=38},17,12,paper_muted,'center')
- end
- -- Treat the actual state message as a manuscript status strip,
- -- not free-floating small text on the dark desk.
- panel(layout.message,Art.rgba('surface',.98),border_ink,5)
- write_fitted(Actions.state(u),
-   {x=layout.message.x+12,y=layout.message.y+2,
-    w=layout.message.w-24,h=layout.message.h-4},18,12,
-   (s.phase=='rescue' or s.phase=='lost') and paper_warning or paper_ink,
-   'center')
- for _,a in ipairs(actions) do
-  if a.slot=='primary' then action_button(u,a,layout.primary)
-  elseif a.slot=='secondary' then action_button(u,a,layout.secondary) end
- end
-
  Res.end_ui()
  g.pop()
 end
@@ -1785,19 +1507,17 @@ end
 -- stays in the shared modal presenter until a separate P4 redesign.
 function V.overlay(u,hits)
  u.hits=hits
- if u.minimalHud then
-  local previous=modal_states[u]
-  if previous~=u.modal then
-   if u.modal then AudioManager.play_ui('menu_open')
-   elseif previous then AudioManager.play_ui('menu_close') end
-   modal_states[u]=u.modal
-  end
+ local previous=modal_states[u]
+ if previous~=u.modal then
+  if u.modal then AudioManager.play_ui('menu_open')
+  elseif previous then AudioManager.play_ui('menu_close') end
+  modal_states[u]=u.modal
  end
- if u.minimalHud and u.game then
+ if u.game then
   local g=love.graphics
   g.push('all')
   Res.begin_ui()
-  draw_minimal_footer(u,Layout.build('table_minimal'),Actions.build(u))
+  draw_table_footer(u,Layout.build(),Actions.build(u))
   Res.end_ui()
   g.pop()
  end
