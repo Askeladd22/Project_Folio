@@ -26,7 +26,7 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 
 ### Verifiche e limiti
 - Baseline `main@2631b3c9` (0.1.68): CI completa Linux PASS.
-- Nuovo branch: controlli statici dei consumer e del diff; CI Lua 5.4/LuaJIT, Mesa e Python da eseguire.
+- **CI Linux PASS** sul commit `557681681f5b1fb19e78985bf88fccad9cde4104`: versionamento, lint e sintassi Lua, geometria HUD, suite complete Lua 5.4 e LuaJIT, GPU smoke LÖVE/Mesa per dadi e composizione Mercante, salvataggio frame e test Python ([run 43500967902](https://github.com/Askeladd22/Project_Folio/actions/runs/43500967902)).
 - Collaudo manuale Windows di prospettiva/picking/presa non eseguito.
 - Gameplay Farkle, solver, salvataggi e RNG invariati.
 
