@@ -15,11 +15,11 @@ selezione della partita e impostazioni. La navigazione apre prima
 |---|---|
 | [`src/farkle/rules.lua`](../src/farkle/rules.lua) | Punteggio (`scoring`), medaglie (`medals`), commissioni (`progress`) e regole del turno |
 | [`src/farkle/controller.lua`](../src/farkle/controller.lua) | Input, richieste fisiche, esiti accettati, transizioni e registrazione eventi |
-| [`src/farkle/interaction.lua`](../src/farkle/interaction.lua) | Selezione (`selection`), presa singola (`single`), gruppo (`group`, `shaker`), scuotimento (`shake`) e proiezione (`projection`) |
+| [`src/farkle/interaction.lua`](../src/farkle/interaction.lua) | Selezione (`selection`), presa singola (`single`), gruppo (`group`, `shaker`) e scuotimento (`shake`) |
 | [`src/farkle/dice.lua`](../src/farkle/dice.lua) | Facce incise, filtro pesato e calcolo del rischio teorico |
 | [`src/farkle/presentation.lua`](../src/farkle/presentation.lua) | Provenienza dei risultati, stato HUD (`hud_model`), folio (`folio_view`), medaglie (`medal_panel`) e notifiche (`toast_messages`) |
 | [`src/farkle/ui.lua`](../src/farkle/ui.lua) | HUD (`hud`, con `actions` e `accepted`), geometria (`layout`), testo (`text_fit`), indicatori (`overlay`), finestre (`dialogs`) e avversario (`opponent_scene`) |
-| [`src/farkle/tabletop.lua`](../src/farkle/tabletop.lua) | Inquadratura e zoom (`tray_view`), workshop diagnostico (`tray_workshop`) |
+| [`src/farkle/tabletop.lua`](../src/farkle/tabletop.lua) | Inquadratura prospettica fissa (`tray_view`), workshop diagnostico (`tray_workshop`) |
 | [`src/screens/frontend.lua`](../src/screens/frontend.lua) | Menu principale (`main_menu`), selezione partita (`campaign_select`) e impostazioni (`settings`); registrazione tramite `modules` |
 | [`src/screens/folio_surface.lua`](../src/screens/folio_surface.lua) | Superfici condivise (`menu_surface`), impaginazione (`page_layout`), testo animato (`folio_ink_text`), figure e post-effetti 2D |
 | [`src/screens/startup_splash.lua`](../src/screens/startup_splash.lua) | Intro LÖVE e transizione al menu |
@@ -72,7 +72,7 @@ docs/, audits/          Documentazione ed evidenze di revisione
 Il Tavolo del Mercante usa il layout `table_minimal`, con selezione diretta
 dei dadi. La prospettiva e il picking passano da
 `src/farkle/tabletop.lua` (`tray_view`),
-`src/farkle/interaction.lua` (`projection`) e
+`src/farkle/interaction.lua` (presa fisica) e
 `src/engine3d/g3d/scene.lua` (`camera`). Per la geometria esatta
 consultare quei sorgenti e i test di proiezione, che seguono l'evoluzione
 dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con

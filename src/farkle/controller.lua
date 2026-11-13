@@ -57,7 +57,6 @@ function U:reset(mode)
  if self.state=='rolling' then return end
  Audio.stop_dice('shake',.045)
  Toasts.clear()
- self.minimalHud=true
  self.mouseThrow=nil
  self.manualRoll=nil
  self.marquee=nil

@@ -171,7 +171,7 @@ local rules=require('src.farkle.rules')
 assert(rules.points==rules.scoring.points and rules.score==rules.scoring.score)
 assert(rules.contracts==rules.progress.contracts and type(rules.medals.get)=='function')
 local input=require('src.farkle.interaction')
-for _,name in ipairs{'shake','single','shaker','group','selection','projection'} do
+for _,name in ipairs{'shake','single','shaker','group','selection'} do
  assert(type(input[name])=='table','missing interaction section: '..name)
 end
 local bounds=require('src.engine3d.bounds')

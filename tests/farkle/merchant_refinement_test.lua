@@ -41,7 +41,7 @@ for _,wh in ipairs{{1280,720},{1920,1080},{3440,1440}} do
  local offset=(wh[1]-1920*factor)*.5
  local r={x=offset+L.tray.x*factor,y=L.tray.y*factor,
           w=L.tray.w*factor,h=L.tray.h*factor}
- local owner={minimalHud=true}
+ local owner={}
  local cx,cy,scale=Tray.fit(owner,r,View,{-14,14,-6.05,6.05})
  local px,py=View.project(7,1.5,.47)
  local sx,sy=cx+px*scale,cy+py*scale
