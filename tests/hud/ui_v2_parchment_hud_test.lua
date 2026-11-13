@@ -28,6 +28,7 @@ local gfx=setmetatable({
  getWidth=function()return w end,getHeight=function()return h end,
  newFont=function(a,b)return fakeFont(b or a)end,
  getFont=function()return fakeFont(18)end,
+ newImage=function()return {getWidth=function()return 944 end,getHeight=function()return 229 end}end,
  push=function()pushes=pushes+1 end,
  pop=function()pops=pops+1 end,
  setColor=function(...)currentColor={...}end,
@@ -37,7 +38,7 @@ local gfx=setmetatable({
 },{__index=function()return function()end end})
 love={graphics=gfx,mouse={getPosition=function()return mouseX,mouseY end}}
 local Hud=require('src.farkle.ui').hud
-local layout=Layout.build('single_folio')
+local layout=Layout.build()
 assert(Layout.validate(layout))
 local function sameRgb(color,name)
  local expected=Art.rgb(name)
@@ -71,39 +72,38 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  Res.init(1920,1080)
  Res.refresh(w,h)
  drawCalls={}
- mouseX,mouseY=Res.to_screen(layout.primary.x+layout.primary.w/2,
-  layout.primary.y+layout.primary.h/2)
+ mouseX,mouseY=Res.to_screen(layout.single_action.x+layout.single_action.w/2,
+  layout.single_action.y+layout.single_action.h/2)
  local game=R.new()
  local ui={game=game,presentation=P.new(game)}
  local oldBank,oldPot,oldPhase=game.bank,game.pot,game.phase
  Hud.draw(ui)
  assert(pushes==pops,'Folio HUD leaked graphics state')
- assert(matchingFill(layout.header),'header must use ink-on-parchment')
- assert(matchingFill(layout.context),'tools panel must use parchment')
- assert(activeFill(layout.primary),'primary button should react to hover using screen-to-virtual mapping')
+ assert(matchingFill(layout.score_panel),'scorecard must use ink-on-parchment')
+ assert(activeFill(layout.single_action),'roll button should react to hover using screen-to-virtual mapping')
  assert(not activeFill(layout.secondary),'disabled action should never show hover')
- assert(ui.buttons.roll and ui.buttons.bank)
- assert(ui.buttons.help and ui.buttons.runmenu and ui.buttons.folio)
- assert(ui.buttons.roll.enabled and not ui.buttons.bank.enabled)
+ assert(ui.buttons.roll and not ui.buttons.bank)
+ assert(ui.buttons.help and ui.buttons.runmenu and not ui.buttons.folio)
+ assert(ui.buttons.roll.enabled)
  assert(game.bank==oldBank and game.pot==oldPot and game.phase==oldPhase,
   'rendering is not allowed to change the Farkle state')
- for _,id in ipairs{'roll','bank','help','runmenu'} do
+ for _,id in ipairs{'roll','help','runmenu'} do
   local rect=ui.buttons[id]
   assert(Surface.within(rect,1920,1080),'off-viewport '..id)
   assert(Layout.overlap(layout.tray,rect)==0,
    'an action obscures the physical 3D dice plane: '..id)
  end
- assert(ui.buttons.roll.x==layout.primary.x and
-   ui.buttons.roll.y==layout.primary.y and
-   ui.buttons.roll.w==layout.primary.w and
-   ui.buttons.roll.h==layout.primary.h,'visual/input rectangles drifted')
+ assert(ui.buttons.roll.x==layout.single_action.x and
+   ui.buttons.roll.y==layout.single_action.y and
+   ui.buttons.roll.w==layout.single_action.w and
+   ui.buttons.roll.h==layout.single_action.h,'visual/input rectangles drifted')
 end
 local f=assert(io.open('src/farkle/ui.lua','rb'))
 local source=f:read('*a');f:close()
 assert(source:find("src.screens.folio_surface",1,true))
 assert(source:find("MenuSurface.item(rect",1,true))
-assert(source:find("Folio.draw(s,u.presentation",1,true))
+assert(source:find("Dialogs.overlay(u,hits)",1,true))
 assert(source:find("Indicators.draw(u,hits)",1,true))
 assert(not source:find("hud_minimal",1,true))
 love=oldLove
-print('PASS Farkle HUD ink/parchment, hover mapping, unchanged hitboxes and score at 720p/1080p/1440p')
+print('PASS Merchant HUD ink/parchment, hover mapping, hitboxes and score at three sizes')

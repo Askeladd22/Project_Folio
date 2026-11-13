@@ -20,7 +20,7 @@ local originalYaw=V.yaw
 V.yaw=scene.tray_camera.yaw;V.cos_yaw=math.cos(V.yaw);V.sin_yaw=math.sin(V.yaw)
 local region=scene.regions.unified
 local extents={-region.half_back,region.half_back,region.y_back,region.y_front}
-local layout=require('src.farkle.ui').layout.build('table_minimal')
+local layout=require('src.farkle.ui').layout.build()
 for _,width in ipairs{1280,1920,2560} do
  local factor=width/1920
  local tray={}

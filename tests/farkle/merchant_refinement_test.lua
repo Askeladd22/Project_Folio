@@ -5,7 +5,7 @@ local Scene=require('src.engine3d.g3d.scene').scenery
 local Mesh=require('src.engine3d.g3d.scene').mesh
 local View=require('src.engine3d.view')
 local Tray=require('src.farkle.tabletop').tray_view
-local L=Layout.build('table_minimal')
+local L=Layout.build()
 assert(Layout.validate(L))
 assert(L.host.y+L.host.h==L.tray.y+76,'rear framing must meet the room')
 assert(L.tray.y>=530 and L.tray.y<=550 and L.host.h-L.tray.y==76,

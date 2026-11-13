@@ -23,7 +23,8 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 - Il controller e la camera non cambiano comportamento; gli ulteriori residui del flag `minimalHud` nella proiezione 3D saranno trattati come gate distinto.
 
 ### Verifiche
-- Revisione statica dei consumatori del vecchio layout e dei test che ne dipendono; CI e smoke GPU del nuovo branch ancora da eseguire.
+- Migrati test di geometria, palette, hover, leggibilità, azioni e registro al solo layout corrente; ritirato il test del pannello laterale dismesso, con Folio e ricompense coperti dai test modali e del Mercante.
+- Revisione statica dei consumatori; CI e smoke GPU del nuovo branch ancora da eseguire.
 - Nessuna modifica ai punteggi Farkle, ai sei D6, ai salvataggi o alla fisica.
 
 ## [0.1.65] - 2026-11-13

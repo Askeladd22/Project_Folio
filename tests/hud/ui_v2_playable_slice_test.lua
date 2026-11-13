@@ -25,15 +25,10 @@ local function items(u)
  end
  return result
 end
-local function check_region(id,layout)
- return id=='help' or id=='runmenu' and layout.header or
-        id=='folio' and layout.folio
-end
-
 local fresh=R.new()
 local u=owner(fresh)
 local a=items(u)
-assert(a.help.enabled and a.runmenu.enabled and a.folio.enabled)
+assert(a.help.enabled and a.runmenu.enabled and not a.folio)
 assert(a.roll and a.roll.enabled and a.roll.slot=='primary')
 assert(a.bank and not a.bank.enabled and a.bank.slot=='secondary')
 assert(not a.take and not a.next and not a.retryphysical)
@@ -44,11 +39,10 @@ assert(R.start(fresh))
 local rolling=items(u)
 assert(not rolling.roll or not rolling.roll.enabled)
 assert(not rolling.bank or not rolling.bank.enabled)
-assert(not rolling.folio.enabled and not rolling.help.enabled)
+assert(not rolling.folio and not rolling.help.enabled)
 assert(R.settle(fresh,{1,1,1,1,1,1}) and fresh.phase=='ready')
 local ready=items(u)
-assert(not ready.choices and
-       ready.roll and not ready.roll.enabled)
+assert(not ready.choices and not ready.roll)
 for i=1,6 do assert(R.toggle(fresh,i)) end
 local selected=items(u)
 assert(selected.take and selected.take.enabled)
@@ -63,7 +57,7 @@ assert(u.events[#u.events]=='bank' and fresh.pot==0 and fresh.bank>0,
 local pending=owner(R.new())
 pending.manualRoll={count=3}
 local p=items(pending)
-assert(p.roll and not p.roll.enabled,
+assert(not p.roll,
  'P2 must not allow the automatic roll during physical partial release')
 assert(A.state(pending):find('3 dadi',1,true),
  'manual physical release needs a dedicated status')
@@ -110,13 +104,13 @@ local advancing=R.new()
 advancing.phase='advance'
 assert(items(owner(advancing)).next)
 
-local layout=Layout.build('single_folio')
+local layout=Layout.build()
 assert(Layout.validate(layout))
 local regions={}
 regions.primary=layout.primary
 regions.secondary=layout.secondary
-regions.context=layout.context
-regions.folio=layout.folio
+regions.context=layout.context_actions[1]
+regions.shelf=layout.shelf
 for _,r in pairs(regions) do assert(not Layout.overlap(r,layout.tray) or
                                  Layout.overlap(r,layout.tray)==0) end
 Res.init(1920,1080)
@@ -146,8 +140,8 @@ assert(v:find('Indicators.draw(u,hits)',1,true))
 assert(v:find('Accepted.draw(u)',1,true))
 assert(v:find('Dialogs.overlay(u,hits)',1,true))
 assert(not v:find('hud_minimal',1,true))
-assert(v:find('Folio.draw(s,u.presentation',1,true),
- 'P2 folio must use current Farkle state')
+assert(not v:find('single_folio',1,true),
+ 'retired folio sidebar must not return')
 assert(v:find('u.buttons[a.id]',1,true),
  'P2 must register input in original controller hitbox table')
 print('PASS UI v2 default: Farkle actions, grip, reward/dialogs, no legacy fallback and hitbox projection')
