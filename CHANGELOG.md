@@ -10,6 +10,24 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.70] - 2026-11-13
+
+**Stato:** rimozione del painter 2D disconnesso dal workshop del Tavolo del Mercante.
+
+### Rimosso
+- `tray_workshop.shelf` e `tray_workshop.caption`, due funzioni di disegno 2D senza chiamanti nel repository dopo la migrazione a g3d.
+- La tabella `labels` impiegata esclusivamente dalla didascalia non più disegnata.
+
+### Conservato
+- `tray_workshop.cycle` e `tray_workshop.current`, con i cinque stati F8 `book`, `current`, `A`, `B`, `C`, usati dal rendering g3d.
+- Regole Farkle, fisica dei sei D6, camera, HUD, Folio modale, input e salvataggi.
+
+### Verifiche e limiti
+- Baseline `main@6a4078c` (0.1.69): CI Linux PASS.
+- **CI Linux PASS** sul commit `2aee23b8843ddf7aec507a7ddbbe555e196443db`: sintassi, versionamento, suite Lua 5.4 e LuaJIT (compreso ciclo F8), smoke GPU LÖVE/Mesa dei sei D6, interazione/composizione Mercante, acquisizione frame e test Python ([run 43503670885](https://github.com/Askeladd22/Project_Folio/actions/runs/43503670885)).
+- Il diagnostico Windows `tests/smoke/tray_workshop.lua` resta disponibile per controllo di picking e varianti grafiche.
+- Collaudo manuale Windows non eseguito.
+
 ## [0.1.69] - 2026-11-13
 
 **Stato:** simplification dell'inquadratura del Tavolo del Mercante.
