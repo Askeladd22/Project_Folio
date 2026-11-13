@@ -107,12 +107,9 @@ end)()
 
 -- Table and HUD geometry
 Parts.layout = (function()
--- UI 2.0 P1: pure geometry STUDY, no production HUD integration.
--- The two proposals share a 1920x1080 coordinate contract. The actual
--- selected layout is TBD until Windows g3d screenshots and P0 baseline QA.
--- This module contains neither LOVE drawing nor gameplay input/scoring.
+-- Merchant-table geometry and the retained single-folio HUD contract.
+-- Layout is presentation-only: g3d, rules and input stay authoritative.
 local M={virtual_w=1920,virtual_h=1080}
-M.variants={'single_folio','open_codex'}
 
 local function rect(x,y,w,h)
  return {x=x,y=y,w=w,h=h}
@@ -145,8 +142,8 @@ local function common()
 end
 
 function M.build(which)
- assert(which=='single_folio' or which=='open_codex' or
-        which=='table_minimal','unknown UI 2.0 layout candidate')
+ assert(which=='single_folio' or which=='table_minimal',
+        'unknown HUD layout')
  if which=='table_minimal' then
   -- Production Farkle table: preserve a large 3D viewport, without the
   -- legacy commission/folio/tools sidebar.
@@ -192,8 +189,8 @@ function M.build(which)
   }
  end
  local a=common()
- if which=='single_folio' then
-  -- A broad physical playing folio and a narrower on-desk work ledger.
+ -- Retained single-folio geometry for compatibility coverage.
+ -- A broad physical playing folio and a narrower on-desk work ledger.
   a.book=rect(48,108,1444,784)
   a.shelf=rect(140,136,1252,64)
   a.tray=rect(68,216,1402,666)
@@ -213,34 +210,8 @@ function M.build(which)
   a.shelf_divider=rect(140,208,1252,1)
   a.page_main=rect(60,120,1420,764)
   a.page_info=nil
- else
-  -- Real two-facing-page silhouette: left playable, right for work.
-  -- Deliberately smaller physical play surface, measurable in the study.
-  a.book=rect(48,112,1824,780)
-  a.page_main=rect(66,128,1182,744)
-  a.page_info=rect(1250,128,604,744)
-  a.shelf=rect(146,152,1030,80)
-  a.tray=rect(88,262,1136,598)
-  a.folio=rect(1286,164,530,520)
-  a.context=rect(1286,714,530,146)
- end
  a.name=which
  return a
-end
-
-local function area(r) return r.w*r.h end
-function M.comparison()
- local single=M.build('single_folio')
- local spread=M.build('open_codex')
- return {
-  single_tray_area=area(single.tray),
-  open_tray_area=area(spread.tray),
-  open_vs_single_tray_fraction=area(spread.tray)/area(single.tray),
-  single_folio_area=area(single.folio),
-  open_folio_area=area(spread.folio),
-  single_tray_ratio=single.tray.w/single.tray.h,
-  open_tray_ratio=spread.tray.w/spread.tray.h,
- }
 end
 
 function M.contains(outer,inner)
@@ -254,8 +225,8 @@ function M.overlap(a,b)
  return math.max(0,w)*math.max(0,h)
 end
 
--- Screen mapping is ONLY for layout studies and hitbox QA; the production
--- resolution_manager remains the sole authority for input conversion.
+-- Geometry probe for viewport and hitbox regression tests; production uses
+-- ResolutionManager for the actual pointer mapping.
 function M.screen_rect(r,viewport)
  assert(viewport and viewport.scale and viewport.scale>0)
  return rect(viewport.x+r.x*viewport.scale,

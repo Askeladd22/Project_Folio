@@ -39,8 +39,6 @@ for i,rect in ipairs(layout.context_actions) do
  assert(Layout.contains(layout.context,rect))
 end
 assert(#layout.context_actions==2)
-assert(Layout.validate(Layout.build('open_codex')),
- 'the experimental alternative layout must remain valid')
 
 local originalLove=love
 local realW,realH=1920,1080
