@@ -85,7 +85,7 @@ function T.fit(owner,tray,view,extents)
  -- coordinates remain identical for g3d and projected die hit-testing,
  -- without moving the physical vertices throughout pickup or release.
  if merchant then
-  local layout=require('src.farkle.ui').layout.build('table_minimal')
+  local layout=require('src.farkle.ui').layout.build()
   local left=view.project(extents[1]-rim,extents[3],0)
   local right=view.project(extents[2]+rim,extents[3],0)
   -- The anchor is the floor seam, not the top of an imaginary rear
