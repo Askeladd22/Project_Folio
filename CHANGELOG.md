@@ -10,6 +10,21 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.63] - 2026-11-13
+
+**Stato:** semplificazione interna della UI di produzione; nessuna modifica al gameplay Farkle, ai dadi fisici o al rendering g3d.
+
+### Modificato
+- Tre implementazioni duplicate del caricamento font in menu, selezione della partita e impostazioni sono state consolidate in un unico helper privato di `src/screens/frontend.lua`, senza introdurre una nuova interfaccia pubblica.
+- Mantenuti ordine dei font Aldine Aetna/Cardo, recupero tramite font predefinito LÖVE e comportamento delle schermate.
+- Aggiunto un controllo statico di regressione per garantire un solo proprietario del loader.
+
+### Verifica
+- Verificati staticamente i tre punti d'uso, l'unicità del loader e la conservazione dei riferimenti esistenti.
+- Test Lua, avvio LÖVE e collaudo grafico Windows: non eseguiti in questa sessione; verifica CI e umana in attesa.
+- Nessuna modifica alla main né integrazione di laboratori.
+
+
 ## [0.1.62] - 2026-11-09
 
 Status: EX-001 standalone Merchant V4 research. No shipping Farkle, physics, assets, or UI changes.
