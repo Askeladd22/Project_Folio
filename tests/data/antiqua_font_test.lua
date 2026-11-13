@@ -55,6 +55,8 @@ for name,section in pairs{register=register,hud=table_hud} do
   'HUD section must use the shared glyph-aware loader: '..name)
 end
 local menu=read('src/screens/frontend.lua')
+local _, loader_count = menu:gsub('local function load_font%(', '')
+assert(loader_count == 1, 'frontend must share one font candidate/fallback loader across three screens')
 assert(menu:find('fonts.subtitle = load_font({FONT_TEXT, FONT_FALLBACK}',1,true))
 assert(menu:find('fonts.footer = load_font({FONT_TEXT, FONT_FALLBACK}',1,true))
 

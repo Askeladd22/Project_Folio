@@ -1,7 +1,28 @@
 local Bundle = {}
 Bundle.menu_surface = require('src.screens.folio_surface').menu_surface
-Bundle.main_menu = (function()
 local Typography = require('src.core.presentation').typography
+-- Shared by the main menu, campaign selection and settings.
+-- Try authored fonts first; fall back to the default LÖVE font if unavailable.
+local function load_font(candidates, size)
+    if love.filesystem and love.filesystem.getInfo then
+        for _, path in ipairs(candidates) do
+            if love.filesystem.getInfo(path) then
+                local ok, font = pcall(function()
+                    return Typography.load(path, size)
+                end)
+                if ok and font then
+                    return font
+                end
+            end
+        end
+    end
+    local ok, fallback = pcall(function()
+        return love.graphics.newFont(size)
+    end)
+    return (ok and fallback) or love.graphics.getFont()
+end
+
+Bundle.main_menu = (function()
 local MainMenu = {}
 local AudioManager = require("src.core.audio_manager")
 local I18n = require('src.core.presentation').i18n
@@ -186,18 +207,6 @@ local function pick_font_for_text(text, text_font, uppercase_font)
     return text_font
 end
 
-local function load_font(candidates, size)
-    for _, fname in ipairs(candidates) do
-        if love.filesystem and love.filesystem.getInfo and love.filesystem.getInfo(fname) then
-            local ok, f = pcall(function() return Typography.load(fname, size) end)
-            if ok and f then
-                return f
-            end
-        end
-    end
-    local ok, fallback = pcall(function() return love.graphics.newFont(size) end)
-    return (ok and fallback) or love.graphics.getFont()
-end
 
 local function get_resolution_text_scale(view_h)
     local h = tonumber(view_h) or 1080
@@ -749,7 +758,6 @@ end
 return MainMenu
 end)()
 Bundle.campaign_select = (function()
-local Typography = require('src.core.presentation').typography
 local AudioManager = require("src.core.audio_manager")
 local I18n = require('src.core.presentation').i18n
 local MenuVisuals = require('src.core.presentation').menu_visuals
@@ -843,27 +851,6 @@ local function point_in_rect(px, py, rect)
     return rect and px >= rect.x and px <= rect.x + rect.w and py >= rect.y and py <= rect.y + rect.h
 end
 
-local function load_font(candidates, size)
-    if love.filesystem and love.filesystem.getInfo then
-        for _, path in ipairs(candidates) do
-            if love.filesystem.getInfo(path) then
-                local ok, font = pcall(function()
-                    return Typography.load(path, size)
-                end)
-                if ok and font then
-                    return font
-                end
-            end
-        end
-    end
-    local ok, fallback = pcall(function()
-        return love.graphics.newFont(size)
-    end)
-    if ok and fallback then
-        return fallback
-    end
-    return love.graphics.getFont()
-end
 
 local function ensure_assets()
     local _,height = love.graphics.getDimensions()
@@ -1114,7 +1101,6 @@ end
 return CampaignSelect
 end)()
 Bundle.settings = (function()
-local Typography = require('src.core.presentation').typography
 
 local Settings = {}
 local SettingsState = require('src.core.runtime_state').settings
@@ -1268,28 +1254,6 @@ local function leave_to_main_menu()
     Navigation.go(return_module)
 end
 
-local function load_font(candidates, size)
-    if love.filesystem and love.filesystem.getInfo then
-        for _, path in ipairs(candidates) do
-            if love.filesystem.getInfo(path) then
-                local ok, font = pcall(function()
-                    return Typography.load(path, size)
-                end)
-                if ok and font then
-                    return font
-                end
-            end
-        end
-    end
-
-    local ok, fallback = pcall(function()
-        return love.graphics.newFont(size)
-    end)
-    if ok and fallback then
-        return fallback
-    end
-    return love.graphics.getFont()
-end
 
 local function ensure_assets()
     local height=love.graphics.getHeight()
