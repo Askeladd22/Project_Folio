@@ -11,7 +11,7 @@ for z=0,9 do
  assert(V.projection=='perspective')
 end
 -- Orthographic math is still supported by engine3d.view, not the HUD.
-V.projection=nil
+V.projection='orthographic'
 local a,b,c=V.to_camera(0,0,0);local d,e,f=V.to_camera(5,4,7)
 assert(a==d and b==e and c==f,'orthographic math must remain available')
 local diceSchema=require('src.data.dice_schema')
