@@ -26,6 +26,9 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 - L'inventario dei sorgenti di produzione passa da 30 a 29 file; il test di struttura protegge ora direttamente l'isolamento dello startup.
 - Documentazione tecnica aggiornata ai laboratori effettivamente presenti, con storia conservata in Git.
 
+### Corretto
+- Ripristinata la licenza MIT originaria (Copyright 2024 Dice) del codice FPS-derived rimasto in `src/engine3d/bounds.lua`, copiandola dal commit storico `5a4e60a3` in `lib/licenses/LICENSE_fps`; corretto il riferimento al file scomparso e aggiunto un gate di regressione.
+
 ### Verifiche
 - Verificata via albero Git la non esistenza dei laboratori ritirati e censiti i relativi consumatori statici.
 - Prima della modifica, `main@99d0e33` falliva in `tests/engine3d/physics_handoff_test.lua` per il modulo assente `experiments.physics_lab.old`.

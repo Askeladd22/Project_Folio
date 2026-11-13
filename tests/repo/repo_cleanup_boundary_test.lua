@@ -65,4 +65,12 @@ for _,path in ipairs{
  local f=assert(io.open(path,'rb'),'active engine asset deleted: '..path)
  f:close()
 end
+-- Production FPS-derived footprint logic keeps its original MIT notice.
+local license=read('lib/licenses/LICENSE_fps')
+assert(license:find('MIT License',1,true) and
+       license:find('Copyright (c) 2024 Dice',1,true) and
+       license:find('Permission is hereby granted',1,true),
+ 'retained FPS-derived code must ship with the original license')
+assert(read('src/engine3d/bounds.lua'):find('lib/licenses/LICENSE_fps',1,true),
+ 'FPS attribution must point to the retained license')
 print('PASS retired desk/painter absent; production Farkle, g3d and physics assets preserved')
