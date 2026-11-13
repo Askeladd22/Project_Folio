@@ -24,7 +24,7 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 
 ### Verifiche e limiti
 - Baseline `main@6a4078c` (0.1.69): CI Linux PASS.
-- Nuovo controllo headless del ciclo F8 e degli stati invalidi: CI della revisione da eseguire.
+- **CI Linux PASS** sul commit `2aee23b8843ddf7aec507a7ddbbe555e196443db`: sintassi, versionamento, suite Lua 5.4 e LuaJIT (compreso ciclo F8), smoke GPU LÖVE/Mesa dei sei D6, interazione/composizione Mercante, acquisizione frame e test Python ([run 43503670885](https://github.com/Askeladd22/Project_Folio/actions/runs/43503670885)).
 - Il diagnostico Windows `tests/smoke/tray_workshop.lua` resta disponibile per controllo di picking e varianti grafiche.
 - Collaudo manuale Windows non eseguito.
 
