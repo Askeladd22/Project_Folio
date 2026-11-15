@@ -40,12 +40,10 @@ local checkDiceSettled
 local physicalResolution
 local manual_session=nil
 local RollResolution = require('src.engine3d.roll_resolution')
-local MouseThrow = require('src.farkle.interaction').single
 local onDiceSettled
 local readDiceValues
 local readDieFace
 local DICE_CONFIG = DiceConfig.load()
-local DICE_BOARD_IMAGE_PATH = DICE_CONFIG.board_image_path
 
 dice = {}
 local DICE_SIZE_SCHEMA = DICE_CONFIG.sizes
@@ -184,12 +182,6 @@ local TRAY_CAMERA = {
     distance = DICE_SCENE_CAMERA_SCHEMA.distance,
 }
 
-local DICE_BOX_HALF_X = DICE_SCENE_BOX_SCHEMA.half_x
-local DICE_BOX_HALF_Y = DICE_SCENE_BOX_SCHEMA.half_y
-local DICE_BOX_HEIGHT = DICE_SCENE_BOX_SCHEMA.height
-local DICE_BOX_LINEAR_DAMPING = DICE_SCENE_BOX_SCHEMA.linear_damping
-local DICE_BOX_ANGULAR_DAMPING = DICE_SCENE_BOX_SCHEMA.angular_damping
-local DICE_BOX_BORDER_HEIGHT = DICE_SCENE_BOX_SCHEMA.border_height
 
 local D6_REGION_RATIO = DICE_SCENE_REGION_SCHEMA.d6_ratio
 local DICE_REGIONS = DICE_SCENE_REGION_SCHEMA
@@ -724,7 +716,7 @@ local function initial_position_for_slot(slot, slot_index)
     local col = (slot_index - 1) % cols
     local t = (cols > 1) and (col / (cols - 1)) or 0.5
     local sx = safe_left + (safe_right - safe_left) * t
-    return sx, sy, side
+    return sx, sy
 end
 
 local function spawn_initial_dice()

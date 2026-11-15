@@ -10,6 +10,25 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.71] - 2026-11-15
+
+**Stato:** hardening diagnostico e pulizia statica mirata, senza modifiche al gameplay.
+
+### Corretto
+- `EngineBridge.emit` rende visibili nome evento ed errore con traceback, una volta per firma evento/errore. Conserva il comportamento precedente: ritorno zero e interruzione degli altri listener quando uno fallisce.
+- Rimosso il terzo valore di ritorno non definito e non consumato da `initial_position_for_slot`.
+
+### Rimosso
+- Otto alias locali inutilizzati in `src/core/dice_runtime.lua`. Nessuna API o risorsa eliminata.
+
+### Aggiunto
+- Regressione `tests/core/event_bus_test.lua` per log dell'errore, deduplicazione e comportamento di dispatch invariato.
+
+### Verifiche e limiti
+- Review statica su `main@77f0939a`. Nessun cambiamento a Farkle, solver, g3d o salvataggi.
+- Suite LuaJIT/Lua 5.4, lint, smoke LÖVE/Mesa e verifica manuale Windows **in attesa della CI o di un runtime locale**.
+- Nessuna sessione Feather, LuaLS o profiling è stata eseguita.
+
 ## [0.1.70] - 2026-11-13
 
 **Stato:** rimozione del painter 2D disconnesso dal workshop del Tavolo del Mercante.

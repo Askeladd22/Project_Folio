@@ -65,7 +65,35 @@ local function test_when_off_is_called_with_event_name_then_event_is_cleared()
     assert_eq(count, 0, "handlers should be removed")
 end
 
+
+local function test_when_bridge_listener_fails_then_diagnostic_is_emitted_once()
+    local Bridge = require('src.core.engine_bridge')
+    local bus = EventBus.new()
+    local reached = 0
+    bus:on("test.broken", function() error("expected listener failure") end)
+    bus:on("test.broken", function() reached = reached + 1 end)
+    Bridge.set_event_bus(bus)
+    local reports = {}
+    local original_print = print
+    print = function(message) reports[#reports + 1] = tostring(message) end
+    local ok, err = pcall(function()
+        assert_eq(Bridge.emit("test.broken"), 0, "failure retains zero return")
+        assert_eq(reached, 0, "failed listener stops dispatch as before")
+        assert_eq(#reports, 1, "first failure must be visible")
+        assert_true(reports[1]:find("test.broken", 1, true) ~= nil, "log contains event name")
+        assert_true(reports[1]:find("expected listener failure", 1, true) ~= nil, "log contains reason")
+        assert_eq(Bridge.emit("test.broken"), 0, "repeat failure retains zero return")
+        assert_eq(#reports, 1, "duplicate error must not flood log")
+        Bridge.set_event_bus(EventBus.new())
+        assert_eq(Bridge.emit("test.broken"), 0, "new bus is independent")
+    end)
+    print = original_print
+    Bridge.set_event_bus(nil)
+    assert_true(ok, err)
+end
+
 local tests = {
+    {name = 'when_bridge_listener_fails_then_diagnostic_is_emitted_once', fn = test_when_bridge_listener_fails_then_diagnostic_is_emitted_once},
     {
         name = "when_emitting_then_handlers_receive_payload_and_event_name",
         fn = test_when_emitting_then_handlers_receive_payload_and_event_name,
