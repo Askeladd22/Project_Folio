@@ -38,7 +38,6 @@ local app_events = nil
 local rollAllDice
 local checkDiceSettled
 local physicalResolution
-local manual_session=nil
 local RollResolution = require('src.engine3d.roll_resolution')
 local onDiceSettled
 local readDiceValues
@@ -914,10 +913,14 @@ end
 -- One logical Farkle roll can consist of several separate real die throws.
 -- Score resolution is held until EVERY active physical die has been released.
 local function begin_manual_roll(indices)
-    assert(not manual_session,'a second physical manual session was requested')
-    local pending={}
-    for _,i in ipairs(indices) do pending[i]=true end
-    manual_session={pending=pending,count=#indices}
+    -- The controller owns the single queue of physical dice to release.
+    local session=assert(Scriptorium.manualRoll,'missing controller manual session')
+    assert(not session.staged,'a second physical manual session was requested')
+    assert(session.count==#indices,'manual session count does not match active dice')
+    for _,i in ipairs(indices) do
+        assert(session.pending[i],'active physical die missing from manual session')
+    end
+    session.staged=true
     last_roll_indices={}
     for _,i in ipairs(indices) do last_roll_indices[#last_roll_indices+1]=i end
     physicalResolution=RollResolution.new(last_roll_indices)
@@ -944,15 +947,15 @@ local function begin_manual_roll(indices)
 end
 
 local function release_manual_die(index)
-    if not manual_session or not manual_session.pending[index] then return false end
+    local session=Scriptorium.manualRoll
+    if not session or not session.staged or not session.pending[index] then return false end
     assert(not dice[index].body._manual_pending,'release must activate physical die')
-    manual_session.pending[index]=nil
-    manual_session.count=manual_session.count-1
+    session.pending[index]=nil
+    session.count=session.count-1
     EngineBridge.emit('dice.manual_die_released',{
-        index=index,remaining=manual_session.count,
+        index=index,remaining=session.count,
         logical_roll_id=Scriptorium.logicalRollId
     })
-    if manual_session.count==0 then manual_session=nil end
     return true
 end
 
@@ -1131,7 +1134,7 @@ end
 
 function rollAllDice(max_dice, roll_indices, recovery, technical, gesture)
     -- Automatic Space/technical retries preserve the existing launch path.
-    manual_session=nil
+    Scriptorium.manualRoll=nil
     for _,entry in ipairs(dice) do
         entry.body._manual_pending=false
         entry.body._grabbed=false
@@ -1332,7 +1335,7 @@ function rollAllDice(max_dice, roll_indices, recovery, technical, gesture)
 end
 
 function checkDiceSettled(dt)
-    if diceSettled or (manual_session and manual_session.count>0) then return end
+    if diceSettled or (Scriptorium.manualRoll and Scriptorium.manualRoll.count>0) then return end
     if physicalResolution then
         local action,event=RollResolution.advance(physicalResolution,dt,dice)
         if action=='accept' then diceSettled=true;Scriptorium.physicalNotice=nil;onDiceSettled()

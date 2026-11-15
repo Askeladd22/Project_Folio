@@ -48,7 +48,10 @@ local function fresh()
   end
  end
  U.onManualRollRelease=function(index)
+  assert(U.manualRoll and U.manualRoll.pending[index],'group die must be queued')
   assert(not dice[index].body._manual_pending)
+  U.manualRoll.pending[index]=nil
+  U.manualRoll.count=U.manualRoll.count-1
   ends[#ends+1]=index
   return true
  end

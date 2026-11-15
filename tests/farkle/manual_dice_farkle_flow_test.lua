@@ -34,8 +34,11 @@ U.onManualRollBegin=function(indices)
  end
 end
 U.onManualRollRelease=function(index)
- ends=ends+1
+ assert(U.manualRoll and U.manualRoll.pending[index],'physical die must be queued')
  assert(not dice[index].body._manual_pending)
+ U.manualRoll.pending[index]=nil
+ U.manualRoll.count=U.manualRoll.count-1
+ ends=ends+1
  return true
 end
 for i=1,6 do
@@ -49,6 +52,8 @@ for i=1,6 do
  clock=clock+.04
  U:mousereleased(150+i*4,130,2)
  assert(ends==i,'each die should be released exactly once')
+ assert(not U.manualRoll or not U.manualRoll.pending[i],
+  'released die must not remain queued')
  assert(starts==1,'only one Farkle logical roll should start')
  assert(U.game.phase=='rolling' and U.game.pot==0,
   'no Farkle points are assigned until entire group settles')
