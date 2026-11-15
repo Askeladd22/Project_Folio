@@ -206,6 +206,8 @@ local EngineBridge = {
     event_bus = nil,
 }
 
+-- Retain synchronous dispatch semantics; report each event/error signature once.
+local reported_dispatch_errors = {}
 local HANDLER_KEYS = {
     get_dice_tray_rect = true,
     get_tray_die_hits = true,
@@ -232,6 +234,7 @@ end
 function EngineBridge.set_event_bus(event_bus)
     if event_bus == nil then
         EngineBridge.event_bus = nil
+        reported_dispatch_errors = {}
         return
     end
     if type(event_bus) ~= "table" then
@@ -247,6 +250,7 @@ function EngineBridge.set_event_bus(event_bus)
         return
     end
     EngineBridge.event_bus = event_bus
+    reported_dispatch_errors = {}
 end
 
 ---@param event_name string
@@ -261,7 +265,21 @@ function EngineBridge.emit(event_name, payload)
     if type(fn) ~= "function" then
         return 0
     end
-    local ok, called = pcall(fn, bus, event_name, payload)
+    local function on_error(err)
+        local message = tostring(err)
+        local key = tostring(event_name) .. "\0" .. message
+        if not reported_dispatch_errors[key] then
+            reported_dispatch_errors[key] = true
+            local trace = message
+            if type(debug) == "table" and type(debug.traceback) == "function" then
+                trace = debug.traceback(message, 2)
+            end
+            print("[EngineBridge.emit] listener failure in " .. tostring(event_name) .. ": " .. trace)
+        end
+    end
+    local ok, called = xpcall(function()
+        return fn(bus, event_name, payload)
+    end, on_error)
     if ok and type(called) == "number" then
         return called
     end
