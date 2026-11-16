@@ -10,6 +10,27 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.72] - 2026-11-15
+
+**Stato:** una sola sessione per il lancio manuale dei dadi.
+
+### Modificato
+- Il controller conserva l'unica mappa `manualRoll.pending` e il conteggio `manualRoll.count`; il runtime fisico ne verifica lo staging e consuma le stesse voci dopo ogni rilascio, anziché mantenere un duplicato.
+- Il controllo del settle e il reset del lancio automatico consultano la stessa sessione. Il flag `staged` nel medesimo oggetto mantiene la protezione contro avvii manuali ripetuti.
+- Adeguati test headless di singolo dado e gruppo, verifica statica del gate e nota dello smoke di cancellazione.
+
+### Corretto
+- Un reset del controller non lascia più una sessione manuale privata pendente nel runtime.
+- La conferma della fisica deve consumare esattamente una voce per rilascio.
+
+### Rimosso
+- La sessione duplicata `manual_session` nel runtime e il contatore `valid_releases` inutilizzato nel controller.
+
+### Verifiche e limiti
+- Audit di sorgenti e test su `main@e2b96bdc`.
+- CI LuaJIT/Lua 5.4, lint, LÖVE/Mesa smoke, Python **da eseguire**; collaudo manuale Windows **da eseguire**.
+- LuaLS e Feather non eseguiti; gameplay Farkle, fisica, g3d, sei D6 e salvataggi invariati.
+
 ## [0.1.71] - 2026-11-15
 
 **Stato:** hardening diagnostico e pulizia statica mirata, senza modifiche al gameplay.

@@ -371,15 +371,15 @@ function U:mousereleased(x,y,b)
   local one=MouseThrow.release(held,x,y,love.timer.getTime(),view,scale,bounds)
   if one then releases={one} end
  end
- local valid_releases=0
  for _,released in ipairs(releases) do
   local i=released.index
   if self.manualRoll and self.manualRoll.pending[i] then
-   valid_releases=valid_releases+1
-   self.manualRoll.pending[i]=nil
-   self.manualRoll.count=self.manualRoll.count-1
+   -- The physical runtime now consumes this very same pending/count table.
+   local before=self.manualRoll.count
    assert(self.onManualRollRelease and self.onManualRollRelease(i),
     'manual physical release did not reach the runtime')
+   assert(self.manualRoll.count==before-1 and not self.manualRoll.pending[i],
+    'manual runtime did not consume exactly one queued die')
    if self.dragSelected then self.dragSelected[i]=nil end
    self:log('die_released',i)
    if self.manualRoll.count==0 then self.manualRoll=nil;self.dragSelected=nil end

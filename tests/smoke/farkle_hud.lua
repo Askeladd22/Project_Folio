@@ -83,8 +83,8 @@ function M.install(U)
   U:reset('build')
   assert(U.game.phase=='fresh' and not U.manualRoll,
    'P0 smoke cleanup left a pending physical throw')
-  -- The controller reset cannot clear the runtime's private manual session.
-  -- A real automatic roll closes it through the production launch path.
+  -- Reset now clears the controller-owned manual session.
+  -- A real automatic roll must still work after a cancelled grip.
   assert(U:request(),'P0 cleanup roll could not start')
   while U.game.phase=='rolling' do wait() end
   U:reset('build')
