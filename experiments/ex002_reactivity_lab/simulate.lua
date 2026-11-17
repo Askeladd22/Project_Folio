@@ -96,6 +96,9 @@ end
 
 local function choose_claim(s,claim_policy,cf)
  if claim_policy=='first' then return assert(cf.rows[1]).lane end
+ -- Post-pilot stress only: deliberately choose the last open category.
+ -- Never included in the preregistered M.pilot sample.
+ if claim_policy=='last' then return assert(cf.rows[#cf.rows]).lane end
  assert(claim_policy=='informed','unknown EX-002 claim policy')
  local best,best_utility
  for _,row in ipairs(cf.rows) do
@@ -112,7 +115,7 @@ function M.play(seed,mode,dice_policy,claim_policy,writer)
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed<2147483647)
  assert(mode=='reactive' or mode=='fixed')
  assert(M.stops[dice_policy],'unknown dice policy')
- assert(claim_policy=='first' or claim_policy=='informed')
+ assert(claim_policy=='first' or claim_policy=='informed' or claim_policy=='last')
  local s=E.new('C',seed,{rival_target_mode=mode})
  local stats={choice_states=0,legal_claims=0,nonlocking_states=0,
   target_sensitive=0,nonlocking_target_sensitive=0,terminal_status_sensitive=0,
