@@ -10,6 +10,27 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.73] - 2026-11-17
+
+**Stato:** esperimento EX-002 isolato di targeting del Mercante in Encounter C;
+**non attivo nel gameplay canonico**.
+
+### Aggiunto
+- Controllo sperimentale a priorità fissa (`rival_target_mode='fixed'`) per
+  Encounter C, opt-in e con budget/ritmo dei sigilli invariati.
+- Preview trasparente e non mutante della scelta del rivale (punteggi,
+  regola, bersaglio, alternative), mantenendo R come comportamento predefinito.
+- Laboratorio R/F preregistrato: seed appaiati, tre policy Farkle e due
+  policy di allocazione, controfattuali esaustivi per ogni stato di claim.
+- Test EX-002, driver headless, workflow pilota con esportazione CSV e
+  protocollo in `research/EX-002.md`.
+
+### Verifiche e limiti
+- Nessun risultato di simulazione dichiarato prima dell'esecuzione CI.
+  Lua 5.4, LuaJIT, lint/smoke LÖVE e CSV **in attesa di verifica**.
+- Preservati `src/`, Encounter A, sei D6, regole Farkle, fisica e g3d.
+  G3 numerico e G4 playtest da valutare; nessuna promozione a `main`.
+
 ## [0.1.72] - 2026-11-15
 
 **Stato:** una sola sessione per il lancio manuale dei dadi.
