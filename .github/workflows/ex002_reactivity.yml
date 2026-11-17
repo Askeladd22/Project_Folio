@@ -1,0 +1,36 @@
+name: EX-002 Encounter C reactivity pilot
+on:
+  push:
+    branches:
+      - experiments/ex002-reactivity-paul-seed
+jobs:
+  ex002:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua runtimes
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit
+      - name: Encounter A/C original regression
+        run: |
+          lua5.4 tests/labs/encounter_ac_test.lua
+          luajit tests/labs/encounter_ac_test.lua
+      - name: EX-002 deterministic tests
+        run: |
+          lua5.4 tests/labs/ex002_reactivity_test.lua
+          luajit tests/labs/ex002_reactivity_test.lua
+      - name: EX-002 paired pilot 1000-1999
+        run: |
+          mkdir -p /tmp/ex002
+          lua5.4 experiments/ex002_reactivity_lab/run.lua 1000 1999 /tmp/ex002 | tee /tmp/ex002/summary.txt
+          test "$(wc -l < /tmp/ex002/ex002_matches.csv)" -eq 12001
+          test "$(wc -l < /tmp/ex002/ex002_counterfactuals.csv)" -gt 12001
+      - name: Preserve raw results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ex002-pilot-1000-1999
+          path: /tmp/ex002/*
+          if-no-files-found: ignore
