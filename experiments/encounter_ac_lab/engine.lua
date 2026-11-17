@@ -85,30 +85,50 @@ local function c_seal(s,actor,lane_id,amount)
  end
  return true
 end
-local function rival_c_target(s)
+-- EX-002: the only experimental switch is which open lane the rival targets.
+-- All candidate scores use public information. This function never mutates s.
+function E.preview_rival_target(s)
+ if s.mode~='C' then return nil end
+ local mode=s.rival_target_mode or 'reactive'
  local best,best_score
+ local candidates={}
  for id,l in ipairs(s.lanes) do
   if not l.owner then
-   -- Prefers finishing its own proofs and contesting dangerous player progress.
-   -- Public fixed policy; no knowledge of unrevealed dice.
-   local score=l.rival*5+l.player*2+({3,2,1})[id]
+   local priority=({3,2,1})[id]
+   local score=priority
+   if mode=='reactive' then score=score+l.rival*5+l.player*2 end
+   candidates[#candidates+1]={lane=id,score=score,player=l.player,
+     rival=l.rival,priority=priority}
    if not best or score>best_score then best=id;best_score=score end
   end
  end
- return best
+ if not best then return nil end
+ local marks=s.round%3==0 and 2 or 1
+ return {target=best,name=s.lanes[best].name,mode=mode,score=best_score,
+  marks=marks,candidates=candidates,
+  rule=mode=='reactive' and '5×sigilli Mercante + 2×sigilli Incisore + priorità'
+    or 'priorità fissa 3,2,1 (solo categorie aperte)'}
 end
 local function rival_c_action(s)
  if active_lanes(s)==0 then return end
- local target=rival_c_target(s)
- if not target then return end
- local marks=s.round%3==0 and 2 or 1
+ local decision=E.preview_rival_target(s)
+ if not decision then return end
+ local target,marks=decision.target,decision.marks
  c_seal(s,'rival',target,marks)
+ -- Diagnostic only; the existing event sequence and descriptions stay unchanged.
+ s.last_rival_decision=decision
  log(s,'rival_claim',target..':'..marks)
 end
-function E.new(mode,seed)
+function E.new(mode,seed,opts)
  assert(mode=='A' or mode=='C','unknown encounter prototype')
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed<2147483647,'invalid seed')
+ opts=opts or {}
+ assert(type(opts)=='table','invalid Encounter options')
+ local target_mode=opts.rival_target_mode or 'reactive'
+ assert(target_mode=='reactive' or target_mode=='fixed','invalid EX-002 rival mode')
+ assert(mode=='C' or target_mode=='reactive','EX-002 applies only to C')
  local s={mode=mode,seed=seed,round=1,max_rounds=mode=='A' and 5 or 6,
+  rival_target_mode=target_mode,
   lanes={},phase='dice',turn=Rules.new('control'),random=RNG.new_rng(seed),
   banked=0,busts=0,events={},winner=nil,
   offered_marks=0,pair=1,left=1,
@@ -219,6 +239,7 @@ end
 function E.claim(s,lane_id)
  if s.mode~='C' or s.phase~='claim' or type(lane_id)~='number' or
    lane_id%1~=0 or lane_id<1 or lane_id>3 or s.lanes[lane_id].owner then return false end
+ s.last_rival_decision=nil
  assert(c_seal(s,'player',lane_id,s.claim_marks))
  log(s,'player_claim',lane_id..':'..s.claim_marks)
  local owned=owner_counts(s)
@@ -231,6 +252,7 @@ function E.next_round(s)
  if s.phase~='round_end' then return false end
  s.round=s.round+1
  s.turn=Rules.new('control')
+ s.last_rival_decision=nil
  s.phase='dice'
  s.last='Nuova prova: incassa o rischia con i dadi.'
  return true
