@@ -105,3 +105,18 @@ lua5.4 experiments/ex002_reactivity_lab/stress_run.lua 8000 8999 /tmp/ex002b
 `ex002b_matches.csv` registra anche il percorso effettivo dei target.
 Questo esperimento di stress non modifica il protocollo congelato del
 pilot e non sostituisce un playtest umano o il futuro holdout.
+
+## Risultati misurati del ciclo EX-002 / EX-002b
+
+La CI del 17 novembre 2026 ha validato 12.000 match del pilot e
+6.000 di EX-002b, con gli output raw conservati come artifact.
+Nel pilot `first` e `informed` scelgono le stesse categorie
+in tutte le 24.492 decisioni comparabili e R/F producono
+identiche contromosse effettive. Nel test esplorativo `last`
+R e F divergono nei risultati finali per 72/91/104 match
+su 1.000 rispettivamente per prudent/balanced/daring; tuttavia
+le vittorie del giocatore cambiano solo +1/-3/+3 su 1.000.
+Vedere `research/EX-002.md` per tabella, run e limiti.
+
+**Decisione:** non introdurre R/F come regola canonica; il
+prototipo C non ha ancora superato la prova di agency umana.
