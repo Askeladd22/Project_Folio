@@ -31,10 +31,15 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 - **CI EX-002 PASS**: regressione A/C, Lua 5.4 e LuaJIT, pilot
   preregistrato di 12.000 partite, raw CSV archiviati
   ([run #44176272158](https://github.com/Askeladd22/Project_Folio/actions/runs/44176272158)).
-- Pilot G3 **non superato**: le policy di allocazione hanno percorso gli
-  stessi stati effettivi, senza differenze di esito R/F; verifica di
-  stress EX-002b post-pilot e CI generale PR **in attesa**.
-- Lint/smoke LÖVE completo sulla PR **in attesa**.
+- Pilot G3 **non superato** come prova di agency: le policy di allocazione
+  visitano gli stessi percorsi R/F. Stress EX-002b 6.000 partite PASS,
+  post-hoc: bersagli/vincitori divergono, ma win-rate Incisore quasi
+  invariato ([run #44177227975](https://github.com/Askeladd22/Project_Folio/actions/runs/44177227975)).
+- CI generale PR **PASS** ([Lua regression #44177236507](https://github.com/Askeladd22/Project_Folio/actions/runs/44177236507)):
+  bump/changelog, lint, sintassi, suite Lua 5.4/LuaJIT, LÖVE/Mesa,
+  smoke HUD, test Python.
+- CI Encounter A/C **PASS** ([run #44177236513](https://github.com/Askeladd22/Project_Folio/actions/runs/44177236513)).
+  Collaudo manuale Windows e playtest G4 **non eseguiti**.
 - Preservati `src/`, Encounter A, sei D6, regole Farkle, fisica e g3d.
   G3 numerico e G4 playtest da valutare; nessuna promozione a `main`.
 
