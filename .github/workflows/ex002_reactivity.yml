@@ -27,6 +27,12 @@ jobs:
           lua5.4 experiments/ex002_reactivity_lab/run.lua 1000 1999 /tmp/ex002 | tee /tmp/ex002/summary.txt
           test "$(wc -l < /tmp/ex002/ex002_matches.csv)" -eq 12001
           test "$(wc -l < /tmp/ex002/ex002_counterfactuals.csv)" -gt 12001
+      - name: EX-002b post-pilot exploratory stress 8000-8999
+        run: |
+          mkdir -p /tmp/ex002b
+          lua5.4 experiments/ex002_reactivity_lab/stress_run.lua 8000 8999 /tmp/ex002b | tee /tmp/ex002/summary_ex002b.txt
+          test "$(wc -l < /tmp/ex002b/ex002b_matches.csv)" -eq 6001
+          cp /tmp/ex002b/ex002b_matches.csv /tmp/ex002/
       - name: Preserve raw results
         if: always()
         uses: actions/upload-artifact@v4
