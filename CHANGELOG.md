@@ -24,10 +24,17 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
   policy di allocazione, controfattuali esaustivi per ogni stato di claim.
 - Test EX-002, driver headless, workflow pilota con esportazione CSV e
   protocollo in `research/EX-002.md`.
+- EX-002b: test esplorativo separato, ultima categoria libera, su seed
+  esterni all'holdout, per verificare l'equivalenza osservata nel pilot.
 
 ### Verifiche e limiti
-- Nessun risultato di simulazione dichiarato prima dell'esecuzione CI.
-  Lua 5.4, LuaJIT, lint/smoke LÖVE e CSV **in attesa di verifica**.
+- **CI EX-002 PASS**: regressione A/C, Lua 5.4 e LuaJIT, pilot
+  preregistrato di 12.000 partite, raw CSV archiviati
+  ([run #44176272158](https://github.com/Askeladd22/Project_Folio/actions/runs/44176272158)).
+- Pilot G3 **non superato**: le policy di allocazione hanno percorso gli
+  stessi stati effettivi, senza differenze di esito R/F; verifica di
+  stress EX-002b post-pilot e CI generale PR **in attesa**.
+- Lint/smoke LÖVE completo sulla PR **in attesa**.
 - Preservati `src/`, Encounter A, sei D6, regole Farkle, fisica e g3d.
   G3 numerico e G4 playtest da valutare; nessuna promozione a `main`.
 
