@@ -88,3 +88,20 @@ G3 solo dopo audit dei CSV e dei controesempi, confrontando coppie
 seed/policy omogenee. G4 playtest crossover con predizione della
 risposta del Mercante, senza presentare nuove meccaniche come canoniche.
 G5 decisione scritta in `research/DECISIONS.md` solo su approvazione.
+
+## EX-002b — stress diagnostico post-pilot
+
+Il pilot ha rilevato `first == informed` su tutti i percorsi visitati,
+così l'effetto della reattività è osservabile nei soli controfattuali.
+Per falsificare la possibile equivalenza completa senza usare l'holdout
+si esegue un sondaggio dichiaratamente **post-hoc** con policy `last`
+(ultima categoria aperta; non skill ottimale), seed 8000..8999:
+
+```sh
+mkdir -p /tmp/ex002b
+lua5.4 experiments/ex002_reactivity_lab/stress_run.lua 8000 8999 /tmp/ex002b
+```
+
+`ex002b_matches.csv` registra anche il percorso effettivo dei target.
+Questo esperimento di stress non modifica il protocollo congelato del
+pilot e non sostituisce un playtest umano o il futuro holdout.
