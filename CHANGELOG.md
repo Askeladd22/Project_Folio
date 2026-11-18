@@ -10,6 +10,42 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.79] - 2026-11-18
+
+**Stato:** ulteriori correzioni alla fisica D6 (FPS-FIX-002) in
+PR di lavoro; non è un port del solver nativo FPS.
+La versione non è rilasciata finché la PR non è approvata.
+
+### Corretto
+- Il passo fisso è suddiviso **solo in caso di rotazioni elevate**
+  in sottopassi limitati (max 12): le orientazioni intermedie
+  partecipano ai test SAT e possono intercettare impatti che
+  il precedente CCD solo traslazionale non rilevava.
+- La risoluzione dei contatti fra i sei D6 usa fino a quattro
+  passaggi SAT per ridurre le penetrazioni residue in catene
+  e gruppi di dadi. Un contatto non può emettere più eventi
+  audio per la stessa coppia all'interno del passo fisso.
+- Tempo simulato, accumulatore, massimo recupero, API `after_step`,
+  dadi in mano e regole canoniche Farkle restano invariati.
+
+### Aggiunto
+- Test riproducibili per rotazione da 0 a 90 gradi con
+  collisione soltanto intermedia, catene da 3 e 6 dadi,
+  deduplicazione audio, timestep e limite dei sottopassi.
+- Contatori diagnostici `angular_substeps` e
+  `angular_substep_cap_hits`, protocollo
+  `research/FPS-FIX-002.md` e CI dedicata aggiornata.
+
+### Verifiche e limiti
+- CI Lua 5.4/LuaJIT e smoke LÖVE/Mesa da verificare
+  sulla HEAD di questa PR, senza inventare esiti.
+- Il limite dei sottopassi implica che rotazioni illimitatamente
+  veloci non sono garantite; punto di contatto e risposta
+  restano approssimazioni, non il manifold nativo FPS.
+- QA Windows con 50 lanci reali ancora NOT RUN;
+  nessun merge automatico, niente modifiche a logica Farkle
+  o sistema del libro.
+
 ## [0.1.78] - 2026-11-18
 
 **Stato:** correzione delle collisioni D6-D6 nel solver Lua di
