@@ -1,5 +1,6 @@
 
 require('lib.core')local Logger = require('src.core.engine_bridge').logger
+local DieCollisions = require('src.engine3d.die_collision')
 
 local materials = {}
 
@@ -107,6 +108,13 @@ function box:update(dt)
   local maxSteps = self.max_steps or 5
   local steps = 0
   while (self.timeleft + 1e-12 >= self.dt) and (steps < maxSteps) do
+    -- Previous fixed-step centers are required for continuous pair collision
+    -- checks even when bodies no longer overlap at the end of the frame.
+    local old_positions={}
+    for i=1,#self do
+      local p=self[i].position
+      old_positions[i]={p[1],p[2],p[3]}
+    end
     local gravity_vec = vector{0,0,-(self.gravity or 0) * self.dt}
     for i=1,#self do
       local s=self[i]
@@ -219,165 +227,9 @@ function box:update(dt)
       end -- skip integration on waiting/held body
     end
     
-    local n = #self
-    if n > 1 then
-      local intervals = {}
-      for i=1,n do
-        local body = self[i]
-        if not body.radius then
-          local r = 0
-          for k=1,#body do r = math.max(r, vector(body[k] or {0,0,0}):abs()) end
-          body.radius = r * 0.75
-        end
-        local minx = body.position[1] - body.radius
-        local maxx = body.position[1] + body.radius
-        intervals[i] = {minx = minx, maxx = maxx, idx = i}
-      end
-      table.sort(intervals, function(a,b) return a.minx < b.minx end)
-
-      for ii=1,n do
-        local A = intervals[ii]
-        local a = self[A.idx]
-        if not a._manual_pending then
-        for jj = ii+1, n do
-          local B = intervals[jj]
-          if B.minx > A.maxx then break end
-          local b = self[B.idx]
-          if b._manual_pending then goto continue_pair end
-          local aymin, aymax = a.position[2] - a.radius, a.position[2] + a.radius
-          local bymin, bymax = b.position[2] - b.radius, b.position[2] + b.radius
-          if aymax < bymin or bymax < aymin then goto continue_pair end
-          local azmin, azmax = a.position[3] - a.radius, a.position[3] + a.radius
-          local bzmin, bzmax = b.position[3] - b.radius, b.position[3] + b.radius
-          if azmax < bzmin or bzmax < azmin then goto continue_pair end
-
-          local diff = b.position - a.position
-          local dist = diff:abs()
-          local minDist = a.radius + b.radius
-          if dist > 0 and dist < minDist then
-            if a.asleep and b.asleep then
-              goto continue_pair
-            end
-            
-            local normal = diff * (1/dist)
-            local rel = (b.velocity - a.velocity)..normal
-            
-            if a.asleep then a.asleep = false a.sleep_timer = 0 end
-            if b.asleep then b.asleep = false b.sleep_timer = 0 end
-            
-            if rel < -0.001 then
-              local e = math.min(self.bounce or 0.4, 0.9)
-              local invMassA = (a.mass ~= 0) and (1 / a.mass) or 0
-              local invMassB = (b.mass ~= 0) and (1 / b.mass) or 0
-              local denom = invMassA + invMassB
-              if denom > 0 then
-              -- Read-only physical event: before applying the unchanged impulse.
-              -- Sound routing happens outside the solver.
-              if self.on_contact then
-                self.on_contact(self, "pair", A.idx, B.idx, -rel)
-              end
-              local step_dt = self.dt or 0.0166667
-              local relDisp = (b.velocity - a.velocity) * step_dt
-              local relPos0 = (b.position - a.position) - relDisp
-              local a_q = relDisp..relDisp
-              local b_q = 2 * (relPos0..relDisp)
-              local c_q = (relPos0..relPos0) - (minDist * minDist)
-              local didCCD = false
-              local eps = 1e-8
-              if a_q > eps then
-                local disc = b_q*b_q - 4*a_q*c_q
-                if disc >= 0 then
-                  local sqrtD = math.sqrt(disc)
-                  local ttoi = (-b_q - sqrtD) / (2 * a_q)
-                  if ttoi >= 0 and ttoi <= 1 then
-                    local prevA = a.position - a.velocity * step_dt
-                    local prevB = b.position - b.velocity * step_dt
-                    local posA_t = prevA + a.velocity * (ttoi * step_dt)
-                    local posB_t = prevB + b.velocity * (ttoi * step_dt)
-                    local contact = posB_t - posA_t
-                    local dist_t = contact:abs()
-                    if dist_t > eps then
-                      local normal_toi = contact * (1 / dist_t)
-                      local relv = (b.velocity - a.velocity)..normal_toi
-                      local j = (-(1 + e) * relv) / denom
-                      local impulse = normal_toi * j
-                      a.position = posA_t
-                      b.position = posB_t
-                      a:push(-impulse)
-                      b:push(impulse)
-                      local rem = (1 - ttoi) * step_dt
-                      a.position = a.position + a.velocity * rem
-                      b.position = b.position + b.velocity * rem
-                      didCCD = true
-                    end
-                  end
-                end
-              end
-
-              if not didCCD then
-                local j = (-(1+e) * rel) / denom
-                local impulse = normal * j
-                a:push(-impulse)
-                b:push(impulse)
-                
-                local rel_vel = b.velocity - a.velocity
-                local tangent = rel_vel - normal * (rel_vel..normal)
-                local tangent_mag = tangent:abs()
-                if tangent_mag > 1e-6 then
-                  local tangent_dir = tangent / tangent_mag
-                  local mu = 0.3
-                  local friction_impulse = tangent_dir * math.min(tangent_mag * denom, mu * math.abs(j))
-                  a:push(friction_impulse)
-                  b:push(-friction_impulse)
-                end
-                
-                a._last_collision = {other=B.idx}
-                b._last_collision = {other=A.idx}
-                
-                local slop = 0.01
-                local percent = 0.4
-                local penetration = minDist - dist
-                
-                if penetration > slop and denom > 0 then
-                  local correction = normal * ((penetration - slop) * (percent / denom))
-                  a.position = a.position - correction * invMassA
-                  b.position = b.position + correction * invMassB
-                end
-              end
-            end
-            end
-          end
-          ::continue_pair::
-        end
-        end
-      end
-    end
-    -- Position corrections belong to the same fixed step as integration.
-  for i=1,#self do
-    local a = self[i]
-    if not a._manual_pending then
-    for j=i+1,#self do
-      local b = self[j]
-      if not b._manual_pending then
-      local diff = b.position - a.position
-      local dist = diff:abs()
-      local minDist = a.radius + b.radius
-      if dist > 0.01 and dist < minDist then
-        local normal = diff * (1/dist)
-        local penetration = minDist - dist
-        local pushback = normal * (penetration * 0.8)
-        local invMassA = (a.mass ~= 0) and (1 / a.mass) or 0.5
-        local invMassB = (b.mass ~= 0) and (1 / b.mass) or 0.5
-        local total = invMassA + invMassB
-        if total > 0 then
-          a.position = a.position - pushback * (invMassA / total)
-          b.position = b.position + pushback * (invMassB / total)
-        end
-      end
-      end
-    end
-    end
-  end
+    -- SAT for rotating cubes; swept SAT prevents high-speed pass-through
+    -- and contact-point impulses drive rotation. No sphere-only response.
+    DieCollisions.solve(self,old_positions,self.dt)
     if self.after_step then self:after_step(self.dt) end
     self.timeleft = math.max(0,self.timeleft - self.dt)
     self.simulated_time=(self.simulated_time or 0)+self.dt
