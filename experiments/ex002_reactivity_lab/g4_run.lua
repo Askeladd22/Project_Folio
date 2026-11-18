@@ -41,12 +41,12 @@ local headers=csv('participant','order','stage','mode','seed','round','marks',
  'requested_target','chosen_lane','correct_lanes','control_ok','explanation')
 local lines={headers}
 local scored={total=0,r_predict=0,r_steer=0,r_n=0,f_predict=0,f_steer=0,f_n=0}
-print('Project Folio — G4: lettura del Mercante (studio anonimo e offline).')
+print('Project Folio — G4: lettura del Rivale (studio anonimo e offline).')
 print('Non inserire nomi o dati personali. Puoi interrompere con EOF senza salvare.')
 print('Ogni prova parte da uno stato reale del prototipo C, NON dal gioco finale.')
 print('Alcune prove possono essere CHIUSE: non sono opzioni legali.')
 print('Aggiungi i tuoi sigilli a una prova APERTA PRIMA della risposta.')
-print('Il Mercante colloca i suoi sigilli sulla prova con il punteggio maggiore.')
+print('Il Rivale colloca i suoi sigilli sulla prova con il punteggio maggiore.')
 print('In caso di pareggio la priorita e 3 > 2 > 1 (Capilettera prima).')
 print('Sono previste 2 esercitazioni con feedback + 12 valutazioni senza feedback.')
 io.write('Confermi di partecipare volontariamente, senza inserire dati personali? (s/n): ')
@@ -62,14 +62,14 @@ for i,t in ipairs(trials) do
     t.stage=='practice' and 'esercitazione' or 'valutazione'))
  print(G.rule(t.mode))
  print(G.display_board(t))
- local prediction=prompt(('Se assegni %d sigilli a %d (%s), il Mercante scegliera 1, 2 o 3? '):
+ local prediction=prompt(('Se assegni %d sigilli a %d (%s), il Rivale scegliera 1, 2 o 3? '):
    format(t.marks,t.proposed,lane_names[t.proposed]),predict_choices)
- local choice=prompt(('Scegli dove collocare i sigilli per far puntare il Mercante a %d (%s). '..
+ local choice=prompt(('Scegli dove collocare i sigilli per far puntare il Rivale a %d (%s). '..
    'Digita 0 se impossibile, altrimenti 1, 2 o 3: '):
    format(t.request_target,lane_names[t.request_target]),steer_choices)
  local rationale=''
  if t.stage=='test' and (i==6 or i==13) then
-  rationale=text_prompt('In una frase, perche il Mercante dovrebbe fare quella scelta? ')
+  rationale=text_prompt('In una frase, perche il Rivale dovrebbe fare quella scelta? ')
  end
  local predict_ok=prediction==t.prediction_target
  local steer_ok=G.is_correct_control(t,choice)
@@ -80,7 +80,7 @@ for i,t in ipairs(trials) do
     predict_ok and 1 or 0,t.request_target,choice,
     table.concat(correct,'|'),steer_ok and 1 or 0,rationale)
  if t.stage=='practice' then
-  print(('Feedback: il Mercante sceglierebbe %d (%s).'):format(
+  print(('Feedback: il Rivale sceglierebbe %d (%s).'):format(
    t.prediction_target,lane_names[t.prediction_target]))
   if #correct==0 then
    print('Per il secondo obiettivo non esiste una scelta valida su questo tavolo.')
