@@ -10,6 +10,30 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.75] - 2026-11-18
+
+**Stato:** protocollo G4b di comprensione del Mercante, esclusivamente
+laboratoriale; le regole canoniche e il G4 originale rimangono invariati.
+
+### Aggiunto
+- Generatore offline di 14 stati reali per la matrice bilanciata R/F:
+  tre casi valutati per R-raggiungibile, R-impossibile,
+  F-raggiungibile e F-impossibile, più due prove guidate.
+- Schede per partecipanti e chiave distinta per il facilitatore.
+  Runner anonimo, locale e senza invio online delle risposte.
+- Test di regressione del generatore G4 originale, verifica oracle
+  contro `E.claim`, struttura delle schede e smoke CLI sintetico.
+- Preregistrazione del controllo delle scorciatoie metodologiche
+  in `research/EX-002-G4b.md`.
+
+### Verifiche e limiti
+- Alla creazione del piano: Lua 5.4, LuaJIT e G4b CI **da verificare**,
+  così come CI generale e LÖVE/Mesa sulla PR.
+- Nessun partecipante umano testato; G4 resta **NON ESEGUITO**.
+- `src/`, sei D6 fisici, regole Farkle, g3d, Encounter A/C
+  e simulazione EX-002 rimangono invariati.
+- Nessuna promozione del Mercante o approvazione G5.
+
 ## [0.1.74] - 2026-11-18
 
 **Stato:** esclusivamente QA documentale e strumentale del playtest umano
