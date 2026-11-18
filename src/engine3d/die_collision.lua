@@ -252,7 +252,7 @@ function C.solve(world,old_positions,dt,emitted_pairs)
  -- present-time overlaps: moving the middle die in a chain may reopen
  -- penetration in a pair already visited. Four bounded Gauss-Seidel
  -- passes are sufficient for six dice without a new physics engine.
- local passes=world.pair_solver_passes or 4
+ local passes=world.pair_solver_passes or 6
  assert(passes>=1 and passes<=8 and passes%1==0,
   'bounded pair_solver_passes (1..8) required')
  for pass=1,passes do
