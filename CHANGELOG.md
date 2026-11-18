@@ -48,8 +48,13 @@ Non è un port completo né un'integrazione nativa di FPS 1.2.5.
 - Adeguati i test `mouse_throw` e `source_structure` al
   solver separato: mantengono le invarianti di presa e
   l'allowlist esplicita dei 30 moduli di produzione.
-- Suite generale di Farkle e smoke LÖVE/Mesa **da verificare**
-  sulla HEAD finale; 50 lanci su Windows **non eseguiti**.
+- **CI generale PASS** ([#44368766409](https://github.com/Askeladd22/Project_Folio/actions/runs/44368766409))
+  sulla revisione `2875a7d5`: versione/changelog, lint,
+  sintassi, Lua 5.4/LuaJIT, Farkle, LÖVE/Mesa e Python.
+  I commit successivi aggiornano soltanto i documenti
+  di verifica; nessun nuovo comportamento fisico.
+- **UAT Windows NOT RUN:** servono 50 lanci reali e
+  misure di stabilità/frametime prima del merge.
 - La swept SAT congela l'orientamento al termine dello step;
   intersezioni causate da rotazioni estreme richiedono ulteriori test.
   Il punto di contatto è approssimato dai supporti delle facce,
