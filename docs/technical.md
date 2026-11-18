@@ -94,6 +94,12 @@ illustrazioni rimangono elementi 2D.
 - `resources/textures/wood.png` è la texture condivisa dal tavoliere 3D
   e dal laboratorio g3d. I vecchi JPEG del Mercante per legno e intaglio
   sono stati eliminati e non devono più essere caricati.
+- `resources/models/marble_topped_centre_table.glb` è il tavolo 3D
+  caricato dal renderer, se disponibile; `old_wooden_table.glb`
+  rimane come campione reale per il test headless del parser GLB.
+  I tre scan non referenziati (libro alchemico, Fabrica e moneta romana)
+  sono disponibili nella cronologia Git (commit `33f8afea35`), non
+  nell'albero distribuito.
 - `resources/ui/menu_manuzio.png` è l'illustrazione attuale del menu.
 - `resources/ui/startup_splash/` e i relativi shader appartengono allo splash LÖVE.
 - Licenze e attribuzioni si trovano in `lib/licenses/` e nelle librerie.

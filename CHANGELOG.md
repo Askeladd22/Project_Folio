@@ -10,6 +10,35 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.82] - 2026-11-18
+
+**Stato:** rimozione conservativa di tre GLB non referenziati;
+nessuna modifica al comportamento, alla fisica o alle regole Farkle.
+
+### Rimosso
+- Dall'albero Git corrente: `aged_alchemical_book_mid_poly.glb`
+  (60.111.544 byte), `de_humani_corporis_fabrica.glb` (9.839.356 byte)
+  e `old_roman_coin_ueinbaiva_mid.glb` (6.295.156 byte), tutti
+  sotto `resources/models/`. Totale **76.246.056 byte (72,71 MiB)**.
+  Gli originali restano nel commit storico `33f8afea35`:
+  questa pulizia non riscrive la storia Git.
+
+### Modificato
+- Mappa tecnica aggiornata con il tavolo GLB attivo e il modello campione
+  usato dal test del parser; entrambi esplicitamente protetti.
+- Test housekeeping esteso: segnala la reintroduzione dei tre GLB
+  non raggiungibili dai caricamenti attuali.
+
+### Verifiche e limiti
+- Inventario integrale non troncato: 362 file a `main@8983ffb0`.
+  Nessun riferimento testuale ai tre GLB in codice, test, script o
+  documenti. Unico modello 3D di produzione nominato dal renderer:
+  `marble_topped_centre_table.glb`.
+- Nuova CI PR: **PENDING** (nessun esito anticipato); test locali
+  **NOT RUN**. Possibili consumer esterni non documentati.
+- QA Windows 50 lanci **NOT RUN**; `src/`, `lib/`, `experiments/`,
+  Farkle, g3d, PNG, font, suoni, dati salvati e altri GLB invariati.
+
 ## [0.1.81] - 2026-11-18
 
 **Stato:** pulizia circoscritta di evidenze QA incomplete nel tree Git.
