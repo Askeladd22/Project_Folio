@@ -108,128 +108,153 @@ function box:update(dt)
   local maxSteps = self.max_steps or 5
   local steps = 0
   while (self.timeleft + 1e-12 >= self.dt) and (steps < maxSteps) do
-    -- Previous fixed-step centers are required for continuous pair collision
-    -- checks even when bodies no longer overlap at the end of the frame.
-    local old_positions={}
+    -- Angularly swept CCD cannot be reconstructed from end-step axes.
+    -- Subdivide only when a moving die rotates substantially, ensuring
+    -- intermediate cube orientations participate in SAT/contact response.
+    -- Fixed-step time, backlog and after_step cadence stay unchanged.
+    local peak_angular=0
     for i=1,#self do
-      local p=self[i].position
-      old_positions[i]={p[1],p[2],p[3]}
+      local die=self[i]
+      if not die._manual_pending and not die.asleep then
+        peak_angular=math.max(peak_angular,die.angular:abs())
+      end
     end
-    local gravity_vec = vector{0,0,-(self.gravity or 0) * self.dt}
-    for i=1,#self do
-      local s=self[i]
-      -- Keep held and waiting dice kinematic until released individually.
-      if s._manual_pending then
-        s.asleep=true
-        s.sleep_timer=0
-        s.velocity=vector{0,0,0}
-      else
-      if not s.asleep then
-        local vertices_on_ground = 0
-        local ground_z = 0.05
-        local ground_vertices_z = {}
-        local required_flat_vertices = s.flat_face_vertices or 4
-        local flat_z_tolerance = s.flat_z_tolerance or 0.03
-        for k=1,#s do
-          local vertex_world_z = s[k][3] + s.position[3]
-          if vertex_world_z <= ground_z then
-            vertices_on_ground = vertices_on_ground + 1
-            table.insert(ground_vertices_z, vertex_world_z)
+    local angle_limit=self.max_rotation_per_substep or 0.12
+    local substep_limit=self.max_angular_substeps or 12
+    assert(angle_limit>0 and substep_limit>=1,
+      'positive angular substep bounds required')
+    local requested=math.max(1,math.ceil(peak_angular*self.dt/angle_limit))
+    local count=math.min(requested,substep_limit)
+    if requested>substep_limit then
+      self.angular_substep_cap_hits=(self.angular_substep_cap_hits or 0)+1
+    end
+    self.angular_substeps=(self.angular_substeps or 0)+(count-1)
+    local sub_dt=self.dt/count
+    local emitted_pairs={}
+    for substep=1,count do
+      -- Previous fixed-step centers are required for continuous pair collision
+      -- checks even when bodies no longer overlap at the end of the frame.
+      local old_positions={}
+      for i=1,#self do
+        local p=self[i].position
+        old_positions[i]={p[1],p[2],p[3]}
+      end
+      local gravity_vec = vector{0,0,-(self.gravity or 0) * sub_dt}
+      for i=1,#self do
+        local s=self[i]
+        -- Keep held and waiting dice kinematic until released individually.
+        if s._manual_pending then
+          s.asleep=true
+          s.sleep_timer=0
+          s.velocity=vector{0,0,0}
+        else
+        if not s.asleep then
+          local vertices_on_ground = 0
+          local ground_z = 0.05
+          local ground_vertices_z = {}
+          local required_flat_vertices = s.flat_face_vertices or 4
+          local flat_z_tolerance = s.flat_z_tolerance or 0.03
+          for k=1,#s do
+            local vertex_world_z = s[k][3] + s.position[3]
+            if vertex_world_z <= ground_z then
+              vertices_on_ground = vertices_on_ground + 1
+              table.insert(ground_vertices_z, vertex_world_z)
+            end
           end
-        end
-        
-        local is_flat = false
-        if vertices_on_ground >= required_flat_vertices and #ground_vertices_z >= required_flat_vertices then
-          local z_min = math.huge
-          local z_max = -math.huge
-          for _, z in ipairs(ground_vertices_z) do
-            z_min = math.min(z_min, z)
-            z_max = math.max(z_max, z)
+          
+          local is_flat = false
+          if vertices_on_ground >= required_flat_vertices and #ground_vertices_z >= required_flat_vertices then
+            local z_min = math.huge
+            local z_max = -math.huge
+            for _, z in ipairs(ground_vertices_z) do
+              z_min = math.min(z_min, z)
+              z_max = math.max(z_max, z)
+            end
+            is_flat = (z_max - z_min) < flat_z_tolerance
           end
-          is_flat = (z_max - z_min) < flat_z_tolerance
+          
+          local v_mag = s.velocity:abs()
+          local w_mag = s.angular:abs()
+          local settle_linear = s.settle_linear or 0.20
+          local settle_angular = s.settle_angular or 0.15
+          if is_flat and v_mag < settle_linear and w_mag < settle_angular then
+            s.velocity = vector{0,0,0}
+            s.angular = vector{0,0,0}
+            s.asleep = true
+            s.sleep_timer = 999
+          else
+            s.velocity = s.velocity + gravity_vec
+            s:update(sub_dt)
+            s:box(-self.x,-self.y,0,self.x,self.y,self.z,self.bounce,self.friction)
+            
+            local border_height = self.border_height or 1.5
+            local rim_margin = 0.3
+            local rim_z_min = border_height * 0.3
+            local rim_z_max = border_height + 0.5
+            
+            local pos = s.position
+            local near_x_edge = math.abs(pos[1]) > (self.x - rim_margin)
+            local near_y_edge = math.abs(pos[2]) > (self.y - rim_margin)
+            local in_rim_zone = pos[3] > rim_z_min and pos[3] < rim_z_max
+            
+            if in_rim_zone and (near_x_edge or near_y_edge) then
+              local push_strength = 2.0 * sub_dt
+              if near_x_edge then
+                local dir = pos[1] > 0 and -1 or 1
+                s.velocity[1] = s.velocity[1] + dir * push_strength
+              end
+              if near_y_edge then
+                local dir = pos[2] > 0 and -1 or 1
+                s.velocity[2] = s.velocity[2] + dir * push_strength
+              end
+              s.velocity[3] = s.velocity[3] - push_strength * 0.5
+              s.asleep = false
+              s.sleep_timer = 0
+            end
+            
+            local ld = (s.linear_damping ~= nil) and s.linear_damping or self.linear_damping or 0
+            local ad = (s.angular_damping ~= nil) and s.angular_damping or self.angular_damping or 0
+            if ld and ld > 0 then
+              local vf = 1 - math.min(0.99, ld * sub_dt)
+              s.velocity = s.velocity * vf
+            end
+            if ad and ad > 0 then
+              local af = 1 - math.min(0.99, ad * sub_dt)
+              s.angular = s.angular * af
+            end
+            if math.abs(s.angular[3])<0.1 then s.angular[3]=0 end
+          end
+        else
+          s.velocity = vector{0,0,0}
+          s.angular = vector{0,0,0}
         end
         
         local v_mag = s.velocity:abs()
         local w_mag = s.angular:abs()
-        local settle_linear = s.settle_linear or 0.20
-        local settle_angular = s.settle_angular or 0.15
-        if is_flat and v_mag < settle_linear and w_mag < settle_angular then
-          s.velocity = vector{0,0,0}
-          s.angular = vector{0,0,0}
-          s.asleep = true
-          s.sleep_timer = 999
+        local sleep_thresh_v = self.sleep_linear or 0.05
+        local sleep_thresh_w = self.sleep_angular or 0.15
+        local sleep_time = self.sleep_time or 0.4
+        local near_ground = s.position[3] < 1.2
+        
+        if v_mag < sleep_thresh_v and w_mag < sleep_thresh_w and near_ground then
+          s.sleep_timer = (s.sleep_timer or 0) + sub_dt
+          if s.sleep_timer >= sleep_time and not s.asleep then
+            s.asleep = true
+            s.velocity = vector{0,0,0}
+            s.angular = vector{0,0,0}
+            s.wall_hits = 0
+          end
         else
-          s.velocity = s.velocity + gravity_vec
-          s:update(self.dt)
-          s:box(-self.x,-self.y,0,self.x,self.y,self.z,self.bounce,self.friction)
-          
-          local border_height = self.border_height or 1.5
-          local rim_margin = 0.3
-          local rim_z_min = border_height * 0.3
-          local rim_z_max = border_height + 0.5
-          
-          local pos = s.position
-          local near_x_edge = math.abs(pos[1]) > (self.x - rim_margin)
-          local near_y_edge = math.abs(pos[2]) > (self.y - rim_margin)
-          local in_rim_zone = pos[3] > rim_z_min and pos[3] < rim_z_max
-          
-          if in_rim_zone and (near_x_edge or near_y_edge) then
-            local push_strength = 2.0 * self.dt
-            if near_x_edge then
-              local dir = pos[1] > 0 and -1 or 1
-              s.velocity[1] = s.velocity[1] + dir * push_strength
-            end
-            if near_y_edge then
-              local dir = pos[2] > 0 and -1 or 1
-              s.velocity[2] = s.velocity[2] + dir * push_strength
-            end
-            s.velocity[3] = s.velocity[3] - push_strength * 0.5
-            s.asleep = false
-            s.sleep_timer = 0
-          end
-          
-          local ld = (s.linear_damping ~= nil) and s.linear_damping or self.linear_damping or 0
-          local ad = (s.angular_damping ~= nil) and s.angular_damping or self.angular_damping or 0
-          if ld and ld > 0 then
-            local vf = 1 - math.min(0.99, ld * self.dt)
-            s.velocity = s.velocity * vf
-          end
-          if ad and ad > 0 then
-            local af = 1 - math.min(0.99, ad * self.dt)
-            s.angular = s.angular * af
-          end
-          if math.abs(s.angular[3])<0.1 then s.angular[3]=0 end
+          s.sleep_timer = 0
+          s.asleep = false
         end
-      else
-        s.velocity = vector{0,0,0}
-        s.angular = vector{0,0,0}
+        end -- skip integration on waiting/held body
       end
       
-      local v_mag = s.velocity:abs()
-      local w_mag = s.angular:abs()
-      local sleep_thresh_v = self.sleep_linear or 0.05
-      local sleep_thresh_w = self.sleep_angular or 0.15
-      local sleep_time = self.sleep_time or 0.4
-      local near_ground = s.position[3] < 1.2
-      
-      if v_mag < sleep_thresh_v and w_mag < sleep_thresh_w and near_ground then
-        s.sleep_timer = (s.sleep_timer or 0) + self.dt
-        if s.sleep_timer >= sleep_time and not s.asleep then
-          s.asleep = true
-          s.velocity = vector{0,0,0}
-          s.angular = vector{0,0,0}
-          s.wall_hits = 0
-        end
-      else
-        s.sleep_timer = 0
-        s.asleep = false
-      end
-      end -- skip integration on waiting/held body
-    end
-    
-    -- SAT for rotating cubes; swept SAT prevents high-speed pass-through
-    -- and contact-point impulses drive rotation. No sphere-only response.
-    DieCollisions.solve(self,old_positions,self.dt)
+      -- SAT for rotating cubes; swept SAT prevents high-speed pass-through
+      -- and contact-point impulses drive rotation. No sphere-only response.
+      DieCollisions.solve(self,old_positions,sub_dt,emitted_pairs)
+    end -- rotation-aware substeps
     if self.after_step then self:after_step(self.dt) end
     self.timeleft = math.max(0,self.timeleft - self.dt)
     self.simulated_time=(self.simulated_time or 0)+self.dt
