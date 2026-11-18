@@ -22,8 +22,9 @@ nuova meccanica e non promuove il prototipo Encounter C nel gameplay canonico.
 - La scena usa provvisoriamente il ritratto esistente
   `resources/opponents/merchant.png` per `rival`, senza attribuirgli
   l'identità del Mercante. Un futuro `rival.png` prevale
-  automaticamente. Il fallback JPEG con Mercante incorporato è
-  limitato all'ID esplicito `merchant`.
+  automaticamente. Il fallback JPEG con Mercante incorporato resta disponibile
+  anche per `rival` soltanto quando mancano gli asset modulari,
+  senza cambiare l'ID logico; per gli altri personaggi è vietato.
 - Interfacce testuali G4/G4b, messaggi Encounter C, README e
   documentazione corrente chiamano il personaggio generico «Rivale»
   e il piano di gioco «tavolo da gioco». Il prototipo storico
