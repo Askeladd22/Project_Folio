@@ -17,9 +17,10 @@ local legacy=S.resolve('merchant',exists({}))
 assert(legacy.id=='merchant' and legacy.legacy and
  legacy.room==S.legacy_room and not legacy.portrait,
  'legacy Merchant composite is only valid for explicitly named Merchant')
-local generic_ok,generic_err=pcall(S.resolve,nil,exists({}))
-assert(not generic_ok and generic_err:find(room,1,true),
- 'generic rival must not accidentally fall back to baked-in Merchant JPEG')
+local generic_fallback=S.resolve(nil,exists({}))
+assert(generic_fallback.id=='rival' and generic_fallback.legacy and
+ generic_fallback.room==S.legacy_room and not generic_fallback.portrait,
+ 'fallback artwork must not change the generic logical identity')
 assert(S.resolve('merchant',exists({[room]=true})).legacy)
 local a=S.resolve('merchant',exists({[room]=true,[merchant]=true}))
 local b=S.resolve('monk',exists({[room]=true,[monk]=true}))
