@@ -76,7 +76,7 @@ function M.manifest()
  -- Mix diagnostic player allocation routes. Every board still comes from
  -- the EXISTING encounter engine with real six-D6 decisions. Discard
  -- near-duplicates: max two scenarios may share the same public board.
- for _,claim_policy in ipairs({'first','last','sample_seeded'}) do
+ for _,claim_policy in ipairs({'sample_seeded','last','first'}) do
   for _,dice_policy in ipairs({'balanced','prudent','daring'}) do
    for seed=M.first_seed,M.last_seed do
     X.play(seed,'reactive',dice_policy,claim_policy,nil,function(s,cf)
