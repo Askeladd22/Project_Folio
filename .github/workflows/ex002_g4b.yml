@@ -1,0 +1,67 @@
+name: EX-002 G4b balanced understanding audit
+on:
+  push:
+    branches:
+      - experiments/ex002-g4b-balanced-20261118
+jobs:
+  g4b:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua 5.4 and LuaJIT
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit
+      - name: Old G4 and Encounter A/C regression
+        run: |
+          lua5.4 tests/labs/ex002_g4_test.lua
+          luajit tests/labs/ex002_g4_test.lua
+          lua5.4 tests/labs/encounter_ac_test.lua
+          luajit tests/labs/encounter_ac_test.lua
+      - name: New G4b balanced target and oracle invariants
+        run: |
+          lua5.4 tests/labs/ex002_g4b_test.lua
+          luajit tests/labs/ex002_g4b_test.lua
+      - name: Generate participant cards and separate facilitator key
+        run: |
+          mkdir -p /tmp/folio-g4b
+          lua5.4 experiments/ex002_reactivity_lab/g4b_export.lua /tmp/folio-g4b
+          test "$(grep -c '^## Caso ' /tmp/folio-g4b/g4b_cards.md)" -eq 14
+          test "$(wc -l < /tmp/folio-g4b/g4b_answer_key.csv)" -eq 15
+          python3 - <<'PY'
+          import csv, collections
+          p='/tmp/folio-g4b/g4b_answer_key.csv'
+          rows=list(csv.DictReader(open(p,encoding='utf-8')))
+          scored=[r for r in rows if r['stage']=='test']
+          n=collections.Counter(r['condition'] for r in scored)
+          assert n=={'R_yes':3,'R_no':3,'F_yes':3,'F_no':3},n
+          assert len(set(r['board'] for r in rows))==14,'duplicate full public scenarios'
+          print('PASS G4b 3×4 balanced manifest and separate answer key')
+          PY
+      - name: Synthetic CLI I/O smoke (NOT a human test)
+        run: |
+          mkdir -p /tmp/folio-g4b/data
+          python3 - <<'PY' > /tmp/folio-g4b/synthetic_answers.txt
+          print('s')
+          for i in range(14):
+              print('1')
+              print('0')
+              if i in (4,11): print('RISPOSTA SINTETICA - NON UMANA')
+          PY
+          lua5.4 experiments/ex002_reactivity_lab/g4b_run.lua CI_SMOKE /tmp/folio-g4b/data < /tmp/folio-g4b/synthetic_answers.txt
+          test "$(wc -l < /tmp/folio-g4b/data/g4b_CI_SMOKE.csv)" -eq 15
+          # Never publish fabricated participant files.
+          rm -r /tmp/folio-g4b/data
+      - name: Participant-only output
+        uses: actions/upload-artifact@v4
+        with:
+          name: g4b-participant-cards
+          path: /tmp/folio-g4b/g4b_cards.md
+          if-no-files-found: error
+      - name: Private facilitator key
+        uses: actions/upload-artifact@v4
+        with:
+          name: g4b-facilitator-answer-key
+          path: /tmp/folio-g4b/g4b_answer_key.csv
+          if-no-files-found: error
