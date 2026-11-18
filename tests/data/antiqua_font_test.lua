@@ -16,6 +16,21 @@ for _,path in ipairs({primary,support}) do
 end
 assert(read('resources/font/LICENSE-AldineAetna.txt'):find('CC0',1,true))
 assert(read('resources/font/OFL-Cardo.txt'):find('SIL OPEN FONT LICENSE',1,true))
+-- The remaining shipping typography is Aetna + Cardo. The old
+-- visual alternatives and their font-specific OFL copies are in Git history.
+for _,path in ipairs({
+ 'resources/font/EagleLake-Regular.ttf',
+ 'resources/font/GoudyBookletter1911.ttf',
+ 'resources/font/IMFeENsc28P.ttf',
+ 'resources/font/ManuskriptGothischUNZ1A.ttf',
+ 'resources/font/OFL-GoudyBookletter1911.txt',
+ 'resources/font/OFL-IMFellEnglishSC.txt',
+ 'lib/licenses/Open Font License_Manuskript Gothisch UNZ1A.txt',
+}) do
+ local handle=io.open(path,'rb')
+ if handle then handle:close() end
+ assert(not handle,'retired font or obsolete license restored: '..path)
+end
 local frontend=require('src.data.frontend_schema')
 local settings=require('src.data.frontend_schema').settings
 local schemas={

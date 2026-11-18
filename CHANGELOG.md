@@ -10,6 +10,43 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.83] - 2026-11-19
+
+**Stato:** housekeeping tipografico PAUL + SEED su branch dedicato;
+nessuna modifica al renderer, agli input, alla logica Farkle o alle UI.
+
+### Rimosso
+- Dal tree corrente quattro font privi di consumer runtime e test:
+  `EagleLake-Regular.ttf`, `GoudyBookletter1911.ttf`,
+  `IMFeENsc28P.ttf`, `ManuskriptGothischUNZ1A.ttf`.
+- Tre file di licenza esclusivamente associati ai font ritirati:
+  `resources/font/OFL-GoudyBookletter1911.txt`,
+  `resources/font/OFL-IMFellEnglishSC.txt`,
+  `lib/licenses/Open Font License_Manuskript Gothisch UNZ1A.txt`.
+- Totale: **425.640 byte** non più tracciati nell'albero corrente,
+  senza riscrittura della cronologia Git. Gli originali sono recuperabili
+  dai commit introduttivi (`69048336`, `f4445501`, `6fb571ec`).
+
+### Conservato
+- `AldineAetna-Regular.ttf` e `Cardo-Regular.ttf` più relative
+  licenze, come previsto dalla direzione artistica e dal loader.
+- Invariati `src/`, gli esperimenti R&D, i suoni, il gameplay,
+  gli asset 2D e tutti i modelli GLB ancora nel progetto.
+
+### Verifiche e limiti
+- Ricerca statica nei file indicizzati su `main@6729f11e` e
+  inventario Git completo: font e licenze ritirati non sono caricati
+  dal runtime. Il test Antiqua protegge ancora primary/fallback.
+- Esteso `tests/data/antiqua_font_test.lua` con una regressione
+  anti-reintroduzione dei sette file; nessuna rimozione di test.
+- **PASS** [CI PR #140, run #44422233837](https://github.com/Askeladd22/Project_Folio/actions/runs/44422233837)
+  sul commit di pulizia `96ceb713`: versioning, lint, test Lua 5.4,
+  LuaJIT, LÖVE/Mesa e Python (16 step del job riusciti).
+- Test locali **NOT RUN**; il successivo commit solo documentale
+  richiede ricontrollo CI; consumer esterni non documentati
+  non sono verificabili.
+- QA Windows dei 50 lanci reali ancora **NOT RUN**.
+
 ## [0.1.82] - 2026-11-18
 
 **Stato:** rimozione conservativa di tre GLB non referenziati;
