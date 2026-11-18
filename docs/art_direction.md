@@ -192,8 +192,11 @@ Mercante dietro a un altro personaggio: in assenza dell'immagine
 richiesta il loader segnala l'errore esplicitamente.
 
 Il vecchio composito `resources/merchant/table-host.jpg` resta un
-fallback limitato al Mercante e non è il formato da utilizzare
-per creare nuovi avversari.
+**fallback tecnico di compatibilità** per `rival` quando non sono disponibili
+gli asset modulari, e per `merchant` quando è selezionato esplicitamente.
+Il composito contiene già il Mercante: non è un ritratto neutro e non
+va impiegato per creare altri personaggi. In produzione si preferisce
+sempre la stanza pulita con un PNG indipendente.
 
 **Confine di design:** sostituire un PNG non crea un bot, una
 scommessa o un encounter competitivo. Quei sistemi restano aperti
