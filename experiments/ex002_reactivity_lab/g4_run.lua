@@ -44,10 +44,15 @@ local scored={total=0,r_predict=0,r_steer=0,r_n=0,f_predict=0,f_steer=0,f_n=0}
 print('Project Folio — G4: lettura del Mercante (studio anonimo e offline).')
 print('Non inserire nomi o dati personali. Puoi interrompere con EOF senza salvare.')
 print('Ogni prova parte da uno stato reale del prototipo C, NON dal gioco finale.')
-print('Le tre prove sono aperte; aggiungi i tuoi sigilli PRIMA della risposta.')
+print('Alcune prove possono essere CHIUSE: non sono opzioni legali.')
+print('Aggiungi i tuoi sigilli a una prova APERTA PRIMA della risposta.')
 print('Il Mercante colloca i suoi sigilli sulla prova con il punteggio maggiore.')
 print('In caso di pareggio la priorita e 3 > 2 > 1 (Capilettera prima).')
 print('Sono previste 2 esercitazioni con feedback + 12 valutazioni senza feedback.')
+io.write('Confermi di partecipare volontariamente, senza inserire dati personali? (s/n): ')
+io.flush()
+local consent=io.read('*l')
+if consent~='s' and consent~='S' then print('Sessione annullata, nessun dato salvato.');return end
 print('Lo studio verifica comprensione, non la bravura reale nelle partite.')
 local lane_names={'Capilettera','Miniatura','Marca tipografica'}
 local predict_choices={[1]=true,[2]=true,[3]=true}
