@@ -1,10 +1,26 @@
 local S=require('src.farkle.ui').opponent_scene
 local L=require('src.farkle.ui').layout.build()
 local room,merchant,monk=S.room_path,S.portrait_path('merchant'),S.portrait_path('monk')
+local rival=S.portrait_path('rival')
 local function exists(paths) return function(p) return paths[p] or false end end
-local legacy=S.resolve(nil,exists({}))
+assert(S.default_id=='rival' and S.validate_id(nil)=='rival',
+ 'unassigned/default opponent must be generic Rivale, never Mercante')
+assert(rival=='resources/opponents/rival.png')
+local placeholder=S.resolve(nil,exists({[room]=true,[merchant]=true}))
+assert(placeholder.id=='rival' and placeholder.portrait==merchant and
+ placeholder.room==room and not placeholder.legacy,
+ 'generic rival may reuse existing Merchant art without adopting its identity')
+local supplied=S.resolve(nil,exists({[room]=true,[merchant]=true,[rival]=true}))
+assert(supplied.id=='rival' and supplied.portrait==rival and not supplied.legacy,
+ 'a dedicated rival.png must override the temporary artwork alias')
+local legacy=S.resolve('merchant',exists({}))
 assert(legacy.id=='merchant' and legacy.legacy and
- legacy.room==S.legacy_room and not legacy.portrait)
+ legacy.room==S.legacy_room and not legacy.portrait,
+ 'legacy Merchant composite is only valid for explicitly named Merchant')
+local generic_fallback=S.resolve(nil,exists({}))
+assert(generic_fallback.id=='rival' and generic_fallback.legacy and
+ generic_fallback.room==S.legacy_room and not generic_fallback.portrait,
+ 'fallback artwork must not change the generic logical identity')
 assert(S.resolve('merchant',exists({[room]=true})).legacy)
 local a=S.resolve('merchant',exists({[room]=true,[merchant]=true}))
 local b=S.resolve('monk',exists({[room]=true,[monk]=true}))
@@ -15,6 +31,11 @@ assert(not ok and err:find(room,1,true),
  'other opponent cannot use JPEG with Merchant already inside')
 ok,err=pcall(S.resolve,'monk',exists({[room]=true}))
 assert(not ok and err:find(monk,1,true),'missing PNG must fail explicitly')
+local controller=assert(io.open('src/farkle/controller.lua','rb'))
+local controller_source=controller:read('*a');controller:close()
+assert(controller_source:find('self:setOpponentVisual(params.opponent_id)',1,true) and
+ not controller_source:find("params.opponent_id or 'merchant'",1,true),
+ 'new run must use the neutral default rather than silently select Merchant')
 for _,id in ipairs({'../monk','Monk','monk.png','',12}) do
  assert(not pcall(S.validate_id,id),'invalid filename injection allowed')
 end

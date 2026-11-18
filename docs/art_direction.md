@@ -24,7 +24,7 @@ ornamenti decorativi ripetuti senza funzione.
 
 ## Tavolo e livelli della scena
 
-Il **Tavolo del Mercante** è la composizione attualmente giocabile:
+Il **tavolo da gioco** è la composizione attualmente giocabile:
 sei D6 tridimensionali in osso, tavolo g3d, avversario illustrato
 oltre il piano e UI su livelli 2D separati. Evitare di sacrificare
 leggibilità e picking dei dadi a favore dell'ornamento.
@@ -171,8 +171,17 @@ il rapporto d'aspetto.
 
 ### Selezione dell'avversario
 
+L'identità di default è **Rivale** (`opponent_id='rival'`), un
+segnaposto neutro: **Mercante** non è il nome di tutti gli avversari.
+Il PNG `merchant.png` è ancora usato *provvisoriamente* per il default
+finché non esisterà `resources/opponents/rival.png`, che verrà preferito
+automaticamente. La grafica esistente non attribuisce al default le
+meccaniche del Mercante.
+
 ```lua
-require('src.core.navigation').go('scriptorium',{opponent_id='merchant'})
+require('src.core.navigation').go('scriptorium',{new_run=true})
+-- Soltanto quando si vuole esplicitamente il personaggio Mercante:
+require('src.core.navigation').go('scriptorium',{new_run=true,opponent_id='merchant'})
 -- Oppure nella scena corrente:
 require('src.farkle.controller'):setOpponentVisual('merchant')
 ```
@@ -183,8 +192,11 @@ Mercante dietro a un altro personaggio: in assenza dell'immagine
 richiesta il loader segnala l'errore esplicitamente.
 
 Il vecchio composito `resources/merchant/table-host.jpg` resta un
-fallback limitato al Mercante e non è il formato da utilizzare
-per creare nuovi avversari.
+**fallback tecnico di compatibilità** per `rival` quando non sono disponibili
+gli asset modulari, e per `merchant` quando è selezionato esplicitamente.
+Il composito contiene già il Mercante: non è un ritratto neutro e non
+va impiegato per creare altri personaggi. In produzione si preferisce
+sempre la stanza pulita con un PNG indipendente.
 
 **Confine di design:** sostituire un PNG non crea un bot, una
 scommessa o un encounter competitivo. Quei sistemi restano aperti

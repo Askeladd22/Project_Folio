@@ -212,7 +212,7 @@ Annota PASS / FAIL / N/A, screenshot e osservazioni per ciascun punto:
 - [ ] Folio laterale: niente clipping o testo sovrapposto alle cornici
 - [ ] Help e combinazioni: schede, tabelle e opzioni completamente leggibili
 - [ ] Ricompense: due schede visibili e pulsanti con buon contrasto
-- [ ] Menu partita, catalogo medaglie e tavolo del Mercante senza sovrapposizioni
+- [ ] Menu partita, catalogo medaglie e tavolo da gioco senza sovrapposizioni
 - [ ] Accessibilità: big text, high contrast, reduced animations realmente percepibili
 - [ ] Puntatore/click: attivare `Mostra hitbox reali` nella galleria e verificare allineamento oro/grigio/blu
 - [ ] Nessuna regressione di g3d, input fisico, scoring, Farkle e rendering

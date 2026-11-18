@@ -16,11 +16,11 @@ local function csv(...)
 end
 local cards=assert(io.open(out..'/g4b_cards.md','w'))
 local key=assert(io.open(out..'/g4b_answer_key.csv','w'))
-cards:write('# Project Folio — G4b: comprendere il Mercante\n\n')
+cards:write('# Project Folio — G4b: comprendere il Rivale\n\n')
 cards:write('Questa e una prova di comprensione, non una partita e non un test di talento.\n')
 cards:write('2 esercitazioni con feedback seguite da 12 prove senza feedback.\n\n')
 cards:write('Leggi per ogni prova la regola R oppure F. Scegli soltanto categorie APERTE.\n')
-cards:write('Rispondi: (1) dove il Mercante rispondera dopo la mossa proposta; ')
+cards:write('Rispondi: (1) dove il Rivale rispondera dopo la mossa proposta; ')
 cards:write('(2) in quale categoria collocheresti i sigilli per OTTENERE la ')
 cards:write('risposta richiesta, oppure 0 se impossibile. La possibilita cambia ')
 cards:write('da una prova all\'altra, anche dentro la stessa regola R o F.\n\n')
@@ -34,7 +34,7 @@ for i,t in ipairs(trials) do
   t.stage=='practice' and 'Pratica' or 'Valutazione'))
  cards:write(G.rule(t.mode)..'\n\n')
  cards:write('**'..('Prova %d/6, sigilli tuoi da collocare: %d'):format(t.round,t.marks)..'**\n\n')
- cards:write('| Categoria | Tu | Mercante | Priorita | Stato |\n')
+ cards:write('| Categoria | Tu | Rivale | Priorita | Stato |\n')
  cards:write('|---|---:|---:|---:|---|\n')
  for lane,l in ipairs(t.lanes) do
   cards:write(('| %d — %s | %d | %d | %d | %s |\n'):format(
@@ -42,8 +42,8 @@ for i,t in ipairs(trials) do
    l.owner and ('CHIUSA ('..l.owner..')') or 'aperta'))
  end
  cards:write(('\n1. Se collochi i sigilli nella categoria **%d**, '..
-   'il Mercante risponde sulla categoria _____ (1/2/3).\n\n'):format(t.proposed))
- cards:write(('2. Vuoi OTTENERE che il Mercante risponda alla categoria **%d**. '..
+   'il Rivale risponde sulla categoria _____ (1/2/3).\n\n'):format(t.proposed))
+ cards:write(('2. Vuoi OTTENERE che il Rivale risponda alla categoria **%d**. '..
    'Dove metti i sigilli? _____ (0=impossibile, oppure 1/2/3).\n\n'):
    format(t.request_target))
  if i==5 or i==12 then

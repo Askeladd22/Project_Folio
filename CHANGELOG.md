@@ -10,6 +10,38 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.76] - 2026-11-18
+
+**Stato:** denominazione neutra dell'avversario predefinito. Non è una
+nuova meccanica e non promuove il prototipo Encounter C nel gameplay canonico.
+
+### Modificato
+- Il nuovo incontro usa per default `opponent_id='rival'` (Rivale)
+  anziché `merchant`; `merchant` continua a identificare un
+  personaggio selezionato esplicitamente.
+- La scena usa provvisoriamente il ritratto esistente
+  `resources/opponents/merchant.png` per `rival`, senza attribuirgli
+  l'identità del Mercante. Un futuro `rival.png` prevale
+  automaticamente. Il fallback JPEG con Mercante incorporato resta disponibile
+  anche per `rival` soltanto quando mancano gli asset modulari,
+  senza cambiare l'ID logico; per gli altri personaggi è vietato.
+- Interfacce testuali G4/G4b, messaggi Encounter C, README e
+  documentazione corrente chiamano il personaggio generico «Rivale»
+  e il piano di gioco «tavolo da gioco». Il prototipo storico
+  Merchant Wager, gli asset e le versioni passate non sono rinominati.
+- Aggiornati i test di selezione ritratti e il registro
+  `research/DECISIONS.md` (D-001).
+
+### Verifiche e limiti
+- Regole Farkle, sei D6, fisica, rendering g3d e policy R/F
+  non sono state modificate.
+- **CI regressione generale PASS** ([run #44327484575](https://github.com/Askeladd22/Project_Folio/actions/runs/44327484575)):
+  versioning, lint, sintassi, test Lua 5.4/LuaJIT, smoke LÖVE/Mesa,
+  test Python sulla revisione `2b3ce2e4`.
+- **Encounter A/C PASS** ([run #44327484484](https://github.com/Askeladd22/Project_Folio/actions/runs/44327484484))
+  sulla stessa revisione. Nuova CI dopo aggiornamento del changelog
+  da verificare; collaudo Windows e nuova grafica neutra non eseguiti.
+
 ## [0.1.75] - 2026-11-18
 
 **Stato:** protocollo G4b di comprensione del Mercante, esclusivamente

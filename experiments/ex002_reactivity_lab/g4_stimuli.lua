@@ -167,7 +167,7 @@ end
 function M.display_board(t)
  local lines={}
  lines[#lines+1]=('Prova %d/6; sigilli da collocare: %d'):format(t.round,t.marks)
- lines[#lines+1]='  Categoria                  Tu   Mercante  Priorita  Stato'
+ lines[#lines+1]='  Categoria                  Tu   Rivale  Priorita  Stato'
  for i,l in ipairs(t.lanes) do
   lines[#lines+1]=string.format('  %d %-24s %d      %d        %d       %s',
    i,l.name,l.player,l.rival,4-i,
@@ -178,7 +178,7 @@ end
 
 function M.rule(mode)
  if mode=='reactive' then
-  return 'R — Mercante: 5×propri sigilli + 2×tuoi sigilli + priorita; vince il massimo.'
+  return 'R — Rivale: 5×propri sigilli + 2×tuoi sigilli + priorita; vince il massimo.'
  end
  return 'F — controllo: sceglie la priorita massima (3/2/1) fra prove aperte.'
 end

@@ -3,7 +3,7 @@ local H=require('src.farkle.presentation').hud_model
 local layout=require('src.farkle.ui').layout
  .build()
 assert(layout.tray.x<100 and layout.tray.w>=1700 and
- layout.tray.h>=420,'dominant physical Merchant dice tray under V2')
+ layout.tray.h>=420,'dominant physical dice tray under V2')
 assert(H.tray==nil and H.slots==nil and H.feedback==nil,
  'HUD model must not retain retired fallback positions')
 assert(H.reward_active({phase='upgrade'}) and H.reward_active({phase='medal'}))

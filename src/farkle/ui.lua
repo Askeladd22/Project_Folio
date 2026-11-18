@@ -116,7 +116,7 @@ local function rect(x,y,w,h)
 end
 
 function M.build(which)
- assert(which==nil,'HUD layout is fixed to the Merchant table')
+ assert(which==nil,'HUD layout is fixed to the game table')
   -- Production Farkle table: preserve a large 3D viewport, without the
   -- legacy commission/folio/tools sidebar.
   return {
@@ -242,7 +242,7 @@ function M.validate(layout)
      not aligned(layout.single_action) or not aligned(layout.idle_message) or
      not aligned(layout.message) or
      math.abs((actions_left+actions_right)*.5-center)>3 then
-   return false,'merchant controls are not centered on physical table'
+   return false,'game controls are not centered on physical table'
   end
   if M.overlap(layout.primary,layout.secondary)>0 or
      M.overlap(layout.help,layout.runmenu)>0 or
@@ -411,7 +411,7 @@ Bundle.opponent_scene = (function()
 -- opponents REQUIRE a clean room, so two figures can never overlap.
 local Art=require('src.data.frontend_schema').palette
 local S={}
-S.default_id='merchant'
+S.default_id='rival'
 S.room_path='resources/scenes/printshop-room.png'
 S.legacy_room='resources/merchant/table-host.jpg'
 function S.validate_id(id)
@@ -431,10 +431,20 @@ function S.resolve(id,exists)
  id=S.validate_id(id)
  assert(type(exists)=='function','file-existence function required')
  local png=S.portrait_path(id)
- if exists(S.room_path) and exists(png) then
+ local clean_room=exists(S.room_path)
+ -- The generic rival temporarily shares the existing illustrated portrait.
+ -- A future rival.png takes precedence automatically; explicit 'merchant'
+ -- remains a separately selectable character/legacy-art identity.
+ if id==S.default_id and not exists(png) and exists(S.portrait_path('merchant')) then
+  png=S.portrait_path('merchant')
+ end
+ if clean_room and exists(png) then
   return {id=id,room=S.room_path,portrait=png,legacy=false}
  end
- if id==S.default_id then
+ -- Preserve the historical composite fallback for headless/minimal builds.
+ -- The logical identity stays 'rival' for the generic default; 'merchant'
+ -- remains a separate explicit selection. Normal builds use modular art.
+ if id==S.default_id or id=='merchant' then
   return {id=id,room=S.legacy_room,portrait=nil,legacy=true}
  end
  if not exists(S.room_path) then

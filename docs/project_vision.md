@@ -54,7 +54,7 @@ sceglie se incassare o rilanciare e rischia di perdere il bottino del
 turno con un Farkle. Rendering unico **g3d**; nessun ripristino
 di painter/fallback legacy.
 
-La partita attuale usa commissioni sul Tavolo del Mercante.
+La partita attuale usa commissioni sul tavolo da gioco. L'avversario generico si chiama **Rivale**: non viene identificato automaticamente con il personaggio Mercante.
 Il bilanciamento di obiettivi e progressione è ancora provvisorio.
 
 ## Incontri e poste — principi forti, regolamento ancora aperto
@@ -103,12 +103,12 @@ strategie prudenti e aggressive prima di lavorare su UI e arte.
 
 Il Folio non è stato eliminato: dalla v0.1.14 non occupa la sidebar
 permanente del tavolo, ma resta consultabile con **F**. Il tavolo
-g3d del Mercante è la scena giocabile. Il vecchio obiettivo di
+g3d con avversario generico è la scena giocabile. Il vecchio obiettivo di
 **colorare progressivamente una pagina fino alla vittoria** è
 abbandonato come loop principale: rimane invece da progettare la
 ricomposizione delle xilografie nel libro dopo gli incontri.
 
-Il Mercante è per ora una figura illustrata modulare, **non**
+Il Rivale predefinito è per ora una figura illustrata modulare, **non**
 un avversario competitivo già completo. La modalità Monaco beta è
 stata rimossa nella v0.1.16.
 

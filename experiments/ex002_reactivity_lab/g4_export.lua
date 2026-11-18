@@ -20,10 +20,10 @@ cards:write('# Project Folio — G4 schede per studio umano\n\n')
 cards:write('**Versione sperimentale.** Non è il gameplay canonico. ')
 cards:write('Partecipante anonimo: ______  Data: ______\n\n')
 cards:write('Per ogni caso, leggi la regola, la situazione pubblica e scegli: ')
-cards:write('(1) dove risponderà il Mercante se collochi i sigilli nella ')
+cards:write('(1) dove risponderà il Rivale se collochi i sigilli nella ')
 cards:write('categoria indicata; (2) dove collocare i sigilli per farlo ')
 cards:write('rispondere alla categoria obiettivo, oppure **0 = impossibile**.\n\n')
-cards:write('La tua mossa avviene prima della risposta del Mercante. ')
+cards:write('La tua mossa avviene prima della risposta del Rivale. ')
 cards:write('Le categorie indicate come CHIUSE non sono selezionabili; nessuna mossa legale del caso sigilla immediatamente una categoria. ')
 cards:write('Con punteggi pari vince la priorità 3, poi 2, poi 1. ')
 cards:write('Due casi di pratica con feedback a cura del facilitatore ')
@@ -34,8 +34,8 @@ for i,t in ipairs(stimuli) do
  cards:write(('### Caso %02d — %s\n\n'):format(i,
    t.stage=='practice' and 'Pratica' or 'Valutazione'))
  cards:write(G.rule(t.mode)..'\n\n')
- cards:write('Tempo: una sola assegnazione, poi il Mercante risponde.\n\n')
- cards:write('| Categoria | Tu | Mercante | Priorita | Stato |\n')
+ cards:write('Tempo: una sola assegnazione, poi il Rivale risponde.\n\n')
+ cards:write('| Categoria | Tu | Rivale | Priorita | Stato |\n')
  cards:write('|---|---:|---:|---:|---|\n')
  for lane,l in ipairs(t.lanes) do
   cards:write(('| %d — %s | %d | %d | %d | %s |\n'):format(
@@ -44,9 +44,9 @@ for i,t in ipairs(stimuli) do
  end
  cards:write(('\n**Prova %d/6.** Sigilli tuoi da assegnare: **%d**.\n\n'):
     format(t.round,t.marks))
- cards:write(('1. Se li assegni a **%d**, il Mercante risponde su: '..
+ cards:write(('1. Se li assegni a **%d**, il Rivale risponde su: '..
   '_____ (1/2/3).\n\n'):format(t.proposed))
- cards:write(('2. Vuoi far rispondere il Mercante su **%d**. '..
+ cards:write(('2. Vuoi far rispondere il Rivale su **%d**. '..
   'Dove collochi i sigilli? _____ (0/1/2/3).\n\n'):format(
   t.request_target))
  if i==6 or i==13 then
