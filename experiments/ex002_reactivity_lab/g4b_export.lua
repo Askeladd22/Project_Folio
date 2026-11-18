@@ -33,7 +33,7 @@ for i,t in ipairs(trials) do
  cards:write(('## Caso %02d — %s\n\n'):format(i,
   t.stage=='practice' and 'Pratica' or 'Valutazione'))
  cards:write(G.rule(t.mode)..'\n\n')
- cards:write('**'+('Prova %d/6, sigilli tuoi da collocare: %d'):format(t.round,t.marks)+'**\n\n')
+ cards:write('**'..('Prova %d/6, sigilli tuoi da collocare: %d'):format(t.round,t.marks)..'**\n\n')
  cards:write('| Categoria | Tu | Mercante | Priorita | Stato |\n')
  cards:write('|---|---:|---:|---:|---|\n')
  for lane,l in ipairs(t.lanes) do
