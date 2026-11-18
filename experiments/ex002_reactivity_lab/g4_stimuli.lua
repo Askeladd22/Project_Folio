@@ -73,7 +73,7 @@ function M.manifest()
    X.play(seed,'reactive',dice_policy,'first',nil,function(s,cf)
     if #pool>=M.practice_count+M.test_count then return end
     if cf.legal>=2 and cf.nonlocking and cf.target_sensitive and
-       s.round>=2 and s.round<=5 then
+       s.round>=1 and s.round<=5 then
      local target=changed_target(cf)
      if target then
       local t=snapshot(s)
@@ -181,7 +181,7 @@ function M.assert_manifest(trials)
   assert(t.order==i and t.proposed>=1 and t.proposed<=3)
   assert(t.prediction_target==M.oracle(t,t.mode,t.proposed))
   assert(M.is_correct_control(t,t.control_choices[1] or 0))
-  assert(t.round>=2 and t.round<=5 and t.marks>=1 and t.marks<=3)
+  assert(t.round>=1 and t.round<=5 and t.marks>=1 and t.marks<=3)
   if t.stage=='test' then
    test_count=test_count+1;counts[t.mode]=counts[t.mode]+1
   end
