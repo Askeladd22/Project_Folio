@@ -3,11 +3,13 @@ on:
   push:
     branches:
       - fix/dice-obb-ccd-angular-20261118
+      - fix/die-angular-substeps-multicontact-20261118
   pull_request:
     paths:
       - 'src/engine3d/die_collision.lua'
       - 'src/engine3d/physics.lua'
       - 'tests/engine3d/die_collision_sat_ccd_test.lua'
+      - 'tests/engine3d/die_collision_refinement_test.lua'
       - '.github/workflows/dice_collision_fix.yml'
 jobs:
   physics:
@@ -26,7 +28,9 @@ jobs:
       - name: Interpreter
         run: lua -v
       - name: Orientation-aware D6 collision regression
-        run: lua -e 'unpack=unpack or table.unpack' tests/engine3d/die_collision_sat_ccd_test.lua
+        run: |
+          lua -e 'unpack=unpack or table.unpack' tests/engine3d/die_collision_sat_ccd_test.lua
+          lua -e 'unpack=unpack or table.unpack' tests/engine3d/die_collision_refinement_test.lua
       - name: Existing physics time and mouse integration
         run: |
           lua -e 'unpack=unpack or table.unpack' tests/engine3d/physics_time_test.lua
