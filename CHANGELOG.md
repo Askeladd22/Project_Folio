@@ -37,8 +37,16 @@ La versione non è rilasciata finché la PR non è approvata.
   `research/FPS-FIX-002.md` e CI dedicata aggiornata.
 
 ### Verifiche e limiti
-- CI Lua 5.4/LuaJIT e smoke LÖVE/Mesa da verificare
-  sulla HEAD di questa PR, senza inventare esiti.
+- **PASS** [CI mirata #44387298729](https://github.com/Askeladd22/Project_Folio/actions/runs/44387298729)
+  (Lua 5.4 e LuaJIT; 7 regressioni precedenti + 6 gruppi
+  nuovi e contratti presa/audio/timing).
+- **PASS** [CI generale #44387298518](https://github.com/Askeladd22/Project_Folio/actions/runs/44387298518)
+  (versioning, Farkle, Lua, LÖVE/Mesa, Python).
+- Il primo pilot ha fallito la soglia di penetrazione
+  0.025 su sei dadi (residuo 0.035323 a quattro passaggi).
+  Sei passaggi superano il test senza cambiare la soglia.
+  Il controllo statico di `mouse_throw_test.lua` è stato
+  aggiornato alla chiamata con `sub_dt`.
 - Il limite dei sottopassi implica che rotazioni illimitatamente
   veloci non sono garantite; punto di contatto e risposta
   restano approssimazioni, non il manifold nativo FPS.
