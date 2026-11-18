@@ -32,3 +32,5 @@ jobs:
           lua -e 'unpack=unpack or table.unpack' tests/engine3d/physics_time_test.lua
           lua -e 'unpack=unpack or table.unpack' tests/engine3d/manual_dice_physics_test.lua
           lua -e 'unpack=unpack or table.unpack' tests/engine3d/dice_physics_audio_callbacks_test.lua
+          lua -e 'unpack=unpack or table.unpack' tests/farkle/mouse_throw_test.lua
+          lua -e 'unpack=unpack or table.unpack' tests/engine3d/fps_wall_bounds_test.lua
