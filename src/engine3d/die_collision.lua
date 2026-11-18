@@ -251,10 +251,15 @@ function C.solve(world,old_positions,dt)
    for j=i+1,#world do
     local b=world[j]
     if not b._manual_pending and not (a.asleep and b.asleep) then
-     local hit=C.overlap(a,b)
-     if not hit and old_positions and old_positions[i] and old_positions[j] then
+     -- Test the time of impact FIRST: two dice can already have swapped
+     -- centre order while still intersecting at the end of the step.
+     -- Swept SAT returns nil for bodies already overlapping initially;
+     -- those are solved by the static SAT fallback.
+     local hit
+     if old_positions and old_positions[i] and old_positions[j] then
       hit=C.sweep(a,b,old_positions[i],old_positions[j])
      end
+     if not hit then hit=C.overlap(a,b) end
      if hit and C.resolve(world,a,b,i,j,hit,dt) then hits=hits+1 end
     end
    end
