@@ -69,6 +69,24 @@ check('continuous collision catches swapped-endpoint fast crossing',function()
    'high-speed cap fallback must be exercised and observable')
 end)
 
+check('CCD also wins over reversed-centre end-step overlap',function()
+ local w=world()
+ local a,b=die(-1.5,0,3,170,0,0),die(1.5,0,3,-170,0,0)
+ w[1],w[2]=a,b
+ local contacts=0
+ w.on_contact=function(_,kind)
+  if kind=='pair' then contacts=contacts+1 end
+ end
+ -- Uncorrected endpoints are +.2 and -.2: still overlapping,
+ -- but in the wrong relative order. End-step SAT alone is not CCD.
+ w:update(.01)
+ assert(contacts>=1,'earliest swept contact must be detected')
+ assert(a.position[1]<b.position[1],
+  'overlap after crossing must not invert physical order')
+ assert(b.velocity[1]-a.velocity[1]>=-1e-8,
+  'CCD must remove residual closing velocity after capped impulses')
+end)
+
 check('off-centre face collision imparts angular velocity',function()
  local w=world()
  local a,b=die(0,0,3,5,0,0),die(.85,.25,3,0,0,0)
@@ -110,4 +128,4 @@ check('same initial state, same deterministic trajectory',function()
   end
  end
 end)
-print('PASS D6 collision acceptance '..count..'/6')
+print('PASS D6 collision acceptance '..count..'/7')
