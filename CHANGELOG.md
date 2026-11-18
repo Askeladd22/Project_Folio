@@ -34,8 +34,11 @@ nessuna modifica al comportamento, alla fisica o alle regole Farkle.
   Nessun riferimento testuale ai tre GLB in codice, test, script o
   documenti. Unico modello 3D di produzione nominato dal renderer:
   `marble_topped_centre_table.glb`.
-- Nuova CI PR: **PENDING** (nessun esito anticipato); test locali
-  **NOT RUN**. Possibili consumer esterni non documentati.
+- **PASS** [CI della PR #139, run #44414980861](https://github.com/Askeladd22/Project_Folio/actions/runs/44414980861)
+  sul commit di pulizia `ba8ea0c8`: versioning, test housekeeping,
+  lint, sintassi Lua, test Lua 5.4/LuaJIT, smoke LÖVE/Mesa e test Python.
+  Test locali **NOT RUN**; la CI del commit finale solo documentale
+  è da verificare. Possibili consumer esterni non documentati.
 - QA Windows 50 lanci **NOT RUN**; `src/`, `lib/`, `experiments/`,
   Farkle, g3d, PNG, font, suoni, dati salvati e altri GLB invariati.
 
