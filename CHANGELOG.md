@@ -21,7 +21,7 @@ La versione non è rilasciata finché la PR non è approvata.
   in sottopassi limitati (max 12): le orientazioni intermedie
   partecipano ai test SAT e possono intercettare impatti che
   il precedente CCD solo traslazionale non rilevava.
-- La risoluzione dei contatti fra i sei D6 usa fino a quattro
+- La risoluzione dei contatti fra i sei D6 usa fino a sei
   passaggi SAT per ridurre le penetrazioni residue in catene
   e gruppi di dadi. Un contatto non può emettere più eventi
   audio per la stessa coppia all'interno del passo fisso.
