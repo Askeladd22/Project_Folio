@@ -111,7 +111,7 @@ local function choose_claim(s,claim_policy,cf)
 end
 
 -- writer receives one counterfactual row for EVERY legal claim (selected or not).
-function M.play(seed,mode,dice_policy,claim_policy,writer)
+function M.play(seed,mode,dice_policy,claim_policy,writer,observer)
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed<2147483647)
  assert(mode=='reactive' or mode=='fixed')
  assert(M.stops[dice_policy],'unknown dice policy')
@@ -136,6 +136,9 @@ function M.play(seed,mode,dice_policy,claim_policy,writer)
   elseif s.phase=='claim' then
    local cf=M.counterfactuals(s)
    local chosen=choose_claim(s,claim_policy,cf)
+   -- G4 observation-only hook: inspect real pre-claim states, never modify.
+   -- Existing callers omit the hook and retain identical behavior.
+   if observer then observer(s,cf,chosen) end
    local round=s.round
    local amount=s.claim_marks
    stats.choice_states=stats.choice_states+1
