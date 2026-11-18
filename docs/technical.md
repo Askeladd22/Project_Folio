@@ -69,7 +69,7 @@ experiments/            Laboratori isolati, mai caricati dal gioco
 docs/, audits/          Documentazione ed evidenze di revisione
 ```
 
-Il Tavolo del Mercante usa il layout `table_minimal`, con selezione diretta
+Il tavolo da gioco usa il layout `table_minimal`, con selezione diretta
 dei dadi. La prospettiva e il picking passano da
 `src/farkle/tabletop.lua` (`tray_view`),
 `src/farkle/interaction.lua` (presa fisica) e
@@ -82,14 +82,14 @@ il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
 ## Rendering e risorse
 
-g3d disegna il vassoio e i dadi 3D. Interfaccia, ritratto del Mercante e
+g3d disegna il vassoio e i dadi 3D. Interfaccia, ritratto dell'avversario e
 illustrazioni rimangono elementi 2D.
 
 - `lib/g3d/`, `src/engine3d/g3d/` e
   `resources/shaders/dice_lit.glsl` forniscono il rendering.
 - `resources/dice/1.png` … `6.png` forniscono le facce D6.
 - `resources/scenes/printshop-room.png` è il fondale della bottega senza persone;
-  `resources/opponents/merchant.png` è il PNG indipendente del Mercante.
+  `resources/opponents/merchant.png` è il PNG del personaggio Mercante, riutilizzato temporaneamente come illustrazione del default generico `rival` finché non esiste `resources/opponents/rival.png` (preferito automaticamente quando disponibile). L'ID `merchant` resta selezionabile solo esplicitamente.
 - `resources/textures/wood.png` è la texture condivisa dal tavoliere 3D
   e dal laboratorio g3d. I vecchi JPEG del Mercante per legno e intaglio
   sono stati eliminati e non devono più essere caricati.
