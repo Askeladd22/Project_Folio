@@ -10,6 +10,42 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.80] - 2026-11-18
+
+**Stato:** correzione di sicurezza del solver angolare e housekeeping
+non distruttivo. Branch `fix/physics-cap-repo-hygiene-20261118`.
+Non è un'integrazione FPS nativa e non cambia le regole Farkle.
+
+### Corretto
+- Al saturarsi dei 12 sottopassi angolari, il solver ora
+  **limita anche la velocità angolare effettivamente integrata**
+  (preservandone la direzione), così l'angolo per sottopasso
+  non supera il valore configurato. Diagnostica
+  `angular_velocity_clamps` e test su 3000 rad/s.
+- I lanci e gli shake ordinari, già limitati dall'interazione,
+  non vengono modificati; il clamp estremo dissipa energia
+  per sicurezza e non equivale a CCD rotazionale analitico.
+- README aggiornato da 29 a **30 moduli Lua** in `src/`;
+  mappa tecnica completata con `die_collision.lua`.
+- Eliminati percorsi ripetuti nel test di cleanup.
+  `.gitignore` mantiene gli ignore specifici degli audit
+  generati, ma non nasconde più indiscriminatamente tutti
+  i nuovi audit; gli audit storici versionati rimangono
+  nel repository e nella storia Git.
+
+### Verifiche e limiti
+- Nuove regressioni: clamp su rotazione estrema, nessun
+  clamp su rotazione normale, coerenza documentazione
+  e ignore selettivo.
+- CI Lua 5.4/LuaJIT, LÖVE/Mesa, test Python e repo
+  da verificare sulla HEAD finale della PR.
+- Restano `NOT RUN` i 50 lanci manuali Windows e
+  i benchmark frametime su GPU reale. Il punto di contatto
+  continua a usare supporti approssimati: non sono emersi
+  test che giustifichino una riscrittura manifold.
+- Nessun asset, PNG QA tracciato, esperimento o
+  documento di ricerca eliminato.
+
 ## [0.1.79] - 2026-11-18
 
 **Stato:** ulteriori correzioni alla fisica D6 (FPS-FIX-002) in
