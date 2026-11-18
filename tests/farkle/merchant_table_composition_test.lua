@@ -75,7 +75,9 @@ local Hud=require('src.farkle.ui').hud
 local game=require('src.farkle.rules').new()
 for _,wh in ipairs{{1920,1080},{3440,1440},{1280,1024}} do
  Res.refresh(wh[1],wh[2]); images={}
- Hud.draw({game=game})
+ -- This legacy-composite geometry regression selects the Merchant explicitly;
+ -- the generic Rivale default uses the clean room and modular portrait.
+ Hud.draw({game=game,opponentId='merchant'})
  local expected=0
  for _,r in ipairs(images) do
   expected=expected+r.w*r.h
