@@ -51,7 +51,7 @@ assert(not runtime:find('manual_session',1,true),'no redundant private session m
 assert(runtime:find("physicalResolution=RollResolution.new(last_roll_indices)",1,true))
 assert(physics:find('if s._manual_pending then',1,true))
 local pairs=source('src/engine3d/die_collision.lua')
-assert(physics:find('DieCollisions.solve(self,old_positions,self.dt)',1,true),
+assert(physics:find('DieCollisions.solve(self,old_positions,sub_dt,emitted_pairs)',1,true),
  'physical pair solver must use the production oriented D6 contacts')
 assert(pairs:find('if not a._manual_pending then',1,true) and
  pairs:find('if not b._manual_pending and',1,true),
