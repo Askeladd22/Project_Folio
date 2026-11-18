@@ -10,6 +10,60 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.78] - 2026-11-18
+
+**Stato:** correzione delle collisioni D6-D6 nel solver Lua di
+produzione su branch di fix, **NON ancora integrata in main**.
+Non è un port completo né un'integrazione nativa di FPS 1.2.5.
+
+### Corretto
+- Sostituita la risposta sferica fra coppie di D6 con 15 assi SAT
+  sulle forme cubiche orientate realmente renderizzate: nessun
+  impulso se due cubi non si toccano.
+- Introdotto swept SAT sul movimento relativo del passo fisso
+  per intercettare collisioni traslazionali anche quando i dadi
+  risultano nuovamente separati al termine del frame.
+- Impulsi normali e tangenziali applicati al punto di contatto,
+  così gli urti decentrati trasferiscono momento angolare.
+- Mantenuti il passo fisso, il suolo, le sponde, la presa
+  `_manual_pending`, l'interfaccia audio e il gameplay Farkle.
+
+### Aggiunto
+- `src/engine3d/die_collision.lua`, test
+  `tests/engine3d/die_collision_sat_ccd_test.lua` e
+  piano `research/FPS-FIX-001.md` con criteri PAUL.
+
+### Verifiche e limiti
+- **CI dedicata PASS** ([#44366963087](https://github.com/Askeladd22/Project_Folio/actions/runs/44366963087)):
+  6 test originali SAT/CCD/rotazione sotto Lua 5.4 e LuaJIT,
+  più regressioni `physics_time`, presa manuale e audio contatti.
+- La prima revisione ha fallito un test CCD con impulso
+  limitato da `dv_max=50`; corretto con un arresto inelastico
+  di sicurezza della sola velocità relativa residua (log
+  `ccd_safety_stops`) e rieseguita la suite con PASS.
+- Aggiunto settimo test: CCD dà priorità al TOI anche
+  quando i dadi invertiti sono ancora sovrapposti a fine step.
+  **7/7 regressioni PASS** Lua 5.4/LuaJIT
+  ([CI #44368346259](https://github.com/Askeladd22/Project_Folio/actions/runs/44368346259)).
+- Adeguati i test `mouse_throw` e `source_structure` al
+  solver separato: mantengono le invarianti di presa e
+  l'allowlist esplicita dei 30 moduli di produzione.
+- **CI generale PASS** ([#44368766409](https://github.com/Askeladd22/Project_Folio/actions/runs/44368766409))
+  sulla revisione `2875a7d5`: versione/changelog, lint,
+  sintassi, Lua 5.4/LuaJIT, Farkle, LÖVE/Mesa e Python.
+  I commit successivi aggiornano soltanto i documenti
+  di verifica; nessun nuovo comportamento fisico.
+- **UAT Windows NOT RUN:** servono 50 lanci reali e
+  misure di stabilità/frametime prima del merge.
+- La swept SAT congela l'orientamento al termine dello step;
+  intersezioni causate da rotazioni estreme richiedono ulteriori test.
+  Il punto di contatto è approssimato dai supporti delle facce,
+  non da un manifold completo di FPS.
+- Dadi ancora trattenuti/pending restano cinematici come prima.
+  Nessun test umano di 50 lanci dichiarato.
+- Nessuna modifica a lib/g3d, `src/farkle/rules.lua`, dadi
+  canonici o stato degli esperimenti EX-003.
+
 ## [0.1.77] - 2026-11-18
 
 **Stato:** laboratorio EX-003 isolato, confronto tra duello Farkle

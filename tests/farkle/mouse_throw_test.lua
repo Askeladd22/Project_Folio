@@ -50,6 +50,11 @@ assert(runtime:find('Scriptorium.manualRoll.count>0',1,true),'cannot score parti
 assert(not runtime:find('manual_session',1,true),'no redundant private session must survive reset')
 assert(runtime:find("physicalResolution=RollResolution.new(last_roll_indices)",1,true))
 assert(physics:find('if s._manual_pending then',1,true))
-assert(physics:find('if b._manual_pending then goto continue_pair end',1,true))
+local pairs=source('src/engine3d/die_collision.lua')
+assert(physics:find('DieCollisions.solve(self,old_positions,self.dt)',1,true),
+ 'physical pair solver must use the production oriented D6 contacts')
+assert(pairs:find('if not a._manual_pending then',1,true) and
+ pairs:find('if not b._manual_pending and',1,true),
+ 'both queued and held bodies must remain excluded from pair impulses')
 assert(not package.loaded['lib.g3d'],'physics tests must not need a GPU')
 print('PASS tabletop individual dice: physical hold/rotate/release, queue, cancel, and delayed Farkle scoring')
