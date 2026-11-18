@@ -30,8 +30,17 @@ né un nuovo Rivale di produzione. Piano 03-01 approvato dall'utente.
   `research/EX-003-UAT.md` (somministrazione **NON ESEGUITA**).
 
 ### Verifiche e limiti
-- All'apertura del laboratorio: CI EX-003, regressione generale,
-  risultati numerici e smoke LÖVE/Mesa **ancora da verificare**.
+- **CI EX-003 PASS** ([run #44344432082](https://github.com/Askeladd22/Project_Folio/actions/runs/44344432082)):
+  Lua 5.4, LuaJIT, regressioni A/C e G4b, 1.600 incontri,
+  15 colonne e CSV raw in artifact `ex003-pilot-16000-16199`.
+- Risultati sintetici: D P(win) prudent/balanced/daring/situational
+  = 120/109/100/106 su 200; C = 85/75/66/86 su 200.
+  La differenza appaiata situational-balanced è −1,5 pp (D)
+  e +5,5 pp (C), **non** un confronto causale fra D e C.
+- Il profilo C situational non differisce dal claim «prima categoria
+  aperta» in 784/784 scelte. **Nessuna prova di mastery umano**.
+- CI generale e smoke LÖVE/Mesa ancora da verificare sulla
+  HEAD finale di PR #134, dopo questo aggiornamento.
 - Non comparare win-rate D e C come effetto causale: D concede
   sei veri turni Farkle al Rivale; C assegna sigilli automatici.
 - Nessun risultato umano, mastery, preferenza o promozione
