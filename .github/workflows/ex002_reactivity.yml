@@ -21,6 +21,14 @@ jobs:
         run: |
           lua5.4 tests/labs/ex002_reactivity_test.lua
           luajit tests/labs/ex002_reactivity_test.lua
+      - name: G4 deterministic human-test stimuli checks (NOT human playtest)
+        run: |
+          lua5.4 tests/labs/ex002_g4_test.lua
+          luajit tests/labs/ex002_g4_test.lua
+          mkdir -p /tmp/ex002g4
+          lua5.4 experiments/ex002_reactivity_lab/g4_export.lua /tmp/ex002g4
+          test "$(grep -c '^### Caso ' /tmp/ex002g4/g4_cards.md)" -eq 14
+          test "$(wc -l < /tmp/ex002g4/g4_answer_key.csv)" -eq 15
       - name: EX-002 paired pilot 1000-1999
         run: |
           mkdir -p /tmp/ex002
@@ -33,6 +41,13 @@ jobs:
           lua5.4 experiments/ex002_reactivity_lab/stress_run.lua 8000 8999 /tmp/ex002b | tee /tmp/ex002/summary_ex002b.txt
           test "$(wc -l < /tmp/ex002b/ex002b_matches.csv)" -eq 6001
           cp /tmp/ex002b/ex002b_matches.csv /tmp/ex002/
+      - name: Preserve G4 test materials (not participant data)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ex002-g4-stimuli-and-facilitator-key
+          path: /tmp/ex002g4/*
+          if-no-files-found: ignore
       - name: Preserve raw results
         if: always()
         uses: actions/upload-artifact@v4
