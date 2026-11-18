@@ -65,34 +65,38 @@ end
 
 function M.manifest()
  local pool,seen={},{}
- for seed=M.first_seed,M.last_seed do
-  local found
-  X.play(seed,'reactive','balanced','last',nil,function(s,cf)
-   if found then return end
-   if cf.legal==3 and cf.nonlocking and cf.target_sensitive and
-      s.round>=2 and s.round<=5 then
-    local target=changed_target(cf)
-    if target then
-     local t=snapshot(s)
-     local k=signature(t)
-     if not seen[k] then
-      local f=M.restore(t,'fixed')
-      local check=X.counterfactuals(f)
-      if not check.target_sensitive and check.legal==3 and
-         check.nonlocking then
-       seen[k]=true
-       t.changed_target=target
-       found=t
+ -- Collect ALL qualifying snapshots from real matches, not only the first
+ -- per seed. Early boards repeat under a deterministic policy, so discarding
+ -- later encounters would incorrectly make the reachable pool appear tiny.
+ for _,dice_policy in ipairs({'balanced','prudent','daring'}) do
+  for seed=M.first_seed,M.last_seed do
+   X.play(seed,'reactive',dice_policy,'last',nil,function(s,cf)
+    if #pool>=M.practice_count+M.test_count then return end
+    if cf.legal==3 and cf.nonlocking and cf.target_sensitive and
+       s.round>=2 and s.round<=5 then
+     local target=changed_target(cf)
+     if target then
+      local t=snapshot(s)
+      local k=signature(t)
+      if not seen[k] then
+       local f=M.restore(t,'fixed')
+       local check=X.counterfactuals(f)
+       if not check.target_sensitive and check.legal==3 and
+          check.nonlocking then
+        seen[k]=true
+        t.changed_target=target
+        pool[#pool+1]=t
+       end
       end
      end
     end
-   end
-  end)
-  if found then pool[#pool+1]=found end
+   end)
+   if #pool>=M.practice_count+M.test_count then break end
+  end
   if #pool>=M.practice_count+M.test_count then break end
  end
  assert(#pool>=M.practice_count+M.test_count,
-  'not enough distinct reachable, nonlocking R-sensitive G4 boards')
+  'not enough distinct reachable G4 boards: '..#pool)
  -- Two practice tasks (R then F), then eight R and four F scored tasks.
  local modes={'reactive','fixed','reactive','fixed','reactive',
   'reactive','fixed','reactive','reactive','fixed','reactive',
