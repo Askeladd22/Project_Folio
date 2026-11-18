@@ -39,8 +39,12 @@ nessuna modifica al renderer, agli input, alla logica Farkle o alle UI.
   dal runtime. Il test Antiqua protegge ancora primary/fallback.
 - Esteso `tests/data/antiqua_font_test.lua` con una regressione
   anti-reintroduzione dei sette file; nessuna rimozione di test.
-- CI della nuova PR **PENDING**; test locali **NOT RUN**;
-  consumer esterni non documentati non sono verificabili.
+- **PASS** [CI PR #140, run #44422233837](https://github.com/Askeladd22/Project_Folio/actions/runs/44422233837)
+  sul commit di pulizia `96ceb713`: versioning, lint, test Lua 5.4,
+  LuaJIT, LÖVE/Mesa e Python (16 step del job riusciti).
+- Test locali **NOT RUN**; il successivo commit solo documentale
+  richiede ricontrollo CI; consumer esterni non documentati
+  non sono verificabili.
 - QA Windows dei 50 lanci reali ancora **NOT RUN**.
 
 ## [0.1.82] - 2026-11-18
