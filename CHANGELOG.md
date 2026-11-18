@@ -35,12 +35,19 @@ Non è un port completo né un'integrazione nativa di FPS 1.2.5.
 
 ### Verifiche e limiti
 - **CI dedicata PASS** ([#44366963087](https://github.com/Askeladd22/Project_Folio/actions/runs/44366963087)):
-  6/6 nuovi test SAT/CCD/rotazione sotto Lua 5.4 e LuaJIT,
+  6 test originali SAT/CCD/rotazione sotto Lua 5.4 e LuaJIT,
   più regressioni `physics_time`, presa manuale e audio contatti.
 - La prima revisione ha fallito un test CCD con impulso
   limitato da `dv_max=50`; corretto con un arresto inelastico
   di sicurezza della sola velocità relativa residua (log
   `ccd_safety_stops`) e rieseguita la suite con PASS.
+- Aggiunto settimo test: CCD dà priorità al TOI anche
+  quando i dadi invertiti sono ancora sovrapposti a fine step.
+  **7/7 regressioni PASS** Lua 5.4/LuaJIT
+  ([CI #44368346259](https://github.com/Askeladd22/Project_Folio/actions/runs/44368346259)).
+- Adeguati i test `mouse_throw` e `source_structure` al
+  solver separato: mantengono le invarianti di presa e
+  l'allowlist esplicita dei 30 moduli di produzione.
 - Suite generale di Farkle e smoke LÖVE/Mesa **da verificare**
   sulla HEAD finale; 50 lanci su Windows **non eseguiti**.
 - La swept SAT congela l'orientamento al termine dello step;
