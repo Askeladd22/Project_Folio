@@ -17,12 +17,22 @@ for _,path in ipairs{
 
  'resources/ui/startup_splash/love.png',
  'resources/dice/1.png',
+ 'resources/models/marble_topped_centre_table.glb',
+ 'resources/models/old_wooden_table.glb',
  'src/engine3d/g3d/live.lua',
  'src/engine3d/physics.lua',
  'src/farkle/rules.lua',
  'docs/project_vision.md',
 } do
  assert(exists(path),'protected production source/asset missing: '..path)
+end
+-- Three inactive scans stay in Git history at commit 33f8afea35.
+for _,path in ipairs{
+ 'resources/models/aged_alchemical_book_mid_poly.glb',
+ 'resources/models/de_humani_corporis_fabrica.glb',
+ 'resources/models/old_roman_coin_ueinbaiva_mid.glb',
+} do
+ assert(not exists(path),'retired GLB scan reintroduced: '..path)
 end
 local f=assert(io.open('.gitignore','rb'))
 local ignore=f:read('*a');f:close()
