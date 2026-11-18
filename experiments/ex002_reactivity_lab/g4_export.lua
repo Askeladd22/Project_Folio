@@ -35,11 +35,12 @@ for i,t in ipairs(stimuli) do
    t.stage=='practice' and 'Pratica' or 'Valutazione'))
  cards:write(G.rule(t.mode)..'\n\n')
  cards:write('Tempo: una sola assegnazione, poi il Mercante risponde.\n\n')
- cards:write('| Categoria | Tu | Mercante | Priorita |\n')
- cards:write('|---|---:|---:|---:|\n')
+ cards:write('| Categoria | Tu | Mercante | Priorita | Stato |\n')
+ cards:write('|---|---:|---:|---:|---|\n')
  for lane,l in ipairs(t.lanes) do
-  cards:write(('| %d — %s | %d | %d | %d |\n'):format(
-    lane,l.name,l.player,l.rival,4-lane))
+  cards:write(('| %d — %s | %d | %d | %d | %s |\n'):format(
+    lane,l.name,l.player,l.rival,4-lane,
+    l.owner and ('CHIUSA ('..l.owner..')') or 'aperta'))
  end
  cards:write(('\n**Prova %d/6.** Sigilli tuoi da assegnare: **%d**.\n\n'):
     format(t.round,t.marks))
