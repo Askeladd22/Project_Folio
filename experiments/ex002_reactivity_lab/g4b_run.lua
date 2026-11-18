@@ -50,7 +50,7 @@ for i,t in ipairs(trials) do
  print(G.rule(t.mode))
  print(G.display_board(t))
  local prediction=ask(('Se metti %d sigilli in categoria %d, '..
-  'dove risponde il Mercante (1/2/3)? '):format(t.marks,t.proposed),yn)
+  'dove risponde il Rivale (1/2/3)? '):format(t.marks,t.proposed),yn)
  local chosen=ask(('Per OTTENERE una risposta in categoria %d, '..
   'dove metti i sigilli (0=impossibile, 1/2/3)? '):
   format(t.request_target),zero)
@@ -69,7 +69,7 @@ for i,t in ipairs(trials) do
    table.concat(t.control_choices,'|') or '0',control_ok and 1 or 0,
   explanation)
  if t.stage=='practice' then
-  print('Feedback: il Mercante sceglierebbe '..t.prediction_target)
+  print('Feedback: il Rivale sceglierebbe '..t.prediction_target)
   print('Soluzioni seconda domanda: '..
    (#t.control_choices>0 and table.concat(t.control_choices,', ') or '0 (impossibile)'))
  else
