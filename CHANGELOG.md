@@ -27,9 +27,13 @@ laboratoriale; le regole canoniche e il G4 originale rimangono invariati.
   in `research/EX-002-G4b.md`.
 
 ### Verifiche e limiti
-- Alla creazione del piano: Lua 5.4, LuaJIT e G4b CI **da verificare**,
-  così come CI generale e LÖVE/Mesa sulla PR.
-- Nessun partecipante umano testato; G4 resta **NON ESEGUITO**.
+- **CI G4b PASS** ([run #44278701838](https://github.com/Askeladd22/Project_Folio/actions/runs/44278701838)):
+  Lua 5.4, LuaJIT, regresioni G4/A/C, matrice 3×4, export,
+  smoke CLI sintetico; 14 board distinti e holdout intatto.
+- **CI generale PASS** ([run #44278714645](https://github.com/Askeladd22/Project_Folio/actions/runs/44278714645)):
+  versionamento, lint, sintassi, test Lua, LÖVE/Mesa e Python.
+- **Limite:** 11/12 casi valutati provengono dalla quarta prova.
+  Nessun partecipante umano testato; G4 resta **NON ESEGUITO**.
 - `src/`, sei D6 fisici, regole Farkle, g3d, Encounter A/C
   e simulazione EX-002 rimangono invariati.
 - Nessuna promozione del Mercante o approvazione G5.
