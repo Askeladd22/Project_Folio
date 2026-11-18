@@ -10,6 +10,39 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.73] - 2026-11-17
+
+**Stato:** esperimento EX-002 isolato di targeting del Mercante in Encounter C;
+**non attivo nel gameplay canonico**.
+
+### Aggiunto
+- Controllo sperimentale a priorità fissa (`rival_target_mode='fixed'`) per
+  Encounter C, opt-in e con budget/ritmo dei sigilli invariati.
+- Preview trasparente e non mutante della scelta del rivale (punteggi,
+  regola, bersaglio, alternative), mantenendo R come comportamento predefinito.
+- Laboratorio R/F preregistrato: seed appaiati, tre policy Farkle e due
+  policy di allocazione, controfattuali esaustivi per ogni stato di claim.
+- Test EX-002, driver headless, workflow pilota con esportazione CSV e
+  protocollo in `research/EX-002.md`.
+- EX-002b: test esplorativo separato, ultima categoria libera, su seed
+  esterni all'holdout, per verificare l'equivalenza osservata nel pilot.
+
+### Verifiche e limiti
+- **CI EX-002 PASS**: regressione A/C, Lua 5.4 e LuaJIT, pilot
+  preregistrato di 12.000 partite, raw CSV archiviati
+  ([run #44176272158](https://github.com/Askeladd22/Project_Folio/actions/runs/44176272158)).
+- Pilot G3 **non superato** come prova di agency: le policy di allocazione
+  visitano gli stessi percorsi R/F. Stress EX-002b 6.000 partite PASS,
+  post-hoc: bersagli/vincitori divergono, ma win-rate Incisore quasi
+  invariato ([run #44177227975](https://github.com/Askeladd22/Project_Folio/actions/runs/44177227975)).
+- CI generale PR **PASS** ([Lua regression #44177236507](https://github.com/Askeladd22/Project_Folio/actions/runs/44177236507)):
+  bump/changelog, lint, sintassi, suite Lua 5.4/LuaJIT, LÖVE/Mesa,
+  smoke HUD, test Python.
+- CI Encounter A/C **PASS** ([run #44177236513](https://github.com/Askeladd22/Project_Folio/actions/runs/44177236513)).
+  Collaudo manuale Windows e playtest G4 **non eseguiti**.
+- Preservati `src/`, Encounter A, sei D6, regole Farkle, fisica e g3d.
+  G3 numerico e G4 playtest da valutare; nessuna promozione a `main`.
+
 ## [0.1.72] - 2026-11-15
 
 **Stato:** una sola sessione per il lancio manuale dei dadi.
