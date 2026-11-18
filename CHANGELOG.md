@@ -10,6 +10,41 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.78] - 2026-11-18
+
+**Stato:** correzione delle collisioni D6-D6 nel solver Lua di
+produzione su branch di fix, **NON ancora integrata in main**.
+Non è un port completo né un'integrazione nativa di FPS 1.2.5.
+
+### Corretto
+- Sostituita la risposta sferica fra coppie di D6 con 15 assi SAT
+  sulle forme cubiche orientate realmente renderizzate: nessun
+  impulso se due cubi non si toccano.
+- Introdotto swept SAT sul movimento relativo del passo fisso
+  per intercettare collisioni traslazionali anche quando i dadi
+  risultano nuovamente separati al termine del frame.
+- Impulsi normali e tangenziali applicati al punto di contatto,
+  così gli urti decentrati trasferiscono momento angolare.
+- Mantenuti il passo fisso, il suolo, le sponde, la presa
+  `_manual_pending`, l'interfaccia audio e il gameplay Farkle.
+
+### Aggiunto
+- `src/engine3d/die_collision.lua`, test
+  `tests/engine3d/die_collision_sat_ccd_test.lua` e
+  piano `research/FPS-FIX-001.md` con criteri PAUL.
+
+### Verifiche e limiti
+- CI Lua 5.4/LuaJIT, regressioni Farkle, LÖVE/Mesa e
+  verifiche Windows **da registrare al termine della PR**.
+- La swept SAT congela l'orientamento al termine dello step;
+  intersezioni causate da rotazioni estreme richiedono ulteriori test.
+  Il punto di contatto è approssimato dai supporti delle facce,
+  non da un manifold completo di FPS.
+- Dadi ancora trattenuti/pending restano cinematici come prima.
+  Nessun test umano di 50 lanci dichiarato.
+- Nessuna modifica a lib/g3d, `src/farkle/rules.lua`, dadi
+  canonici o stato degli esperimenti EX-003.
+
 ## [0.1.77] - 2026-11-18
 
 **Stato:** laboratorio EX-003 isolato, confronto tra duello Farkle
