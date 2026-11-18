@@ -31,8 +31,19 @@ L'utente ha autorizzato di correggere i tre gap dell'audit.
   commit `39a15423cfd53b8c9a953ceb79685ec319ffab26`,
   **PASS** (Lua 5.4 e LuaJIT, 6/6 nuovi controlli + vecchi test
   physics_time, manual_dice_physics, dice_physics_audio_callbacks).
-- La suite generale Lua/LÖVE/Mesa richiede conferma sulla
-  HEAD definitiva della PR: **non dichiarare PASS senza CI**.
+- La revisione `5414e5f2` aggiunge il caso **end-step overlap
+  con centri già scambiati**: [CI dedicata #44368346259](https://github.com/Askeladd22/Project_Folio/actions/runs/44368346259)
+  **PASS** su Lua 5.4 e LuaJIT per **7/7 prove**.
+- Durante la regressione generale, `mouse_throw_test.lua`
+  cercava un frammento del solver rimosso (`goto continue_pair`);
+  aggiornata l'asserzione alla garanzia sui dadi pending nel
+  modulo nuovo, senza eliminare il test comportamentale.
+- `source_structure_test.lua` manteneva una allowlist esatta
+  dei 29 moduli della versione precedente. Aggiornata in
+  modo tracciato a 30 per registrare il nuovo modulo D6.
+  La [CI generale #44368076075](https://github.com/Askeladd22/Project_Folio/actions/runs/44368076075)
+  è **PASS** sulla revisione precedente `18392263`; la CI
+  completa sulla HEAD finale è **da verificare**.
 - Test Windows reali (minimo 50 lanci, 720p/1080p,
   single, group, shake, partial, hot dice) **NOT RUN**;
   nessuna misurazione di frametime, contatti o facce in Windows.
