@@ -11,7 +11,7 @@ L'utente ha autorizzato di correggere i tre gap dell'audit.
 | --- | --- | --- | --- |
 | AC-1 — niente respinte premature | SAT su facce e assi incrociati di D6 ruotati | caso centri 1.2 separati e 0.83 sovrapposti | PASS tecnico |
 | AC-2 — CCD, urti decentrati | swept SAT anche con endpoint separati; impulso con leva | caso +250/-250, off-center spin, pending | PASS tecnico |
-| AC-3 — test e preservazione | nuove regressioni, versione/changelog, workflow dedicato | Lua 5.4 e LuaJIT entrambi PASS, suite generale da verificare | PARZIALE |
+| AC-3 — test e preservazione | nuove regressioni, versione/changelog, workflow dedicato | Lua 5.4/LuaJIT e suite generale LÖVE/Mesa PASS; UAT Windows non eseguito | PASS tecnico / UAT NOT RUN |
 
 ## Esecuzione, fallimento e correzione documentati
 
@@ -42,8 +42,12 @@ L'utente ha autorizzato di correggere i tre gap dell'audit.
   dei 29 moduli della versione precedente. Aggiornata in
   modo tracciato a 30 per registrare il nuovo modulo D6.
   La [CI generale #44368076075](https://github.com/Askeladd22/Project_Folio/actions/runs/44368076075)
-  è **PASS** sulla revisione precedente `18392263`; la CI
-  completa sulla HEAD finale è **da verificare**.
+  è **PASS** sulla revisione precedente `18392263`.
+  Anche la [CI generale #44368766409](https://github.com/Askeladd22/Project_Folio/actions/runs/44368766409),
+  revisione `2875a7d57126d28c740974813e65b91bb1e52cb9`,
+  **PASS** per versioning, sintassi, Lua 5.4/LuaJIT, controlli
+  di repository, smoke LÖVE/Mesa e test Python.
+  L'ultima modifica successiva è solo documentale.
 - Test Windows reali (minimo 50 lanci, 720p/1080p,
   single, group, shake, partial, hot dice) **NOT RUN**;
   nessuna misurazione di frametime, contatti o facce in Windows.
@@ -61,13 +65,13 @@ un confronto nativo FPS o da test manuali estesi.
 Gli `_manual_pending` restano esclusi dalle collisioni
 coerentemente con la presa esistente.
 
-**PAUL:** T1/T2 implementati e test mirati PASS;
-T3 CI generale/QA umano rimangono gates separati.
+**PAUL:** T1/T2 implementati, test 7/7 e regressioni
+generali PASS; T3 verifica tecnica PASS, UAT Windows NOT RUN.
 **SEED:** WARN finché non c'è evidenza reale
 di feeling, clipping e stabilità sul PC Windows.
 **Nessuna promozione G5**, nessun cambiamento
 Farkle, carte, HP o struttura della run.
 
-**Prossimo gate unico:** verificare la CI generale
-sulla HEAD della PR #135, poi 50 lanci UAT Windows
-prima del merge. Nessuna integrazione automatica.
+**Prossimo gate unico:** eseguire i 50 lanci UAT su Windows
+(vedere `docs/windows_technical_qa.md`) prima di un'eventuale
+approvazione al merge. Nessuna integrazione automatica.
