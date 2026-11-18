@@ -10,6 +10,43 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.77] - 2026-11-18
+
+**Stato:** laboratorio EX-003 isolato, confronto tra duello Farkle
+diretto (D) e tre prove contese (C). **Non** è gameplay canonico
+né un nuovo Rivale di produzione. Piano 03-01 approvato dall'utente.
+
+### Aggiunto
+- `experiments/ex003_duel_lab/`: benchmark D in cui Incisore e
+  Rivale giocano ciascuno sei turni Farkle con gli stessi sei D6
+  canonici, punteggio assicurato, Farkle e policy rivale pubblica.
+- Confronto con Encounter C esistente, senza modificare il suo engine,
+  tramite quattro policy Incisore (prudent, balanced, daring,
+  situational) e stream RNG del giocatore separati per seed/turno.
+- Protocollo preregistrato di 200 seed × 4 policy × 2 sistemi =
+  1.600 partite sintetiche, outcome e stopping divergente sullo stesso
+  stato pubblico, CSV raw e intervalli paired *within-arm*.
+- Test Lua 5.4/LuaJIT, CI EX-003 e protocollo umano
+  `research/EX-003-UAT.md` (somministrazione **NON ESEGUITA**).
+
+### Verifiche e limiti
+- **CI EX-003 PASS** ([run #44344432082](https://github.com/Askeladd22/Project_Folio/actions/runs/44344432082)):
+  Lua 5.4, LuaJIT, regressioni A/C e G4b, 1.600 incontri,
+  15 colonne e CSV raw in artifact `ex003-pilot-16000-16199`.
+- Risultati sintetici: D P(win) prudent/balanced/daring/situational
+  = 120/109/100/106 su 200; C = 85/75/66/86 su 200.
+  La differenza appaiata situational-balanced è −1,5 pp (D)
+  e +5,5 pp (C), **non** un confronto causale fra D e C.
+- Il profilo C situational non differisce dal claim «prima categoria
+  aperta» in 784/784 scelte. **Nessuna prova di mastery umano**.
+- CI generale e smoke LÖVE/Mesa ancora da verificare sulla
+  HEAD finale di PR #134, dopo questo aggiornamento.
+- Non comparare win-rate D e C come effetto causale: D concede
+  sei veri turni Farkle al Rivale; C assegna sigilli automatici.
+- Nessun risultato umano, mastery, preferenza o promozione
+  di una variante dichiarato.
+- `src/`, dati Farkle, sei D6 fisici, g3d e UI di produzione invariati.
+
 ## [0.1.76] - 2026-11-18
 
 **Stato:** denominazione neutra dell'avversario predefinito. Non è una
