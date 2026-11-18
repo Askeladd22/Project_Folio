@@ -23,6 +23,12 @@ jobs:
           else
             python3 scripts/check_versioning.py
           fi
+      - name: Prevent re-tracking retired incomplete UI snapshot
+        run: |
+          if git ls-files -- 'audits/ui-v2-review/20261103-084723-1e3761ce/' | grep -q .; then
+            echo 'ERROR: incomplete historical UI capture is still tracked'
+            exit 1
+          fi
       - name: Install Lua runtimes
         run: |
           sudo apt-get update -qq
