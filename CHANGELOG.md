@@ -10,6 +10,34 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.76] - 2026-11-18
+
+**Stato:** denominazione neutra dell'avversario predefinito. Non è una
+nuova meccanica e non promuove il prototipo Encounter C nel gameplay canonico.
+
+### Modificato
+- Il nuovo incontro usa per default `opponent_id='rival'` (Rivale)
+  anziché `merchant`; `merchant` continua a identificare un
+  personaggio selezionato esplicitamente.
+- La scena usa provvisoriamente il ritratto esistente
+  `resources/opponents/merchant.png` per `rival`, senza attribuirgli
+  l'identità del Mercante. Un futuro `rival.png` prevale
+  automaticamente. Il fallback JPEG con Mercante incorporato è
+  limitato all'ID esplicito `merchant`.
+- Interfacce testuali G4/G4b, messaggi Encounter C, README e
+  documentazione corrente chiamano il personaggio generico «Rivale»
+  e il piano di gioco «tavolo da gioco». Il prototipo storico
+  Merchant Wager, gli asset e le versioni passate non sono rinominati.
+- Aggiornati i test di selezione ritratti e il registro
+  `research/DECISIONS.md` (D-001).
+
+### Verifiche e limiti
+- Regole Farkle, sei D6, fisica, rendering g3d e policy R/F
+  non sono state modificate.
+- Test Lua 5.4/LuaJIT, suite generale e smoke LÖVE/Mesa da
+  certificare sulla HEAD finale della PR; collaudo Windows e
+  nuova grafica neutra non eseguiti.
+
 ## [0.1.75] - 2026-11-18
 
 **Stato:** protocollo G4b di comprensione del Mercante, esclusivamente
