@@ -79,6 +79,7 @@ local modules={
  'src/data/frontend_schema.lua',
  'src/data/locale_en.lua',
  'src/engine3d/bounds.lua',
+ 'src/engine3d/die_collision.lua',
  'src/engine3d/geometry.lua',
  'src/engine3d/physics.lua',
  'src/engine3d/roll_resolution.lua',
@@ -97,7 +98,7 @@ local modules={
  'src/farkle/ui.lua',
  'src/screens/startup_splash.lua',
 }
-assert(#modules==29,'production allowlist must contain exactly 29 Lua files')
+assert(#modules==30,'production allowlist must contain exactly 30 Lua files')
 local expected={}
 for _,path in ipairs(modules) do
  local current=assert(io.open(path,'rb'),'missing consolidated module: '..path)
@@ -113,7 +114,7 @@ for path in listing:lines() do
  count=count+1
 end
 assert(listing:close(),'cannot enumerate production modules')
-assert(count==29,'expected exactly 29 production Lua files, found '..count)
+assert(count==30,'expected exactly 30 production Lua files, found '..count)
 
 local function exists(path)
  local command=windows and ('if exist "'..path:gsub('/','\\')..'" (exit 0) else (exit 1)')
