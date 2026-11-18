@@ -32,3 +32,31 @@
 Introdotta una struttura di ricerca e validazione **documentale**, non è stata approvata nessuna modifica al gameplay. Le decisioni pregresse valide restano in docs/project_vision.md e negli altri documenti canonici.
 
 **Nessun vincitore di RQ-001 è stato scelto.** La comparazione in BASELINE.md è descrittiva e non comprende playtest eseguiti dal laboratorio.
+
+## D-001 — Nome neutro dell'avversario predefinito (18 novembre 2026)
+
+- **Base Git:** `main@b86264fd2d731ce164e6ffe191e6eb0b3a76d6f9` (0.1.75).
+- **Richiesta approvata:** il default generico non deve più chiamarsi
+  «Mercante», perché crea confusione fra il segnaposto e uno specifico
+  personaggio/encounter.
+- **Implementazione scelta:** ID neutro `rival`, denominato «Rivale»
+  nei testi di utilizzo corrente e nei test G4/G4b; l'ID `merchant`
+  rimane valido come scelta **esplicita**, senza rinominare asset storici
+  o l'esperimento specifico Merchant Wager.
+- **Stato della parola «Rivale»:** scelta di implementazione coerente
+  con gli attuali testi del prototipo C, non una nuova identità narrativa
+  obbligatoria o il nome proprio di un personaggio.
+- **Compatibilità visiva:** `resources/opponents/merchant.png` è
+  temporaneamente il ritratto del default `rival`; se è disponibile
+  `resources/opponents/rival.png`, la nuova risorsa prevale.
+  Il JPEG storico con il Mercante incorporato resta utilizzabile
+  soltanto per `merchant` selezionato esplicitamente.
+- **Prove da acquisire:** CI su branch, test di selezione/default e
+  regressioni g3d/LÖVE, verifiche Windows a cura di un partecipante.
+- **Fuori ambito:** cambiare il personaggio illustrato, le regole di
+  Farkle, il comportamento del rivale o lo stato canonico di EX-002.
+- **Decisione narrativa:** il Mercante rimane un possibile archetipo
+  futuro e non è automaticamente il rivale predefinito.
+- **Approvazione:** richiesta esplicita dell'utente nel turno
+  «basta chiamare l'avversario default Mercante. crea incomprensioni!
+  modifica anche il codice».
