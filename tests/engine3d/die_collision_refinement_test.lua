@@ -81,7 +81,7 @@ end)
 
 check('six interacting dice bound residual penetration',function()
  local once=chain(6,1)
- local refined=chain(6,4)
+ local refined=chain(6,6)
  once:update(.01);refined:update(.01)
  local a=max_penetration(once)
  local b=max_penetration(refined)
