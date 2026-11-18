@@ -1,0 +1,58 @@
+name: EX-003 Direct Duel vs Encounter C
+on:
+  push:
+    branches:
+      - experiments/ex003-duel-paul-seed-20261118
+  pull_request:
+    paths:
+      - 'experiments/ex003_duel_lab/**'
+      - 'research/EX-003*'
+      - 'tests/labs/ex003_duel_test.lua'
+      - '.github/workflows/ex003_duel.yml'
+jobs:
+  ex003:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua 5.4 and LuaJIT
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit
+      - name: Unmodified Encounter A/C and public G4b oracle regression
+        run: |
+          lua5.4 tests/labs/encounter_ac_test.lua
+          luajit tests/labs/encounter_ac_test.lua
+          lua5.4 tests/labs/ex002_g4b_test.lua
+          luajit tests/labs/ex002_g4b_test.lua
+      - name: EX-003 direct rival, policies, paired streams and deterministic tests
+        run: |
+          lua5.4 tests/labs/ex003_duel_test.lua
+          luajit tests/labs/ex003_duel_test.lua
+      - name: Run preregistered 1600-match pilot (synthetic only)
+        run: |
+          mkdir -p /tmp/ex003
+          lua5.4 experiments/ex003_duel_lab/run.lua 16000 16199 /tmp/ex003
+          test "$(wc -l < /tmp/ex003/ex003_matches.csv)" -eq 1601
+          python3 - <<'PY'
+          import csv, collections
+          with open('/tmp/ex003/ex003_matches.csv',encoding='utf-8',newline='') as f:
+              rows=list(csv.DictReader(f))
+          assert len(rows)==1600,len(rows)
+          assert len(rows[0])==15,rows[0].keys()
+          keys=collections.Counter((r['model'],r['profile']) for r in rows)
+          assert keys=={(a,p):200 for a in ('D','C') for p in
+              ('prudent','balanced','daring','situational')},keys
+          assert {int(r['seed']) for r in rows}==set(range(16000,16200))
+          assert all(r['winner'] in ('player','rival','draw') for r in rows)
+          assert all(r['rival_banked']=='' for r in rows if r['model']=='C')
+          assert all(r['rival_banked']!='' for r in rows if r['model']=='D')
+          assert all(int(r['player_rolls'])>=1 for r in rows)
+          print('PASS EX-003 1600 paired model/policy matches and schema')
+          PY
+      - name: Upload raw synthetic evidence (not human playtest)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ex003-pilot-16000-16199
+          path: /tmp/ex003/*
+          if-no-files-found: error
