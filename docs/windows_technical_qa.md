@@ -9,8 +9,10 @@ Farkle, fisica, RNG, g3d o assets per “far passare” un test.
 > **Gestione delle evidenze (4 novembre 2026):** le nuove catture in
 > `audits/ui-v2-review/` sono ignorate da Git; conserva sul PC il
 > bundle ZIP verificato e condividilo separatamente quando necessario.
-> Lo snapshot incompleto del 3 novembre, già tracciato, è mantenuto
-> per il rapporto storico. Vedere
+> Lo snapshot incompleto del 3 novembre resta disponibile nel
+> [commit storico c2b2f74a](https://github.com/Askeladd22/Project_Folio/commit/c2b2f74aaf1eec31ec21aeeaf31439632e59441d),
+> non nell'albero corrente: rimuovere i file tracciati non equivale a QA superata.
+> Vedere
 > [repository housekeeping](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/REPOSITORY_HOUSEKEEPING_2026_11_04.md).
 >
 ## Evidenze caricate su GitHub — verifica parziale del 3 novembre 2026
@@ -23,6 +25,12 @@ a 1280×720. Mancano nel repository i 14 PNG/TSV rimanenti a 1280,
 `review-manifest.json`, `review-checklist.md`, `gallery.html`
 e i log smoke. **Non è noto se i file mancanti non siano stati
 generati oppure non siano stati inclusi nell'upload.**
+
+I 36 file (18 PNG e 18 TSV) dello snapshot incompleto sono ritirati
+dall'albero corrente: non costituiscono un bundle di verifica completo,
+mentre il commit storico e il rapporto QA ne preservano l'evidenza.
+Le nuove catture complete sono generate localmente e validate dagli
+script di acquisizione e packaging. Il gate QA Windows resta aperto.
 
 Le **18 mappe TSV** sono state controllate: nessun hitbox fuori schermo
 o overlap fra comandi attivi; i due scenari presenti a entrambe le

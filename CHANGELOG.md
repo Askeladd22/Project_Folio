@@ -10,6 +10,36 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.81] - 2026-11-18
+
+**Stato:** pulizia circoscritta di evidenze QA incomplete nel tree Git.
+Nessuna modifica al gioco, al solver, agli asset di produzione o a R&D.
+
+### Rimosso
+- Dal tree corrente i 18 PNG e 18 TSV di
+  `audits/ui-v2-review/20261103-084723-1e3761ce/`, raccolta
+  incompleta del 3 novembre 2026. Gli originali restano nel commit
+  `c2b2f74a` e nel rapporto storico, senza riscrivere la storia Git.
+
+### Modificato
+- Allineata `docs/windows_technical_qa.md` alla conservazione in
+  Git history, mantenendo esplicito il gate Windows non superato.
+- Aggiunto controllo CI per evitare che quel particolare snapshot
+  venga nuovamente tracciato, senza impedire catture locali.
+
+### Verifiche e limiti
+- Audit statico sul commit `e6e7ea63`: 36 file inventariati;
+  raccolta priva dei 14 scenari 1280p mancanti, manifest,
+  gallery, checklist e log. Nessun consumer runtime o test identificato.
+- **PASS** [CI generale della PR #138, run 44408697225](https://github.com/Askeladd22/Project_Folio/actions/runs/44408697225)
+  sul commit `a974bf1f`: versioning, anti-retracking,
+  lint, sintassi Lua, suite Lua 5.4/LuaJIT, LÖVE/Mesa,
+  asset/artifact e test Python.
+- La verifica Windows reale con 50 lanci resta **NOT RUN**.
+  Eventuali commit successivi solo documentali richiedono ricontrollo CI.
+- Restano intatti `src/`, `lib/`, `resources/`, `experiments/`,
+  tool di acquisizione, fixture di test e protezioni di compatibilità.
+
 ## [0.1.80] - 2026-11-18
 
 **Stato:** correzione di sicurezza del solver angolare e housekeeping
