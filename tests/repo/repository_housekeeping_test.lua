@@ -34,6 +34,15 @@ for _,path in ipairs{
 } do
  assert(not exists(path),'retired GLB scan reintroduced: '..path)
 end
+-- Historical texture/prop samples are absent from the live asset map.
+-- Source commits: d767b7c8 (wood_floor), 33f8afea (doubloon).
+-- Keep the live wood.png and marble table GLB checked above.
+for _,path in ipairs{
+ 'resources/textures/wood_floor.png',
+ 'resources/models/doubloon.glb',
+} do
+ assert(not exists(path),'retired unreferenced asset reintroduced: '..path)
+end
 local f=assert(io.open('.gitignore','rb'))
 local ignore=f:read('*a');f:close()
 for _,pattern in ipairs{

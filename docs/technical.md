@@ -93,10 +93,14 @@ illustrazioni rimangono elementi 2D.
   `resources/opponents/merchant.png` è il PNG del personaggio Mercante, riutilizzato temporaneamente come illustrazione del default generico `rival` finché non esiste `resources/opponents/rival.png` (preferito automaticamente quando disponibile). L'ID `merchant` resta selezionabile solo esplicitamente.
 - `resources/textures/wood.png` è la texture condivisa dal tavoliere 3D
   e dal laboratorio g3d. I vecchi JPEG del Mercante per legno e intaglio
-  sono stati eliminati e non devono più essere caricati.
+  sono stati eliminati e non devono più essere caricati. Il PNG storico
+  `resources/textures/wood_floor.png` non ha consumer individuati
+  e rimane reperibile nel commit `d767b7c8`, non nel tree corrente.
 - `resources/models/marble_topped_centre_table.glb` è il tavolo 3D
   caricato dal renderer, se disponibile; `old_wooden_table.glb`
   rimane come campione reale per il test headless del parser GLB.
+  Il piccolo `doubloon.glb`, privo di consumer attuali identificati,
+  resta nella cronologia Git (commit `33f8afea`).
   I tre scan non referenziati (libro alchemico, Fabrica e moneta romana)
   sono disponibili nella cronologia Git (commit `33f8afea35`), non
   nell'albero distribuito.
