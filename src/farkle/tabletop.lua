@@ -32,7 +32,7 @@ function T.fit(owner,tray,view,extents)
   local px,py=view.project(x,y,z);points[#points+1]={px,py}
   minx=math.min(minx,px);maxx=math.max(maxx,px);miny=math.min(miny,py);maxy=math.max(maxy,py)
  end
- -- Fit the merchant's visible rim; flight space is rendered above it.
+ -- Fit the game table's visible rim; flight space is rendered above it.
  local rim=.40
  local top=scene.box.border_height
  for _,x in ipairs({extents[1]-rim,extents[2]+rim}) do
