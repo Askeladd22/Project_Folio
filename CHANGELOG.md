@@ -31,8 +31,12 @@ Nessuna modifica al gioco, al solver, agli asset di produzione o a R&D.
 - Audit statico sul commit `e6e7ea63`: 36 file inventariati;
   raccolta priva dei 14 scenari 1280p mancanti, manifest,
   gallery, checklist e log. Nessun consumer runtime o test identificato.
-- La suite CI di questa PR è **DA VERIFICARE** dopo la sua esecuzione.
-  Il QA Windows reale con 50 lanci è **NOT RUN**.
+- **PASS** [CI generale della PR #138, run 44408697225](https://github.com/Askeladd22/Project_Folio/actions/runs/44408697225)
+  sul commit `a974bf1f`: versioning, anti-retracking,
+  lint, sintassi Lua, suite Lua 5.4/LuaJIT, LÖVE/Mesa,
+  asset/artifact e test Python.
+- La verifica Windows reale con 50 lanci resta **NOT RUN**.
+  Eventuali commit successivi solo documentali richiedono ricontrollo CI.
 - Restano intatti `src/`, `lib/`, `resources/`, `experiments/`,
   tool di acquisizione, fixture di test e protezioni di compatibilità.
 
