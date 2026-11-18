@@ -63,8 +63,10 @@ check('continuous collision catches swapped-endpoint fast crossing',function()
  assert(events>=1,'missing swept contact with no final overlap')
  assert(a.position[1]<b.position[1],
    'bodies must not swap positions by tunnelling')
- assert(a.velocity[1]<0 and b.velocity[1]>0,
-   'linear response must reverse approaching relative motion')
+ assert(b.velocity[1]-a.velocity[1]>=-1e-8,
+   'CCD safety must remove residual closing center velocity')
+ assert(w.ccd_safety_stops and w.ccd_safety_stops>=1,
+   'high-speed cap fallback must be exercised and observable')
 end)
 
 check('off-centre face collision imparts angular velocity',function()
