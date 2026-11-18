@@ -30,7 +30,7 @@ function U:setOpponentVisual(id)
 end
 function U:enter(params)
  if params and (params.opponent_id or params.new_run) then
-  self:setOpponentVisual(params.opponent_id or 'merchant')
+  self:setOpponentVisual(params.opponent_id)
  end
  if not self.game or (params and params.new_run) then
   self:reset('build')
