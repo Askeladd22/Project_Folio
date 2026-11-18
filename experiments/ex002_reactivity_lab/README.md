@@ -1,11 +1,11 @@
-# EX-002 — Reattività del Mercante nel prototipo C
+# EX-002 — Reattività del Rivale nel prototipo C
 
 **Status:** research only (RQ-003); non è una nuova regola approvata.
 Base: `main@1b8fb88590a084488c2c3f029d6e188b76426a6f` (0.1.72).
 
 ## Domanda falsificabile
 
-La categoria scelta dall'Incisore cambia le risposte del Mercante in modo
+La categoria scelta dall'Incisore cambia le risposte del Rivale in modo
 strategicamente utile, oppure la policy reattiva è equivalente a un timer
 che aggiunge sigilli secondo un ordine fisso?
 
@@ -86,7 +86,7 @@ conserva l'archivio grezzo.
 G2 tecnico verificabile con Lua 5.4, LuaJIT e regressione esistente.
 G3 solo dopo audit dei CSV e dei controesempi, confrontando coppie
 seed/policy omogenee. G4 playtest crossover con predizione della
-risposta del Mercante, senza presentare nuove meccaniche come canoniche.
+risposta del Rivale, senza presentare nuove meccaniche come canoniche.
 G5 decisione scritta in `research/DECISIONS.md` solo su approvazione.
 
 ## EX-002b — stress diagnostico post-pilot
