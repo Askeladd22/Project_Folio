@@ -441,7 +441,10 @@ function S.resolve(id,exists)
  if clean_room and exists(png) then
   return {id=id,room=S.room_path,portrait=png,legacy=false}
  end
- if id=='merchant' then
+ -- Preserve the historical composite fallback for headless/minimal builds.
+ -- The logical identity stays 'rival' for the generic default; 'merchant'
+ -- remains a separate explicit selection. Normal builds use modular art.
+ if id==S.default_id or id=='merchant' then
   return {id=id,room=S.legacy_room,portrait=nil,legacy=true}
  end
  if not exists(S.room_path) then
