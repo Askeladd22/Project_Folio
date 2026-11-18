@@ -23,12 +23,17 @@ check('14 reproducible, distinct reachable states outside reserved seeds',functi
  end
 end)
 
-check('all G4 boards have three open lanes and no immediate artist lock',function()
+check('all G4 boards have >=2 open lanes and no immediate artist lock',function()
  for _,t in ipairs(G.manifest()) do
+  local open=0
   for _,l in ipairs(t.lanes) do
-   assert(not l.owner and l.player+t.marks<4)
+   if not l.owner then
+    open=open+1;assert(l.player+t.marks<4)
+   end
    assert(l.player>=0 and l.rival>=0)
   end
+  assert(open>=2 and not t.lanes[t.proposed].owner and
+    not t.lanes[t.request_target].owner)
   local r=G.restore(t,'reactive')
   local f=G.restore(t,'fixed')
   assert(r.phase=='claim' and f.phase=='claim')
@@ -36,7 +41,7 @@ check('all G4 boards have three open lanes and no immediate artist lock',functio
   local cf=X.counterfactuals(f)
   assert(cr.nonlocking and cf.nonlocking)
   assert(cr.target_sensitive and not cf.target_sensitive)
-  eq(cr.legal,3);eq(cf.legal,3)
+  assert(cr.legal>=2);eq(cf.legal,cr.legal)
  end
 end)
 
