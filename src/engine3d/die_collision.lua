@@ -160,7 +160,7 @@ end
 local function at_point(body,r)
  return body.velocity+(body.angular^vector(r))
 end
-function C.resolve(world,a,b,index_a,index_b,hit,dt)
+function C.resolve(world,a,b,index_a,index_b,hit,dt,emitted_pairs)
  if not hit then return false end
  local n=vector(hit.normal)
  if hit.swept then
@@ -190,7 +190,9 @@ function C.resolve(world,a,b,index_a,index_b,hit,dt)
    local e=min(ea,eb)
    local j=-(1+e)*speed/denom
    local impulse=n*j
-   if world.on_contact then
+   local pair_key=index_a..':'..index_b
+   if world.on_contact and not (emitted_pairs and emitted_pairs[pair_key]) then
+    if emitted_pairs then emitted_pairs[pair_key]=true end
     world.on_contact(world,'pair',index_a,index_b,-speed)
    end
    a:push(-impulse,ra)
@@ -243,27 +245,38 @@ end
 
 -- At six dice an all-pairs SAT test is bounded (15 pairs × up to 15
 -- separating axes). No new spatial tree or new physics dependencies.
-function C.solve(world,old_positions,dt)
+function C.solve(world,old_positions,dt,emitted_pairs)
  local hits=0
- for i=1,#world-1 do
-  local a=world[i]
-  if not a._manual_pending then
-   for j=i+1,#world do
-    local b=world[j]
-    if not b._manual_pending and not (a.asleep and b.asleep) then
-     -- Test the time of impact FIRST: two dice can already have swapped
-     -- centre order while still intersecting at the end of the step.
-     -- Swept SAT returns nil for bodies already overlapping initially;
-     -- those are solved by the static SAT fallback.
-     local hit
-     if old_positions and old_positions[i] and old_positions[j] then
-      hit=C.sweep(a,b,old_positions[i],old_positions[j])
+ emitted_pairs=emitted_pairs or {}
+ -- First pass handles swept time-of-impact. Later passes only recheck
+ -- present-time overlaps: moving the middle die in a chain may reopen
+ -- penetration in a pair already visited. Four bounded Gauss-Seidel
+ -- passes are sufficient for six dice without a new physics engine.
+ local passes=world.pair_solver_passes or 4
+ assert(passes>=1 and passes<=8 and passes%1==0,
+  'bounded pair_solver_passes (1..8) required')
+ for pass=1,passes do
+  local touched=false
+  for i=1,#world-1 do
+   local a=world[i]
+   if not a._manual_pending then
+    for j=i+1,#world do
+     local b=world[j]
+     if not b._manual_pending and not (a.asleep and b.asleep) then
+      local hit
+      if pass==1 and old_positions and old_positions[i] and old_positions[j] then
+       hit=C.sweep(a,b,old_positions[i],old_positions[j])
+      end
+      if not hit then hit=C.overlap(a,b) end
+      if hit and C.resolve(world,a,b,i,j,hit,dt,emitted_pairs) then
+       hits=hits+1
+       touched=true
+      end
      end
-     if not hit then hit=C.overlap(a,b) end
-     if hit and C.resolve(world,a,b,i,j,hit,dt) then hits=hits+1 end
     end
    end
   end
+  if not touched then break end
  end
  return hits
 end
