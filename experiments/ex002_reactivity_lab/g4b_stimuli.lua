@@ -13,7 +13,7 @@ local quotas={R_yes=4,R_no=3,F_yes=3,F_no=4}
 local names={'R_yes','R_no','F_yes','F_no'}
 
 local function snapshot(s)
- local out={seed=s.seed,round=s.round,marks=s.claim_marks,lanes={}}
+ local out={seed=s.seed,round=s.round,marks=s.claim_marks or s.marks,lanes={}}
  for i,l in ipairs(s.lanes) do
   out.lanes[i]={name=l.name,player=l.player,rival=l.rival,owner=l.owner}
  end
