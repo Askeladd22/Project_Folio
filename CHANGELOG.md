@@ -37,8 +37,14 @@ Non è un'integrazione FPS nativa e non cambia le regole Farkle.
 - Nuove regressioni: clamp su rotazione estrema, nessun
   clamp su rotazione normale, coerenza documentazione
   e ignore selettivo.
-- CI Lua 5.4/LuaJIT, LÖVE/Mesa, test Python e repo
-  da verificare sulla HEAD finale della PR.
+- **CI fisica PASS** ([#44391931547](https://github.com/Askeladd22/Project_Folio/actions/runs/44391931547)):
+  Lua 5.4 e LuaJIT, regressioni SAT/CCD, velocità angolare
+  e interazione mouse.
+- **CI generale PASS** ([#44391931589](https://github.com/Askeladd22/Project_Folio/actions/runs/44391931589)):
+  lint, versioning, Farkle, Lua 5.4/LuaJIT, LÖVE/Mesa,
+  Python e coerenza dei file del repository.
+- I due run verificano il codice funzionale prima degli
+  ultimi commit solo documentali; CI HEAD finale da ricontrollare.
 - Restano `NOT RUN` i 50 lanci manuali Windows e
   i benchmark frametime su GPU reale. Il punto di contatto
   continua a usare supporti approssimati: non sono emersi
