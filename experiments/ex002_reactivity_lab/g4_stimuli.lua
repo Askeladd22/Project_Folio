@@ -25,6 +25,14 @@ local function signature(t)
  return table.concat(parts,'|')
 end
 M.signature=signature
+-- Board diversity is stricter than full trial signature (round/marks).
+function M.board_key(t)
+ local parts={}
+ for i,l in ipairs(t.lanes) do
+  parts[#parts+1]=i..':'..l.player..':'..l.rival..':'..(l.owner or '-')
+ end
+ return table.concat(parts,'|')
+end
 
 function M.restore(t,mode)
  assert(mode=='reactive' or mode=='fixed','invalid G4 mode')
@@ -64,39 +72,44 @@ local function changed_target(cf)
 end
 
 function M.manifest()
- local pool,seen={},{}
- -- Collect ALL qualifying snapshots from real matches, not only the first
- -- per seed. Early boards repeat under a deterministic policy, so discarding
- -- later encounters would incorrectly make the reachable pool appear tiny.
- for _,dice_policy in ipairs({'balanced','prudent','daring'}) do
-  for seed=M.first_seed,M.last_seed do
-   X.play(seed,'reactive',dice_policy,'first',nil,function(s,cf)
-    if #pool>=M.practice_count+M.test_count then return end
-    if cf.legal>=2 and cf.nonlocking and cf.target_sensitive and
-       s.round>=1 and s.round<=5 then
-     local target=changed_target(cf)
-     if target then
-      local t=snapshot(s)
-      local k=signature(t)
-      if not seen[k] then
-       local f=M.restore(t,'fixed')
-       local check=X.counterfactuals(f)
-       if not check.target_sensitive and check.legal==cf.legal and
-          check.nonlocking then
-        seen[k]=true
-        t.changed_target=target
-        pool[#pool+1]=t
+ local pool,seen,board_counts={},{},{}
+ -- Mix diagnostic player allocation routes. Every board still comes from
+ -- the EXISTING encounter engine with real six-D6 decisions. Discard
+ -- near-duplicates: max two scenarios may share the same public board.
+ for _,claim_policy in ipairs({'first','last','sample_seeded'}) do
+  for _,dice_policy in ipairs({'balanced','prudent','daring'}) do
+   for seed=M.first_seed,M.last_seed do
+    X.play(seed,'reactive',dice_policy,claim_policy,nil,function(s,cf)
+     if #pool>=M.practice_count+M.test_count then return end
+     if cf.legal>=2 and cf.nonlocking and cf.target_sensitive and
+        s.round>=1 and s.round<=5 then
+      local target=changed_target(cf)
+      if target then
+       local t=snapshot(s)
+       local key=signature(t)
+       local board=M.board_key(t)
+       if not seen[key] and (board_counts[board] or 0)<2 then
+        local fixed=M.restore(t,'fixed')
+        local check=X.counterfactuals(fixed)
+        if not check.target_sensitive and check.legal==cf.legal and
+           check.nonlocking then
+         seen[key]=true
+         board_counts[board]=(board_counts[board] or 0)+1
+         t.changed_target=target
+         pool[#pool+1]=t
+        end
        end
       end
      end
-    end
-   end)
+    end)
+    if #pool>=M.practice_count+M.test_count then break end
+   end
    if #pool>=M.practice_count+M.test_count then break end
   end
   if #pool>=M.practice_count+M.test_count then break end
  end
  assert(#pool>=M.practice_count+M.test_count,
-  'not enough distinct reachable G4 boards: '..#pool)
+  'not enough DIVERSE reachable G4 boards: '..#pool)
  -- Two practice tasks (R then F), then eight R and four F scored tasks.
  local modes={'reactive','fixed','reactive','fixed','reactive',
   'reactive','fixed','reactive','reactive','fixed','reactive',
@@ -172,12 +185,15 @@ end
 
 function M.assert_manifest(trials)
  assert(#trials==14,'wrong manifest size')
- local seen,counts={}, {reactive=0,fixed=0}
+ local seen,counts,layout_counts={}, {reactive=0,fixed=0}, {}
  local test_count=0
  for i,t in ipairs(trials) do
   local key=signature(t)
   assert(not seen[key],'repeated board in G4')
   seen[key]=true
+  local board=M.board_key(t)
+  layout_counts[board]=(layout_counts[board] or 0)+1
+  assert(layout_counts[board]<=2,'G4 near-duplicate board overrepresented')
   assert(t.order==i and t.proposed>=1 and t.proposed<=3)
   assert(t.prediction_target==M.oracle(t,t.mode,t.proposed))
   assert(M.is_correct_control(t,t.control_choices[1] or 0))
@@ -187,6 +203,9 @@ function M.assert_manifest(trials)
   end
  end
  assert(test_count==12 and counts.reactive==8 and counts.fixed==4)
+ local layouts=0
+ for _ in pairs(layout_counts) do layouts=layouts+1 end
+ assert(layouts>=7,'G4 has too few distinct public board layouts')
  return true
 end
 return M
