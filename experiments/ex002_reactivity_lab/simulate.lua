@@ -2,6 +2,7 @@
 -- Research only: use the production Farkle rules and existing encounter engine.
 local E=require('experiments.encounter_ac_lab.engine')
 local Rules=require('src.farkle.rules')
+local RNG=require('experiments.merchant_wager_lab.rng')
 local M={}
 M.dice_policies={'prudent','balanced','daring'}
 M.claim_policies={'first','informed'}
@@ -94,11 +95,16 @@ function M.counterfactuals(s)
    terminal_status_sensitive=#rows>=2 and terminal_count>1}
 end
 
-local function choose_claim(s,claim_policy,cf)
+local function choose_claim(s,claim_policy,cf,claim_rng)
  if claim_policy=='first' then return assert(cf.rows[1]).lane end
  -- Post-pilot stress only: deliberately choose the last open category.
  -- Never included in the preregistered M.pilot sample.
  if claim_policy=='last' then return assert(cf.rows[#cf.rows]).lane end
+ -- Stimulus sampling only: an independent seeded stream selects a legal lane.
+ -- NEVER included in frozen EX-002 pilot or EX-002b confirmation.
+ if claim_policy=='sample_seeded' then
+  return assert(cf.rows[claim_rng(1,#cf.rows)]).lane
+ end
  assert(claim_policy=='informed','unknown EX-002 claim policy')
  local best,best_utility
  for _,row in ipairs(cf.rows) do
@@ -115,8 +121,11 @@ function M.play(seed,mode,dice_policy,claim_policy,writer,observer)
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed<2147483647)
  assert(mode=='reactive' or mode=='fixed')
  assert(M.stops[dice_policy],'unknown dice policy')
- assert(claim_policy=='first' or claim_policy=='informed' or claim_policy=='last')
+ assert(claim_policy=='first' or claim_policy=='informed' or claim_policy=='last' or
+  claim_policy=='sample_seeded')
  local s=E.new('C',seed,{rival_target_mode=mode})
+ -- Dedicated choice RNG cannot alter the Farkle or opponent random streams.
+ local claim_rng=RNG.new_rng(1+((seed*69621+1277)%2147483646))
  local stats={choice_states=0,legal_claims=0,nonlocking_states=0,
   target_sensitive=0,nonlocking_target_sensitive=0,terminal_status_sensitive=0,
   total_counterfactuals=0,chosen_rival_replies=0}
@@ -135,7 +144,7 @@ function M.play(seed,mode,dice_policy,claim_policy,writer,observer)
    end
   elseif s.phase=='claim' then
    local cf=M.counterfactuals(s)
-   local chosen=choose_claim(s,claim_policy,cf)
+   local chosen=choose_claim(s,claim_policy,cf,claim_rng)
    -- G4 observation-only hook: inspect real pre-claim states, never modify.
    -- Existing callers omit the hook and retain identical behavior.
    if observer then observer(s,cf,chosen) end
