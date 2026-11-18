@@ -49,8 +49,10 @@ Introdotta una struttura di ricerca e validazione **documentale**, non è stata 
 - **Compatibilità visiva:** `resources/opponents/merchant.png` è
   temporaneamente il ritratto del default `rival`; se è disponibile
   `resources/opponents/rival.png`, la nuova risorsa prevale.
-  Il JPEG storico con il Mercante incorporato resta utilizzabile
-  soltanto per `merchant` selezionato esplicitamente.
+  Il JPEG storico con il Mercante incorporato rimane fallback
+  di compatibilità sia per `rival` sia per `merchant` esplicito quando
+  mancano gli asset modulari, senza cambiare l'ID logico predefinito.
+  Resta un segnaposto visivo da sostituire, non un'identità narrativa.
 - **Prove da acquisire:** CI su branch, test di selezione/default e
   regressioni g3d/LÖVE, verifiche Windows a cura di un partecipante.
 - **Fuori ambito:** cambiare il personaggio illustrato, le regole di
