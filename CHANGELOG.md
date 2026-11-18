@@ -35,9 +35,12 @@ nuova meccanica e non promuove il prototipo Encounter C nel gameplay canonico.
 ### Verifiche e limiti
 - Regole Farkle, sei D6, fisica, rendering g3d e policy R/F
   non sono state modificate.
-- Test Lua 5.4/LuaJIT, suite generale e smoke LÖVE/Mesa da
-  certificare sulla HEAD finale della PR; collaudo Windows e
-  nuova grafica neutra non eseguiti.
+- **CI regressione generale PASS** ([run #44327484575](https://github.com/Askeladd22/Project_Folio/actions/runs/44327484575)):
+  versioning, lint, sintassi, test Lua 5.4/LuaJIT, smoke LÖVE/Mesa,
+  test Python sulla revisione `2b3ce2e4`.
+- **Encounter A/C PASS** ([run #44327484484](https://github.com/Askeladd22/Project_Folio/actions/runs/44327484484))
+  sulla stessa revisione. Nuova CI dopo aggiornamento del changelog
+  da verificare; collaudo Windows e nuova grafica neutra non eseguiti.
 
 ## [0.1.75] - 2026-11-18
 
