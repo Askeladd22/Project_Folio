@@ -38,8 +38,13 @@ consumatori identificati nei percorsi di gioco/test.
   o `doubloon.glb` nel codice, nei test o nella
   documentazione indicizzata. Risorse originali verificabili
   nei rispettivi commit introduttivi.
-- Suite CI di questa PR: **PENDING**; test locali **NOT RUN**.
-  Possibili utilizzi manuali esterni non documentati non esclusi.
+- **PASS** [CI della PR #141, run #44423237861](https://github.com/Askeladd22/Project_Folio/actions/runs/44423237861)
+  sul commit di pulizia `d8ae38a7`: gate di versione, lint,
+  regressioni Lua 5.4/LuaJIT, test Python e smoke LÖVE/Mesa
+  (16 passaggi del job riusciti).
+- Test locali **NOT RUN**; il commit documentale finale richiede
+  nuova CI. Possibili utilizzi manuali esterni non documentati
+  non esclusi.
 - QA fisica Windows con 50 lanci: **NOT RUN**. Nessuna modifica
   a `src/`, `lib/`, `experiments/`, Farkle, renderer,
   asset di produzione, dati utente o librerie.
