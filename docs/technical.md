@@ -1,6 +1,6 @@
 # Architettura e verifica tecnica di Project Folio
 
-Percorsi di produzione ricontrollati il 7 novembre 2026. Documento tecnico di riferimento, non cronologia delle singole milestone UI.
+Percorsi di produzione ricontrollati il 18 novembre 2026. Documento tecnico di riferimento, non cronologia delle singole milestone UI.
 Questo documento descrive i componenti del prototipo corrente.
 La [visione](project_vision.md) raccoglie la direzione narrativa e progettuale.
 
@@ -25,7 +25,8 @@ selezione della partita e impostazioni. La navigazione apre prima
 | [`src/screens/startup_splash.lua`](../src/screens/startup_splash.lua) | Intro LÖVE e transizione al menu |
 | [`src/core/dice_runtime.lua`](../src/core/dice_runtime.lua) | Bootstrap LÖVE, lancio, presa, simulazione e collegamento a g3d |
 | [`src/engine3d/bounds.lua`](../src/engine3d/bounds.lua), [`roll_resolution.lua`](../src/engine3d/roll_resolution.lua) | Contenimento e spawn (`containment`, `fps`, `spawn`); lettura delle facce (`face_state`) e risoluzione del tiro |
-| [`src/engine3d/physics.lua`](../src/engine3d/physics.lua) | Corpi, collisioni e solver a passo fisso |
+| [`src/engine3d/physics.lua`](../src/engine3d/physics.lua) | Corpi, gravità, sponde, passo fisso e sottopassi angolari limitati |
+| [`src/engine3d/die_collision.lua`](../src/engine3d/die_collision.lua) | Contatti D6–D6 (SAT orientato, sweep traslazionale, risposta impulsiva e stabilizzazione fra più dadi); non è un port FPS nativo |
 | [`src/engine3d/geometry.lua`](../src/engine3d/geometry.lua), [`view.lua`](../src/engine3d/view.lua) | Geometrie D6/D8 e texture facce (`face_texture`); proiezione e sagome dei dadi (`projected_die`) |
 | [`src/engine3d/g3d/scene.lua`](../src/engine3d/g3d/scene.lua) | Camera, mesh, materiali, smussi, scenografia e ombre |
 | [`src/engine3d/g3d/live.lua`](../src/engine3d/g3d/live.lua), [`glb_loader.lua`](../src/engine3d/g3d/glb_loader.lua) | Renderer del tavolo e dei dadi, ritratti accantonati e caricamento GLB |
