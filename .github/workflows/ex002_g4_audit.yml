@@ -1,0 +1,44 @@
+name: EX-002 G4 offline playtest instrument
+on:
+  push:
+    branches:
+      - experiments/ex002-g4-audit-20261118
+jobs:
+  g4-instrument:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua runtimes
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4 luajit
+      - name: Encounter A/C regression and G4 oracle checks
+        run: |
+          lua5.4 tests/labs/encounter_ac_test.lua
+          luajit tests/labs/encounter_ac_test.lua
+          lua5.4 tests/labs/ex002_g4_test.lua
+          luajit tests/labs/ex002_g4_test.lua
+      - name: Export participant cards and facilitator answer key
+        run: |
+          mkdir -p /tmp/folio-g4
+          lua5.4 experiments/ex002_reactivity_lab/g4_export.lua /tmp/folio-g4
+          test "$(grep -c '^### Caso ' /tmp/folio-g4/g4_cards.md)" -eq 14
+          test "$(wc -l < /tmp/folio-g4/g4_answer_key.csv)" -eq 15
+      - name: Synthetic CLI smoke — NOT participant data
+        run: |
+          python3 - <<'PY' | lua5.4 experiments/ex002_reactivity_lab/g4_run.lua SMOKE /tmp/folio-g4 > /tmp/folio-g4/g4_cli_smoke.txt
+          print('s')
+          for _ in range(60):
+              print('1')
+          PY
+          test "$(wc -l < /tmp/folio-g4/g4_SMOKE.csv)" -eq 15
+          rm /tmp/folio-g4/g4_SMOKE.csv
+          grep -q 'Test concluso' /tmp/folio-g4/g4_cli_smoke.txt
+      - name: Preserve study materials only — no human responses
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ex002-g4-study-materials
+          path: /tmp/folio-g4/*
+          if-no-files-found: ignore
