@@ -34,8 +34,15 @@ Non è un port completo né un'integrazione nativa di FPS 1.2.5.
   piano `research/FPS-FIX-001.md` con criteri PAUL.
 
 ### Verifiche e limiti
-- CI Lua 5.4/LuaJIT, regressioni Farkle, LÖVE/Mesa e
-  verifiche Windows **da registrare al termine della PR**.
+- **CI dedicata PASS** ([#44366963087](https://github.com/Askeladd22/Project_Folio/actions/runs/44366963087)):
+  6/6 nuovi test SAT/CCD/rotazione sotto Lua 5.4 e LuaJIT,
+  più regressioni `physics_time`, presa manuale e audio contatti.
+- La prima revisione ha fallito un test CCD con impulso
+  limitato da `dv_max=50`; corretto con un arresto inelastico
+  di sicurezza della sola velocità relativa residua (log
+  `ccd_safety_stops`) e rieseguita la suite con PASS.
+- Suite generale di Farkle e smoke LÖVE/Mesa **da verificare**
+  sulla HEAD finale; 50 lanci su Windows **non eseguiti**.
 - La swept SAT congela l'orientamento al termine dello step;
   intersezioni causate da rotazioni estreme richiedono ulteriori test.
   Il punto di contatto è approssimato dai supporti delle facce,
