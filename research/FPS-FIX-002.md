@@ -21,7 +21,7 @@
 ## T2 — Stabilizzazione dei contatti multipli
 
 **File:** `src/engine3d/die_collision.lua`.
-**AC-2:** con 3+ D6 con sovrapposizioni a catena, il solver ripete in modo deterministico i contatti SAT fino a max 4 passaggi, senza modificare il numero o gli ID dei dadi, senza impulso su `_manual_pending`; anche con 6 dadi i residui di penetrazione devono rimanere sotto una soglia misurata nel test.
+**AC-2:** con 3+ D6 con sovrapposizioni a catena, il solver ripete in modo deterministico i contatti SAT fino a max 6 passaggi, senza modificare il numero o gli ID dei dadi, senza impulso su `_manual_pending`; anche con 6 dadi i residui di penetrazione devono rimanere sotto una soglia misurata nel test.
 **AC-2b:** il callback `on_contact('pair')` emette al massimo una volta per coppia e per *passo fisso* anche con più sottopassi e iterazioni. Conservare orientamento del normale, attrito, risoluzione delle velocità nel contatto e scoring invariati.
 
 ## T3 — Verifica regressioni e UAT
