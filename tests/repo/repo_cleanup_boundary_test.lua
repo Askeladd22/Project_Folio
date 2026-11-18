@@ -38,8 +38,6 @@ for _,path in ipairs{
  'src/core/dice_runtime.lua',
  'src/farkle/controller.lua',
  'src/farkle/ui.lua',
- 'src/farkle/ui.lua',
- 'src/screens/frontend.lua',
  'src/screens/frontend.lua',
  'src/farkle/tabletop.lua',
 } do

@@ -32,4 +32,16 @@ for _,pattern in ipairs{
 } do
  assert(ignore:find(pattern,1,true),'missing generated-output ignore: '..pattern)
 end
+-- The source manifest currently allows 30 modules. Documentation must
+-- not lag behind physical-solver additions or claim an FPS native port.
+local function read(path)
+ local h=assert(io.open(path,'rb'));local s=h:read('*a');h:close()
+ return s
+end
+assert(read('README.md'):find('30 file Lua',1,true),
+ 'README module count must match source_structure_test (30)')
+assert(read('docs/technical.md'):find('src/engine3d/die_collision.lua',1,true),
+ 'technical map must include the production pair-contact solver')
+assert(not ignore:find('\n/audits/\n',1,true),
+ 'do not hide all future audits: ignore only known generated QA folders')
 print('PASS repository housekeeping guard (historical QA retired, production preserved)')

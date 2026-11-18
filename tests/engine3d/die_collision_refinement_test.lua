@@ -137,5 +137,16 @@ check('angular substep cap is explicit and pending dice ignored',function()
  w:update(.01)
  assert(w.angular_substep_cap_hits==1)
  assert(w.angular_substeps==11,'12 bounded slices, not unbounded work')
+ assert((w.angular_velocity_clamps or 0)>=1,
+  'saturating substeps must also bound actual angular travel')
+ assert(w[1].angular[3]>0 and w[1].angular:abs()<=144+1e-8,
+  '3000 rad/s should be direction-preservingly capped to 0.12 rad/slice')
+ local ordinary=world()
+ ordinary[1]=die(0,0,3,0,0,0,0,0,10)
+ ordinary:update(.01)
+ assert((ordinary.angular_velocity_clamps or 0)==0,
+  'normal gameplay spin must not be slowed by safety cap')
+ assert(math.abs(ordinary[1].angular[3]-10)<1e-8,
+  'normal gameplay spin should remain unchanged without angular damping')
 end)
 print('PASS D6 refinement '..n..'/6 groups')

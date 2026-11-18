@@ -184,6 +184,16 @@ function box:update(dt)
             s.sleep_timer = 999
           else
             s.velocity = s.velocity + gravity_vec
+            -- Hard safety bound for an extreme spin: a capped number of
+            -- angular substeps alone does not constrain the angle actually
+            -- integrated in each slice. Preserve direction, limit energy.
+            -- Normal mouse throws (~14 rad/s) are far below this limit.
+            local angular_speed=s.angular:abs()
+            local max_angular_speed=angle_limit/sub_dt
+            if angular_speed>max_angular_speed then
+              s.angular=s.angular*(max_angular_speed/angular_speed)
+              self.angular_velocity_clamps=(self.angular_velocity_clamps or 0)+1
+            end
             s:update(sub_dt)
             s:box(-self.x,-self.y,0,self.x,self.y,self.z,self.bounce,self.friction)
             
