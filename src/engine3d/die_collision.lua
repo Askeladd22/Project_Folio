@@ -216,6 +216,20 @@ function C.resolve(world,a,b,index_a,index_b,hit,dt)
   end
  end
  if hit.swept then
+  -- body:push intentionally caps enormous impulse deltas (dv_max=50).
+  -- A fast CCD hit may therefore remain closing after the bounded
+  -- bounce. Project out ONLY the residual approaching center velocity,
+  -- conserving linear momentum; do not integrate back through contact.
+  -- This is an inelastic emergency safety correction, not extra bounce.
+  local closing=(b.velocity-a.velocity)..n
+  local im_a,im_b=inverse_mass(a),inverse_mass(b)
+  local inv_total=im_a+im_b
+  if closing<-.000001 and inv_total>EPS then
+   local residual=(-closing)/inv_total
+   a.velocity=a.velocity-n*(residual*im_a)
+   b.velocity=b.velocity+n*(residual*im_b)
+   world.ccd_safety_stops=(world.ccd_safety_stops or 0)+1
+  end
   local remain=max(0,1-hit.toi)*dt
   a.position=a.position+a.velocity*remain
   b.position=b.position+b.velocity*remain
