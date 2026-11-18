@@ -1,0 +1,34 @@
+name: D6 SAT CCD fix isolated verification
+on:
+  push:
+    branches:
+      - fix/dice-obb-ccd-angular-20261118
+  pull_request:
+    paths:
+      - 'src/engine3d/die_collision.lua'
+      - 'src/engine3d/physics.lua'
+      - 'tests/engine3d/die_collision_sat_ccd_test.lua'
+      - '.github/workflows/dice_collision_fix.yml'
+jobs:
+  physics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        lua: ['5.4', 'luajit']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install isolated Lua without apt
+        uses: leafo/gh-actions-lua@v13
+        with:
+          luaVersion: ${{ matrix.lua }}
+      - name: Interpreter
+        run: lua -v
+      - name: Orientation-aware D6 collision regression
+        run: lua -e 'unpack=unpack or table.unpack' tests/engine3d/die_collision_sat_ccd_test.lua
+      - name: Existing physics time and mouse integration
+        run: |
+          lua -e 'unpack=unpack or table.unpack' tests/engine3d/physics_time_test.lua
+          lua -e 'unpack=unpack or table.unpack' tests/engine3d/manual_dice_physics_test.lua
+          lua -e 'unpack=unpack or table.unpack' tests/engine3d/dice_physics_audio_callbacks_test.lua
