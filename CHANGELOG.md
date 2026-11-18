@@ -10,6 +10,33 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.74] - 2026-11-18
+
+**Stato:** esclusivamente QA documentale e strumentale del playtest umano
+EX-002 G4; nessuna nuova regola attivata nel gioco.
+
+### Aggiunto
+- Workflow isolato G4 sulla branch `experiments/ex002-g4-audit-20261118`:
+  verifica dei 14 casi, oracolo del motore, campionamento vario,
+  esportazione delle schede e prova I/O **sintetica** del questionario.
+- Protocollo G4 aggiornato alla revisione corrente e audit
+  di varietà: 11 stati pubblici distinti, massimo 2 casi per board.
+
+### Modificato
+- Corretto il registro di ricerca dopo il merge della PR #130
+  e distinto esplicitamente il test degli strumenti dal playtest umano.
+
+### Verifiche e limiti
+- Baseline `main@1cdae82c83981d2e433e6cff5b0b975ae9d88de9`
+  versione 0.1.73; vecchia CI esperimento
+  [#44272963100](https://github.com/Askeladd22/Project_Folio/actions/runs/44272963100)
+  PASS G4 deterministic checks/export, non test umano.
+- CI nuova branch, prova CLI sintetica, regressioni generali e
+  controllo di versionamento **da verificare**.
+- **Nessun partecipante umano testato.** G3 agency ancora non dimostrata,
+  G4 non eseguito, G5 non approvato; niente promozione canonica,
+  nessuna modifica a `src/`, fisica, sei D6 o rendering g3d.
+
 ## [0.1.73] - 2026-11-17
 
 **Stato:** esperimento EX-002 isolato di targeting del Mercante in Encounter C;
