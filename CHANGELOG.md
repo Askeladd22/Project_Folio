@@ -10,6 +10,34 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.77] - 2026-11-18
+
+**Stato:** laboratorio EX-003 isolato, confronto tra duello Farkle
+diretto (D) e tre prove contese (C). **Non** è gameplay canonico
+né un nuovo Rivale di produzione. Piano 03-01 approvato dall'utente.
+
+### Aggiunto
+- `experiments/ex003_duel_lab/`: benchmark D in cui Incisore e
+  Rivale giocano ciascuno sei turni Farkle con gli stessi sei D6
+  canonici, punteggio assicurato, Farkle e policy rivale pubblica.
+- Confronto con Encounter C esistente, senza modificare il suo engine,
+  tramite quattro policy Incisore (prudent, balanced, daring,
+  situational) e stream RNG del giocatore separati per seed/turno.
+- Protocollo preregistrato di 200 seed × 4 policy × 2 sistemi =
+  1.600 partite sintetiche, outcome e stopping divergente sullo stesso
+  stato pubblico, CSV raw e intervalli paired *within-arm*.
+- Test Lua 5.4/LuaJIT, CI EX-003 e protocollo umano
+  `research/EX-003-UAT.md` (somministrazione **NON ESEGUITA**).
+
+### Verifiche e limiti
+- All'apertura del laboratorio: CI EX-003, regressione generale,
+  risultati numerici e smoke LÖVE/Mesa **ancora da verificare**.
+- Non comparare win-rate D e C come effetto causale: D concede
+  sei veri turni Farkle al Rivale; C assegna sigilli automatici.
+- Nessun risultato umano, mastery, preferenza o promozione
+  di una variante dichiarato.
+- `src/`, dati Farkle, sei D6 fisici, g3d e UI di produzione invariati.
+
 ## [0.1.76] - 2026-11-18
 
 **Stato:** denominazione neutra dell'avversario predefinito. Non è una
