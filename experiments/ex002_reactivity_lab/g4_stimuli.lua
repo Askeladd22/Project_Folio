@@ -70,9 +70,9 @@ function M.manifest()
  -- later encounters would incorrectly make the reachable pool appear tiny.
  for _,dice_policy in ipairs({'balanced','prudent','daring'}) do
   for seed=M.first_seed,M.last_seed do
-   X.play(seed,'reactive',dice_policy,'last',nil,function(s,cf)
+   X.play(seed,'reactive',dice_policy,'first',nil,function(s,cf)
     if #pool>=M.practice_count+M.test_count then return end
-    if cf.legal==3 and cf.nonlocking and cf.target_sensitive and
+    if cf.legal>=2 and cf.nonlocking and cf.target_sensitive and
        s.round>=2 and s.round<=5 then
      local target=changed_target(cf)
      if target then
@@ -81,7 +81,7 @@ function M.manifest()
       if not seen[k] then
        local f=M.restore(t,'fixed')
        local check=X.counterfactuals(f)
-       if not check.target_sensitive and check.legal==3 and
+       if not check.target_sensitive and check.legal==cf.legal and
           check.nonlocking then
         seen[k]=true
         t.changed_target=target
@@ -107,14 +107,25 @@ function M.manifest()
   t.id=i
   t.stage=i<=M.practice_count and 'practice' or 'test'
   t.mode=assert(modes[i])
-  t.proposed=((t.seed+t.round+i)%3)+1
+  local open={}
+  for lane,l in ipairs(t.lanes) do
+   if not l.owner then open[#open+1]=lane end
+  end
+  assert(#open>=2)
+  t.proposed=open[((t.seed+t.round+i)%#open)+1]
   t.prediction_target=M.oracle(t,t.mode,t.proposed)
   assert(t.prediction_target>=1 and t.prediction_target<=3)
   if t.mode=='reactive' then
    t.request_target=t.changed_target
   else
-   t.request_target=(t.prediction_target%3)+1
+   -- Fixed control must request a DIFFERENT, but still OPEN, target.
+   for _,lane in ipairs(open) do
+    if lane~=t.prediction_target then
+     t.request_target=lane;break
+    end
+   end
   end
+  assert(t.request_target and not t.lanes[t.request_target].owner)
   t.control_choices=M.legal_targets(t,t.mode,t.request_target)
   if t.mode=='reactive' then
    assert(#t.control_choices>=1,'G4 R claim target not achievable')
@@ -143,10 +154,11 @@ end
 function M.display_board(t)
  local lines={}
  lines[#lines+1]=('Prova %d/6; sigilli da collocare: %d'):format(t.round,t.marks)
- lines[#lines+1]='  Categoria                  Tu   Mercante   Priorita'
+ lines[#lines+1]='  Categoria                  Tu   Mercante  Priorita  Stato'
  for i,l in ipairs(t.lanes) do
-  lines[#lines+1]=string.format('  %d %-24s %d      %d         %d',
-   i,l.name,l.player,l.rival,4-i)
+  lines[#lines+1]=string.format('  %d %-24s %d      %d        %d       %s',
+   i,l.name,l.player,l.rival,4-i,
+   l.owner and ('CHIUSA ('..l.owner..')') or 'aperta')
  end
  return table.concat(lines,'\n')
 end
