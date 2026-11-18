@@ -77,7 +77,9 @@ end
 
 local function csv(...)
  local fields={...}
- for i,v in ipairs(fields) do
+ local count=select('#',...)
+ for i=1,count do
+  local v=fields[i]
   local s=tostring(v==nil and '' or v)
   if s:find('[,"\r\n]') then s='"'..s:gsub('"','""')..'"' end
   fields[i]=s
