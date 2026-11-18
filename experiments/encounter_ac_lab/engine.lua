@@ -106,7 +106,7 @@ function E.preview_rival_target(s)
  local marks=s.round%3==0 and 2 or 1
  return {target=best,name=s.lanes[best].name,mode=mode,score=best_score,
   marks=marks,candidates=candidates,
-  rule=mode=='reactive' and '5×sigilli Mercante + 2×sigilli Incisore + priorità'
+  rule=mode=='reactive' and '5×sigilli Rivale + 2×sigilli Incisore + priorità'
     or 'priorità fissa 3,2,1 (solo categorie aperte)'}
 end
 local function rival_c_action(s)
