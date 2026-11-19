@@ -10,6 +10,17 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.85] - 2026-11-19
+
+- Corretto il tremolio finale dei D6 appoggiati su una faccia. Il contatto
+  lento col piano smorza scorrimento e rotazione in funzione del sottopasso.
+- Aggiunto un test per la durata dell’assestamento, il ribaltamento da uno
+  spigolo e il risveglio dopo un urto. Superati nove file di test mirati
+  con texlua, inclusi audio, collisioni, presa e lettura della faccia.
+- Su 50 lanci singoli appaiati la mediana della coda passa da 1,125 a
+  0,180 secondi, con la stessa faccia finale in ogni coppia.
+  Verifica visiva e audio su Windows ancora aperta.
+
 ## [0.1.84] - 2026-11-19
 
 **Stato:** PAUL + SEED, pulizia conservativa di due risorse senza

@@ -195,7 +195,7 @@ function box:update(dt)
               self.angular_velocity_clamps=(self.angular_velocity_clamps or 0)+1
             end
             s:update(sub_dt)
-            s:box(-self.x,-self.y,0,self.x,self.y,self.z,self.bounce,self.friction)
+            s:box(-self.x,-self.y,0,self.x,self.y,self.z,self.bounce,self.friction,sub_dt)
             
             local border_height = self.border_height or 1.5
             local rim_margin = 0.3
@@ -333,7 +333,19 @@ function body:update(dt)
 end
 
 
-function body:wall(index, normal, restitution, friction)
+-- A slow D6 supported by a face should dissipate energy across that face.
+-- A single corner impulse at this point can rock it onto the opposite corner.
+local function supported_d6_face(b, lowest)
+  if b.flat_face_vertices ~= 4 or #b ~= 8 then return false end
+  if b.velocity:abs() >= 0.8 or b.angular:abs() >= 1.4 then return false end
+  local count = 0
+  for _, vertex in ipairs(b) do
+    if vertex[3] - lowest <= b.flat_z_tolerance then count = count + 1 end
+  end
+  return count == 4
+end
+
+function body:wall(index, normal, restitution, friction, dt)
   local d = self[index]
   local e = (self.restitution ~= nil) and self.restitution or restitution
   local f = (self.friction ~= nil) and self.friction or friction
@@ -353,6 +365,16 @@ function body:wall(index, normal, restitution, friction)
   -- This callback cannot modify the existing wall impulse calculation.
   if s < -0.001 and self.on_contact then
     self.on_contact(self, normal[3] > 0.5 and "floor" or "rim", -s)
+  end
+
+  if dt and normal[3] == 1 and supported_d6_face(self, d[3]) then
+    -- Exponential decay rates per simulated second, independent of slice size.
+    local slide = math.exp(-25 * dt)
+    self.velocity[1] = self.velocity[1] * slide
+    self.velocity[2] = self.velocity[2] * slide
+    self.velocity[3] = math.max(0, self.velocity[3])
+    self.angular = self.angular * math.exp(-43 * dt)
+    return
   end
 
   local cv,ca = self:effect(normal,d)
@@ -379,7 +401,7 @@ function body:wall(index, normal, restitution, friction)
   self._last_wall = {index=index, normal=normal}
 end
 
-function body:parallel(normal, min, max, restitution, friction)
+function body:parallel(normal, min, max, restitution, friction, dt)
   local lowest, highest = nil,nil
   local lowesta, highesta = min,max
   for i=1,#self do
@@ -397,7 +419,7 @@ function body:parallel(normal, min, max, restitution, friction)
   local penetration_threshold = 0.001
   
   if lowest and (min - lowesta) > penetration_threshold then
-    self:wall(lowest,normal,restitution,friction)
+    self:wall(lowest,normal,restitution,friction,dt)
     if not self.asleep then
       self.position=self.position+normal*(min-lowesta)
     end
@@ -412,8 +434,8 @@ function body:parallel(normal, min, max, restitution, friction)
   
 end
 
-function body:box(x1,y1,z1,x2,y2,z2,restitution,friction)
-  self:parallel(vector{0,0,1},z1,z2,restitution, friction)
+function body:box(x1,y1,z1,x2,y2,z2,restitution,friction,dt)
+  self:parallel(vector{0,0,1},z1,z2,restitution, friction,dt)
   self:parallel(vector{1,0,0},x1,x2,restitution, friction)
   self:parallel(vector{0,1,0},y1,y2,restitution, friction)
 end
