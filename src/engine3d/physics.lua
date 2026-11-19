@@ -344,6 +344,10 @@ function body:wall(index, normal, restitution, friction, dt)
 
   local s = normal..(self.angular^d + self.velocity)
   
+  -- A rim can push but cannot pull. parallel() still removes overlap
+  -- when the contact point is already travelling back into the tray.
+  if normal[3] == 0 and s >= 0 then return end
+
   if self.asleep and math.abs(s) < 0.05 then
     return
   end

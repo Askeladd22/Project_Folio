@@ -112,3 +112,20 @@ for _ = 1, 10 do floating:update(0.01) end
 assert(not floating[1].asleep and floating[1].sleep_timer == 0,
     'slow airborne body accumulated time toward sleep')
 print('PASS slow airborne dice must reach floor support before sleeping')
+
+-- Correct residual penetration at the right rim even when the die
+-- is already moving back into the tray, without pulling it outward.
+local retreating = die({0.51,0,1}, {-0.3,0.2,0}, {0,0,0})
+local contact_events = 0
+retreating.on_contact = function() contact_events = contact_events + 1 end
+retreating:parallel(vector{1,0,0}, -1, 1, 0.25, 0.75)
+assert(math.abs(retreating.position[1] - 0.5) < 1e-9)
+assert(math.abs(retreating.velocity[1]+0.3)<1e-9
+    and math.abs(retreating.velocity[2]-0.2)<1e-9
+    and retreating.angular:abs()<1e-9, 'separating rim contact changed momentum')
+assert(contact_events == 0)
+retreating.position[1], retreating.velocity[1] = 0.51, 0.3
+retreating:parallel(vector{1,0,0}, -1, 1, 0.25, 0.75)
+assert(retreating.velocity[1]<0.3 and contact_events==1,
+    'approaching rim contact must still apply an impulse and emit an event')
+print('PASS separating rim: positional correction only, incoming impact preserved')
