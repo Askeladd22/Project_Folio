@@ -10,6 +10,14 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.88] - 2026-11-19
+
+- La sponda corregge la compenetrazione residua senza applicare un
+  impulso quando il punto di contatto sta già rientrando nel tavolo.
+- Riprodotto il difetto su 0.1.87. Regressione per velocità lineare,
+  rotazione e audio in uscita e per un successivo impatto in ingresso.
+  Dodici file di test superati con texlua. Verifica Windows aperta.
+
 ## [0.1.87] - 2026-11-19
 
 - Il dado a bassa velocità verifica la distanza effettiva del vertice più
