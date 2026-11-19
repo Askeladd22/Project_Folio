@@ -10,3 +10,7 @@ s=b();s.velocity=vector{1,0,0};C.apply(s,1e-8,0,1,0,true);assert(not s.asleep,'m
 s=b();C.apply(s,1e-8,0,0,0,false);assert(not s.asleep,'loss of support wakes')
 s=b();s.asleep=false;C.apply(s,1e-8,0,0,0,true);assert(not s.asleep and s.sleep_timer==.24,'do not force sleep')
 print('PASS numerical containment, displacement, velocity, support and no forced sleep')
+local airborne=b()
+airborne.position[3]=airborne.position[3]+0.02
+assert(C.apply(airborne,0,0,0,0) and not airborne.asleep,
+ 'containment must detect lost floor support when support is inferred')
