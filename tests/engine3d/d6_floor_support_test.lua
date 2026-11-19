@@ -93,3 +93,22 @@ row[1].velocity[2] = 0.05
 pairs_solver.solve(row, nil, 0.01)
 for i = 2, 6 do assert(row[i].asleep, 'spurious wake-up along the row') end
 print('PASS passive contact preserves rest across six adjacent D6')
+
+-- An almost motionless, level die still has to fall the last gap.
+for _, gap in ipairs({0.004, 0.02, 0.04}) do
+    local drop = world()
+    drop[1] = die({0,0,0.5+gap}, {0,0,0}, {0,0,0})
+    drop:update(0.01)
+    assert(not drop[1].asleep and drop[1].position[3] < 0.5+gap,
+        'level die slept before reaching the floor')
+    settle(drop, drop[1])
+    local bottom = Face.inspect({body=drop[1], die=Geometry.d6}).floor
+    assert(math.abs(bottom) <= 0.001, 'final pose must be supported')
+end
+local floating = world()
+floating.gravity = 0.2
+floating[1] = die({0,0,0.8}, {0,0,0}, {0,0,0})
+for _ = 1, 10 do floating:update(0.01) end
+assert(not floating[1].asleep and floating[1].sleep_timer == 0,
+    'slow airborne body accumulated time toward sleep')
+print('PASS slow airborne dice must reach floor support before sleeping')

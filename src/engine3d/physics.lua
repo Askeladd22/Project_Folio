@@ -2,6 +2,8 @@
 require('lib.core')local Logger = require('src.core.engine_bridge').logger
 local DieCollisions = require('src.engine3d.die_collision')
 
+local Ground = require('src.engine3d.bounds').containment
+
 local materials = {}
 
 materials.presets = {
@@ -149,30 +151,20 @@ function box:update(dt)
           s.velocity=vector{0,0,0}
         else
         if not s.asleep then
+          local lowest, highest = math.huge, -math.huge
           local vertices_on_ground = 0
-          local ground_z = 0.05
-          local ground_vertices_z = {}
-          local required_flat_vertices = s.flat_face_vertices or 4
-          local flat_z_tolerance = s.flat_z_tolerance or 0.03
-          for k=1,#s do
-            local vertex_world_z = s[k][3] + s.position[3]
-            if vertex_world_z <= ground_z then
+          for _, vertex in ipairs(s) do
+            local height = vertex[3] + s.position[3]
+            if height <= 0.05 then
+              lowest = math.min(lowest, height)
+              highest = math.max(highest, height)
               vertices_on_ground = vertices_on_ground + 1
-              table.insert(ground_vertices_z, vertex_world_z)
             end
           end
-          
-          local is_flat = false
-          if vertices_on_ground >= required_flat_vertices and #ground_vertices_z >= required_flat_vertices then
-            local z_min = math.huge
-            local z_max = -math.huge
-            for _, z in ipairs(ground_vertices_z) do
-              z_min = math.min(z_min, z)
-              z_max = math.max(z_max, z)
-            end
-            is_flat = (z_max - z_min) < flat_z_tolerance
-          end
-          
+          local is_flat = vertices_on_ground >= (s.flat_face_vertices or 4)
+            and math.abs(lowest) <= Ground.floor_tolerance
+            and highest - lowest < (s.flat_z_tolerance or 0.03)
+
           local v_mag = s.velocity:abs()
           local w_mag = s.angular:abs()
           local settle_linear = s.settle_linear or 0.20
@@ -244,9 +236,9 @@ function box:update(dt)
         local sleep_thresh_v = self.sleep_linear or 0.05
         local sleep_thresh_w = self.sleep_angular or 0.15
         local sleep_time = self.sleep_time or 0.4
-        local near_ground = s.position[3] < 1.2
+
         
-        if v_mag < sleep_thresh_v and w_mag < sleep_thresh_w and near_ground then
+        if v_mag < sleep_thresh_v and w_mag < sleep_thresh_w and Ground.floor_supported(s) then
           s.sleep_timer = (s.sleep_timer or 0) + sub_dt
           if s.sleep_timer >= sleep_time and not s.asleep then
             s.asleep = true
@@ -416,7 +408,7 @@ function body:parallel(normal, min, max, restitution, friction, dt)
     end
   end
   
-  local penetration_threshold = 0.001
+  local penetration_threshold = Ground.floor_tolerance
   
   if lowest and (min - lowesta) > penetration_threshold then
     self:wall(lowest,normal,restitution,friction,dt)

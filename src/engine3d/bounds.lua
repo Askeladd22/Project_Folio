@@ -6,13 +6,16 @@ Parts.containment = (function()
 -- Relative numerical tolerance: 1000x below the legacy .001 contact tolerance.
 -- This is a wake-up tolerance, NOT permission to leave penetration uncorrected.
 local C={relative_position_epsilon=1e-6,linear_sleep=.15,angular_sleep=.20}
+-- Same length tolerance used by the box solver for positional correction.
+C.floor_tolerance = 0.001
+function C.floor_supported(body)
+ local lowest = math.huge
+ for _, vertex in ipairs(body) do lowest = math.min(lowest, vertex[3]) end
+ return math.abs(body.position[3] + lowest) <= C.floor_tolerance
+end
+
 function C.apply(b,x,y,vx,vy,supported)
- if supported==nil then
-  -- Legacy solver has no support manifold. Use its existing ground band;
-  -- absence of measured support must not preserve sleep in mid-air.
-  supported=false
-  for _,v in ipairs(b) do if v[3]+b.position[3]<=.05 then supported=true;break end end
- end
+ if supported==nil then supported=C.floor_supported(b) end
  local dx,dy=x-b.position[1],y-b.position[2]
  local displacement=math.sqrt(dx*dx+dy*dy)
  local speed=b.velocity:abs();local spin=b.angular:abs()

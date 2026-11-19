@@ -10,6 +10,15 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.87] - 2026-11-19
+
+- Il dado a bassa velocità verifica la distanza effettiva del vertice più
+  basso dal tavolo prima di arrestarsi. La tolleranza è condivisa con la
+  correzione di penetrazione e il contenimento laterale.
+- Riprodotto su 0.1.86 un arresto sospeso. Verificati rilasci a 0,004,
+  0,020 e 0,040 unità dal piano e il timer di riposo in caduta lenta.
+  Dodici file di test mirati superati con texlua. QA visiva Windows aperta.
+
 ## [0.1.86] - 2026-11-19
 
 - Corretto il risveglio dei D6 affiancati quando il contatto rientra
