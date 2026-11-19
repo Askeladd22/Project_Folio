@@ -60,3 +60,36 @@ edge_world[1] = tilted
 assert(not Face.inspect({body=tilted,die=Geometry.d6}).valid)
 settle(edge_world, tilted)
 print('PASS D6 floor support: short settling tail, impact wake-up and edge roll')
+
+-- The SAT tolerance permits this microscopic side overlap. The moving
+-- die slides parallel to the contact plane, then turns into its neighbour.
+local pairs_solver = require('src.engine3d.die_collision')
+local group = world()
+group[1] = die({0,0,0.5}, {0,0,0}, {0,0,0})
+group[2] = die({1-0.000005,0,0.5}, {0,0.05,0}, {0,0,0})
+group[1].asleep, group[1].sleep_timer = true, 0.09
+group[2].sleep_timer = 0.04
+local events = 0
+group.on_contact = function() events = events + 1 end
+assert(pairs_solver.overlap(group[1], group[2]))
+pairs_solver.solve(group, nil, 0.01)
+assert(group[1].asleep and group[1].sleep_timer == 0.09,
+    'grazing contact woke a resting die')
+assert(group[2].sleep_timer == 0.04 and events == 0,
+    'passive contact reset time to rest or emitted sound')
+group[2].velocity[1] = -1
+pairs_solver.solve(group, nil, 0.01)
+assert(not group[1].asleep and group[1].velocity[1] < 0 and events == 1,
+    'closing impact must still wake the other die and sound once')
+print('PASS resting pair: passive side contact and subsequent real impact')
+
+-- Starting at one end, a tolerated contact must not wake the whole row.
+local row = world()
+for i = 1, 6 do
+    row[i] = die({(i-1)*(1-0.000005),0,0.5}, {0,0,0}, {0,0,0})
+    row[i].asleep = i > 1
+end
+row[1].velocity[2] = 0.05
+pairs_solver.solve(row, nil, 0.01)
+for i = 2, 6 do assert(row[i].asleep, 'spurious wake-up along the row') end
+print('PASS passive contact preserves rest across six adjacent D6')

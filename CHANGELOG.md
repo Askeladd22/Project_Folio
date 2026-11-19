@@ -10,6 +10,16 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.86] - 2026-11-19
+
+- Corretto il risveglio dei D6 affiancati quando il contatto rientra
+  nella tolleranza SAT e non richiede un impulso. Il tempo di riposo
+  viene conservato anche per il dado ancora in movimento.
+- Riprodotto il difetto su 0.1.85 e verificati contatto radente, urto
+  successivo e fila di sei dadi. Superati dieci file di test con texlua.
+  Identici i risultati dei 50 lanci singoli di confronto. Verifica
+  visiva di lanci multipli su Windows ancora aperta.
+
 ## [0.1.85] - 2026-11-19
 
 - Corretto il tremolio finale dei D6 appoggiati su una faccia. Il contatto
