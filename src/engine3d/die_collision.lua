@@ -5,6 +5,8 @@ require('lib.core')
 local C={}
 local abs,min,max,sqrt=math.abs,math.min,math.max,math.sqrt
 local EPS=1e-8
+local pair_slop=1e-5
+local approach_epsilon=.001
 
 local function dot(a,b)
  return a[1]*b[1]+a[2]*b[2]+a[3]*b[3]
@@ -171,8 +173,8 @@ function C.resolve(world,a,b,index_a,index_b,hit,dt,emitted_pairs)
  else
   local im_a,im_b=inverse_mass(a),inverse_mass(b)
   local im=im_a+im_b
-  if im>0 and hit.depth>1e-5 then
-   local correction=n*((hit.depth-1e-5)*.92/im)
+  if im>0 and hit.depth>pair_slop then
+   local correction=n*((hit.depth-pair_slop)*.92/im)
    a.position=a.position-correction*im_a
    b.position=b.position+correction*im_b
   end
@@ -182,7 +184,12 @@ function C.resolve(world,a,b,index_a,index_b,hit,dt,emitted_pairs)
  local rb=vector(sub(cp,b.position))
  local relative=at_point(b,rb)-at_point(a,ra)
  local speed=relative..n
- if speed<-.001 then
+ -- A tolerated overlap without an approaching contact applies no response.
+ -- Preserve both sleep timers and skip further iterations for this pair.
+ if not hit.swept and hit.depth<=pair_slop and speed>=-approach_epsilon then
+  return false
+ end
+ if speed < -approach_epsilon then
   local denom=effective_mass(a,b,ra,rb,n)
   if denom>EPS then
    local ea=a.restitution or world.bounce or 0.3
