@@ -10,6 +10,45 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.84] - 2026-11-19
+
+**Stato:** PAUL + SEED, pulizia conservativa di due risorse senza
+consumatori identificati nei percorsi di gioco/test.
+
+### Rimosso
+- `resources/textures/wood_floor.png` (637.115 byte):
+  vecchia variante del pavimento senza riferimento attuale; la
+  texture di produzione rimane `resources/textures/wood.png`.
+- `resources/models/doubloon.glb` (12.716 byte): modello
+  decorativo senza consumer identificato; il tavolo attivo resta
+  `resources/models/marble_topped_centre_table.glb`.
+- Totale: **649.831 byte** non più tracciati nel tree corrente.
+  Gli originali restano recuperabili dai commit `d767b7c8`
+  e `33f8afea`; la storia Git non viene riscritta.
+
+### Modificato
+- `tests/repo/repository_housekeeping_test.lua` impedisce di
+  reintrodurre i due asset ritirati, mantenendo i test che
+  proteggono `wood.png` e i modelli GLB ancora necessari.
+- `docs/technical.md` distingue asset correnti e storici.
+
+### Verifiche e limiti
+- Audit statico del tree Git completo `main@be25b960`:
+  352 file tracciati, nessun riferimento a `wood_floor.png`
+  o `doubloon.glb` nel codice, nei test o nella
+  documentazione indicizzata. Risorse originali verificabili
+  nei rispettivi commit introduttivi.
+- **PASS** [CI della PR #141, run #44423237861](https://github.com/Askeladd22/Project_Folio/actions/runs/44423237861)
+  sul commit di pulizia `d8ae38a7`: gate di versione, lint,
+  regressioni Lua 5.4/LuaJIT, test Python e smoke LÖVE/Mesa
+  (16 passaggi del job riusciti).
+- Test locali **NOT RUN**; il commit documentale finale richiede
+  nuova CI. Possibili utilizzi manuali esterni non documentati
+  non esclusi.
+- QA fisica Windows con 50 lanci: **NOT RUN**. Nessuna modifica
+  a `src/`, `lib/`, `experiments/`, Farkle, renderer,
+  asset di produzione, dati utente o librerie.
+
 ## [0.1.83] - 2026-11-19
 
 **Stato:** housekeeping tipografico PAUL + SEED su branch dedicato;
