@@ -548,7 +548,7 @@ local function finite(n)
  return type(n)=='number' and n==n and n~=math.huge and n~=-math.huge
 end
 
-function M.build(u,hits,hoveredId)
+function M.build(u,hits,hoveredId,now)
  local result={markers={},marquee=nil,hand=nil,physicalCount=0}
  local s=u and u.game
  if not s or u.modal or H.reward_active(s) then return result end
@@ -563,7 +563,15 @@ function M.build(u,hits,hoveredId)
   local count=gesture.group and type(gesture.held)=='table'
     and #gesture.held or 1
   if finite(gesture.x) and finite(gesture.y) then
-   result.hand={x=gesture.x,y=gesture.y,count=math.max(1,count)}
+   -- Report only a genuine recent reversal event, never a chosen face.
+   local detector=gesture.group and gesture.shaker and
+     gesture.shaker.detector or gesture.shake
+   local shaken=detector and type(detector.events)=='number' and
+     detector.events>0 and finite(now) and
+     finite(detector.last_event) and now>=detector.last_event and
+     now-detector.last_event<=.70
+   result.hand={x=gesture.x,y=gesture.y,count=math.max(1,count),
+     shaken=not not shaken}
   end
   -- Never paint six per-die selections on top of a gathered physical group.
   -- Also suppress scoring highlights while a throw is physically in hand.
@@ -588,7 +596,14 @@ function M.build(u,hits,hoveredId)
     kind='eligible'
    end
    local hovered=s.phase=='ready' and not s.used[id] and s.hand[id] and id==hoveredId
-   if not kind and hovered then kind='neutral' end
+   -- Scoring selection and physical grip are separate affordances.
+   local pending=u.manualRoll and u.manualRoll.pending and
+     u.manualRoll.pending[id]
+   local readyForGrip=R.can_roll(s) and not u.physicalFailure
+   local physicalHover=id==hoveredId and (pending or
+     (readyForGrip and not s.used[id]))
+   if not kind and physicalHover then kind='grip'
+   elseif not kind and hovered then kind='neutral' end
    if kind then
     result.markers[#result.markers+1]={
      id=id,x=hit.x,y=hit.y,r=finite(hit.r) and
@@ -615,11 +630,13 @@ local M={}
 local fonts={}
 local function palette()
  if UI.high_contrast() then
-  return {physical={.30,1,1,1},score={1,.86,.20,1},
+  return {physical={.30,1,1,1},grip={.30,1,1,1},
+    score={1,.86,.20,1},
     partial={1,.86,.20,1},invalid={1,.52,.46,1},eligible={1,.96,.64,1},
     neutral={1,1,1,.85},hover={1,1,.94,1}}
  end
- return {physical={.40,.83,.91,.96},score={1,.80,.30,.98},
+ return {physical={.40,.83,.91,.96},grip={.40,.83,.91,.96},
+   score={1,.80,.30,.98},
    partial={.96,.78,.41,1},invalid={1,.54,.46,1},eligible={.96,.82,.52,.95},
    neutral={.88,.84,.76,.52},hover={1,.95,.77,.94}}
 end
@@ -654,11 +671,13 @@ local function score_mark(m,colors,scale)
 end
 function M.draw(u,hits)
  local hover
- if u.game and u.game.phase=='ready' and not u.modal and not u.mouseThrow and
+ if u.game and (u.game.phase=='fresh' or u.game.phase=='ready'
+    or u.manualRoll) and not u.modal and not u.mouseThrow and
     not u.marquee and love.mouse and love.mouse.getPosition then
   hover=Bridge.pickTrayDie(love.mouse.getPosition())
  end
- local model=Model.build(u,hits,hover)
+ local now=love.timer and love.timer.getTime and love.timer.getTime()
+ local model=Model.build(u,hits,hover,now)
  local g=love.graphics
  g.push('all')
  local colors=palette()
@@ -694,12 +713,22 @@ function M.draw(u,hits)
   local pts=math.max(14,math.min(27,math.floor(16*UI.scale()*
        (UI.big_text() and 1.2 or 1)+.5)))
   if not fonts[pts] then fonts[pts]=g.newFont(pts) end
-  local title=hand.count>1 and (hand.count..' DADI IN MANO')
-      or 'DADO IN MANO'
+  local title=hand.shaken and 'SCOSSA RILEVATA · LASCIA PER LANCIARE'
+    or hand.count>1 and (hand.count..' DADI IN MANO · SCUOTI O LANCIA')
+    or 'DADO IN MANO · SCUOTI O LANCIA'
   local width=fonts[pts]:getWidth(title)+20
   local height=pts+16
   local x=hand.x+22
   local y=hand.y-height-15
+  -- This overlay is in screen coordinates, including letterboxed windows.
+  if g.getDimensions then
+   local sw,sh=g.getDimensions()
+   if type(sw)=='number' and type(sh)=='number' and
+      sw>width+24 and sh>height+24 then
+    x=math.max(12,math.min(x,sw-width-12))
+    y=math.max(12,math.min(y,sh-height-12))
+   end
+  end
   g.setColor(.08,.10,.11,.92)
   g.rectangle('fill',x,y,width,height,5)
   colour(colors.physical)
@@ -1004,6 +1033,7 @@ Parts.actions = (function()
 local R=require('src.farkle.rules')
 local H=require('src.farkle.presentation').hud_model
 local Medals=R.medals
+local Marquee=require('src.farkle.interaction').selection
 local M={}
 
 local function entry(id,label,enabled,fn,slot,detail)
@@ -1093,8 +1123,16 @@ end
 function M.state(u)
  if u.mouseThrow then
   local count=u.mouseThrow.held and #u.mouseThrow.held or 1
-  return count>1 and ('GRUPPO DI '..count..' DADI IN MANO · Esc annulla') or
-    'DADO IN MANO · Muovi, rilascia; Esc annulla'
+  return (count>1 and ('GRUPPO DI '..count..' DADI') or 'DADO')..
+    ' IN MANO · Scuoti per ruotare · Rilascia per lanciare · Esc annulla'
+ end
+ if u.marquee and Marquee.dragged(u.marquee) then
+  return 'SELEZIONE FISICA · Trascina sui dadi e rilascia'
+ end
+ local count=Marquee.count(u.dragSelected)
+ if count>0 and (u.manualRoll or R.can_roll(u.game)) then
+  return count..(count==1 and ' DADO PRONTO' or ' DADI PRONTI')..
+    ' · Tasto destro per afferrare · Esc annulla'
  end
  if u.manualRoll then
   return 'LANCIO MANUALE · '..u.manualRoll.count..' dadi ancora da lanciare'
@@ -1293,11 +1331,15 @@ local function turns_remaining(s,c)
 end
 local function compact_status(u)
  local s=u.game
- if u.mouseThrow or u.manualRoll then return Actions.state(u) end
+ if u.mouseThrow or u.manualRoll or
+   (u.marquee and require('src.farkle.interaction').selection.dragged(u.marquee)) or
+   (u.dragSelected and next(u.dragSelected) and R.can_roll(s)) then
+  return Actions.state(u)
+ end
  if u.physicalFailure then return 'Tiro non valido: usa Riprova tiro fisico.' end
  if s.phase=='rolling' then return 'I dadi stanno rotolando…' end
  if s.phase=='fresh' then
-  return 'Spazio: lancia · tasto destro: prendi e lancia i dadi'
+  return 'Spazio: lancio rapido · Destro: afferra · Trascina sinistro: seleziona gruppo'
  end
  if s.phase=='rescue' then return 'FARKLE · Usa il Correttore o accetta la perdita.' end
  if s.phase=='ended' then return 'Turno concluso · Continua con [N].' end
