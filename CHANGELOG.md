@@ -12,36 +12,33 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 
 ## [0.1.92] - 2026-11-20
 
-**Stato:** proposta di riposizionamento visivo del tavolo Farkle,
-su `feat/board-framing-true-topdown-0.1.92`, in PR separata e
-dipendente dalla precedente v0.1.91. Nessun merge diretto in main.
+**Stato:** revisione della composizione 2.5D, ancora sperimentale
+nel branch `feat/board-framing-true-topdown-0.1.92` (PR #149).
 
-### Corretto
-- Angolazione realmente più zenitale: il pitch è **1.00 rad**, da
-  **1.16**. Nel proiettore `view.project` diminuire pitch aumenta
-  la profondità apparente del tavolo; l'interpretazione precedente
-  della direzione di variazione era invertita.
-- Bordo posteriore spostato da **y=662 a y=600** virtuali. La
-  superficie del tavolo occupa più altezza disponibile senza
-  interferire con i comandi sotto il bordo anteriore.
-- Ritratto del Rivale ridimensionato da massimo **580 a 520**
-  virtuali; il suo margine rispetto al bordo posteriore resta
-  disponibile e non invade il campo di lancio.
+### Modificato
+- Prospettiva del tavolo: `pitch=0.80 rad` (da 1.16 nella baseline).
+  In `view.project` un pitch minore mostra davvero più superficie.
+- Bordo posteriore: `host.h=520` (da 662), con tavolo più vicino
+  al centro della schermata e superficie di gioco visivamente più ampia.
+- Rivale: altezza massima del PNG 470 (da 580) e
+  `portrait_lift=40` (da 96), per farlo sedere dietro il bordo
+  invece di lasciarlo fluttuare sopra una fascia vuota.
+- Viewport/picking 2D: `tray=(60,470,1800,494)`
+  (da `(60,538,1800,426)`) per includere il bordo posteriore
+  sollevato; il margine anteriore resta a y=964, sopra i comandi.
 
 ### Conservato
-- Distanza della camera **52**, yaw **0**, g3d, sei D6,
-  tavolo fisico e picking **(60,538,1800,426)**, geometria del
-  mondo, regole Farkle, forza/velocità/spin e input del mouse.
-  Il rapporto scala dei dadi è mantenuto dal fit condiviso.
+- Sei D6 fisici, gravità, collisioni, forza e spin, selezione,
+  regole Farkle, modello di scena e renderer g3d. Yaw=0,
+  distanza camera=52, proiezione comune per mesh e picking.
+- Nessuna regolazione nascosta dell'alea o correzione delle facce.
 
-### Test e limiti
-- Aggiornate le regressioni di proiezione, posizione del Rivale,
-  risoluzioni 720p/1080p/ultrawide e allineamento dei pulsanti.
-- **CI da verificare su commit finale:** nessun PASS presunto.
-- Gate umano aperto: screenshot prima/dopo, prova del gesto di
-  lancio davanti e dietro, die picking e lettura dadi in volo
-  su Windows. Se il tavolo occupa troppo lo schermo, riconsiderare
-  framing e scala senza modificare le regole.
+### Verifica
+- Test di proiezione, frame/picking retrostante, ritratto,
+  interazione e geometria a 720p/1080p/ultrawide aggiornati.
+- **CI da confermare sull'head finale.** Smoke Mesa e screenshot
+  non sostituiscono UAT Windows del gesto fisico di lancio.
+- PR lasciata draft; nessuna integrazione senza valutazione visiva.
 
 ## [0.1.91] - 2026-11-20
 
