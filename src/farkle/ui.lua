@@ -123,21 +123,22 @@ function M.build(which)
    name='table_minimal',
    header=rect(44,20,1832,72),
    -- The rear seam leaves room for a larger illustrated opponent.
-    host=rect(0,0,1920,614),
+    host=rect(0,0,1920,662),
     portrait_lift=48,
    rear_span=1280,
    -- One unified scorecard: the risk total is not stranded below the table.
-   score_panel=rect(44,20,414,116),
-   -- Align the one-button state to the same axis as the real tray.
-  single_action=rect(763,976,394,68),
-   secured_caption=rect(63,25,173,18),
-   secured_value=rect(63,43,173,30),
-   risk_caption=rect(258,25,178,18),
-   risk_value=rect(258,43,178,30),
-   objective_caption=rect(63,82,173,18),
-   objective_value=rect(63,100,173,30),
-   turns_caption=rect(258,82,178,18),
-   turns_value=rect(258,100,178,30),
+   score_panel=rect(38,18,540,154),
+   -- The wagering figures are large enough to read at a glance.
+   -- The 3D floor and its physical hitbox stay completely separate.
+   single_action=rect(720,993,480,75),
+   secured_caption=rect(60,27,216,22),
+   secured_value=rect(60,51,216,52),
+   risk_caption=rect(313,27,235,22),
+   risk_value=rect(313,51,235,52),
+   objective_caption=rect(60,116,216,18),
+   objective_value=rect(60,135,216,32),
+   turns_caption=rect(313,116,235,18),
+   turns_value=rect(313,135,235,32),
    help=rect(1510,32,145,46),
    runmenu=rect(1682,32,158,46),
    book=rect(44,107,1832,944),
@@ -145,19 +146,19 @@ function M.build(which)
    -- A small command plaque, shown ONLY when controls are present.
    -- Sit immediately below the front apron. All UI and pick targets
    -- share the same virtual coordinates as the painted room.
-  footer=rect(445,970,1030,78),
-  footer_trim=rect(458,975,1004,2),
+  footer=rect(390,966,1140,110),
+  footer_trim=rect(405,990,1110,2),
    -- The accepted-dice register is just to the LEFT of the plaque.
-  shelf=rect(56,965,384,51),
-   shelf_label=rect(58,935,382,25),
-   -- Starts above the rear seam (host bottom) so the tops of dice
-   -- resting against the back rail stay inside the pick rectangle.
+  shelf=rect(56,965,328,53),
+   shelf_label=rect(58,936,326,24),
+   -- The scoring/picking region is unchanged; only the rear 3D
+   -- projection is lowered to give the opponent and throw more space.
   tray=rect(60,538,1800,426),
-  message=rect(650,1050,620,27),
-  idle_message=rect(650,972,620,36),
-  context_actions={rect(459,976,186,67),rect(459,1042,186,32)},
-  primary=rect(665,976,392,68),
-  secondary=rect(1076,976,383,68),
+  message=rect(470,969,980,20),
+  idle_message=rect(470,969,980,20),
+  context_actions={rect(414,993,185,36),rect(414,1032,185,36)},
+  primary=rect(620,993,410,75),
+  secondary=rect(1046,993,460,75),
   }
 end
 
@@ -224,7 +225,9 @@ function M.validate(layout)
      layout.footer.y<layout.tray.y+layout.tray.h or
      not M.contains(layout.footer,layout.primary) or
      not M.contains(layout.footer,layout.secondary) or
-     not M.contains(layout.footer,layout.single_action) then
+     not M.contains(layout.footer,layout.single_action) or
+     not M.contains(layout.footer,layout.message) or
+     not M.contains(layout.footer,layout.idle_message) then
    return false,'invalid unified scorecard or compact command rail'
   end
   for _,r in ipairs{layout.shelf,layout.header,layout.message,
@@ -1316,13 +1319,18 @@ local function action_button(u,a,rect)
    or parchment,nil,5)
  MenuSurface.item(rect,{primary=isPrimary,disabled=not a.enabled,
    active=a.enabled and pointer_over(rect)})
- local caption={x=rect.x+12,y=rect.y+8,w=rect.w-24,
-   h=a.detail and rect.h>=66 and 32 or rect.h-16}
- write_fitted(a.label,caption,a.slot=='context' and 17 or 24,14,
+ if a.slot~='context' and a.enabled then
+  local stripe=a.id=='bank' and Art.rgba('sage',.90) or Art.rgba('ochre',.94)
+  g.setColor(unpack(stripe))
+  g.rectangle('fill',rect.x+8,rect.y+4,rect.w-16,4,2)
+ end
+ local caption={x=rect.x+12,y=rect.y+7,w=rect.w-24,
+   h=a.detail and rect.h>=66 and 40 or rect.h-14}
+ write_fitted(a.label,caption,a.slot=='context' and 20 or 34,17,
    a.enabled and paper_ink or paper_muted,'center')
  if a.detail and rect.h>=66 then
-  local detail={x=rect.x+8,y=rect.y+44,w=rect.w-16,h=rect.h-50}
-  write_fitted(a.detail,detail,15,11,paper_muted,'center')
+  local detail={x=rect.x+8,y=rect.y+51,w=rect.w-16,h=rect.h-55}
+  write_fitted(a.detail,detail,17,13,paper_muted,'center')
  end
  u.buttons[a.id]={x=rect.x,y=rect.y,w=rect.w,h=rect.h,
     enabled=a.enabled,fn=a.fn,label=a.label}
@@ -1356,23 +1364,16 @@ local function compact_status(u)
   local pts=R.selection(s)
   if pts then
    local can_bank,total,minimum=R.bank_status(s)
-   if can_bank then
-    return '+'..pts..' scelti · Accantona: '..total..
-      ' a rischio · Incassa: '..total..' sicuri'
-   end
-   return '+'..pts..' scelti · '..total..
-     ' provvisori · soglia '..minimum..' per incassare'
+   if can_bank then return '' end
+   return 'Incasso ancora bloccato · Soglia '..minimum..' pt'
   end
   if H.can_complete(s) then return 'Aggiungi i dadi che completano la combinazione.' end
   return 'Deseleziona i dadi che non fanno parte di una combinazione.'
  end
  if s.scored then
   local can_bank,total,minimum=R.bank_status(s)
-  if can_bank then
-   return total..' a rischio · Incassa o rilancia '..
-     R.count_free(s)..' dadi'
-  end
-  return total..' provvisori · soglia '..minimum..' per incassare'
+  if can_bank then return '' end
+  return 'Soglia '..minimum..' pt · Incasso non ancora possibile'
  end
  local eligible=H.eligible(s)
  local keys={}
@@ -1515,7 +1516,7 @@ local function draw_table_footer(u,layout,actions)
  local choosing=s.phase=='ready' and not s.scored and not next(s.selected) and not u.physicalFailure
  local notice_rect=(visible_controls==0 or choosing)
    and layout.idle_message or layout.message
- write_fitted(compact_status(u),notice_rect,choosing and 20 or 18,12,
+ write_fitted(compact_status(u),notice_rect,choosing and 21 or 19,14,
    (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
    'center')
  local primary,secondary=layout.primary,layout.secondary
@@ -1564,18 +1565,18 @@ function V.draw(u)
  panel(layout.score_panel,Art.rgba('surface',.93),border_ink,7)
  g.setColor(unpack(Art.rgba('border',.48)))
  g.setLineWidth(1)
- g.line(246,27,246,129)
- g.line(61,77,441,77)
+ g.line(298,29,298,164)
+ g.line(56,110,560,110)
  panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
- write_fitted('ASSICURATI',layout.secured_caption,17,12,paper_muted)
- write_fitted(s.bank..' pt',layout.secured_value,29,18,paper_ink)
- write_fitted('A RISCHIO',layout.risk_caption,17,12,paper_muted)
- write_fitted(s.pot..' pt',layout.risk_value,29,18,paper_warning)
+ write_fitted('ASSICURATI',layout.secured_caption,21,15,paper_muted)
+ write_fitted(s.bank..' pt',layout.secured_value,47,27,paper_ink)
+ write_fitted('A RISCHIO',layout.risk_caption,21,15,paper_muted)
+ write_fitted(s.pot..' pt',layout.risk_value,47,27,paper_warning)
  local c=R.contracts[s.stage]
- write_fitted('OBIETTIVO',layout.objective_caption,15,11,paper_muted)
- write_fitted(c.target..' pt',layout.objective_value,25,16,paper_gold)
- write_fitted('TURNI RIMASTI',layout.turns_caption,15,11,paper_muted)
- write_fitted(turns_remaining(s,c),layout.turns_value,25,16,paper_ink)
+ write_fitted('OBIETTIVO',layout.objective_caption,18,14,paper_muted)
+ write_fitted(c.target..' pt',layout.objective_value,29,20,paper_gold)
+ write_fitted('TURNI RIMASTI',layout.turns_caption,18,14,paper_muted)
+ write_fitted(turns_remaining(s,c),layout.turns_value,29,20,paper_ink)
  for _,a in ipairs(actions) do
   if a.slot=='header' then
    action_button(u,a,a.id=='help' and layout.help or layout.runmenu)
