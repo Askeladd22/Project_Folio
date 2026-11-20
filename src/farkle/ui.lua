@@ -666,7 +666,8 @@ local function score_mark(m,colors,scale)
  g.setLineWidth(width+1.5*scale);colour(edgeInk)
  g.polygon('line',m.outline)
  g.setLineWidth(width)
- colour(chosen and colors[m.kind] or colors.hover)
+ colour(m.kind=='grip' and colors.physical or
+   chosen and colors[m.kind] or colors.hover)
  g.polygon('line',m.outline)
 end
 function M.draw(u,hits)
@@ -1234,6 +1235,7 @@ local Typography=require('src.core.presentation').typography
 -- g3d owns physical dice and tray. Non-modal HUD no longer imports old HUD.
 -- Gameplay rules and six physical D6 are owned elsewhere; this module paints only the HUD.
 local Actions=Parts.actions
+local Marquee=require('src.farkle.interaction').selection
 local Layout=Bundle.layout
 local R=require('src.farkle.rules')
 local H=require('src.farkle.presentation').hud_model
@@ -1332,7 +1334,7 @@ end
 local function compact_status(u)
  local s=u.game
  if u.mouseThrow or u.manualRoll or
-   (u.marquee and require('src.farkle.interaction').selection.dragged(u.marquee)) or
+   (u.marquee and Marquee.dragged(u.marquee)) or
    (u.dragSelected and next(u.dragSelected) and R.can_roll(s)) then
   return Actions.state(u)
  end
