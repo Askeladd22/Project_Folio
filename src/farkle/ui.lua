@@ -1328,7 +1328,8 @@ local function action_button(u,a,rect)
  end
  local caption={x=rect.x+12,y=rect.y+7,w=rect.w-24,
    h=a.detail and rect.h>=66 and 40 or rect.h-14}
- write_fitted(a.label,caption,a.slot=='context' and 20 or 34,17,
+ write_fitted(a.label,caption,a.slot=='header' and 23
+   or (a.slot=='context' and 20 or 34),17,
    a.enabled and paper_ink or paper_muted,'center')
  if a.detail and rect.h>=66 then
   local detail={x=rect.x+8,y=rect.y+51,w=rect.w-16,h=rect.h-55}
@@ -1533,12 +1534,18 @@ local function draw_table_footer(u,layout,actions)
    primary.x,secondary.x=primary.x+shift,secondary.x+shift
   end
  end
- local context=0
+ local context,context_total=0,0
+ for _,a in ipairs(actions) do
+  if a.slot=='context' then context_total=context_total+1 end
+ end
  for _,a in ipairs(actions) do
   if a.slot=='context' then
    context=context+1
    local rect=assert(layout.context_actions[context],
     'missing minimal table context slot')
+   if context_total==1 then
+    rect={x=rect.x,y=layout.primary.y,w=rect.w,h=layout.primary.h}
+   end
    action_button(u,a,rect)
   elseif a.slot=='primary' then
    action_button(u,a,primary)
