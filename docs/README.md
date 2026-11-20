@@ -1,6 +1,6 @@
 # Project Folio — documentazione essenziale
 
-La cartella `docs/` contiene **7 documenti** canonici, uno per argomento;
+La cartella `docs/` contiene **8 documenti** essenziali, uno per argomento;
 `research/` ospita il nuovo laboratorio R&D, separato dal gameplay. La versione è in
 [`version.txt`](../version.txt) e lo storico nel
 [changelog](../CHANGELOG.md).
@@ -8,6 +8,7 @@ La cartella `docs/` contiene **7 documenti** canonici, uno per argomento;
 | Documento | Contenuto |
 |---|---|
 | [Visione e brainstorming](project_vision.md) | Storia, artista ispirato a Dürer, Farkle come centro, tre pilastri, Folio, avversari, scommesse, idee studiate e problemi aperti |
+| [Fantasy del giocatore](player_fantasy.md) | Promessa esperienziale approvata, gestualità sui dadi, limiti dichiarati, UX e gate sperimentali |
 | [Regole Farkle](farkle_rules.md) | Combinazioni, turni, dadi, accantonamento, rischio e commissioni provvisorie |
 | [Architettura e controlli](technical.md) | Componenti Lua, rendering g3d, suoni fisici, mouse/tastiera, modali e stati della UI |
 | [Direzione artistica](art_direction.md) | Venezia manuziana, tavolo da gioco, palette, Aetna/Cardo, licenze e PNG degli avversari |
