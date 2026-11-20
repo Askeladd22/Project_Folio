@@ -81,6 +81,41 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
+## UI 0.1.90 — HUD leggibile e tavolo abbassato
+
+**Problema osservato:** in un fermo immagine a 1654×930 il pannello
+punteggi e le etichette Accantona/Incassa risultavano troppo piccoli;
+la riga al di sotto dei pulsanti duplicava le conseguenze gia presenti
+nelle azioni. Il bordo posteriore del tavolo era troppo vicino al
+ritratto dell'avversario, facendo percepire il lancio come diretto verso
+la sua figura.
+
+**Intervento:** il layout resta `table_minimal`, senza sidebar.
+La scorecard passa a 540×154 virtuali e le due cifre principali usano
+una gerarchia maggiore. I controlli occupano una placca piu leggibile
+(1140×110, sotto il campo dei dadi), con label da 34 punti nominali
+e una riga superiore per *solo* stato e indicazioni non gia presenti
+nelle action. La tipografia dei dati passa al leggibile Cardo;
+Aldine Aetna rimane negli elementi editoriali. Lo status valido
+non ripete le due anteprime Accantona/Incassa.
+
+**Camera e presa:** il rettangolo fisico `tray` resta
+`(60,538,1800,426)`, incluse coordinate di picking e selezione.
+Solo la proiezione e cambiata: la quota del bordo posteriore passa
+da **614 a 662** punti virtuali e il `pitch` canonico della camera
+da **1.00 a 1.12 rad**. La combinazione mantiene la dimensione
+proiettata dei dadi, altrimenti ridotta da un abbassamento puro, e
+riduce la sensazione che il lancio avvenga sul ritratto. In
+`src/farkle/tabletop.lua` resta un unico fit per mesh/picking;
+nessuna traslazione scollegata del renderer o modifica alla fisica.
+
+**QA:** `tests/hud/ui_v2_minimal_table_test.lua` protegge dimensioni,
+riga status e nuova quota; `tests/hud/ui_v2_projection_comfort_test.lua`
+controlla il fit comune, lo spazio utile e il pick rect invariato.
+Le prove headless non dimostrano il comfort del mouse o l'aspetto
+finale sul monitor: serve QA visiva e lanci ripetuti su Windows, anche
+con gesti che puntano al bordo posteriore.
+
 ## UI: anteprima delle decisioni (0.1.89)
 
 Il Tavolo del Mercante presenta le conseguenze della selezione attraverso
