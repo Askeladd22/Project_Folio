@@ -307,7 +307,7 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
       Scenery.place_table(model,extents,.28,.24)
      end,{max_texture=2048})
     else
-     local model=require('src.engine3d.g3d.wooden_table_mesh').mesh()
+     local model=require('resources.models.wooden_table_mesh').mesh()
      Scenery.place_table(model,extents,.28,.24)
      self.table_prop=self.g3d.newModel(model.verts,self.merchantWood)
     end
