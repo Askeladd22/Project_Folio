@@ -33,8 +33,14 @@ assert(math.abs((layout.context_actions[1].x+
  'the multi-action row must also be balanced around the tray')
 assert(Layout.overlap(layout.shelf,layout.footer)==0,
  'accepted-die register must not cross into command plaque')
-assert(layout.message.y>=layout.primary.y+layout.primary.h,
- 'status must stay below the main actions')
+assert(Layout.contains(layout.footer,layout.message)
+ and layout.message.y+layout.message.h<=layout.primary.y,
+ 'status occupies a separate header row, not a duplicate line below actions')
+assert(layout.score_panel.w>=520 and layout.secured_value.h>=48
+ and layout.risk_value.h>=48,
+ 'the most important wager totals need a legible hierarchy')
+assert(layout.primary.h>=75 and layout.secondary.h>=75,
+ 'primary decisions must be large enough to read and target')
 local buttons={}
 local game=R.new()
 local u={game=game,presentation=P.new(game)}
@@ -204,9 +210,8 @@ local function check_selection(points)
  assert(hand.pot==0,'preview changed the amount at risk')
  assert(math.abs((u.buttons.take.x+u.buttons.bank.x+u.buttons.bank.w)/2-center)<1,
    'the actual visible action pair must be centered without a medal')
- assert(footerNotice and footerNotice:find('Accantona',1,true)
-    and footerNotice:find('Incassa',1,true),
-   'valid selection must preview both decision consequences')
+ assert(not footerNotice or footerNotice=='',
+   'the button details already preview the decisions; do not echo them below')
  assert(u.buttons.take.label=='Accantona · '..points..' pt',
    'valid selection must preserve the actual scoring amount')
 end
@@ -225,7 +230,8 @@ assert(u.buttons.roll.enabled and u.buttons.bank.enabled)
 assert(not footerNotice or not footerNotice:find('Scegli i dadi',1,true),
  'additional scoring dice are optional once the player may roll or bank')
 -- Keep pick headroom above the rear seam for physical dice in flight.
-assert(layout.host.y+layout.host.h-layout.tray.y==76)
+assert(layout.host.y+layout.host.h-layout.tray.y==124,
+ 'rear table seam must sit lower, away from the illustrated opponent')
 assert(Layout.overlap(layout.host,layout.shelf)==0)
 love=savedLove
 print('PASS compact player table: real hitboxes, statuses, contextual actions, accepted dice and three viewport sizes')
