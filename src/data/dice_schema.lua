@@ -62,9 +62,9 @@ return {
         tray_camera = {
             locked = true,
             yaw = 0.00,
-            -- Higher tabletop angle preserves die size as the rear edge
-            -- moves lower, without tilting or moving actual 3D physics.
-            pitch = 1.12,
+            -- Slightly more top-down: keep physical dice and picking aligned
+            -- to the same projection without changing any physics settings.
+            pitch = 1.16,
             distance = 52,
         },
         box = {
