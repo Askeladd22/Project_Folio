@@ -20,4 +20,4 @@ di ingresso sono [controller](src/farkle/controller.lua),
 [regole](src/farkle/rules.lua).
 La [mappa tecnica](docs/technical.md) elenca tutti i moduli e le loro sezioni.
 
-[Documentazione](docs/README.md) · [Mappa del codice](docs/technical.md) · [Regole Farkle](docs/farkle_rules.md) · [Visione del progetto](docs/project_vision.md) · [Changelog](CHANGELOG.md) · [Crediti e licenze di terzi](lib/licenses/)
+[Fantasy del giocatore](docs/player_fantasy.md) · [Documentazione](docs/README.md) · [Mappa del codice](docs/technical.md) · [Regole Farkle](docs/farkle_rules.md) · [Visione del progetto](docs/project_vision.md) · [Changelog](CHANGELOG.md) · [Crediti e licenze di terzi](lib/licenses/)

@@ -131,7 +131,7 @@ for _,path in ipairs{
 for _,path in ipairs{'lib/core.lua','lib/licenses','resources/shaders/dice_glow.glsl',
  'scripts/run_lua_tests.py','scripts/tests/test_versioning.py','run_game.cmd',
  '.github/workflows/lua_tests.yml','docs/art_direction.md','docs/farkle_rules.md',
- 'docs/project_vision.md','docs/technical.md','docs/versioning.md',
+ 'docs/project_vision.md','docs/player_fantasy.md','docs/technical.md','docs/versioning.md',
  'docs/windows_technical_qa.md'} do
  assert(exists(path),'missing relocated path: '..path)
 end
@@ -141,7 +141,7 @@ end
 local doc_listing=assert(io.popen(windows and 'dir /b docs' or "find docs -maxdepth 1 -type f -printf '%f\\n'"))
 local expected_docs={
  ['README.md']=true,['art_direction.md']=true,['farkle_rules.md']=true,
- ['project_vision.md']=true,['technical.md']=true,['versioning.md']=true,
+ ['project_vision.md']=true,['player_fantasy.md']=true,['technical.md']=true,['versioning.md']=true,
  ['windows_technical_qa.md']=true,
 }
 local doc_count=0
@@ -151,7 +151,7 @@ for name in doc_listing:lines() do
  doc_count=doc_count+1
 end
 assert(doc_listing:close(),'cannot enumerate documentation files')
-assert(doc_count==7 and next(expected_docs)==nil,'documentation names must remain lowercase snake_case')
+assert(doc_count==8 and next(expected_docs)==nil,'documentation names must remain lowercase snake_case')
 local root_tests=assert(io.popen(windows and 'dir /b tests\\*_test.lua 2>nul' or "find tests -maxdepth 1 -name '*_test.lua'"))
 local stray=root_tests:read('*a')
 root_tests:close()

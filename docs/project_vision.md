@@ -23,6 +23,10 @@ Per la build corrente consultare [README](../README.md),
 
 ### Fantasy primaria — confermata il 20 novembre 2026
 
+La sua formulazione operativa e i test falsificabili sono raccolti in
+[Fantasy del giocatore](player_fantasy.md). Il documento distingue
+le esperienze desiderate da quelle già implementate.
+
 Il giocatore vuole **sentirsi un giocatore di dadi visceralmente attratto
 dal rischio, che tenta di battere l'alea con le proprie mani**. L'espressione
 «ludopatico giocatore di dadi» descrive il tono volutamente esagerato
