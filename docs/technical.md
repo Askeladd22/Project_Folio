@@ -81,6 +81,28 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
+## UI 0.1.91 — Visualizzare la posta senza aumentare i controlli
+
+La scorecard è ora un **unico pannello** con punteggio sicuro, provvisorio,
+obiettivo, turni rimasti e una piccola barra proporzionale. La barra
+mostra in **salvia** i punti **già incassati** (`game.bank`) e in
+**cinabro** i punti **già accantonati ma a rischio** (`game.pot`),
+con segmenti consecutivi limitati all'obiettivo della commissione.
+La scelta corrente, se non confermata, **non** compare nella barra.
+
+La barra e le etichette sono soltanto letture del modello autorevole;
+non influenzano il tiro, le regole, le facce, le probabilità o le
+condizioni di incasso. Le cifre restano visibili e complete anche quando
+la somma supera l'obiettivo. L'elemento è interno alla scorecard e non
+introduce un nuovo pannello, una valuta o un consiglio di gioco.
+
+`tests/hud/ui_v2_wager_track_test.lua` verifica la barra a zero, con
+posta sicura e a rischio, oltre l'obiettivo e con una selezione ancora
+provvisoria; `tests/hud/ui_v2_minimal_table_test.lua` ne verifica
+la geometria. Restano richiesti controllo screenshot 720p/1080p,
+alto contrasto e playtest umano. La promessa che guida questa scelta
+è descritta in [Fantasy del giocatore](player_fantasy.md).
+
 ## UI 0.1.90 — HUD leggibile e tavolo abbassato
 
 **Problema osservato:** in un fermo immagine a 1654×930 il pannello
