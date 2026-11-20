@@ -26,7 +26,9 @@ g3d sul branch `feat/hud-recomposition-lower-table`.
 - Camera: il bordo posteriore proiettato scende da y=614 a y=662
   e l'angolo aumenta da 1.00 a 1.12 rad, per separare meglio
   il tavolo dal Rivale senza ridurre inutilmente le dimensioni
-  visive dei dadi.
+  visive dei dadi. Il ritratto resta alla quota originale grazie al
+  `portrait_lift` compensativo (48→96), aprendo 61 px virtuali
+  di separazione reale dal bordo posteriore.
 
 ### Conservato
 - Rettangolo di gioco e picking `(60,538,1800,426)`, regole
