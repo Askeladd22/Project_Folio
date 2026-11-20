@@ -62,9 +62,9 @@ return {
         tray_camera = {
             locked = true,
             yaw = 0.00,
-            -- Smaller pitch is more overhead in view.project;
-            -- expose more tabletop depth without touching physical dice.
-            pitch = 1.00,
+            -- Player-seat view: a genuinely overhead angle exposes
+            -- useful tabletop depth while preserving the same g3d physics.
+            pitch = 0.80,
             distance = 52,
         },
         box = {
