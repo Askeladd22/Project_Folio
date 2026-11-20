@@ -62,7 +62,9 @@ return {
         tray_camera = {
             locked = true,
             yaw = 0.00,
-            pitch = 1.00,
+            -- Higher tabletop angle preserves die size as the rear edge
+            -- moves lower, without tilting or moving actual 3D physics.
+            pitch = 1.12,
             distance = 52,
         },
         box = {
