@@ -1,13 +1,20 @@
 -- Contract of the shipping Merchant table; retired P1 layouts are not selectable.
 local Layout=require('src.farkle.ui').layout
 local Res=require('src.core.navigation').resolution
+local Scene=require('src.data.dice_schema').scene
 
 local layout=Layout.build()
 assert(layout.name=='table_minimal','shipping Merchant layout must have its canonical identity')
 assert(Layout.validate(layout),'shipping Merchant table layout is invalid')
-assert(layout.tray.x==60 and layout.tray.y==538
- and layout.tray.w==1800 and layout.tray.h==426,
- 'physical six-D6 play area changed')
+assert(layout.tray.x==60 and layout.tray.y==470
+ and layout.tray.w==1800 and layout.tray.h==494
+ and layout.tray.y+layout.tray.h==964,
+ 'shared screen-space picking viewport must cover the raised board')
+local region=Scene.regions.unified
+assert(region.x_center==0 and region.y_back==-6.05 and
+ region.y_front==6.05 and region.half_back==14 and
+ region.half_front==14,
+ 'the physical six-D6 play area must not change when reframing the camera')
 assert(layout.folio==nil and layout.context==nil,
  'retired sidebar geometry must not return to the shipping table')
 assert(Layout.overlap(layout.tray,layout.score_panel)==0)
@@ -46,7 +53,7 @@ local invalid=Layout.build()
 invalid.primary={x=invalid.tray.x,y=invalid.tray.y,w=300,h=76}
 assert(not Layout.validate(invalid),'button overlapping D6 must be rejected')
 local outside=Layout.build()
-outside.tray={x=-1,y=538,w=1800,h=426}
+outside.tray={x=-1,y=470,w=1800,h=494}
 assert(not Layout.validate(outside),'off-screen 3D tray must be rejected')
 assert(not pcall(Layout.build,'single_folio'),
  'retired sidebar layout must not be selectable')
