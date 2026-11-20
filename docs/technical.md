@@ -92,6 +92,23 @@ mostra i punti assicurabili e dichiara la fine del turno. Sotto le soglie,
 il testo indica quanti punti mancano. L'HUD contestuale ripete in forma
 compatta le due alternative, comprese le selezioni parziali o non valide.
 
+La seconda iterazione rende visibile il controllo fisico già
+supportato: nel tavolo il passaggio del puntatore su un dado realmente
+afferrabile evidenzia la sagoma proiettata, mentre trascinare il tasto
+sinistro distingue la **selezione fisica di gruppo** dalla selezione
+di punteggio. Durante la presa col destro, il badge vicino al puntatore
+mostra il numero di dadi trattenuti; mostra «SCOSSA RILEVATA» soltanto
+quando il detector di inversioni ha registrato un evento recente
+(finestra di 0,70 s). L'etichetta resta entro lo schermo e non altera
+il picking. Lo stato contestuale spiega presa, scuotimento, rilascio
+e annullamento con Esc.
+
+Il badge è un resoconto del gesto reale, **non** un indicatore di
+«faccia desiderata», probabilità migliorata o qualità predetta del
+lancio. Lo stato di shake viene letto, non creato, dall'HUD.
+Gli stati di selezione e le transizioni restano del controller;
+la medesima UI non può spostare né assegnare una faccia ai dadi.
+
 Le etichette sono **anteprime**: non eseguono `rules.take` o
 `rules.bank_turn` durante il disegno, non modificano il lancio fisico e
 non alterano le hitbox. I pulsanti eseguono le azioni esclusivamente
