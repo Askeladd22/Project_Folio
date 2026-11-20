@@ -122,10 +122,10 @@ function M.build(which)
   return {
    name='table_minimal',
    header=rect(44,20,1832,72),
-   -- The rear seam leaves room for a larger illustrated opponent.
-    host=rect(0,0,1920,662),
-    -- Keep the rival in its original place as the table moves down,
-    -- opening real composition space for the airborne dice.
+   -- Bring the table's rear edge higher to reveal its playing surface.
+    -- Physical tray, picking, and collision bounds are unchanged.
+    host=rect(0,0,1920,600),
+    -- Preserve clearance by fitting the rival above the rear rail.
     portrait_lift=96,
    rear_span=1280,
    -- One unified scorecard: the risk total is not stranded below the table.
@@ -477,7 +477,7 @@ function S.portrait_bounds(w,h,layout)
  -- slips behind the g3d table top, avoiding floating or pasted-on figures.
  local bottom=(layout.host and layout.host.y+layout.host.h or layout.tray.y)+35
   -(layout.portrait_lift or 0)
- local maxHeight=math.max(1,math.min(580,bottom-12))
+ local maxHeight=math.max(1,math.min(520,bottom-12))
  local scale=math.min(800/w,maxHeight/h)
  local outW,outH=w*scale,h*scale
  local x=layout.tray.x+layout.tray.w*.5-outW*.5
