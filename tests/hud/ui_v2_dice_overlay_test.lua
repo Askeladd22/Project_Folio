@@ -3,6 +3,7 @@ local R=require('src.farkle.rules')
 local Marquee=require('src.farkle.interaction').selection
 local Model=require('src.farkle.ui').overlay.model
 local Overlay=require('src.farkle.ui').overlay
+local Actions=require('src.farkle.ui').hud.actions
 local Res=require('src.core.navigation').resolution
 local UI=require('src.core.runtime_state').ui
 
@@ -23,6 +24,14 @@ local u={game=game}
 local physical=hits()
 local fresh=Model.build(u,physical)
 assert(#fresh.markers==0 and not fresh.hand and not fresh.marquee)
+local firstGrip=Model.build(u,physical,2)
+assert(count_kind(firstGrip,'grip')==1
+ and firstGrip.markers[1].id==2 and firstGrip.markers[1].hovered,
+ 'only the real die under the pointer can show physical-grip readiness')
+u.physicalFailure='unresolved physics'
+assert(#Model.build(u,physical,2).markers==0,
+ 'physical grip highlight must hide on a blocked physical attempt')
+u.physicalFailure=nil
 local marquee=Marquee.begin(100,240)
 assert(Marquee.move(marquee,720,440))
 u.marquee=marquee
@@ -35,11 +44,21 @@ u.dragSelected={[1]=true,[2]=true,[3]=true,
 selection=Model.build(u,physical)
 assert(selection.physicalCount==6 and
        count_kind(selection,'physical')==6)
+assert(Actions.state(u):find('6 DADI PRONTI',1,true),
+ 'group selected for physical throwing must have a visible affordance')
+assert(Actions.state({game=game,marquee=marquee}):find('SELEZIONE FISICA',1,true),
+ 'marquee must be described as a physical selection, not scoring')
 u.mouseThrow={group=true,held={1,2,3,4,5,6},
  x0=120,y0=300,x=580,y=360}
 local held=Model.build(u,physical)
 assert(held.hand and held.hand.count==6 and
        #held.markers==0,'held group must NOT draw six rings or brackets')
+local grip=u.mouseThrow
+grip.shaker={detector={events=1,last_event=10}}
+assert(Model.build(u,physical,nil,10.1).hand.shaken,
+ 'badge may say SCOSSA only after a confirmed detector event')
+assert(not Model.build(u,physical,nil,11.0).hand.shaken,
+ 'confirmed shake status must expire rather than stick indefinitely')
 u.mouseThrow={x0=150,y0=320,x=260,y=330}
 held=Model.build(u,physical)
 assert(held.hand.count==1 and #held.markers==0,
@@ -93,8 +112,9 @@ end
 -- and restores graphics state, even with contrast and large-text settings.
 local prevLove=love
 local prevScale,prevBig,prevContrast=UI.scale,UI.big_text,UI.high_contrast
-local calls={push=0,pop=0,line=0,circle=0,print=0,segments={}}
+local calls={push=0,pop=0,line=0,circle=0,print=0,segments={},rects={}}
 love={graphics={
+ getDimensions=function() return 1280,720 end,
  push=function() calls.push=calls.push+1 end,
  pop=function() calls.pop=calls.pop+1 end,
  setColor=function() end,
@@ -104,7 +124,9 @@ love={graphics={
   calls.segments[#calls.segments+1]={x1,y1,x2,y2}
  end,
  circle=function() calls.circle=calls.circle+1 end,
- rectangle=function() end,
+ rectangle=function(mode,x,y,w,h)
+  calls.rects[#calls.rects+1]={mode=mode,x=x,y=y,w=w,h=h}
+ end,
  setFont=function() end,
  print=function() calls.print=calls.print+1 end,
  newFont=function(pt) return {getWidth=function(_,txt) return #txt*pt*.55 end} end
@@ -130,6 +152,17 @@ Overlay.draw(u,physical)
 assert(calls.print==1 and calls.line==previousLines+4
    and calls.circle==0 and calls.push==calls.pop,
  'group grip must have one badge and only four reticle strokes')
+local prior=#calls.rects
+u.mouseThrow={group=true,held={1,2,3,4,5,6},
+ x=1270,y=708,shaker={detector={events=1,last_event=10}}}
+love.timer={getTime=function()return 10.1 end}
+Overlay.draw(u,physical)
+local badge=calls.rects[prior+1]
+assert(badge and badge.mode=='fill' and badge.x>=0 and badge.y>=0
+ and badge.x+badge.w<=1280 and badge.y+badge.h<=720,
+ 'physical grip badge must remain on-screen near viewport edges')
+assert(calls.print==2 and calls.push==calls.pop,
+ 'one grip badge per frame, even after confirmed shaking')
 love=prevLove
 UI.scale,UI.big_text,UI.high_contrast=prevScale,prevBig,prevContrast
 print('PASS UI v2 P3: scoring/physical precedence, real-screen hits, held group one-badge feedback, graphics isolation and unchanged Farkle')

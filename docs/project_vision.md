@@ -20,6 +20,35 @@ Per la build corrente consultare [README](../README.md),
 - **Protagonista:** muto e senza personalità imposta: è il giocatore.
   La sua bravura e il suo carattere emergono dalle scelte al tavolo.
 - **Motivazione:** gioca **per puro piacere**.
+
+### Fantasy primaria — confermata il 20 novembre 2026
+
+Il giocatore vuole **sentirsi un giocatore di dadi visceralmente attratto
+dal rischio, che tenta di battere l'alea con le proprie mani**. L'espressione
+«ludopatico giocatore di dadi» descrive il tono volutamente esagerato
+della *fantasy di gioco*, non una diagnosi, un incoraggiamento a
+scommesse reali o un requisito di monetizzazione.
+
+La promessa concreta è **afferrare, scuotere, orientare e lanciare D6
+fisici**, scegliere quando fermarsi e sentire di stare acquisendo
+destrezza e capacità di giudizio. Il lancio usa realmente corpi,
+rotazioni, collisioni e rilevamento delle facce; non è una coreografia
+che nasconde un risultato scelto dall'HUD.
+
+**Limite intenzionale:** la gestualità non garantisce alcuna faccia
+né immunità al Farkle. La fantasy di «vincere contro la sorte» non
+autorizza barare con il RNG, retrocorreggere i lanci, alterare le
+probabilità senza spiegarlo o attribuire al giocatore un controllo che
+non è stato misurato. Dadi speciali e filtri di accettazione dichiarati
+restano distinti dalla destrezza fisica.
+
+Implicazione UI: rendere visibili i gesti possibili (presa, selezione
+fisica multipla, scuotimento effettivamente riconosciuto, rilascio),
+senza aggiungere pseudo-comandi, suggerimenti di risultati sicuri o
+messaggi invadenti. La prova di **quanto** la tecnica di lancio possa
+influenzare la distribuzione finale richiede test fisici appaiati;
+finché non misurata resta un'ipotesi sperimentale. Gli avversari
+competitivi e le poste tra rivali restano questioni aperte.
 - **Tono:** meraviglioso, ironico, conviviale, stravagante.
   **Niente horror, maledizioni o missione di espiazione.**
 
