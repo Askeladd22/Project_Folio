@@ -22,8 +22,18 @@ proposta di ricerca fantasy-first separata dalle meccaniche canoniche.
   indicazione delle soglie quando un incasso non è ancora possibile.
 - Test headless `ui_v2_decision_preview_test.lua` su soglia di ingresso,
   incasso diretto e hot dice.
-- Scheda `research/RQ-002_FANTASY_FIRST_UI.md` sulle ipotesi di
-  fantasy-first, **senza modificare gameplay e avversari**.
+- Feedback **fisico** di grip su dado afferrabile al passaggio del
+  puntatore, istruzioni per presa destra/selezione multipla sinistra,
+  e badge per scuotimento riconosciuto dal controller (non simulato).
+- Test di overlay estesi: distinguono marcatura fisica da punteggio,
+  blocco della presa non valida, evento shake recente/scaduto e badge
+  contenuto nei bordi dello schermo.
+- Scheda `research/RQ-002_FANTASY_FIRST_UI.md` aggiornata con la
+  fantasy primaria confermata dal giocatore: lanciare e manipolare
+  dadi fisici per tentare di sfidare l'alea. Effetto statistico della
+  destrezza non misurato; nessuna regola o avversario alterato.
+- `docs/project_vision.md` registra questa direzione senza promuovere
+  eventuali controlli di esito o variazioni nascoste di probabilità.
 
 ### Modificato
 - Evidenza cromatica del comando primario e descrizioni contestuali,
