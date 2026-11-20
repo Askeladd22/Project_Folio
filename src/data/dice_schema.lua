@@ -62,9 +62,9 @@ return {
         tray_camera = {
             locked = true,
             yaw = 0.00,
-            -- Slightly more top-down: keep physical dice and picking aligned
-            -- to the same projection without changing any physics settings.
-            pitch = 1.16,
+            -- Smaller pitch is more overhead in view.project;
+            -- expose more tabletop depth without touching physical dice.
+            pitch = 1.00,
             distance = 52,
         },
         box = {
