@@ -10,6 +10,46 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.90] - 2026-11-20
+
+**Stato:** nuova composizione reale dell'HUD e revisione dell'inquadratura
+g3d sul branch `feat/hud-recomposition-lower-table`.
+
+### Modificato
+- Punteggi: scorecard ampliata a 540×154 virtuali, valori
+  ASSICURATI e A RISCHIO molto più grandi; font Cardo per i dati
+  operativi, mentre i titoli editoriali restano Aldine.
+- Azioni: placca allargata a 1140×110, pulsanti principali più
+  alti, tipografia maggiore, indicatori cromatici distinti e una
+  sola riga di status sopra i comandi. Eliminata la ripetizione
+  dei valori Accantona/Incassa in fondo alla schermata.
+- Camera: il bordo posteriore proiettato scende da y=614 a y=662
+  e l'angolo aumenta da 1.00 a 1.12 rad, per separare meglio
+  il tavolo dal Rivale senza ridurre inutilmente le dimensioni
+  visive dei dadi.
+
+### Conservato
+- Rettangolo di gioco e picking `(60,538,1800,426)`, regole
+  Farkle, corpi fisici, collisioni, movimento del mouse,
+  g3d e input originali. Nessun lancio viene pilotato dalla UI.
+
+### Aggiunto
+- Regressione `tests/hud/ui_v2_projection_comfort_test.lua` sul
+  fit g3d/picking, dimensioni dei dadi e separazione della
+  zona di lancio dal fondale del Rivale.
+- Contratti aggiornati in `tests/hud/ui_v2_minimal_table_test.lua`
+  e spiegazione di geometria e UAT in `docs/technical.md`.
+
+### Verifiche
+- Codice e layout revisionati sul commit di partenza
+  `main@69b58927b90a3c2855b5eaf670c3e8afd2913e52`.
+- **Test e CI da verificare sulla testa di questa PR:** non
+  dichiarare superate verifiche non ancora completate.
+- **Gate aperti:** screenshot LÖVE Windows 1280×720/1920×1080 e
+  ultrawide, visibilità dadi in volo, tasto destro e lancio manuale,
+  prova umana del comfort della camera. Non integrare in `main`
+  prima della revisione.
+
 ## [0.1.89] - 2026-11-20
 
 **Stato:** UI/UX Farkle, branch `feat/ui-decision-clarity-fantasy-first`;
