@@ -6,8 +6,10 @@ local View=require('src.engine3d.view')
 local Scene=require('src.data.dice_schema').scene
 local layout=Layout.build()
 assert(Layout.validate(layout))
-assert(Scene.tray_camera.locked and Scene.tray_camera.pitch>1.0,
- 'the revised hand-facing tabletop angle must be selected')
+assert(Scene.tray_camera.locked and
+ math.abs(Scene.tray_camera.pitch-1.16)<1e-9 and
+ Scene.tray_camera.yaw==0 and Scene.tray_camera.distance==52,
+ 'approved modest top-down preset must retain yaw, distance and camera lock')
 assert(layout.tray.x==60 and layout.tray.y==538 and
  layout.tray.w==1800 and layout.tray.h==426,
  'do not move the physical mouse hitbox to fake a camera fix')
@@ -30,8 +32,12 @@ local rearScreen=cy+rear*scale
 assert(math.abs(rearScreen-(layout.host.y+layout.host.h))<1e-5,
  'projected rear floor and illustrated opponent seam must coincide')
 local front=owner.trayProjection.floorEnd
-assert(front>880 and front<layout.tray.y+layout.tray.h,
- 'tablefront must remain reachable above the lower action plaque')
+assert(front>880 and front<910,
+ 'a slightly top-down view must shorten the visible tabletop depth')
+local _,apron=View.project(0,extents[4]+.4,-Scene.box.border_height)
+local apronY=cy+apron*scale
+assert(apronY<=layout.footer.y and layout.footer.y-apronY<=20,
+ 'front plank must stay close to the command plaque after camera tilt')
 assert(cx>layout.tray.x and cx<layout.tray.x+layout.tray.w)
 assert(owner.trayProjection.rect==layout.tray)
 dice=previousDice
