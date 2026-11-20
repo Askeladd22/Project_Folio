@@ -158,9 +158,10 @@ function M.build(which)
    -- The accepted-dice register is just to the LEFT of the plaque.
   shelf=rect(56,965,328,53),
    shelf_label=rect(58,936,326,24),
-   -- The scoring/picking region is unchanged; only the rear 3D
-   -- projection is lowered to give the opponent and throw more space.
-  tray=rect(60,538,1800,426),
+   -- Include the exposed rear of the board in the same input/render
+   -- viewport. Keep the *front* border aligned with the command rail.
+   -- This is screen-space picking only: no world or physics changes.
+  tray=rect(60,470,1800,494),
   message=rect(470,969,980,20),
   idle_message=rect(470,969,980,20),
   context_actions={rect(414,993,185,36),rect(414,1032,185,36)},
