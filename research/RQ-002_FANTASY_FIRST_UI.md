@@ -28,6 +28,35 @@ Una promessa espressa in termini di desiderio e azioni del giocatore, anziché i
 
 Questa frase è una **ipotesi di esperienza**, non autorizza un nuovo sistema di combattimento, valuta, carte, HP o trucchi nascosti sul RNG. Non attribuisce a Folio un duello già implementato.
 
+## Risoluzione dell'utente: fantasy F1 scelta (20/11/2026)
+
+Il giocatore vuole essere un **appassionato temerario del gioco di dadi**
+(espresso dall'utente come «ludopatico giocatore di dadi») e tentare di
+**battere l'alea attraverso il lancio e la manipolazione fisica**.
+Questa è la direzione fantasy approvata per Project Folio:
+**prendere, scuotere, ruotare e lanciare dadi reali nel motore, poi
+decidere se rischiare o incassare**.
+
+Non significa che il giocatore possieda già un metodo riproducibile per
+indirizzare le facce. Il codice muove corpi reali, ma la dimensione della
+skill expression *fisica* rispetto alla casualità resta **NON MISURATA**.
+La manipolazione delle probabilità del dado speciale dichiarata dalle
+regole non è una conseguenza garantita del gesto, né una facoltà
+nascosta dell'interfaccia.
+
+**Decisione UI autorizzata:** feedback leggibile per selezione
+multipla con trascinamento sinistro, presa destra, gestualità scuotimento
+riconosciuta, rilascio e stato del lancio manuale. Solo dati già presenti
+nel controller/gestore fisico; nessun tasto o potere per imporre facce.
+
+**Test successivo e falsificabile:** registrare condizioni iniziali,
+input fisici, valori finali e bust con protocollo appaiato per più
+tecniche di lancio. Confrontare distribuzioni e intervalli di
+incertezza; il miglioramento percepito non prova un vantaggio
+statistico, mentre una differenza statistica non prova automaticamente
+che il controllo sia divertente o leggibile. Test umano distinto per
+comprensione, destrezza e percezione di controllo.
+
 ## Prima frizione da rimuovere, senza cambiare gameplay
 
 1. **Prima della scelta:** il giocatore vede quanti punti ha selezionato, quanti dadi restano e se può incassare.
@@ -57,4 +86,4 @@ La PR UI associata a questa ricerca implementa solo il feedback `Accantona / Inc
 
 ## Decisione provvisoria
 
-**Solo esplorazione della promessa F1 come criterio UI.** Conservare i tre pilastri e *mastery not accommodation*. Non modificare il Farkle per inseguire riferimenti commerciali prima dei test.
+**Fantasy F1 approvata dal giocatore, conseguenze meccaniche ancora non dimostrate.** Conservare i tre pilastri e *mastery not accommodation*. Non modificare il Farkle per inseguire riferimenti commerciali prima dei test.
