@@ -129,7 +129,11 @@ function M.build(which)
     portrait_lift=96,
    rear_span=1280,
    -- One unified scorecard: the risk total is not stranded below the table.
-   score_panel=rect(38,18,540,154),
+   score_panel=rect(38,18,540,205),
+   -- One engraved progress track shows what is saved vs still at risk.
+   -- No new resources or RNG: both segments come from committed points.
+   stakes_caption=rect(60,174,498,23),
+   stakes_track=rect(60,200,498,12),
    -- The wagering figures are large enough to read at a glance.
    -- The 3D floor and its physical hitbox stay completely separate.
    single_action=rect(720,993,480,75),
@@ -191,6 +195,7 @@ function M.validate(layout)
    'primary','secondary','help','runmenu','secured_caption','secured_value',
    'risk_caption','risk_value','objective_caption','objective_value',
    'turns_caption','turns_value','shelf_label','score_panel',
+   'stakes_caption','stakes_track',
    'footer','footer_trim','single_action','idle_message'}
   for _,name in ipairs(required) do
    local r=layout[name]
@@ -216,6 +221,14 @@ function M.validate(layout)
       M.overlap(metric[1],metric[2])>0 then
     return false,'score metric outside or overlapping its scorecard'
    end
+  end
+  if not M.contains(layout.score_panel,layout.stakes_caption) or
+     not M.contains(layout.score_panel,layout.stakes_track) or
+     M.overlap(layout.stakes_caption,layout.stakes_track)>0 or
+     M.overlap(layout.objective_value,layout.stakes_caption)>0 or
+     M.overlap(layout.turns_value,layout.stakes_caption)>0 or
+     M.overlap(layout.stakes_track,layout.tray)>0 then
+   return false,'invalid wager progress track'
   end
   if M.overlap(layout.secured_caption,layout.risk_caption)>0 or
      M.overlap(layout.secured_value,layout.risk_value)>0 or
@@ -1344,6 +1357,30 @@ local function turns_remaining(s,c)
  return math.max(0,c.limit-s.turn+
    ((s.phase=='ended' or H.commission_closed(s)) and 0 or 1))
 end
+-- A single, read-only track: solid sage means banked, clay means points
+-- that Farkle would still erase. A pending die selection is NOT committed.
+local function draw_stakes_track(s,target,layout)
+ local g=love.graphics
+ local r=layout.stakes_track
+ local goal=math.max(1,tonumber(target) or 1)
+ local bank=math.max(0,tonumber(s.bank) or 0)
+ local pot=math.max(0,tonumber(s.pot) or 0)
+ local safe=math.min(r.w,r.w*bank/goal)
+ local risky=math.min(r.w-safe,r.w*pot/goal)
+ g.setColor(unpack(Art.rgba('ink',.24)))
+ g.rectangle('fill',r.x,r.y,r.w,r.h,3)
+ if safe>0 then
+  g.setColor(unpack(Art.rgba('sage',.96)))
+  g.rectangle('fill',r.x,r.y,safe,r.h,2)
+ end
+ if risky>0 then
+  g.setColor(unpack(Art.rgba('clay',.98)))
+  g.rectangle('fill',r.x+safe,r.y,risky,r.h,2)
+ end
+ g.setColor(unpack(Art.rgba('border',.85)))
+ g.setLineWidth(1)
+ g.rectangle('line',r.x,r.y,r.w,r.h,3)
+end
 local function compact_status(u)
  local s=u.game
  if u.mouseThrow or u.manualRoll or
@@ -1588,6 +1625,11 @@ function V.draw(u)
  write_fitted(c.target..' pt',layout.objective_value,29,20,paper_gold)
  write_fitted('TURNI RIMASTI',layout.turns_caption,18,14,paper_muted)
  write_fitted(turns_remaining(s,c),layout.turns_value,29,20,paper_ink)
+ g.setColor(unpack(Art.rgba('border',.40)))
+ g.line(56,171,560,171)
+ write_fitted('VERSO L’OBIETTIVO  ·  SALVATI / A RISCHIO',
+   layout.stakes_caption,17,13,paper_muted)
+ draw_stakes_track(s,c.target,layout)
  for _,a in ipairs(actions) do
   if a.slot=='header' then
    action_button(u,a,a.id=='help' and layout.help or layout.runmenu)
