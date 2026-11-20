@@ -1271,7 +1271,8 @@ local function size(n)
 end
 local function font_px(px)
  if not fonts[px] then
-  fonts[px]=Typography.load(Typography.primary,px)
+  -- Cardo gives wagers and actions a clearer x-height than the title face.
+  fonts[px]=Typography.load(Typography.support,px)
  end
  return fonts[px]
 end
@@ -1310,6 +1311,7 @@ local function pointer_over(rect)
  return MenuSurface.contains(rect,vx,vy)
 end
 local function action_button(u,a,rect)
+ local g=love.graphics
  local isPrimary=a.slot=='primary'
  -- Every visible control uses the same rectangular hitbox as the
  -- authoritative controller action table; no decorative overlay eats input.
