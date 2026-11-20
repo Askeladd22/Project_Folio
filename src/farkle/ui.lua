@@ -1047,14 +1047,21 @@ function M.build(u)
   add('next','Prossimo turno [N]',true,
    function() u:act('next',function() return R.next_turn(s) end) end,'primary')
  else
-  local pts=R.selection(s)
+  local option=R.selection_option(s)
+  local pts=option and option.points
   local has_selection=next(s.selected)~=nil
   if has_selection then
    local label=pts and ('Accantona · '..pts..' pt')
      or (H.can_complete(s) and 'Completa la combinazione' or 'Selezione non valida')
+   local detail='[A] · Completa o correggi la selezione'
+   if pts then
+    local free=option.remaining
+    detail='[A] · '..(s.pot+pts)..' a rischio · '..
+      (free==0 and '6 dadi caldi' or free..' dadi liberi')
+   end
    add('take',label,
      pts~=nil,function() u:act('take',function() return R.take(s) end) end,
-     'primary','[A] · Aggiungi ai punti a rischio')
+     'primary',detail)
   else
    local can=R.can_roll(s) and u.manualRoll==nil
    local label=s.hot and 'Rilancia sei dadi' or
@@ -1068,10 +1075,17 @@ function M.build(u)
   local ok,total,min=R.bank_status(s)
   -- Existing Farkle rules permit banking a VALID selected combination
   -- directly, without forcing a separate Set aside action first.
+  local bank_detail
+  if ok then
+   bank_detail='[Invio] · Al sicuro · termina il turno'
+  elseif total<min then
+   bank_detail='Soglia '..min..' pt · ne mancano '..(min-total)
+  else
+   bank_detail='Incasso non disponibile'
+  end
   add('bank','Incassa '..total..' pt',ok,
    function() u:act('bank',function() return R.bank_turn(s) end) end,
-   'secondary',min>0 and ('[Invio] · Soglia '..min..' pt')
-      or '[Invio] · Metti al sicuro')
+   'secondary',bank_detail)
  end
  return a
 end
@@ -1258,7 +1272,8 @@ local function action_button(u,a,rect)
  -- authoritative controller action table; no decorative overlay eats input.
  -- Give even disabled actions a light leaf underneath: their semi-transparent
  -- shared widget fill would otherwise sit directly on the dark desk.
- panel(rect,parchment,nil,5)
+ panel(rect,isPrimary and a.enabled and Art.rgba('ochre_light',.98)
+   or parchment,nil,5)
  MenuSurface.item(rect,{primary=isPrimary,disabled=not a.enabled,
    active=a.enabled and pointer_over(rect)})
  local caption={x=rect.x+12,y=rect.y+8,w=rect.w-24,
@@ -1281,7 +1296,9 @@ local function compact_status(u)
  if u.mouseThrow or u.manualRoll then return Actions.state(u) end
  if u.physicalFailure then return 'Tiro non valido: usa Riprova tiro fisico.' end
  if s.phase=='rolling' then return 'I dadi stanno rotolando…' end
- if s.phase=='fresh' then return '' end
+ if s.phase=='fresh' then
+  return 'Spazio: lancia · tasto destro: prendi e lancia i dadi'
+ end
  if s.phase=='rescue' then return 'FARKLE · Usa il Correttore o accetta la perdita.' end
  if s.phase=='ended' then return 'Turno concluso · Continua con [N].' end
  if s.phase=='lost' then return 'Partita terminata · Nessun turno rimasto.' end
@@ -1292,11 +1309,27 @@ local function compact_status(u)
  end
  if s.hot then return 'Dadi caldi · Rilancia tutti e sei oppure incassa.' end
  if next(s.selected) then
-  if R.selection(s) then return '' end
+  local pts=R.selection(s)
+  if pts then
+   local can_bank,total,minimum=R.bank_status(s)
+   if can_bank then
+    return '+'..pts..' scelti · Accantona: '..total..
+      ' a rischio · Incassa: '..total..' sicuri'
+   end
+   return '+'..pts..' scelti · '..total..
+     ' provvisori · soglia '..minimum..' per incassare'
+  end
   if H.can_complete(s) then return 'Aggiungi i dadi che completano la combinazione.' end
   return 'Deseleziona i dadi che non fanno parte di una combinazione.'
  end
- if s.scored then return '' end
+ if s.scored then
+  local can_bank,total,minimum=R.bank_status(s)
+  if can_bank then
+   return total..' a rischio · Incassa o rilancia '..
+     R.count_free(s)..' dadi'
+  end
+  return total..' provvisori · soglia '..minimum..' per incassare'
+ end
  local eligible=H.eligible(s)
  local keys={}
  for i=1,6 do if eligible[i] then keys[#keys+1]='['..i..']' end end
