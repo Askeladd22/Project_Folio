@@ -204,7 +204,11 @@ local function check_selection(points)
  assert(hand.pot==0,'preview changed the amount at risk')
  assert(math.abs((u.buttons.take.x+u.buttons.bank.x+u.buttons.bank.w)/2-center)<1,
    'the actual visible action pair must be centered without a medal')
- assert(not footerNotice,'a valid selection already gives its instructions on the two buttons')
+ assert(footerNotice and footerNotice:find('Accantona',1,true)
+    and footerNotice:find('Incassa',1,true),
+   'valid selection must preview both decision consequences')
+ assert(u.buttons.take.label=='Accantona · '..points..' pt',
+   'valid selection must preserve the actual scoring amount')
 end
 check_selection(50)
 assert(u.buttons.bank and u.buttons.bank.enabled)
