@@ -237,8 +237,8 @@ assert(u.buttons.roll.enabled and u.buttons.bank.enabled)
 assert(not footerNotice or not footerNotice:find('Scegli i dadi',1,true),
  'additional scoring dice are optional once the player may roll or bank')
 -- Keep pick headroom above the rear seam for physical dice in flight.
-assert(layout.host.y+layout.host.h-layout.tray.y==124,
- 'rear table seam must sit lower, away from the illustrated opponent')
+assert(layout.host.y+layout.host.h-layout.tray.y==62,
+ 'rear table seam must show a larger playing surface with the new camera')
 assert(Layout.overlap(layout.host,layout.shelf)==0)
 love=savedLove
 print('PASS compact player table: real hitboxes, statuses, contextual actions, accepted dice and three viewport sizes')
