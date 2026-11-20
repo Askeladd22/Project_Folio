@@ -103,7 +103,10 @@ non ripete le due anteprime Accantona/Incassa.
 `(60,538,1800,426)`, incluse coordinate di picking e selezione.
 Solo la proiezione e cambiata: la quota del bordo posteriore passa
 da **614 a 662** punti virtuali e il `pitch` canonico della camera
-da **1.00 a 1.12 rad**. La combinazione mantiene la dimensione
+da **1.00 a 1.12 rad**. Il `portrait_lift` aumenta da 48 a 96:
+il Rivale resta alla quota originale mentre il tavolo scende,
+creando 61 punti virtuali di separazione invece di trascinare
+in basso anche il ritratto. La combinazione mantiene la dimensione
 proiettata dei dadi, altrimenti ridotta da un abbassamento puro, e
 riduce la sensazione che il lancio avvenga sul ritratto. In
 `src/farkle/tabletop.lua` resta un unico fit per mesh/picking;
