@@ -40,8 +40,11 @@ local function settled(index,x,y)
  return P.from_body(index,b,view.project,0,0,1000,faces,true)
 end
 local side,top=settled(1,8.96,.03),settled(2,8,0)
-assert(P.pick({side},818,-88)==1 and P.pick({top},818,-88)==2,'fixture needs two overlapping hulls')
-assert(P.pick({side,top},818,-88)==2 and P.pick({top,side},818,-88)==2,
+-- With the new overhead framing, (818,-30) lies inside BOTH
+-- transformed silhouettes; the old (818,-88) point is outside die 1.
+assert(P.pick({side},818,-30)==1 and P.pick({top},818,-30)==2,
+ 'fixture needs two overlapping hulls in the current camera')
+assert(P.pick({side,top},818,-30)==2 and P.pick({top,side},818,-30)==2,
  'the visible top face must win over the neighboring die with the nearer centre')
 local Model=require('src.farkle.ui').overlay.model
 local R=require('src.farkle.rules')
