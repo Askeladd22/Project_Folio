@@ -7,15 +7,18 @@ local View=require('src.engine3d.view')
 local Tray=require('src.farkle.tabletop').tray_view
 local L=Layout.build()
 assert(Layout.validate(L))
-assert(L.host.y+L.host.h==L.tray.y+76,'rear framing must meet the room')
-assert(L.tray.y>=530 and L.tray.y<=550 and L.host.h-L.tray.y==76,
- 'grazing camera: lower rear seam with pick headroom above it')
+assert(L.host.y+L.host.h==L.tray.y+124,
+ 'rear framing must match the newly lowered tabletop')
+assert(L.tray.y>=530 and L.tray.y<=550 and L.host.h-L.tray.y==124,
+ 'the pick headroom must follow the lowered visual projection')
 assert(L.tray.y+L.tray.h<=L.footer.y,'command rail clipped')
 local portrait=Opponent.portrait_bounds(700,1000,L)
 assert(portrait.h>550 and portrait.h<=580 and portrait.y>=9)
 assert(math.abs(portrait.x+portrait.w*.5-L.tray.x-L.tray.w*.5)<.01)
 assert(portrait.y+portrait.h==L.host.h+35-L.portrait_lift,
  'opponent stays anchored while the table lowers')
+assert(L.host.h-(portrait.y+portrait.h)>=50,
+ 'lowering the table must create actual clearance from the rival portrait')
 local function read(path)
  local f=assert(io.open(path,'rb'));local s=f:read('*a');f:close();return s
 end

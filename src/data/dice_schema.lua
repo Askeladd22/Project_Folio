@@ -62,7 +62,9 @@ return {
         tray_camera = {
             locked = true,
             yaw = 0.00,
-            pitch = 1.00,
+            -- Slightly more top-down: keep physical dice and picking aligned
+            -- to the same projection without changing any physics settings.
+            pitch = 1.16,
             distance = 52,
         },
         box = {
