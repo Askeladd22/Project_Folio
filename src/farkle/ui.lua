@@ -607,7 +607,7 @@ function M.build(u,hits,hoveredId,now)
    if kind then
     result.markers[#result.markers+1]={
      id=id,x=hit.x,y=hit.y,r=finite(hit.r) and
-       math.max(11,math.min(30,hit.r*.70)) or 22,kind=kind,outline=hit.outline,hovered=not not hovered
+       math.max(11,math.min(30,hit.r*.70)) or 22,kind=kind,outline=hit.outline,hovered=not not (hovered or physicalHover)
     }
    end
   end
