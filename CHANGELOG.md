@@ -24,7 +24,7 @@ g3d sul branch `feat/hud-recomposition-lower-table`.
   sola riga di status sopra i comandi. Eliminata la ripetizione
   dei valori Accantona/Incassa in fondo alla schermata.
 - Camera: il bordo posteriore proiettato scende da y=614 a y=662
-  e l'angolo aumenta da 1.00 a 1.12 rad, per separare meglio
+  e l'angolo aumenta da 1.00 a 1.16 rad (1.12 nella prima iterazione della PR), per separare meglio
   il tavolo dal Rivale senza ridurre inutilmente le dimensioni
   visive dei dadi. Il ritratto resta alla quota originale grazie al
   `portrait_lift` compensativo (48→96), aprendo 61 px virtuali
@@ -38,7 +38,9 @@ g3d sul branch `feat/hud-recomposition-lower-table`.
 ### Aggiunto
 - Regressione `tests/hud/ui_v2_projection_comfort_test.lua` sul
   fit g3d/picking, dimensioni dei dadi e separazione della
-  zona di lancio dal fondale del Rivale.
+  zona di lancio dal fondale del Rivale. Il test protegge ora
+  `pitch=1.16`, `yaw=0`, `distance=52`, profondità apparente
+  e distanza del bordo frontale dalla placca.
 - Contratti aggiornati in `tests/hud/ui_v2_minimal_table_test.lua`
   e spiegazione di geometria e UAT in `docs/technical.md`.
 
