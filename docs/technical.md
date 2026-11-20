@@ -81,6 +81,38 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
+## UI 0.1.92 — Inquadratura con profondità reale del tavolo
+
+**Diagnosi a partire dallo screenshot 1280×720:** tavolo molto largo,
+piano visivamente poco profondo, ritratto dominante e dadi compressi
+in una fascia. Il valore `pitch=1.16`, introdotto come «più topdown»,
+aveva in realtà l'effetto opposto: `view.project` applica
+`y' = cos(pitch) * y - sin(pitch) * z`. Su un pavimento
+`z=0`, **un pitch minore espande la componente verticale della
+superficie**, mentre vicino a `pi/2` la schiaccia.
+
+**Soluzione sperimentale**: `pitch=1.00` (da 1.16),
+`host.h=600` (da 662), `maxHeight` dei PNG avversari a
+520 (da 580). La posizione del margine posteriore e del
+ritratto rimane coordinata tramite la sola geometria
+`src/farkle/ui.lua`. Con il fit proiettivo canonico si
+prevede una profondità del piano **~319 unità virtuali**
+contro **~240** precedenti, a scala dei dadi quasi identica
+(~503 contro ~512). Sono **risultati del calcolo di proiezione**,
+non dati di playtest o confort misurato.
+
+Il picking rimane nella stessa area fisica `(60,538,1800,426)`,
+con trasformazione unificata per mesh g3d e mouse. Nessuna
+conversione di coordinate separata, nessuna correzione delle
+facce, nessun cambiamento a collisioni o impulso del lancio.
+
+**QA:** `tests/hud/ui_v2_projection_comfort_test.lua`,
+`tests/farkle/merchant_refinement_test.lua`,
+`tests/hud/opponent_scene_test.lua` e
+`tests/hud/ui_v2_minimal_table_test.lua` proteggono rapporti
+e geometrie. Le catture CI Mesa possono confrontare l'aspetto
+prima/dopo; verificare comunque input e traiettorie su Windows.
+
 ## UI 0.1.91 — Visualizzare la posta senza aumentare i controlli
 
 La scorecard è ora un **unico pannello** con punteggio sicuro, provvisorio,
