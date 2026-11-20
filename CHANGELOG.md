@@ -10,6 +10,39 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.92] - 2026-11-20
+
+**Stato:** proposta di riposizionamento visivo del tavolo Farkle,
+su `feat/board-framing-true-topdown-0.1.92`, in PR separata e
+dipendente dalla precedente v0.1.91. Nessun merge diretto in main.
+
+### Corretto
+- Angolazione realmente più zenitale: il pitch è **1.00 rad**, da
+  **1.16**. Nel proiettore `view.project` diminuire pitch aumenta
+  la profondità apparente del tavolo; l'interpretazione precedente
+  della direzione di variazione era invertita.
+- Bordo posteriore spostato da **y=662 a y=600** virtuali. La
+  superficie del tavolo occupa più altezza disponibile senza
+  interferire con i comandi sotto il bordo anteriore.
+- Ritratto del Rivale ridimensionato da massimo **580 a 520**
+  virtuali; il suo margine rispetto al bordo posteriore resta
+  disponibile e non invade il campo di lancio.
+
+### Conservato
+- Distanza della camera **52**, yaw **0**, g3d, sei D6,
+  tavolo fisico e picking **(60,538,1800,426)**, geometria del
+  mondo, regole Farkle, forza/velocità/spin e input del mouse.
+  Il rapporto scala dei dadi è mantenuto dal fit condiviso.
+
+### Test e limiti
+- Aggiornate le regressioni di proiezione, posizione del Rivale,
+  risoluzioni 720p/1080p/ultrawide e allineamento dei pulsanti.
+- **CI da verificare su commit finale:** nessun PASS presunto.
+- Gate umano aperto: screenshot prima/dopo, prova del gesto di
+  lancio davanti e dietro, die picking e lettura dadi in volo
+  su Windows. Se il tavolo occupa troppo lo schermo, riconsiderare
+  framing e scala senza modificare le regole.
+
 ## [0.1.91] - 2026-11-20
 
 **Stato:** fantasy del giocatore e UI di gestione della posta sul branch
