@@ -10,6 +10,36 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.89] - 2026-11-20
+
+**Stato:** UI/UX Farkle, branch `feat/ui-decision-clarity-fantasy-first`;
+proposta di ricerca fantasy-first separata dalle meccaniche canoniche.
+
+### Aggiunto
+- Anteprima contestuale di **Accantona** (nuovo totale a rischio e
+  dadi disponibili) e **Incassa** (punti messi al sicuro e fine turno).
+- Messaggio di scelta leggibile anche con una selezione valida, con
+  indicazione delle soglie quando un incasso non è ancora possibile.
+- Test headless `ui_v2_decision_preview_test.lua` su soglia di ingresso,
+  incasso diretto e hot dice.
+- Scheda `research/RQ-002_FANTASY_FIRST_UI.md` sulle ipotesi di
+  fantasy-first, **senza modificare gameplay e avversari**.
+
+### Modificato
+- Evidenza cromatica del comando primario e descrizioni contestuali,
+  usando la palette esistente.
+- Regressione `ui_v2_minimal_table_test.lua` aggiornata al feedback
+  delle due scelte; mappa tecnica aggiornata.
+
+### Verifiche
+- Revisionati sorgenti e contratti di selezione, accantonamento e
+  incasso sul commit `b315bf57`; patch applicata su branch separato.
+- **Test Lua, CI e smoke LÖVE non ancora eseguiti** al momento di
+  questa voce; non dichiarare PASS senza output.
+- Restano aperti Windows 720p/1080p/1440p/ultrawide, testo grande,
+  contrasto, picking, animazioni e playtest sulla comprensione del rischio.
+- PR di implementazione: da inserire nel report della pull request.
+
 ## [0.1.88] - 2026-11-19
 
 - La sponda corregge la compenetrazione residua senza applicare un
