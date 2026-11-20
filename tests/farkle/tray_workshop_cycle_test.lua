@@ -1,8 +1,8 @@
 -- Production F8 workshop: preserve all selectable g3d tray styles.
 local Workshop=require('src.farkle.tabletop').tray_workshop
 local saved=Workshop.current
-Workshop.current='book'
-for _,expected in ipairs{'current','A','B','C','book'} do
+Workshop.current='wooden'
+for _,expected in ipairs{'book','current','A','B','C','wooden'} do
  local actual=Workshop.cycle()
  assert(actual==expected and Workshop.current==expected,
   'F8 style cycle changed at '..expected)
