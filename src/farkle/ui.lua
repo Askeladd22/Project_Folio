@@ -124,7 +124,9 @@ function M.build(which)
    header=rect(44,20,1832,72),
    -- The rear seam leaves room for a larger illustrated opponent.
     host=rect(0,0,1920,662),
-    portrait_lift=48,
+    -- Keep the rival in its original place as the table moves down,
+    -- opening real composition space for the airborne dice.
+    portrait_lift=96,
    rear_span=1280,
    -- One unified scorecard: the risk total is not stranded below the table.
    score_panel=rect(38,18,540,154),
