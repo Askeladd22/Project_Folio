@@ -81,6 +81,33 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
+## UI: anteprima delle decisioni (0.1.89)
+
+Il Tavolo del Mercante presenta le conseguenze della selezione attraverso
+`src/farkle/ui.lua`, senza introdurre una seconda fonte per il punteggio:
+`hud.actions.build` legge soltanto `rules.selection_option` e
+`rules.bank_status`. Sui dadi selezionati validi il comando **Accantona**
+mostra punti a rischio dopo l'azione e dadi ancora liberi; **Incassa**
+mostra i punti assicurabili e dichiara la fine del turno. Sotto le soglie,
+il testo indica quanti punti mancano. L'HUD contestuale ripete in forma
+compatta le due alternative, comprese le selezioni parziali o non valide.
+
+Le etichette sono **anteprime**: non eseguono `rules.take` o
+`rules.bank_turn` durante il disegno, non modificano il lancio fisico e
+non alterano le hitbox. I pulsanti eseguono le azioni esclusivamente
+attraverso le callback già esistenti del controller. Il colore ocra sul
+comando primario è un indizio visivo aggiuntivo, non l'unico mezzo per
+distinguere le azioni; resta disponibile la modalità alto contrasto.
+
+Regressioni interessate:
+`tests/hud/ui_v2_decision_preview_test.lua` per soglie, incasso diretto
+e hot dice; `tests/hud/ui_v2_minimal_table_test.lua` per la leggibilità
+dei feedback e la geometria. Da verificare ancora con LÖVE reale su Windows:
+etichette a 1280×720, testo grande, ultrawide, contrasto e picking fisico.
+
+La proposta di fantasy-first è **ricerca**, non gameplay:
+`research/RQ-002_FANTASY_FIRST_UI.md`.
+
 ## Rendering e risorse
 
 g3d disegna il vassoio e i dadi 3D. Interfaccia, ritratto dell'avversario e
