@@ -103,7 +103,7 @@ non ripete le due anteprime Accantona/Incassa.
 `(60,538,1800,426)`, incluse coordinate di picking e selezione.
 Solo la proiezione e cambiata: la quota del bordo posteriore passa
 da **614 a 662** punti virtuali e il `pitch` canonico della camera
-da **1.00 a 1.12 rad**. Il `portrait_lift` aumenta da 48 a 96:
+da **1.00 a 1.16 rad** (prima iterazione: **1.12**, poi regolato a **1.16** per una vista leggermente più dall'alto). `yaw=0.00`, `distance=52` e lock restano invariati. Il `portrait_lift` aumenta da 48 a 96:
 il Rivale resta alla quota originale mentre il tavolo scende,
 creando 61 punti virtuali di separazione invece di trascinare
 in basso anche il ritratto. La combinazione mantiene la dimensione
@@ -114,7 +114,7 @@ nessuna traslazione scollegata del renderer o modifica alla fisica.
 
 **QA:** `tests/hud/ui_v2_minimal_table_test.lua` protegge dimensioni,
 riga status e nuova quota; `tests/hud/ui_v2_projection_comfort_test.lua`
-controlla il fit comune, lo spazio utile e il pick rect invariato.
+controlla il fit comune, lo spazio utile e il pick rect invariato; ora vincola il preset 1.16, la profondità apparente del piano e la vicinanza del bordo frontale ai comandi.
 Le prove headless non dimostrano il comfort del mouse o l'aspetto
 finale sul monitor: serve QA visiva e lanci ripetuti su Windows, anche
 con gesti che puntano al bordo posteriore.
