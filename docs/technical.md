@@ -81,6 +81,40 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
+## Tavolo di legno game-ready, v0.1.93 (esperimento F8)
+
+**Scelta visiva:** variante `wooden` selezionata come default nel
+`tray_workshop`; `book` continua a mostrare il precedente tavolo
+decorativo in marmo. Premere **F8** per confrontare le due varianti e
+gli skin `current/A/B/C` senza riavviare, senza modificare il gameplay.
+
+**Origine:** `wooden_table_game_ready_asset.glb` allegato dall'utente,
+Pixel Life, CC BY 4.0. La sorgente completa da 12 MB non è inclusa
+nella PR: una silhouette triangolare *derivata*, compressa e tracciata
+in `resources/models/wooden_table_mesh.lua`, è utilizzata come
+fallback autosufficiente. La superficie usa la texture `wood.png`
+del progetto anziché l'atlante PBR originale. L'originale completo
+può essere aggiunto localmente in
+`resources/models/wooden_table_game_ready_asset.glb`, che verrà
+caricato dal loader GLB esistente (senza nuovo renderer). Per
+attribuzioni e modifiche vedere
+`resources/models/WOODEN_TABLE_CREDITS.md`.
+
+**Separazione di responsabilità:** `src/engine3d/g3d/live.lua`
+gestisce soltanto la scelta dell'asset grafico. Il modello
+decorativo ha un bordino rialzato (+0,24 unità mondo), mentre
+il `floor_model` rimane sul piano fisico `z=0` per ombre e
+contatto coerenti anche dove la mesh semplificata è aperta.
+Rimangono attive le pareti fisiche e il loro bordo visivo
+sottile. Nessuna variazione a `dice_schema`, contatti,
+hitbox, proiezione, RNG o Farkle.
+
+**Verifiche:** `tests/engine3d/wooden_board_contract_test.lua`
+e `scripts/tests/test_wooden_table_asset.py`, oltre alla
+suite F8 e agli screenshot Mesa. La compatibilità dei
+materiali del modello originale completo, le licenze di
+distribuzione e la leggibilità Windows sono ancora gate umani.
+
 ## UI 0.1.92 — Board centrata e Rivale davvero dietro il tavolo
 
 **Diagnosi delle catture 1280×720:** le precedenti correzioni di
