@@ -10,6 +10,40 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.91] - 2026-11-20
+
+**Stato:** fantasy del giocatore e UI di gestione della posta sul branch
+`feat/fantasy-stakes-hud-0.1.91`. Nessuna modifica alle meccaniche.
+
+### Aggiunto
+- Documento [`docs/player_fantasy.md`](docs/player_fantasy.md):
+  fantasy primaria approvata (sfidare l'alea con lancio e destrezza),
+  promesse e limiti, struttura dei desideri del giocatore, contratto UI,
+  ipotesi EX-F01/EX-F02 e prossimo gate falsificabile.
+- Barra della posta all'interno della scorecard: parte sicura in
+  salvia, parte ancora a rischio in cinabro, in proporzione
+  all'obiettivo e senza nuovi controlli o valuta.
+- Test headless `tests/hud/ui_v2_wager_track_test.lua` per zero,
+  segmenti, clipping oltre obiettivo e stato non modificato.
+- Contratti geometrici estesi per proteggere numeri e area dei D6.
+
+### Modificato
+- Scorecard 540×205 per ospitare la barra sotto i numeri, con una
+  sola superficie grafica e testi brevi. I valori restano autorevoli.
+- Indici di documentazione e link dalla visione canonica e dal README.
+- `docs/technical.md` aggiornato sui confini di sola lettura della UI.
+
+### Verifiche
+- Sorgenti e regole controllati alla baseline
+  `main@ded8bdc06f26510f54321a677ba86f9227a2cfee`.
+- **Test e CI da verificare sull'head di questa PR:** non dichiarare
+  PASS senza esecuzione e revisione dei log.
+- **Gate aperti:** screenshot Mesa/Windows a 720p e 1080p, modalità
+  alto contrasto e testo grande, collisioni/gesti mouse, A/B comprensione
+  del rischio; EX-F01 ed EX-F02 non eseguiti.
+- La documentazione della fantasy non rappresenta una nuova feature
+  competitiva né una prova di controllo statistico dei risultati.
+
 ## [0.1.90] - 2026-11-20
 
 **Stato:** nuova composizione reale dell'HUD e revisione dell'inquadratura
