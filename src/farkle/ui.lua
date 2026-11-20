@@ -122,11 +122,12 @@ function M.build(which)
   return {
    name='table_minimal',
    header=rect(44,20,1832,72),
-   -- The rear seam leaves room for a larger illustrated opponent.
-    host=rect(0,0,1920,662),
-    -- Keep the rival in its original place as the table moves down,
-    -- opening real composition space for the airborne dice.
-    portrait_lift=96,
+   -- Raise the playing surface into the central viewport,
+   -- without moving the g3d picking rectangle or the physical board.
+   host=rect(0,0,1920,520),
+   -- Let the rival meet the rear rail instead of floating above it.
+   -- Draw order still puts the 3D table in front of the PNG portrait.
+   portrait_lift=40,
    rear_span=1280,
    -- One unified scorecard: the risk total is not stranded below the table.
    score_panel=rect(38,18,540,205),
@@ -157,9 +158,10 @@ function M.build(which)
    -- The accepted-dice register is just to the LEFT of the plaque.
   shelf=rect(56,965,328,53),
    shelf_label=rect(58,936,326,24),
-   -- The scoring/picking region is unchanged; only the rear 3D
-   -- projection is lowered to give the opponent and throw more space.
-  tray=rect(60,538,1800,426),
+   -- Include the exposed rear of the board in the same input/render
+   -- viewport. Keep the *front* border aligned with the command rail.
+   -- This is screen-space picking only: no world or physics changes.
+  tray=rect(60,470,1800,494),
   message=rect(470,969,980,20),
   idle_message=rect(470,969,980,20),
   context_actions={rect(414,993,185,36),rect(414,1032,185,36)},
@@ -477,7 +479,7 @@ function S.portrait_bounds(w,h,layout)
  -- slips behind the g3d table top, avoiding floating or pasted-on figures.
  local bottom=(layout.host and layout.host.y+layout.host.h or layout.tray.y)+35
   -(layout.portrait_lift or 0)
- local maxHeight=math.max(1,math.min(580,bottom-12))
+ local maxHeight=math.max(1,math.min(470,bottom-12))
  local scale=math.min(800/w,maxHeight/h)
  local outW,outH=w*scale,h*scale
  local x=layout.tray.x+layout.tray.w*.5-outW*.5

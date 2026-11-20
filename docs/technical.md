@@ -81,6 +81,46 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
+## UI 0.1.92 — Board centrata e Rivale davvero dietro il tavolo
+
+**Diagnosi delle catture 1280×720:** le precedenti correzioni di
+`pitch` lasciavano il tavolo nella fascia più bassa dello schermo
+e una distanza vuota tra il bordo posteriore e il PNG dell'avversario.
+La board sembrava un pannello sospeso davanti alla bottega.
+
+**Geometria corretta:** in `src/engine3d/view.lua` la coordinata
+verticale proiettata include `cos(pitch)*y - sin(pitch)*z`;
+per un piano orizzontale, ridurre pitch verso 0 espande
+la profondità visibile. La proposta passa da 1.16 a
+`pitch=0.80`, con `distance=52`, `yaw=0` e camera bloccata.
+
+**Composizione:** il bordo posteriore scende in termini di
+quota numerica da 662 a **520** (sale sullo schermo). Il
+Rivale ha un limite di altezza **470** e `portrait_lift=40`:
+il suo bordo basso termina solo 5 unità virtuali sopra il
+retro del tavolo, anziché fluttuare 61 unità sopra.
+Nel modello proiettivo, la superficie passa da circa 319
+a **403 unità virtuali di profondità**, mantenendo una scala
+di circa **494** contro 503. Sono grandezze del proiettore,
+**non** risultati di comfort o divertimento misurati.
+
+**Viewport fisico:** il vecchio `tray=(60,538,1800,426)`
+iniziava più in basso del nuovo bordo posteriore (520),
+impedendo il picking dei dadi vicino al retro. Per questo
+l'area di schermo, condivisa tra rendering 3D e selezione
+mouse, è ora `(60,470,1800,494)`; la posizione del bordo
+anteriore **non cambia** (y=964). Le collisioni e le
+posizioni fisiche dei dadi nel mondo restano identiche.
+Niente doppia proiezione o spostamento grafico scollegato
+dall'input.
+
+**Gate:** test Lua per scala, bordi del tray, dadi sul retro,
+limiti ritratto, allineamento con comandi e stabilità del
+lancio; smoke Mesa e confronto screenshot; UAT manuale
+Windows per comodità dei gesti e chiarezza in movimento.
+Questa composizione è un **esperimento**, non una scelta
+canonica confermata dal playtest.
+
 ## UI 0.1.91 — Visualizzare la posta senza aumentare i controlli
 
 La scorecard è ora un **unico pannello** con punteggio sicuro, provvisorio,

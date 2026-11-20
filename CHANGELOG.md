@@ -10,6 +10,36 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.92] - 2026-11-20
+
+**Stato:** revisione della composizione 2.5D, ancora sperimentale
+nel branch `feat/board-framing-true-topdown-0.1.92` (PR #149).
+
+### Modificato
+- Prospettiva del tavolo: `pitch=0.80 rad` (da 1.16 nella baseline).
+  In `view.project` un pitch minore mostra davvero più superficie.
+- Bordo posteriore: `host.h=520` (da 662), con tavolo più vicino
+  al centro della schermata e superficie di gioco visivamente più ampia.
+- Rivale: altezza massima del PNG 470 (da 580) e
+  `portrait_lift=40` (da 96), per farlo sedere dietro il bordo
+  invece di lasciarlo fluttuare sopra una fascia vuota.
+- Viewport/picking 2D: `tray=(60,470,1800,494)`
+  (da `(60,538,1800,426)`) per includere il bordo posteriore
+  sollevato; il margine anteriore resta a y=964, sopra i comandi.
+
+### Conservato
+- Sei D6 fisici, gravità, collisioni, forza e spin, selezione,
+  regole Farkle, modello di scena e renderer g3d. Yaw=0,
+  distanza camera=52, proiezione comune per mesh e picking.
+- Nessuna regolazione nascosta dell'alea o correzione delle facce.
+
+### Verifica
+- Test di proiezione, frame/picking retrostante, ritratto,
+  interazione e geometria a 720p/1080p/ultrawide aggiornati.
+- **CI da confermare sull'head finale.** Smoke Mesa e screenshot
+  non sostituiscono UAT Windows del gesto fisico di lancio.
+- PR lasciata draft; nessuna integrazione senza valutazione visiva.
+
 ## [0.1.91] - 2026-11-20
 
 **Stato:** fantasy del giocatore e UI di gestione della posta sul branch

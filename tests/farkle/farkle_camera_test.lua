@@ -33,10 +33,10 @@ for _,width in ipairs{1280,1920,2560} do
  local right=V.project(extents[2]+.4,extents[3]-.4,scene.box.border_height)
  local farScale=select(4,V.project(0,region.y_back,.6))
  local nearScale=select(4,V.project(0,region.y_front,.6))
- -- A 1.16-radian approved camera gives a 1.24004 near/far ratio;
- -- the old strict <1.24 gate came from the preceding 1.12 preset.
- assert(nearScale/farScale>1.20 and nearScale/farScale<1.27,
-  'approved perspective camera must preserve clear depth without exaggeration')
+ -- In the player-seat 0.80 rad preset, depth foreshortening is
+ -- milder than the previous 1.16 rad near/far ratio.
+ assert(nearScale/farScale>1.16 and nearScale/farScale<1.22,
+  'player-seat camera must preserve perspective without excessive flattening')
  local fraction=(right-left)*k/width
  assert(fraction>=.63 and fraction<=.70,'table must occupy 63–70% of screen width')
  assert(math.abs(cy+rear*k-(layout.host.y+layout.host.h)*factor)<1,'rear rail disconnected from portrait')

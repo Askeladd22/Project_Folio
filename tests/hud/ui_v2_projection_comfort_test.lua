@@ -7,14 +7,17 @@ local Scene=require('src.data.dice_schema').scene
 local layout=Layout.build()
 assert(Layout.validate(layout))
 assert(Scene.tray_camera.locked and
- math.abs(Scene.tray_camera.pitch-1.16)<1e-9 and
+ math.abs(Scene.tray_camera.pitch-0.80)<1e-9 and
  Scene.tray_camera.yaw==0 and Scene.tray_camera.distance==52,
- 'approved modest top-down preset must retain yaw, distance and camera lock')
-assert(layout.tray.x==60 and layout.tray.y==538 and
- layout.tray.w==1800 and layout.tray.h==426,
- 'do not move the physical mouse hitbox to fake a camera fix')
-assert(layout.host.y+layout.host.h>=650,
- 'rear rail should be lower than the original 614px opponent seam')
+ 'actual overhead camera preset must retain yaw, distance and lock')
+assert(layout.tray.x==60 and layout.tray.y==470 and
+ layout.tray.w==1800 and layout.tray.h==494 and
+ layout.tray.y+layout.tray.h==964,
+ 'screen-space picking must include the newly visible back edge while keeping the same front')
+assert(layout.host.y+layout.host.h>=510 and
+ layout.host.y+layout.host.h<=530 and
+ layout.host.h>layout.tray.y,
+ 'board must be centered while its rear stays within the picking viewport')
 
 local previousDice=dice
 dice={}
@@ -24,21 +27,25 @@ local owner={}
 local extents={-14,14,Scene.regions.unified.y_back,
  Scene.regions.unified.y_front}
 local cx,cy,scale=Fit(owner,layout.tray,View,extents)
-assert(type(scale)=='number' and scale>460,
- 'lowering the camera must not make physical dice hard to read')
+assert(type(scale)=='number' and scale>=490,
+ 'deeper board must retain close to the old on-screen die size')
 assert(math.abs(View.pitch-Scene.tray_camera.pitch)<1e-9)
 local _,rear=View.project(0,extents[3],0)
 local rearScreen=cy+rear*scale
 assert(math.abs(rearScreen-(layout.host.y+layout.host.h))<1e-5,
  'projected rear floor and illustrated opponent seam must coincide')
 local front=owner.trayProjection.floorEnd
-assert(front>880 and front<910,
- 'a slightly top-down view must shorten the visible tabletop depth')
+assert(front>905 and front<940 and
+ front-(layout.host.y+layout.host.h)>390,
+ 'the tabletop must fill the center of the scene with a genuinely deep playfield')
 local _,apron=View.project(0,extents[4]+.4,-Scene.box.border_height)
 local apronY=cy+apron*scale
 assert(apronY<=layout.footer.y and layout.footer.y-apronY<=20,
  'front plank must stay close to the command plaque after camera tilt')
 assert(cx>layout.tray.x and cx<layout.tray.x+layout.tray.w)
 assert(owner.trayProjection.rect==layout.tray)
+local _,backDie=View.project(0,extents[3],Scene.box.border_height/2)
+assert(cy+backDie*scale>=layout.tray.y,
+ 'raised back-of-board dice must remain pickable in shared screen coordinates')
 dice=previousDice
-print('PASS lowered merchant table: shared projection, useful die scale and unchanged physical hitbox')
+print('PASS true overhead Merchant board: deeper playfield, aligned projection, useful die scale and unchanged hitbox')

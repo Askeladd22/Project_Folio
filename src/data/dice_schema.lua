@@ -62,9 +62,9 @@ return {
         tray_camera = {
             locked = true,
             yaw = 0.00,
-            -- Slightly more top-down: keep physical dice and picking aligned
-            -- to the same projection without changing any physics settings.
-            pitch = 1.16,
+            -- Player-seat view: a genuinely overhead angle exposes
+            -- useful tabletop depth while preserving the same g3d physics.
+            pitch = 0.80,
             distance = 52,
         },
         box = {
