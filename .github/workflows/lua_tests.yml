@@ -105,3 +105,4 @@ jobs:
           PYTHONPATH=scripts python3 scripts/tests/test_ui_v2_review.py
           PYTHONPATH=scripts python3 scripts/tests/test_ui_v2_evidence.py
           PYTHONPATH=. python3 scripts/tests/test_love_runtime.py
+          PYTHONPATH=. python3 scripts/tests/test_wooden_table_asset.py
