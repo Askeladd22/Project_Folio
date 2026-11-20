@@ -17,6 +17,13 @@ assert(Layout.contains(layout.score_panel,layout.objective_caption))
 assert(Layout.contains(layout.score_panel,layout.objective_value))
 assert(Layout.contains(layout.score_panel,layout.turns_caption))
 assert(Layout.contains(layout.score_panel,layout.turns_value))
+assert(Layout.contains(layout.score_panel,layout.stakes_caption)
+ and Layout.contains(layout.score_panel,layout.stakes_track),
+ 'the wager track must remain part of the existing scorecard')
+assert(Layout.overlap(layout.stakes_track,layout.objective_value)==0
+ and Layout.overlap(layout.stakes_track,layout.turns_value)==0
+ and Layout.overlap(layout.stakes_track,layout.tray)==0,
+ 'wager progress must not hide numerical scores or physical dice')
 assert(layout.risk_caption.y==layout.secured_caption.y)
 assert(layout.risk_value.y==layout.secured_value.y)
 assert(layout.footer.y>=layout.tray.y+layout.tray.h
