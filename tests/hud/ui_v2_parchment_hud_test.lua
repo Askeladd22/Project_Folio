@@ -36,7 +36,9 @@ local gfx=setmetatable({
   drawCalls[#drawCalls+1]={mode=mode,x=x,y=y,w=rw,h=rh,c=currentColor}
  end,
 },{__index=function()return function()end end})
-love={graphics=gfx,mouse={getPosition=function()return mouseX,mouseY end}}
+love={filesystem={getInfo=function(path)
+ return path=='resources/scenes/printshop-room.png' and {type='file'} or nil
+end},graphics=gfx,mouse={getPosition=function()return mouseX,mouseY end}}
 local Hud=require('src.farkle.ui').hud
 local layout=Layout.build()
 assert(Layout.validate(layout))
