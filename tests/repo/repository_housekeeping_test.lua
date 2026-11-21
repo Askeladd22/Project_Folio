@@ -18,6 +18,7 @@ for _,path in ipairs{
  'resources/ui/startup_splash/love.png',
  'resources/dice/1.png',
  'resources/models/wooden_table_mesh.lua',
+ 'resources/models/old_wooden_table_fallback.lua',
  'resources/models/WOODEN_TABLE_CREDITS.md',
  'resources/models/old_wooden_table.glb',
  'src/engine3d/g3d/live.lua',
