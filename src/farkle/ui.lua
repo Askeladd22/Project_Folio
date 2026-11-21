@@ -206,7 +206,7 @@ function M.validate(layout)
    end
   end
   if not M.contains(layout.book,layout.page_main) or
-     not M.contains(layout.page_main,layout.tray) or
+     not M.contains(bounds,layout.tray) or
      not M.contains(layout.page_main,layout.shelf) or
      not M.contains(layout.header,layout.help) or
      not M.contains(layout.header,layout.runmenu) then
@@ -246,7 +246,7 @@ function M.validate(layout)
      not M.contains(layout.footer,layout.idle_message) then
    return false,'invalid unified scorecard or compact command rail'
   end
-  for _,r in ipairs{layout.shelf,layout.header,layout.message,
+  for _,r in ipairs{layout.header,layout.message,
     layout.primary,layout.secondary,layout.single_action,
     layout.idle_message,layout.help,layout.runmenu} do
    if M.overlap(r,layout.tray)>0 and r~=layout.primary and r~=layout.secondary and r~=layout.single_action and r~=layout.message and r~=layout.idle_message then
