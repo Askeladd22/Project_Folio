@@ -61,7 +61,9 @@ local function image(w,h)
  return {getWidth=function() return w end,getHeight=function() return h end}
 end
 local font={getWidth=function(_,s) return #s*8 end,getHeight=function() return 16 end}
-love={graphics=setmetatable({
+love={filesystem={getInfo=function(path)
+ return path=='resources/scenes/printshop-room.png' and {type='file'} or nil
+end},graphics=setmetatable({
  newImage=function() return image(1920,1080) end,newFont=function() return font end,
  newQuad=function(x,y,w,h) return {width=w,height=h} end,
  draw=function(im,q,x,y,angle,sx,sy)
