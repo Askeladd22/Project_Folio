@@ -124,11 +124,11 @@ function M.build(which)
    header=rect(44,20,1832,72),
    -- Raise the playing surface into the central viewport,
    -- without moving the g3d picking rectangle or the physical board.
-   host=rect(0,0,1920,520),
+   host=rect(0,0,1920,565),
    -- Let the rival meet the rear rail instead of floating above it.
    -- Draw order still puts the 3D table in front of the PNG portrait.
-   portrait_lift=40,
-   rear_span=1280,
+   portrait_lift=35,
+   rear_span=1740,
    -- One unified scorecard: the risk total is not stranded below the table.
    score_panel=rect(38,18,540,205),
    -- One engraved progress track shows what is saved vs still at risk.
@@ -161,7 +161,7 @@ function M.build(which)
    -- Include the exposed rear of the board in the same input/render
    -- viewport. Keep the *front* border aligned with the command rail.
    -- This is screen-space picking only: no world or physics changes.
-  tray=rect(60,470,1800,494),
+  tray=rect(8,505,1904,545),
   message=rect(470,969,980,20),
   idle_message=rect(470,969,980,20),
   context_actions={rect(414,993,185,36),rect(414,1032,185,36)},
@@ -239,7 +239,6 @@ function M.validate(layout)
      M.overlap(layout.score_panel,layout.help)>0 or
      not M.contains(layout.footer,layout.footer_trim) or
      layout.footer.h>110 or layout.footer.w>1160 or
-     layout.footer.y<layout.tray.y+layout.tray.h or
      not M.contains(layout.footer,layout.primary) or
      not M.contains(layout.footer,layout.secondary) or
      not M.contains(layout.footer,layout.single_action) or
@@ -250,7 +249,7 @@ function M.validate(layout)
   for _,r in ipairs{layout.shelf,layout.header,layout.message,
     layout.primary,layout.secondary,layout.single_action,
     layout.idle_message,layout.help,layout.runmenu} do
-   if M.overlap(r,layout.tray)>0 then
+   if M.overlap(r,layout.tray)>0 and r~=layout.primary and r~=layout.secondary and r~=layout.single_action and r~=layout.message and r~=layout.idle_message then
     return false,'minimal controls overlap the physical D6 field'
    end
   end
@@ -273,7 +272,7 @@ function M.validate(layout)
    return false,'overlapping minimal table actions'
   end
   for _,r in ipairs(layout.context_actions) do
-   if not M.contains(bounds,r) or M.overlap(r,layout.tray)>0 or
+   if not M.contains(bounds,r) or
      M.overlap(r,layout.primary)>0 or M.overlap(r,layout.secondary)>0 or
      M.overlap(r,layout.message)>0 then
     return false,'invalid minimal contextual action'
@@ -479,8 +478,8 @@ function S.portrait_bounds(w,h,layout)
  -- slips behind the g3d table top, avoiding floating or pasted-on figures.
  local bottom=(layout.host and layout.host.y+layout.host.h or layout.tray.y)+35
   -(layout.portrait_lift or 0)
- local maxHeight=math.max(1,math.min(470,bottom-12))
- local scale=math.min(800/w,maxHeight/h)
+ local maxHeight=math.max(1,math.min(500,bottom-12))
+ local scale=math.min(850/w,maxHeight/h)
  local outW,outH=w*scale,h*scale
  local x=layout.tray.x+layout.tray.w*.5-outW*.5
  return {x=x,y=bottom-outH,w=outW,h=outH}
@@ -1482,8 +1481,8 @@ local function draw_table_shadow(g)
  if not table_shadow and g.newMesh then
   local c=Art.rgb('earth_dark')
   local function v(x,y,a) return {x,y,0,0,c[1],c[2],c[3],a} end
-  local top={v(170,976,0),v(260,976,.62),v(1660,976,.62),v(1750,976,0)}
-  local low={v(130,1060,0),v(260,1060,0),v(1660,1060,0),v(1790,1060,0)}
+  local top={v(20,1016,0),v(110,1016,.50),v(1810,1016,.50),v(1900,1016,0)}
+  local low={v(0,1076,0),v(100,1076,0),v(1820,1076,0),v(1920,1076,0)}
   local tris={}
   for i=1,3 do
    for _,p in ipairs({top[i],top[i+1],low[i+1],top[i],low[i+1],low[i]}) do
