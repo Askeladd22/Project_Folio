@@ -371,7 +371,7 @@ function love.update(dt)
   app.saved=true
   app.save_note=ok and 'Partita registrata.' or ('Registro non salvato: '..tostring(err))
  end
- if os.getenv('MERCHANT_V4_SMOKE')=='1' then
+ if os.getenv('OPPONENT_V4_SMOKE')=='1' then
   app.frames=app.frames+1
   if app.frames>=30 then love.event.quit(0) end
  end

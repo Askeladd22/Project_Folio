@@ -41,7 +41,7 @@ jobs:
           luajit tests/labs/opponent_wager_aldine_ui_test.lua
       - name: Standalone UI smoke with software OpenGL
         env:
-          MERCHANT_V4_SMOKE: '1'
+          OPPONENT_V4_SMOKE: '1'
           LIBGL_ALWAYS_SOFTWARE: '1'
           ALSOFT_DRIVERS: 'null'
         run: timeout 40s xvfb-run -a -s '-screen 0 1280x720x24' love experiments/opponent_wager_lab

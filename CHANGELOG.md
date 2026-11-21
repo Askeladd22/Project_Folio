@@ -16,7 +16,7 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 
 ### Modificato
 - Il test del posizionamento dei sei dadi iniziali mantiene le asserzioni ma adotta il nome neutro `opponent_opening_dice_test.lua`.
-- Il percorso di screenshot Mesa usa `PROJECT_FOLIO_OPPONENT_REVIEW` in workflow e smoke, senza cambiare i casi di acquisizione.
+- I percorsi di screenshot Mesa usano `PROJECT_FOLIO_OPPONENT_REVIEW` (produzione) e `OPPONENT_V4_SMOKE` (lab V4), sincronizzati con i rispettivi workflow senza cambiare gli scenari.
 - Rimossi il vecchio riferimento testuale al tasto Spazio nel runtime e la falsa fixture `roll` nel test della presa diretta.
 
 ### Verifiche
