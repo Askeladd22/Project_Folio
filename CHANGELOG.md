@@ -17,7 +17,7 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 ### Fixed
 - The SAT pair solver no longer skips two sleeping dice when their oriented boxes still overlap. A sleeping overlap receives positional correction without a spurious impulse or forced wake-up.
 - `stage_kept` now probes the physical D6 collider before choosing a rear-row slot, selecting a deterministic vacant alternative instead of teleporting a scored solid cube into a stationary neighbour. Fixed six-D6 scoring, face orientation and pickup semantics are unchanged.
-- A final non-swept SAT correction runs **after** tray-region containment and **before** settling the dice, preventing containment from silently leaving a new overlap.
+- A final non-swept SAT correction runs **only when** tray-region containment actually moved a die, and **before** settling the dice. This prevents new overlaps without doubling SAT work on ordinary frames.
 - Added `run_game.vbs`, a Windows GUI launcher that starts `love.exe` directly without a visible CMD window; preserved `run_game.cmd` for diagnostics.
 
 ### Validation
