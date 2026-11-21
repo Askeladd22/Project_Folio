@@ -110,7 +110,7 @@ for _,screen in ipairs{{1280,720},{1920,1080},{2560,1440}} do
       a.w==b.w and a.h==b.h,'reward click region changed')
     end
    elseif mode=='help' then
-    assert(captured('1. Press Space',445,333,66))
+    assert(captured('1. Right-click a die',445,333,66))
     assert(captured('Reach the target',445,333+6*76,66))
    elseif mode=='scores' then
     assert(captured('Singles:',445,329,56))
