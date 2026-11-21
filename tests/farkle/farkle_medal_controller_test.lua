@@ -5,13 +5,19 @@ assert(type(U.activate_reference)=='function','medal physical adapter missing')
 dice={};for i=1,6 do dice[i]={kept=false} end
 U.log=function() end
 local calls={};U.onRollRequest=function(_,ids) calls[#calls+1]=ids end
+local manualRecovery
+U.onManualRollBegin=function(ids) manualRecovery=ids end
+U.onManualRollRelease=function() return true end
 U.game=R.new();assert(R.equip_reference(U.game,'reroll_gold'))
 assert(R.start(U.game));assert(R.settle(U.game,{1,5,2,3,4,6}));U:sync()
 R.toggle(U.game,1);R.take(U.game);U:sync()
 assert(U:activate_reference({3,4}));assert(#calls==1 and #calls[1]==2)
 assert(dice[1].kept and dice[2].kept and not dice[3].kept and dice[6].kept)
 assert(not U:activate_reference({2}));assert(#calls==1)
-U.state='physics_error';U:retry_physical();assert(#calls==2 and M.remaining(U.game)==0)
+U.state='physics_error';U:retry_physical()
+assert(#calls==1 and #manualRecovery==2 and manualRecovery[1]==3 and manualRecovery[2]==4,
+ 'human technical retry must queue physical grip instead of auto-launch')
+assert(M.remaining(U.game)==0)
 U:onDiceSettled({{index=3,value=2},{index=4,value=3}})
 assert(U.game.hand[2]==5 and U.game.used[1] and U.game.phase=='ready' and U.game.pot==10)
 assert(U.state=='placing' and dice[2].kept and dice[1].kept,'retained dice must stay excluded after settlement')
