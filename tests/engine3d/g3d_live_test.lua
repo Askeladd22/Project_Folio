@@ -44,7 +44,7 @@ assert(not package.loaded['lib.g3d'],'headless geometry must not load GPU')
 print('PASS production g3d: default-ready, single-renderer, shadows, folio rules and highlights')
 
 local Scene=require('src.engine3d.g3d.scene').scenery
-for _,style in ipairs({'wooden_compact','wooden','book','current','A','B','C'}) do
+for _,style in ipairs({'old_wooden','wooden_compact','wooden','book','current','A','B','C'}) do
  local skin=Scene.style_vertices(M,{-9.2,9.2,-3.8,3.8},.74,style)
  assert(#skin>=4*3*8*6,'g3d renderer missing F8 style '..style)
  for _,vertex in ipairs(skin) do
