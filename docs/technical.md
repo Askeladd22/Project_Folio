@@ -385,7 +385,7 @@ illustrazioni rimangono elementi 2D.
   `resources/shaders/dice_lit.glsl` forniscono il rendering.
 - `resources/dice/1.png` … `6.png` forniscono le facce D6.
 - `resources/scenes/printshop-room.png` è il fondale della bottega senza persone;
-  `resources/opponents/opponent.png` è il PNG del personaggio Opponent, riutilizzato temporaneamente come illustrazione del default generico `rival` finché non esiste `resources/opponents/rival.png` (preferito automaticamente quando disponibile). L'ID `opponent` resta selezionabile solo esplicitamente.
+  `resources/opponents/opponent.png` è il ritratto modulare dell'identità predefinita neutra `opponent`. Un altro personaggio richiede un PNG trasparente dedicato. Se il ritratto di default manca, resta visibile la stanza pulita, senza reincorporare un personaggio nel fondale.
 - `resources/textures/wood.png` è la texture condivisa dal tavoliere 3D
   e dal laboratorio g3d. I vecchi JPEG del Opponent per legno e intaglio
   sono stati eliminati e non devono più essere caricati. Il PNG storico
