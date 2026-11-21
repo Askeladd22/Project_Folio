@@ -1578,9 +1578,21 @@ local function draw_table_footer(u,layout,actions)
  local choosing=s.phase=='ready' and not s.scored and not next(s.selected) and not u.physicalFailure
  local notice_rect=(visible_controls==0 or choosing)
    and layout.idle_message or layout.message
- write_fitted(compact_status(u),notice_rect,choosing and 21 or 19,14,
-   (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
-   'center')
+ -- During the rival's turn the printed Opponent note already owns the
+ -- explanation. Avoid duplicating tiny text on the front wood rail.
+ local notice=u.duel and u.duel.actor=='opponent' and '' or compact_status(u)
+ if notice~='' then
+  if visible_controls==0 then
+   -- A short dark ink strip, inset into the wooden apron, replaces the
+   -- low-contrast bare text shown by the old floating HUD.
+   g.setColor(unpack(Art.rgba('earth_dark',.88)))
+   g.rectangle('fill',notice_rect.x,notice_rect.y-3,
+     notice_rect.w,notice_rect.h+6,2)
+  end
+  write_fitted(notice,notice_rect,choosing and 23 or 22,15,
+    (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
+    'center')
+ end
  local primary,secondary=layout.primary,layout.secondary
  if not has_context then
   if visible_controls==1 then
@@ -1652,11 +1664,16 @@ function V.draw(u)
     or d.last_take and ('Last set aside: +'..d.last_take..' pt ('..d.last_count..' dice)')
     or (d.actor=='opponent' and 'PREPARING' or 'WAITING')
   write_fitted(last,{x=mr.x+18,y=mr.y+113,w=mr.w-36,h=27},18,13,paper_muted)
-  local ar=layout.opponent_action
-  ledger_sheet(ar,Art.rgba('surface',.94))
-  write_fitted('OPPONENT MOVE',{x=ar.x+15,y=ar.y+9,w=ar.w-30,h=21},16,13,paper_muted)
-  write_fitted(d.move or 'WAITING',{x=ar.x+15,y=ar.y+34,w=ar.w-30,h=31},23,17,paper_ink)
-  write_fitted(d.intent or '',{x=ar.x+15,y=ar.y+75,w=ar.w-30,h=22},17,12,paper_muted)
+  -- The rival's move is written only while they are actually playing.
+  -- On the player's turn this area reveals the printshop artwork instead
+  -- of displaying a contradictory "Opponent Move / Your Turn" note.
+  if d.actor=='opponent' and not d.winner then
+   local ar=layout.opponent_action
+   ledger_sheet(ar,Art.rgba('surface',.94))
+   write_fitted('OPPONENT MOVE',{x=ar.x+15,y=ar.y+9,w=ar.w-30,h=21},16,13,paper_muted)
+   write_fitted(d.move or 'WAITING',{x=ar.x+15,y=ar.y+34,w=ar.w-30,h=31},23,17,paper_ink)
+   write_fitted(d.intent or '',{x=ar.x+15,y=ar.y+75,w=ar.w-30,h=22},17,12,paper_muted)
+  end
   ledger_sheet(layout.duel_turn,Art.rgba('surface',.94))
   write_fitted(d.winner and (d.winner=='player' and 'YOU WON THE DUEL' or 'OPPONENT WINS')
    or ('TURN · '..(d.actor=='player' and 'YOU' or 'OPPONENT')),

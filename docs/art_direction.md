@@ -45,7 +45,10 @@ composizione della bottega raccontano banca e rischio; un foglietto
 separato illustra il turno e le scelte dell'Opponent. Pergamena,
 inchiostro, doppie righe sottili e righello inciso sostituiscono il
 lessico dei pannelli digitali senza perdere accessibilità, numeri,
-azioni o stato del tiro. Nessun nuovo asset, stato di gameplay o carta
+azioni o stato del tiro. La nota delle scelte dell'Opponent compare
+**solo** durante il suo turno; il giocatore legge una breve istruzione
+incisa sulla fascia anteriore del tavolo. I toast che duplicano banca
+o Farkle sono soppressi durante il duello. Nessun nuovo asset, stato di gameplay o carta
 obbligatoria è introdotto.
 
 - Fondale senza personaggi: `resources/scenes/printshop-room.png`.

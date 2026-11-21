@@ -141,8 +141,12 @@ function U:act(name,fn)
     d.intent=d.actor=='player' and 'You won the duel!' or 'Opponent won the duel!'
    else d.intent=d.actor=='player' and 'Points secured. Opponent plays next.' or 'Opponent banked its points.' end
   end
-  if name=='bank' then Toasts.show('Banked: +'..(self.lastBank or 0)..' pts')
+  -- Duel scores and Farkle losses are already in the printed ledgers.
+  -- Keep old toasts only for the historical solo regression mode.
+  if not self.duel then
+   if name=='bank' then Toasts.show('Banked: +'..(self.lastBank or 0)..' pts')
    elseif name=='accept_bust' then Toasts.show('Farkle: turn points lost') end
+  end
  end
 end
 function U:begin_physical(indices,technical,gesture,manual)
@@ -362,7 +366,7 @@ function U:onDiceSettled(values)
    self.duel.intent=self.duel.actor=='opponent' and 'Opponent lost its unbanked points.' or 'Your unbanked points are lost.'
    self.duel.wait=2.2
   end
-  Toasts.show('Farkle: turn over')
+  if not self.duel then Toasts.show('Farkle: turn over') end
  end
  return true
 end

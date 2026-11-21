@@ -20,6 +20,7 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 - Removed the unreachable campaign-selection frontend (~344 source lines), its schema/localization/registration and its obsolete menu-specific tests. New Game still enters only Opponent Duel.
 - Synced active technical/art-direction docs and preserved historical research records instead of deleting experimental provenance.
 - Repaired the Mesa Opponent screenshot fixture: it now boots `duel` and captures actual player bank, 3D kept dice and the rival's selection/set-aside/decision stages, rather than the retired solo-mode HUD.
+- Removed the redundant Opponent-move note from the player's turn, gave front-rail instructions a readable ink strip and suppressed dueling score toasts that duplicated the printed ledger.
 
 ### Verification
 - Automated Lua 5.4/LuaJIT, Python and Mesa gates: pending for this commit.
