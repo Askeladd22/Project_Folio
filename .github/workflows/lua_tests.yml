@@ -44,16 +44,16 @@ jobs:
           set -eu
           find src tests experiments -name '*.lua' -type f -print0 | xargs -0 -n 1 luac5.4 -p
           luac5.4 -p main.lua conf.lua lib/core.lua
-      - name: Merchant table geometry contract (independent gate)
+      - name: Opponent table geometry contract (independent gate)
         run: |
           set -eu
           lua5.4 -e 'unpack=table.unpack' tests/hud/ui_v2_layout_contract_test.lua
           luajit tests/hud/ui_v2_layout_contract_test.lua
-      - name: Experimental Merchant AI duel (independent gate)
+      - name: Experimental Opponent AI duel (independent gate)
         run: |
           set -eu
-          lua5.4 -e 'unpack=table.unpack' tests/labs/merchant_duel_ai_test.lua
-          luajit tests/labs/merchant_duel_ai_test.lua
+          lua5.4 -e 'unpack=table.unpack' tests/labs/opponent_duel_ai_test.lua
+          luajit tests/labs/opponent_duel_ai_test.lua
       - name: Lua 5.4 headless tests
         run: |
           set -eu
@@ -82,11 +82,11 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE: '1'
           ALSOFT_DRIVERS: 'null'
         run: timeout 60s xvfb-run -a love .
-      - name: Merchant table interaction and composition (Mesa)
+      - name: Opponent table interaction and composition (Mesa)
         env:
           MANUSCRIPT_FARKLE_HUD_SMOKE: '1'
           PROJECT_FOLIO_MERCHANT_REVIEW: '1'
-          MANUSCRIPT_AUDIT_OUT: ${{ runner.temp }}/merchant-table
+          MANUSCRIPT_AUDIT_OUT: ${{ runner.temp }}/opponent-table
           LIBGL_ALWAYS_SOFTWARE: '1'
           ALSOFT_DRIVERS: 'null'
         run: |
@@ -94,11 +94,11 @@ jobs:
           timeout 75s xvfb-run -a -s '-screen 0 1920x1080x24' love . ||
             { cat "$MANUSCRIPT_AUDIT_OUT/hud-smoke.log"; exit 1; }
           cat "$MANUSCRIPT_AUDIT_OUT/hud-smoke.log"
-      - name: Save merchant table frames
+      - name: Save opponent table frames
         uses: actions/upload-artifact@v4
         with:
-          name: merchant-table
-          path: ${{ runner.temp }}/merchant-table/merchant-*.png
+          name: opponent-table
+          path: ${{ runner.temp }}/opponent-table/opponent-*.png
           if-no-files-found: error
       - name: Python source tests
         run: |

@@ -38,7 +38,7 @@ class UiReviewManifestTests(unittest.TestCase):
         for scene in (
             "physical-group-held", "accessibility-on", "help",
             "manual-pair", "upgrade-fixture", "medal-fixture",
-            "folio", "merchant-live",
+            "folio", "opponent-live",
         ):
             self.assertIn(scene, SCENES)
 
@@ -66,7 +66,7 @@ class UiReviewManifestTests(unittest.TestCase):
             self.assertFalse("manual_visual_qa_approved" in str(frames))
             gallery = report_html(frames, "abc123")
             self.assertIn("non ancora approvate visivamente", gallery)
-            self.assertIn("hud-usability-1920-merchant-live.png", gallery)
+            self.assertIn("hud-usability-1920-opponent-live.png", gallery)
             self.assertIn("Mostra hitbox reali", gallery)
             self.assertIn('<svg class="overlay"', gallery)
             self.assertIn('class="hitbox tray disabled"', gallery)

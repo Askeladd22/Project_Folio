@@ -23,7 +23,7 @@ SCENES = (
     "help", "help-scores", "folio", "run-menu",
     "ready-fixture", "manual-pair", "selected-fixture",
     "upgrade-fixture", "medal-fixture", "reference-catalog",
-    "merchant-live",
+    "opponent-live",
 )
 SIZES = (("1920", 1920, 1080), ("1280", 1280, 720))
 
