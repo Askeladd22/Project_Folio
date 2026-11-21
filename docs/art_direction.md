@@ -217,7 +217,7 @@ carta impressa nel 1496 non è garantita dal semplice TTF.
 
 ### Ambiti
 
-Menu principale, impostazioni, selezione delle commissioni, splash,
+Menu principale, impostazioni, ingresso diretto al duello, splash,
 HUD della partita, dialoghi, folio e toast. Nessuna modifica alla
 logica Farkle, ai dadi fisici o agli input.
 

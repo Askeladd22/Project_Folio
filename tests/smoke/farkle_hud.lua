@@ -231,7 +231,10 @@ function M.install(U)
  local function opponent_selection(w,h)
   assert(love.window.setMode(w,h,{resizable=true,vsync=0}))
   love.resize(w,h)
-  U:reset('build')
+  -- Capture the ACTUAL shipping duel, not the historical solo commission
+  -- fixture. Each dice face still comes from a physical orientation.
+  U:reset('duel')
+  assert(U.duel and U.duel.actor=='player' and U.game.mode=='duel')
   local faceState=require('src.engine3d.roll_resolution').face_state
   local rows={{3,-3,-.9,.20},{3,-.5,-1.45,-.27},{3,1.8,-.7,.43},
    {5,3.2,1.3,-.14},{2,-2.2,1.35,.51},{6,.3,1.75,-.38}}
@@ -276,8 +279,35 @@ function M.install(U)
   assert(U.buttons.take.enabled and U.buttons.take.label=='Set Aside · 30 pt')
   click('take')
   assert(U.game.pot==30 and U.game.used[1] and U.game.used[3])
+  for i=1,3 do
+   assert(dice[i].kept and dice[i].body._manual_pending
+     and dice[i].body.position[2]==-4.45,
+     'accepted physical D6 must stay parked on the actual 3D board')
+  end
   shot('opponent-'..w..'-taken')
-  record('PASS opponent '..w..'x'..h..' mouse, keyboard, hover and triple score')
+  -- Bank as the player; then reveal an actual opponent actor transition.
+  click('bank')
+  assert(U.game.phase=='ended' and U.duel.scores.player==30)
+  U:update_duel(1.0)
+  assert(U.duel.actor=='opponent' and U.game.phase=='fresh')
+  shot('opponent-'..w..'-rival-turn')
+  -- Deterministic accepted physical faces are the same recorded face values:
+  -- only this Mesa fixture bypasses the time-consuming random throw.
+  feed(hand)
+  assert(U.game.phase=='ready' and U.duel.actor=='opponent')
+  U:update_duel(1.4)
+  assert(U.duel.pending_take and U.duel.selected_points
+   and next(U.game.selected),'opponent choice must be visible before scoring')
+  shot('opponent-'..w..'-rival-select')
+  U:update_duel(1.9)
+  assert(U.duel.last_take and U.duel.last_take>0
+   and U.game.pot>0 and U.duel.pending_take==nil)
+  shot('opponent-'..w..'-rival-taken')
+  U:update_duel(2.1)
+  assert(U.duel.pending_action,'decision must be announced before acting')
+  shot('opponent-'..w..'-rival-decision')
+  record('PASS opponent '..w..'x'..h..
+   ' real duel: player bank, physical kept D6, rival preview/take/decision')
  end
  local function scenario(w,h)
   love.window.setMode(w,h,{resizable=true});love.resize(w,h);U.hud_variant='standard';U:reset('build')

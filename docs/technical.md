@@ -21,6 +21,11 @@ indicatori banca/rischio e le intenzioni del rivale sono stampati su
 fogli diegetici, senza introdurre un secondo modello di stato.
 Le decisioni della 0.1.98 restano consultabili nel changelog e nella
 cronologia Git, non come una modalità o specifica concorrente.
+Il controllo grafico Mesa `PROJECT_FOLIO_OPPONENT_REVIEW=1` cattura
+il **duello vero**: selezione e accantonamento fisico del giocatore,
+banca, cambio dell'attore e scelta dell'Opponent con i tre passaggi
+leggibili. La fixture imposta solo facce fisiche note per avere
+schermate riproducibili; non sostituisce prove umane di rilancio.
 
 ## Avvio e responsabilità
 
