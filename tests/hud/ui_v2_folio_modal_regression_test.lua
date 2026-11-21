@@ -49,8 +49,8 @@ local function check_modal(state,w,h)
  local sawFolio,sawBank,sawPot=false,false,false
  for _,label in ipairs(displayed) do
   if label:find('FOLIO',1,true) then sawFolio=true end
-  if label:find('assicurati',1,true) then sawBank=true end
-  if label:find('a rischio',1,true) then sawPot=true end
+  if label:find('banked',1,true) then sawBank=true end
+  if label:find('at risk',1,true) then sawPot=true end
  end
  assert(sawFolio and sawBank and sawPot,
   'folio modal must use the actual folio renderer and show both score types')
