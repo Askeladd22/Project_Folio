@@ -49,6 +49,11 @@ jobs:
           set -eu
           lua5.4 -e 'unpack=table.unpack' tests/hud/ui_v2_layout_contract_test.lua
           luajit tests/hud/ui_v2_layout_contract_test.lua
+      - name: Experimental Merchant AI duel (independent gate)
+        run: |
+          set -eu
+          lua5.4 -e 'unpack=table.unpack' tests/labs/merchant_duel_ai_test.lua
+          luajit tests/labs/merchant_duel_ai_test.lua
       - name: Lua 5.4 headless tests
         run: |
           set -eu
