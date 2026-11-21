@@ -81,6 +81,27 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
+## Tavolo v0.1.94 — piano grafico e fisico allineati
+
+La variante `wooden` di v0.1.93 portava il piano decorativo
+a z=+0,24 sopra il piano fisico (z=0). Questo poteva produrre
+intersezioni visive con i dadi. La correzione conserva le
+coordinate fisiche e modifica esclusivamente il renderer:
+
+- fallback incluso: silhouette a z=-0,018, otto assi
+  sul ricevitore z=0 con altezza decorativa +0,006,
+  e sottili giunzioni. Il depth buffer resta condiviso;
+- GLB completo opzionale: piano superiore a z=+0,005
+  con texture UV originale e ricevitore a z=-0,018
+  che non copre il piano importato.
+
+`tests/engine3d/wooden_board_contract_test.lua` ora
+verifica i due percorsi e il bordo fisico invariato.
+Il GLB ottimizzato allegato separatamente conserva UV
+e 4538 triangoli, senza normal/roughness PBR che il
+loader esistente non applica. Nessuna logica di punteggio
+o collisione nuova. Il comfort Windows resta da verificare.
+
 ## Tavolo di legno game-ready, v0.1.93 (esperimento F8)
 
 **Scelta visiva:** variante `wooden` selezionata come default nel
