@@ -366,8 +366,10 @@ Regression: `tests/engine3d/six_die_crowding_test.lua`.
   visual turn accent, opponent note typography and high-contrast
   front-apron help. Same `Layout.build()` supplies all hitbox/render
   coordinates; no duplicate view state or imported UI framework.
-- Player sheet: virtual `{x=38,y=20,w=540,h=154}`; rival sheet
-  `{x=38,y=190,w=540,h=164}`. Neither touches the 3D picking
+- Player scoreboard rail: virtual `{x=38,y=20,w=540,h=154}`;
+  rival rail `{x=38,y=190,w=540,h=164}`. Ink-dark wood and
+  light typography replace the two opaque paper cards. Neither
+  touches the 3D picking
   viewport `{x=8,y=580,w=1904,h=475}`. The actor marker and
   instruction slip are strictly non-interactive.
 - Rendering and physics of the g3d table, camera matrix, 6 D6,

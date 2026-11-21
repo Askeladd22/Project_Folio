@@ -16,10 +16,12 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 PR draft verso `main`. Nessun nuovo sistema di gioco.
 
 ### Modificato
-- Due registri cartacei compattati: la scheda giocatore passa da 205
-  a 154 px e quella dell'Opponent da 224 a 164 px. I fogli
-  continuano a mostrare banca, rischio, obiettivo, turno, progresso
-  e informazioni della mossa avversaria.
+- Due registri compattati: la scheda giocatore passa da 205
+  a 154 px e quella dell'Opponent da 224 a 164 px. I riquadri
+  conservano banca, rischio, obiettivo, turno, progresso e mossa.
+  Il trattamento passa da due fogli chiari sovrapposti alla scena
+  a due strette tavole color legno-inchiostro, con testi chiari,
+  filetti ottone e senza falsi rivetti.
 - Le istruzioni del lancio sono abbreviate e stampate con inchiostro
   scuro su carta chiara lungo il bordo anteriore. Il messaggio
   rimane nella zona di comando e non intercetta il tavoliere.

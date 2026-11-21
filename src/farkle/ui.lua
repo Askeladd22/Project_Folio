@@ -1280,6 +1280,12 @@ local paper_ink=Art.rgba('text')
 local paper_muted=Art.rgba('text_muted')
 local paper_gold=Art.rgba('reward')
 local paper_warning=Art.rgba('risk')
+-- High-contrast inked timber belongs to the printshop, not a pair of
+-- oversized opaque parchment overlays. Action buttons still use paper.
+local ledger_text=Art.rgba('paper')
+local ledger_muted=Art.rgba('paper_mid')
+local ledger_gold=Art.rgba('ochre_light')
+local ledger_risk=Art.rgba('clay')
 local function size(n)
  return math.floor(n*math.min(1.35,UI.scale())*
      (UI.big_text() and 1.16 or 1)+.5)
@@ -1323,22 +1329,16 @@ end
 -- marks do not participate in hit-testing or the physical dice projection.
 local function ledger_sheet(r,fill)
  local g=love.graphics
- -- Pinned paper slips with a quiet binding rule; paper does not own input.
- g.setColor(unpack(Art.rgba('ink',.26)))
- g.rectangle('fill',r.x+5,r.y+7,r.w,r.h,2)
- panel(r,fill or Art.rgba('surface',.93),border_ink,2)
- g.setColor(unpack(Art.rgba('ochre_dark',.77)))
- g.rectangle('fill',r.x+14,r.y+7,r.w-28,2)
- g.setColor(unpack(Art.rgba('border',.34)))
+ -- A restrained inked typecase rail: no fake paper stacking, rivets,
+ -- thick shadows or extra interactive layer over the printshop.
+ g.setColor(unpack(Art.rgba('ink',.22)))
+ g.rectangle('fill',r.x+3,r.y+4,r.w,r.h,2)
+ panel(r,fill or Art.rgba('earth_dark',.94),Art.rgba('ochre_dark',.8),2)
+ g.setColor(unpack(Art.rgba('ochre_light',.54)))
+ g.rectangle('fill',r.x+13,r.y+7,r.w-26,2)
+ g.setColor(unpack(Art.rgba('ochre_light',.27)))
  g.setLineWidth(1)
- g.line(r.x+11,r.y+18,r.x+11,r.y+r.h-17)
- g.line(r.x+16,r.y+r.h-11,r.x+r.w-16,r.y+r.h-11)
- for _,pin in ipairs({r.x+22,r.x+r.w-22}) do
-  g.setColor(unpack(Art.rgba('ochre_dark',.92)))
-  g.circle('fill',pin,r.y+14,3.6)
-  g.setColor(unpack(Art.rgba('ochre_light',.9)))
-  g.circle('fill',pin-.7,r.y+13.3,1.1)
- end
+ g.line(r.x+14,r.y+r.h-8,r.x+r.w-14,r.y+r.h-8)
 end
 local function pointer_over(rect)
  if not (love.mouse and love.mouse.getPosition) then return false end
@@ -1399,7 +1399,7 @@ local function draw_stakes_track(s,target,layout)
  local pot=math.max(0,tonumber(s.pot) or 0)
  local safe=math.min(r.w,r.w*bank/goal)
  local risky=math.min(r.w-safe,r.w*pot/goal)
- g.setColor(unpack(Art.rgba('ink',.24)))
+ g.setColor(unpack(Art.rgba('paper',.16)))
  g.rectangle('fill',r.x,r.y,r.w,r.h,3)
  if safe>0 then
   g.setColor(unpack(Art.rgba('sage',.96)))
@@ -1409,11 +1409,11 @@ local function draw_stakes_track(s,target,layout)
   g.setColor(unpack(Art.rgba('clay',.98)))
   g.rectangle('fill',r.x+safe,r.y,risky,r.h,2)
  end
- g.setColor(unpack(Art.rgba('border',.85)))
+ g.setColor(unpack(Art.rgba('ochre_light',.76)))
  g.setLineWidth(1)
  g.rectangle('line',r.x,r.y,r.w,r.h,3)
  -- A scored ledger ruler: fine engraved divisions, never a health bar.
- g.setColor(unpack(Art.rgba('border',.52)))
+ g.setColor(unpack(Art.rgba('ochre_light',.40)))
  for mark=1,9 do
   local x=r.x+r.w*mark/10
   g.line(x,r.y+2,x,r.y+r.h-2)
@@ -1666,25 +1666,25 @@ function V.draw(u)
  OpponentScene.draw_portrait(visual,layout,g,depth)
  draw_table_shadow(g)
  -- Slim score slip: show who acts without masking the central woodcut.
- ledger_sheet(layout.score_panel,Art.rgba('surface',.93))
+ ledger_sheet(layout.score_panel,Art.rgba('earth_dark',.95))
  if u.duel and u.duel.actor=='player' and not u.duel.winner then
   g.setColor(unpack(Art.rgba('sage',.92)))
   g.rectangle('fill',layout.score_panel.x+5,layout.score_panel.y+13,
     4,layout.score_panel.h-26,1)
  end
- g.setColor(unpack(Art.rgba('border',.48)))
+ g.setColor(unpack(Art.rgba('ochre_light',.37)))
  g.setLineWidth(1)
  g.line(298,28,298,143)
  g.line(56,99,560,99)
-  write_fitted(u.duel and 'YOU · BANKED' or 'BANKED',layout.secured_caption,21,15,paper_muted)
- write_fitted((u.duel and u.duel.scores.player or s.bank)..' pt',layout.secured_value,47,27,paper_ink)
- write_fitted('AT RISK',layout.risk_caption,21,15,paper_muted)
- write_fitted((u.duel and (u.duel.actor=='player' and s.pot or 0) or s.pot)..' pt',layout.risk_value,47,27,paper_warning)
+  write_fitted(u.duel and 'YOU · BANKED' or 'BANKED',layout.secured_caption,21,15,ledger_muted)
+ write_fitted((u.duel and u.duel.scores.player or s.bank)..' pt',layout.secured_value,47,27,ledger_text)
+ write_fitted('AT RISK',layout.risk_caption,21,15,ledger_muted)
+ write_fitted((u.duel and (u.duel.actor=='player' and s.pot or 0) or s.pot)..' pt',layout.risk_value,47,27,ledger_risk)
  local d=u.duel
  local c=d and {target=d.target,limit=0} or R.contracts[s.stage]
  if d then
   local mr=layout.opponent_panel
-  ledger_sheet(mr,Art.rgba('surface',.94))
+  ledger_sheet(mr,Art.rgba('earth_dark',.95))
   if d.actor=='opponent' and not d.winner then
    g.setColor(unpack(Art.rgba('sage',.92)))
    g.rectangle('fill',mr.x+5,mr.y+13,4,mr.h-26,1)
@@ -1693,52 +1693,56 @@ function V.draw(u)
    or 'OPPONENT · WAITING'
   if d.winner then heading=d.winner=='opponent' and 'OPPONENT · WON' or 'OPPONENT · LOST' end
   write_fitted(heading,{x=mr.x+22,y=mr.y+9,w=mr.w-44,h=26},
-   22,16,paper_ink)
+   22,16,ledger_text)
   -- Equal hierarchy for both sides, with all actual duel data retained.
   local half=(mr.w-56)*.5
   local lx,rx=mr.x+22,mr.x+34+half
-  write_fitted('BANKED',{x=lx,y=mr.y+38,w=half,h=18},17,14,paper_muted)
+  write_fitted('BANKED',{x=lx,y=mr.y+38,w=half,h=18},17,14,ledger_muted)
   write_fitted(d.scores.opponent..' pt',
-   {x=lx,y=mr.y+57,w=half,h=37},34,22,paper_ink)
-  write_fitted('AT RISK',{x=rx,y=mr.y+38,w=half,h=18},17,14,paper_muted)
+   {x=lx,y=mr.y+57,w=half,h=37},34,22,ledger_text)
+  write_fitted('AT RISK',{x=rx,y=mr.y+38,w=half,h=18},17,14,ledger_muted)
   write_fitted((d.actor=='opponent' and s.pot or 0)..' pt',
-   {x=rx,y=mr.y+57,w=half,h=37},34,22,paper_warning)
-  g.setColor(unpack(Art.rgba('border',.43)))
+   {x=rx,y=mr.y+57,w=half,h=37},34,22,ledger_risk)
+  g.setColor(unpack(Art.rgba('ochre_light',.37)))
   g.setLineWidth(1)
   g.line(mr.x+22+half+5,mr.y+40,mr.x+22+half+5,mr.y+94)
   g.line(mr.x+22,mr.y+97,mr.x+mr.w-22,mr.y+97)
   if d.actor=='opponent' and not d.winner then
+   -- Letterpress action line distinguishes the rival's actual decision
+   -- from its intent and the last scored group.
+   g.setColor(unpack(Art.rgba('ochre_dark',.50)))
+   g.rectangle('fill',mr.x+16,mr.y+101,mr.w-32,26,1)
    write_fitted(d.move or 'PREPARING',
-     {x=mr.x+22,y=mr.y+101,w=mr.w-44,h=24},24,17,paper_ink)
+     {x=mr.x+22,y=mr.y+101,w=mr.w-44,h=24},24,17,ledger_text)
    write_fitted(d.intent or '',
-     {x=mr.x+22,y=mr.y+125,w=mr.w-44,h=18},18,13,paper_muted)
+     {x=mr.x+22,y=mr.y+125,w=mr.w-44,h=18},18,13,ledger_muted)
    local last=d.selected_points and ('Selected: +'..d.selected_points..' pt')
      or d.last_take and ('Set aside: +'..d.last_take..' pt ('..d.last_count..' dice)')
      or 'Waiting for dice'
    write_fitted(last,{x=mr.x+22,y=mr.y+145,w=mr.w-44,h=15},
-     15,12,paper_muted)
+     15,12,ledger_muted)
   else
    local summary=d.winner and
      (d.winner=='opponent' and 'The rival reached the target'
        or 'You reached the target')
      or 'Rival plays after your turn'
    write_fitted(summary,
-     {x=mr.x+22,y=mr.y+107,w=mr.w-44,h=29},22,15,paper_ink)
+     {x=mr.x+22,y=mr.y+107,w=mr.w-44,h=29},22,15,ledger_text)
    if d.last_take then
     write_fitted('Last set aside: +'..d.last_take..' pt',
-     {x=mr.x+22,y=mr.y+139,w=mr.w-44,h=21},18,13,paper_muted)
+     {x=mr.x+22,y=mr.y+139,w=mr.w-44,h=21},18,13,ledger_muted)
    end
   end
  end
- write_fitted('TARGET',layout.objective_caption,18,14,paper_muted)
- write_fitted(c.target..' pt',layout.objective_value,29,20,paper_gold)
- write_fitted(u.duel and 'TURN' or 'TURNS LEFT',layout.turns_caption,18,14,paper_muted)
+ write_fitted('TARGET',layout.objective_caption,18,14,ledger_muted)
+ write_fitted(c.target..' pt',layout.objective_value,29,20,ledger_gold)
+ write_fitted(u.duel and 'TURN' or 'TURNS LEFT',layout.turns_caption,18,14,ledger_muted)
  write_fitted(u.duel and (u.duel.actor=='player' and 'YOU' or 'OPPONENT') or turns_remaining(s,c),
-  layout.turns_value,29,20,paper_ink)
- g.setColor(unpack(Art.rgba('border',.40)))
+  layout.turns_value,29,20,ledger_text)
+ g.setColor(unpack(Art.rgba('ochre_light',.37)))
  g.line(56,144,560,144)
  write_fitted('TOWARD TARGET · BANKED / AT RISK',
-   layout.stakes_caption,17,13,paper_muted)
+   layout.stakes_caption,17,13,ledger_muted)
  draw_stakes_track(u.duel and {bank=u.duel.scores.player,pot=u.duel.actor=='player' and s.pot or 0}
    or s,c.target,layout)
  for _,a in ipairs(actions) do
