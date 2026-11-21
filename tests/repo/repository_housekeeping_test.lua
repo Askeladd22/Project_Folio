@@ -12,7 +12,7 @@ assert(not exists('audits/ui-v2-review/20261101-101134-b2e7f4cb/hud/hud-usabilit
 for _,path in ipairs{
  'resources/textures/wood.png',
  'resources/scenes/printshop-room.png',
- 'resources/opponents/merchant.png',
+ 'resources/opponents/opponent.png',
  'resources/ui/menu_manuzio.png',
 
  'resources/ui/startup_splash/love.png',

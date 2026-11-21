@@ -1,4 +1,4 @@
--- Composition/physical-picking regression for the lowered g3d merchant table.
+-- Composition/physical-picking regression for the lowered g3d opponent table.
 -- Presentation only: no launcher, RNG or Farkle rules are modified.
 local Layout=require('src.farkle.ui').layout
 local Fit=require('src.farkle.tabletop').tray_view.fit
@@ -48,4 +48,4 @@ local _,backDie=View.project(0,extents[3],Scene.box.border_height/2)
 assert(cy+backDie*scale>=layout.tray.y,
  'raised back-of-board dice must remain pickable in shared screen coordinates')
 dice=previousDice
-print('PASS true overhead Merchant board: deeper playfield, aligned projection, useful die scale and unchanged hitbox')
+print('PASS true overhead Opponent board: deeper playfield, aligned projection, useful die scale and unchanged hitbox')

@@ -43,7 +43,7 @@ cornerBody[1][3]=-1
 local touching=G.shadow_vertices(cornerBody,0)
 assert(touching[1][12]>tilted[1][12],'clearance must follow the lowest rotated vertex')
 local scene=require('src.engine3d.g3d.scene').scenery
-local sides=scene.style_vertices(Mesh,{-14,14,-6,6},.74,'merchant')
+local sides=scene.style_vertices(Mesh,{-14,14,-6,6},.74,'opponent')
 local apron=false
 for _,v in ipairs(sides) do
  assert(v[2]>=-6 and (v[2]>-6 or v[3]==0),'rear rail tip must meet the painted plane')
