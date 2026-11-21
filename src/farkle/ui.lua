@@ -1085,7 +1085,7 @@ function M.build(u)
   add('retryphysical','Retry Physical Throw',true,
    function() u:retry_physical() end,'primary','Technical recovery, not a Farkle')
  elseif s.phase=='rescue' then
-  add('rescue','Usa Corrector [M]',true,
+  add('rescue','Use Corrector [M]',true,
    function() u:request(true,nil,true) end,'primary','Save this turn · then grab the dice')
   add('fail','Accept Farkle',true,
    function() u:act('accept_bust',function() return R.fail(s) end) end,
@@ -1122,7 +1122,7 @@ function M.build(u)
   if ok then
    bank_detail='[Enter] · Secures points and ends turn'
   elseif total<min then
-   bank_detail='Minimum '..min..' pt · ne mancano '..(min-total)
+   bank_detail='Minimum '..min..' pt · short by '..(min-total)
   else
    bank_detail='Bank unavailable'
   end
@@ -1138,7 +1138,7 @@ end
 function M.state(u)
  if u.mouseThrow then
   local count=u.mouseThrow.held and #u.mouseThrow.held or 1
-  return (count>1 and ('GRUPPO DI '..count..' DICE') or 'DADO')..
+  return (count>1 and ('GROUP OF '..count..' DICE') or 'DIE')..
     ' HELD · Shake to rotate · Release to throw · Esc cancels'
  end
  if u.marquee and Marquee.dragged(u.marquee) then
@@ -1146,7 +1146,7 @@ function M.state(u)
  end
  local count=Marquee.count(u.dragSelected)
  if count>0 and (u.manualRoll or R.can_roll(u.game)) then
-  return count..(count==1 and ' DIE PRONTO' or ' DICE PRONTI')..
+  return count..(count==1 and ' DIE READY' or ' DICE READY')..
     ' · Right-click to grab · Esc cancels'
  end
  if u.manualRoll then
@@ -1385,7 +1385,7 @@ local function compact_status(u)
    (u.dragSelected and next(u.dragSelected) and R.can_roll(s)) then
   return Actions.state(u)
  end
- if u.physicalFailure then return 'Tiro non valido: usa Retry Physical Throw.' end
+ if u.physicalFailure then return 'Throw failed: use Retry Physical Throw.' end
  if u.duel and u.duel.winner then return u.duel.winner=='player' and 'VICTORY · You beat the Opponent!' or 'DEFEAT · Opponent won the duel.' end
  if u.duel and u.duel.actor=='opponent' then return u.duel.intent or 'Opponent is playing.' end
  if u.duel and s.phase=='ended' then return 'Turn over · Opponent prepares to throw.' end
@@ -1393,7 +1393,7 @@ local function compact_status(u)
  if s.phase=='fresh' then
   return 'Right-click: grab and throw · Left-drag: select a group'
  end
- if s.phase=='rescue' then return 'FARKLE · Usa il Corrector o accetta la perdita.' end
+ if s.phase=='rescue' then return 'FARKLE · Use the Corrector or accept the loss.' end
  if s.phase=='ended' then return 'Turn over · Continue with [N].' end
  if s.phase=='lost' then return 'Game over · No turns left.' end
  if s.phase=='won' then return 'Game complete.' end
@@ -1407,7 +1407,7 @@ local function compact_status(u)
   if pts then
    local can_bank,total,minimum=R.bank_status(s)
    if can_bank then return '' end
-   return 'Incasso ancora bloccato · Minimum '..minimum..' pt'
+   return 'Bank locked · Minimum '..minimum..' pt'
   end
   if H.can_complete(s) then return 'Add dice to complete the combination.' end
   return 'Deselect any dice that do not score.'
@@ -1650,7 +1650,7 @@ function V.draw(u)
   layout.turns_value,29,20,paper_ink)
  g.setColor(unpack(Art.rgba('border',.40)))
  g.line(56,171,560,171)
- write_fitted('VERSO L’TARGET  ·  SALVATI / AT RISK',
+ write_fitted('TOWARD TARGET · BANKED / AT RISK',
    layout.stakes_caption,17,13,paper_muted)
  draw_stakes_track(u.duel and {bank=u.duel.scores.player,pot=u.duel.actor=='player' and s.pot or 0}
    or s,c.target,layout)

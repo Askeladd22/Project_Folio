@@ -49,7 +49,6 @@ end
 -- Their die IDs and settled face orientation are unchanged; they cannot be
 -- picked up or included in subsequent throws until the next turn/hot dice.
 function D.stage_kept(entries,used)
- local first=0
  for i,entry in ipairs(entries or {}) do
   if used and used[i] then
    local b=entry.body
