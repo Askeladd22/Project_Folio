@@ -27,6 +27,52 @@ Scenery.place_table(box,{-14,14,-6.05,6.05},.28)
 assert(math.abs(box.max[3])<1e-9 and box.verts[2][3]==0,'table top must be flush with the old floor')
 assert(box.min[1]<-14.28 and box.max[1]>14.28 and box.min[2]<-6.33 and box.max[2]>6.33,
  'table top must extend under the whole tray and rim')
+-- The KIFIR GLB optionally uses a separate Alex Krush base-colour
+-- texture. Test the loader interface, not a mock screenshot. Actual
+-- imported material seams still require review on a Windows GPU.
+do
+ local original=love
+ local opened={}
+ local function tex()
+  return {
+   getDimensions=function()return 16,16 end,
+   setFilter=function()end,setMipmapFilter=function()end,
+   setWrap=function()end,release=function()end
+  }
+ end
+ local g=setmetatable({
+  newImage=function(source)
+   opened[#opened+1]=source
+   return tex()
+  end,
+  newCanvas=function()
+   return {newImageData=function()return 'canvas-pixels' end,
+     release=function()end}
+  end,
+ },{__index=function()return function()end end})
+ love={graphics=g,filesystem={
+  read=function(path)return path=='fixture.glb' and glb end,
+  getInfo=function(path)
+   return path=='medieval_table_folio_wood.jpg' and {type='file'}
+  end,
+ }}
+ local created
+ local g3d={newModel=function(vertices,texture)
+  created={vertices=vertices,texture=texture}
+  return created
+ end}
+ local obj,raw=L.load(g3d,'fixture.glb',nil,
+  {texture_override='medieval_table_folio_wood.jpg',max_texture=32})
+ assert(obj==created and #raw.verts==3 and
+  opened[1]=='medieval_table_folio_wood.jpg' and
+  opened[2]=='canvas-pixels',
+  'override must use explicit albedo and make the GPU texture')
+ local none=L.load(g3d,'fixture.glb',nil,
+  {texture_override='missing.jpg'})
+ assert(none==created and created.texture==nil,
+  'missing colour map must fall back safely when no image is embedded')
+ love=original
+end
 -- An inline, deterministic glTF/GLB fixture covers parsing, transformation
 -- and coordinate conversion without a 9 MiB museum model in Git.
 -- Keep testing the real optional external model in manual Windows QA.
