@@ -226,10 +226,15 @@ function M.load(g3d,path,prepare,opts)
  local model=M.to_z_up(M.parse(bytes,opts))
  if prepare then prepare(model) end
  local texture
- if model.image then
+ local override=opts.texture_override and love.filesystem.getInfo(
+  opts.texture_override,'file') and opts.texture_override
+ if model.image or override then
   local g=love.graphics
   local ext=model.mime=='image/jpeg' and '.jpg' or '.png'
-  local source=g.newImage(love.filesystem.newFileData(model.image,path..ext))
+  -- Texture is optional and independent of the authored GLB UV atlas.
+  -- If it isn't installed, keep the original embedded base colour.
+  local source=override and g.newImage(override)
+   or g.newImage(love.filesystem.newFileData(model.image,path..ext))
   local limit=opts.max_texture or 4096
   local w,h=source:getDimensions()
   local k=math.min(1,limit/math.max(w,h))

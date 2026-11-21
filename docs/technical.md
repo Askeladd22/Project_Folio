@@ -380,3 +380,26 @@ Regression: `tests/engine3d/six_die_crowding_test.lua`.
   do not solve the main game's HUD issue; no assets or code imported.
 - QA: new compact HUD contract + existing display, input and game
   regression tests. CI and manual Windows review remain distinct.
+
+## 0.1.109 — Dark walnut decorative trestle
+
+- Canonical Farkle collision, six D6, g3d camera and picking remain
+  unchanged. The old-wooden default uses a darker tracked fallback
+  trestle (three planks, small apron and supports) with the repository's
+  existing `wood.png`; this is a **nonphysical** decorative model.
+- For the full imported KIFIR model: copy `medieval_table_folio.glb`
+  into `resources/models/`; optionally copy the downscaled user
+  `Wood_albedo.jpg` to `medieval_table_folio_wood.jpg`. The existing
+  loader reorients the author mesh `{2,-1,3}`, scales it to match
+  the six-D6 board, and uses the external albedo if installed.
+  This path is NOT used by default CI without those binary files.
+- Both authored tables declare CC BY 4.0 in embedded glTF metadata:
+  KIFIR (Medieval Table, Sketchfab model b72b2843827743bda281a3d28212dd4)
+  and Alex Krush (Old Wooden Table, Sketchfab d06d49bdb23c45d5b1fe33bab4b04374).
+  The supplied Medieval Market/Tent Prop_01 contains 111 mesh entries
+  and is intentionally not included. Respect attribution on distribution.
+- UI panels now flank the woodcut: player x=38, Opponent x=1342
+  in virtual 1920×1080 coordinates, safely above the tabletop.
+- GLB import supports base colour only. Do not pretend roughness,
+  normal or metal maps were wired without a compatible PBR shader.
+

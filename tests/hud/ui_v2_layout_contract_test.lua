@@ -10,10 +10,11 @@ assert(layout.tray.x==8 and layout.tray.y==580
  and layout.tray.w==1904 and layout.tray.h==475
  and layout.tray.y+layout.tray.h==1055,
  'shared screen-space picking viewport must follow the deeper table')
-assert(layout.score_panel.x==layout.opponent_panel.x and
- layout.score_panel.y+layout.score_panel.h<layout.opponent_panel.y and
- layout.opponent_panel.y+layout.opponent_panel.h<layout.tray.y,
- 'pinned ledgers must stack clear of the physical table')
+assert(layout.score_panel.x==38 and layout.opponent_panel.x==1342 and
+ Layout.overlap(layout.score_panel,layout.opponent_panel)==0 and
+ layout.opponent_panel.y+layout.opponent_panel.h<layout.tray.y and
+ Layout.overlap(layout.opponent_panel,layout.runmenu)==0,
+ 'opposing score rails must frame the portrait and avoid dice and controls')
 local region=Scene.regions.unified
 assert(region.x_center==0 and region.y_back==-6.05 and
  region.y_front==6.05 and region.half_back==14 and

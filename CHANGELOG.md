@@ -10,6 +10,36 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.109] - 2026-11-21
+
+**Status:** draft `feat/medieval-trestle-table-composition-0.1.109`,
+no automatic merge into main.
+
+### Changed
+- Two compact, readable HUD score rails now flank the woodcut
+  (player left, Opponent right), instead of obscuring the Venetian
+  architecture on the left. Gameplay scores and actions unchanged.
+- The built-in old-wooden fallback is now a deep walnut trestle:
+  dark, three-part worn board, understated perimeter, cross-braced
+  supporting structure and reduced light receiver. It remains an
+  independent, procedural mesh, not an unlicensed binary export.
+- Optional high-fidelity rendering of KIFIR's uploaded medieval table
+  with the user-supplied Alex Krush dark wood albedo. Both GLBs include
+  **CC BY 4.0** metadata; install matching model/texture files locally.
+  No GLB files are bundled in the Git repository.
+- The GLB loader can take an optional external albedo texture, falling
+  back to the embedded texture. Normal/metal/roughness maps are not
+  supported by the current LÖVE/g3d pipeline and were not connected.
+- User's Medieval Market file contains a whole tent/market scene,
+  not a standalone table, and is not imported.
+
+### Verification
+- New tests of the material hierarchy/geometry, screen-level HUD
+  balance and unchanged physical D6 field; Lua/LuaJIT/versioning and
+  headless Mesa screenshots: **pending CI**.
+- Windows picking, FPS and scene art-direction review: **not run**.
+- Optional user-installed full-GLB path requires human Windows UAT.
+
 ## [0.1.108] - 2026-11-21
 
 **Stato:** [PR draft #164](https://github.com/Askeladd22/Project_Folio/pull/164)
