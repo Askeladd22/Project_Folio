@@ -52,7 +52,7 @@ function M.mesh(extents)
  block(v,x1+inset,x2-inset,y2-.58,y2-.35,-.31,-.15,.67,extents)
  -- Trestle stance is 1.7:1, rather than the 2.31:1 dice-field ratio.
  local cx=(x1+x2)*.5;local cy=(y1+y2)*.5
- local halfX=math.min((x2-x1)*.28,(y2-y1)*.70)
+ local halfX=math.min((x2-x1)*.28,(y2-y1)*.48)
  local halfY=(y2-y1)*.29
  local leg=.46
  for _,sx in ipairs({-1,1}) do
