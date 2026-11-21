@@ -81,6 +81,47 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
+## UI v0.1.95 — Variante B «Compatta» del tavolo
+
+**Decisione utente:** selezionata la variante B in risposta allo screenshot
+v0.1.94, nel quale la fascia anteriore, le gambe e i giunti del legno
+occupavano troppo spazio rispetto ai dadi.
+
+**Cambio isolato e reversibile:** il `tray_workshop` apre ora
+`wooden_compact`, mentre premendo **F8** si può passare a `wooden`
+(il modello grande originale), quindi alle altre varianti già esistenti.
+Non viene creata una seconda camera, un renderer alternativo o una
+configurazione fisica dei dadi.
+
+- `Scenery.place_table` continua a dimensionare la stessa geometria
+  derivata Pixel Life sul piano fisico. Solo dopo questo allineamento,
+  `Scenery.compact_table(model,0.22)` comprime verticalmente la
+  struttura grafica (fascia, gambe) sotto la superficie. Mantiene
+  esattamente la quota superiore e ricalcola le normali per la trasformazione
+  affine. Il valore 0.22 è un **parametro estetico**, non un coefficiente
+  fisico.
+- La superficie conserva il rettangolo fisico, con **sei** tavole
+  visive invece di otto, giunzioni da 0.012 e UV continue. L'intenzione
+  è ridurre l'effetto «strisce» senza cancellare il materiale.
+- Il bordo grafico della variante compatta passa da 0.14 a **0.08**
+  unità mondo; l'altezza della parete rimane quella fisica
+  (`scene.box.border_height=0.74`) per non suggerire falsi confini.
+
+**Limite della scelta:** il piano superiore non viene ristretto in X/Y.
+Una riduzione indipendente renderebbe visivamente possibile lanciare
+fuori da una collisione invisibile. L'intervento agisce sull'**ingombro
+dell'arredo**, non sui limiti del campo da gioco né sulle dimensioni
+dello screenshot.
+
+**QA automatico:** `tests/engine3d/wooden_board_contract_test.lua`
+controlla quota superiore, profondità di fascia, normale dei vertici,
+continuità UV, altezza dei bordi e dimensioni della superficie;
+`tests/farkle/tray_workshop_cycle_test.lua` protegge la reversibilità
+F8; `tests/engine3d/g3d_live_test.lua` include la nuova skin.
+L'esito della CI e delle catture Mesa deve essere riportato in PR.
+Rimane aperto il test umano Windows con sei dadi in movimento e nella
+zona posteriore del tavolo.
+
 ## Tavolo v0.1.94 — piano grafico e fisico allineati
 
 La variante `wooden` di v0.1.93 portava il piano decorativo
