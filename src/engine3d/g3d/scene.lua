@@ -353,6 +353,9 @@ function S.floor_vertices(mesh,extents,style)
    local shade=({.82,.77,.85,.79,.83,.76,.84,.80})[i]
    for _,v in ipairs(plank) do
     v[3]=.006
+    -- UV V must remain continuous across the entire tabletop. Reusing
+    -- 0..1 per plank duplicated the texture's dark border eight times.
+    v[5]=(v[2]-y1)/(y2-y1)
     v[9],v[10],v[11],v[12]=shade,shade*.93,shade*.86,1
     out[#out+1]=v
    end
