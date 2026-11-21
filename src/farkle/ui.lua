@@ -138,6 +138,8 @@ function M.build(which)
    -- The wagering figures are large enough to read at a glance.
    -- The 3D floor and its physical hitbox stay completely separate.
    single_action=rect(720,993,480,75),
+   merchant_panel=rect(1410,114,454,151),
+   duel_turn=rect(655,38,610,54),
    secured_caption=rect(60,27,216,22),
    secured_value=rect(60,51,216,52),
    risk_caption=rect(313,27,235,22),
@@ -198,7 +200,8 @@ function M.validate(layout)
    'risk_caption','risk_value','objective_caption','objective_value',
    'turns_caption','turns_value','shelf_label','score_panel',
    'stakes_caption','stakes_track',
-   'footer','footer_trim','single_action','idle_message'}
+   'footer','footer_trim','single_action','idle_message',
+   'merchant_panel','duel_turn'}
   for _,name in ipairs(required) do
    local r=layout[name]
    if not r or r.w<=0 or r.h<=0 or not M.contains(bounds,r) then
@@ -1070,6 +1073,7 @@ function M.build(u)
  if H.reward_active(s) then return a end
  add('help','Regole [?]',not block,function() u.modal='help' end,'header')
  add('runmenu','Pausa [Esc]',not block,function() u.modal='run' end,'header')
+ if u.duel and (u.duel.actor=='merchant' or u.duel.winner or s.phase=='ended') then return a end
  -- Folio remains accessible with [F] via the modal dispatcher.
  if s.medal~='none' then
   local d=Medals.get(s.medal)
@@ -1390,6 +1394,9 @@ local function compact_status(u)
   return Actions.state(u)
  end
  if u.physicalFailure then return 'Tiro non valido: usa Riprova tiro fisico.' end
+ if u.duel and u.duel.winner then return u.duel.winner=='player' and 'VITTORIA · Hai battuto il Mercante!' or 'SCONFITTA · Il Mercante ha vinto.' end
+ if u.duel and u.duel.actor=='merchant' then return u.duel.intent or 'Il Mercante sta giocando.' end
+ if u.duel and s.phase=='ended' then return 'Turno concluso · Il Mercante prepara i dadi.' end
  if s.phase=='rolling' then return 'I dadi stanno rotolando…' end
  if s.phase=='fresh' then
   return 'Spazio: lancio rapido · Destro: afferra · Trascina sinistro: seleziona gruppo'
@@ -1617,20 +1624,37 @@ function V.draw(u)
  g.line(298,29,298,164)
  g.line(56,110,560,110)
  panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
- write_fitted('ASSICURATI',layout.secured_caption,21,15,paper_muted)
- write_fitted(s.bank..' pt',layout.secured_value,47,27,paper_ink)
+ write_fitted(u.duel and 'TU · ASSICURATI' or 'ASSICURATI',layout.secured_caption,21,15,paper_muted)
+ write_fitted((u.duel and u.duel.scores.player or s.bank)..' pt',layout.secured_value,47,27,paper_ink)
  write_fitted('A RISCHIO',layout.risk_caption,21,15,paper_muted)
- write_fitted(s.pot..' pt',layout.risk_value,47,27,paper_warning)
- local c=R.contracts[s.stage]
+ write_fitted((u.duel and (u.duel.actor=='player' and s.pot or 0) or s.pot)..' pt',layout.risk_value,47,27,paper_warning)
+ local d=u.duel
+ local c=d and {target=d.target,limit=0} or R.contracts[s.stage]
+ if d then
+  local mr=layout.merchant_panel
+  panel(mr,Art.rgba('surface',.93),border_ink,6)
+  write_fitted('MERCANTE',{x=mr.x+18,y=mr.y+8,w=mr.w-36,h=26},22,16,paper_ink)
+  write_fitted('Sicuri: '..d.scores.merchant..' pt',{x=mr.x+18,y=mr.y+43,w=mr.w-36,h=33},28,20,paper_ink)
+  write_fitted('A rischio: '..(d.actor=='merchant' and s.pot or 0)..' pt',
+   {x=mr.x+18,y=mr.y+82,w=mr.w-36,h=23},20,15,paper_warning)
+  write_fitted(d.actor=='merchant' and 'STA GIOCANDO' or 'IN ATTESA',
+   {x=mr.x+18,y=mr.y+117,w=mr.w-36,h=23},18,14,paper_muted)
+  panel(layout.duel_turn,Art.rgba('earth_dark',.86),Art.rgba('ochre',.65),4)
+  write_fitted(d.winner and (d.winner=='player' and 'HAI VINTO IL DUELLO' or 'IL MERCANTE VINCE')
+   or ('TURNO · '..(d.actor=='player' and 'TU' or 'MERCANTE')),
+   layout.duel_turn,24,17,Art.rgba('paper'),'center')
+ end
  write_fitted('OBIETTIVO',layout.objective_caption,18,14,paper_muted)
  write_fitted(c.target..' pt',layout.objective_value,29,20,paper_gold)
- write_fitted('TURNI RIMASTI',layout.turns_caption,18,14,paper_muted)
- write_fitted(turns_remaining(s,c),layout.turns_value,29,20,paper_ink)
+ write_fitted(u.duel and 'TURNO' or 'TURNI RIMASTI',layout.turns_caption,18,14,paper_muted)
+ write_fitted(u.duel and (u.duel.actor=='player' and 'TU' or 'RIVALE') or turns_remaining(s,c),
+  layout.turns_value,29,20,paper_ink)
  g.setColor(unpack(Art.rgba('border',.40)))
  g.line(56,171,560,171)
  write_fitted('VERSO L’OBIETTIVO  ·  SALVATI / A RISCHIO',
    layout.stakes_caption,17,13,paper_muted)
- draw_stakes_track(s,c.target,layout)
+ draw_stakes_track(u.duel and {bank=u.duel.scores.player,pot=u.duel.actor=='player' and s.pot or 0}
+   or s,c.target,layout)
  for _,a in ipairs(actions) do
   if a.slot=='header' then
    action_button(u,a,a.id=='help' and layout.help or layout.runmenu)
