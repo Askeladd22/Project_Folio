@@ -158,7 +158,14 @@ function U:begin_physical(indices,technical,gesture,manual)
  self:sync_presentation()
  if self.presentation then Presentation.finish(self.presentation) end
  self.activePhysical={};for _,i in ipairs(indices) do self.activePhysical[i]=true end
- for i,d in ipairs(dice) do d.kept=not self.activePhysical[i] end
+ for i,d in ipairs(dice) do
+  d.kept=not self.activePhysical[i]
+  if self.activePhysical[i] and d.body then
+   -- Hot dice can be reused before sync() runs: clear the scored collider
+   -- at the exact transition into a newly active physical roll.
+   d.body._kept_solid=nil
+  end
+ end
  self.state='rolling'
  if not manual then self.dragSelected=nil;self.marquee=nil end
  if manual then

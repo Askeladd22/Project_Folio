@@ -51,4 +51,16 @@ for k,v in ipairs(parked) do rest[k]={v[1],v[2],v[3]} end
 require('src.farkle.dice').stage_opening({{body=parked,restPose=rest}})
 assert(not parked._kept_solid and not parked._manual_pending,
  'the new hand must restore normal D6 collisions')
+-- Hot dice are released into a new physical roll before sync() can run.
+-- The exact activation boundary must clear the parked-solid marker.
+local controller=require('src.farkle.controller')
+parked._manual_pending=true;parked._kept_solid=true
+dice={{body=parked}}
+local user=setmetatable({
+ log=function() end,sync_presentation=function() end,
+ onManualRollBegin=function() end
+},{__index=controller})
+user:begin_physical({1},false,nil,true)
+assert(not parked._kept_solid and not dice[1].kept and user.manualRoll,
+ 'hot-dice activation must restore the live physical collider')
 print('PASS solid scored D6 / nonsolid held D6 / stage reactivation')
