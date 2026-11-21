@@ -7,14 +7,14 @@ local View=require('src.engine3d.view')
 local Tray=require('src.farkle.tabletop').tray_view
 local L=Layout.build()
 assert(Layout.validate(L))
-assert(L.host.y+L.host.h==L.tray.y+60,
+assert(L.host.y+L.host.h==L.tray.y+70,
  'rear framing must match the revised deeper tabletop')
-assert(L.tray.y>=500 and L.tray.y<=515 and L.host.h-L.tray.y==60,
+assert(L.tray.y>=575 and L.tray.y<=590 and L.host.h-L.tray.y==70,
  'pick headroom must stay aligned with the revised rear rail')
 assert(L.tray.y+L.tray.h>L.footer.y and L.tray.y+L.tray.h-L.footer.y<=100,
  'command rail may overlap only the near edge of the board')
 local portrait=Opponent.portrait_bounds(700,1000,L)
-assert(portrait.h>470 and portrait.h<=500 and portrait.y>=9)
+assert(portrait.h>550 and portrait.h<=580 and portrait.y>=9)
 assert(math.abs(portrait.x+portrait.w*.5-L.tray.x-L.tray.w*.5)<.01)
 assert(portrait.y+portrait.h==L.host.h+35-L.portrait_lift,
  'opponent stays anchored while the table lowers')
@@ -57,7 +57,7 @@ for _,wh in ipairs{{1280,720},{1920,1080},{3440,1440}} do
  local left=select(1,View.project(-14.4,-6.05,0))
  local right=select(1,View.project(14.4,-6.05,0))
  local fraction=(right-left)*scale/(1920*factor)
- assert(fraction>.75 and fraction<.82,'rear board should visually surround the rival')
+ assert(fraction>.56 and fraction<.60,'rear board should visually surround the rival')
 end
 dice=oldDice
 View.yaw,View.pitch,View.distance,View.projection=oldYaw,oldPitch,oldDistance,oldProjection

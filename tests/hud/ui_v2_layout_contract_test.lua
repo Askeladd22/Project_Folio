@@ -6,10 +6,14 @@ local Scene=require('src.data.dice_schema').scene
 local layout=Layout.build()
 assert(layout.name=='table_minimal','shipping Opponent layout must have its canonical identity')
 assert(Layout.validate(layout),'shipping Opponent table layout is invalid')
-assert(layout.tray.x==8 and layout.tray.y==505
- and layout.tray.w==1904 and layout.tray.h==545
- and layout.tray.y+layout.tray.h==1050,
- 'shared screen-space picking viewport must cover the raised board')
+assert(layout.tray.x==8 and layout.tray.y==580
+ and layout.tray.w==1904 and layout.tray.h==475
+ and layout.tray.y+layout.tray.h==1055,
+ 'shared screen-space picking viewport must follow the deeper table')
+assert(layout.score_panel.x==layout.opponent_panel.x and
+ layout.score_panel.y+layout.score_panel.h<layout.opponent_panel.y and
+ layout.opponent_panel.y+layout.opponent_panel.h<layout.tray.y,
+ 'pinned ledgers must stack clear of the physical table')
 local region=Scene.regions.unified
 assert(region.x_center==0 and region.y_back==-6.05 and
  region.y_front==6.05 and region.half_back==14 and

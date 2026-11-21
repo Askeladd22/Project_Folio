@@ -89,7 +89,8 @@ local layout=UI.layout.build()
 assert(UI.layout.validate(layout))
 assert(layout.tray.x<20 and layout.tray.w>1900 and layout.tray.y+layout.tray.h>1000,
  'camera needs full-width immersive physical playfield')
-assert(layout.opponent_panel and layout.opponent_panel.w<=380
+assert(layout.opponent_panel and layout.opponent_panel.w<=560
+ and layout.opponent_panel.x==layout.score_panel.x
  and not layout.duel_turn and not layout.opponent_action,
  'one compact rival paper ledger replaces two cards and the turn banner')
 print('PASS symmetric Farkle duel: scoring, hot dice, winner, input guards and immersive HUD contract')

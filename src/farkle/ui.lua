@@ -124,11 +124,11 @@ function M.build(which)
    header=rect(44,20,1832,72),
    -- Raise the playing surface into the central viewport,
    -- without moving the g3d picking rectangle or the physical board.
-   host=rect(0,0,1920,565),
+   host=rect(0,0,1920,650),
    -- Let the rival meet the rear rail instead of floating above it.
    -- Draw order still puts the 3D table in front of the PNG portrait.
    portrait_lift=35,
-   rear_span=1740,
+   rear_span=1220,
    -- One unified scorecard: the risk total is not stranded below the table.
    score_panel=rect(38,18,540,205),
    -- One engraved progress track shows what is saved vs still at risk.
@@ -139,7 +139,7 @@ function M.build(which)
    -- The 3D floor and its physical hitbox stay completely separate.
    single_action=rect(720,993,480,75),
    -- One paper ledger for the rival, no redundant top-center turn banner.
-   opponent_panel=rect(1502,113,360,235),
+   opponent_panel=rect(38,240,540,224),
    secured_caption=rect(60,27,216,22),
    secured_value=rect(60,51,216,52),
    risk_caption=rect(313,27,235,22),
@@ -163,7 +163,7 @@ function M.build(which)
    -- Include the exposed rear of the board in the same input/render
    -- viewport. Keep the *front* border aligned with the command rail.
    -- This is screen-space picking only: no world or physics changes.
-  tray=rect(8,505,1904,545),
+  tray=rect(8,580,1904,475),
   message=rect(470,969,980,20),
   idle_message=rect(470,969,980,20),
   context_actions={rect(414,993,185,36),rect(414,1032,185,36)},
@@ -240,6 +240,10 @@ function M.validate(layout)
      M.overlap(layout.objective_caption,layout.turns_caption)>0 or
      M.overlap(layout.objective_value,layout.turns_value)>0 or
      M.overlap(layout.score_panel,layout.help)>0 or
+     M.overlap(layout.score_panel,layout.opponent_panel)>0 or
+     M.overlap(layout.opponent_panel,layout.tray)>0 or
+     M.overlap(layout.opponent_panel,layout.help)>0 or
+     M.overlap(layout.opponent_panel,layout.runmenu)>0 or
      not M.contains(layout.footer,layout.footer_trim) or
      layout.footer.h>110 or layout.footer.w>1160 or
      not M.contains(layout.footer,layout.primary) or
@@ -476,7 +480,7 @@ function S.portrait_bounds(w,h,layout)
  -- slips behind the g3d table top, avoiding floating or pasted-on figures.
  local bottom=(layout.host and layout.host.y+layout.host.h or layout.tray.y)+35
   -(layout.portrait_lift or 0)
- local maxHeight=math.max(1,math.min(500,bottom-12))
+ local maxHeight=math.max(1,math.min(580,bottom-12))
  local scale=math.min(850/w,maxHeight/h)
  local outW,outH=w*scale,h*scale
  local x=layout.tray.x+layout.tray.w*.5-outW*.5
@@ -1319,14 +1323,22 @@ end
 -- marks do not participate in hit-testing or the physical dice projection.
 local function ledger_sheet(r,fill)
  local g=love.graphics
- g.setColor(unpack(Art.rgba('ink',.24)))
- g.rectangle('fill',r.x+4,r.y+5,r.w,r.h,2)
+ -- Pinned paper slips with a quiet binding rule; paper does not own input.
+ g.setColor(unpack(Art.rgba('ink',.26)))
+ g.rectangle('fill',r.x+5,r.y+7,r.w,r.h,2)
  panel(r,fill or Art.rgba('surface',.93),border_ink,2)
- g.setColor(unpack(Art.rgba('ochre_dark',.72)))
- g.rectangle('fill',r.x+13,r.y+7,r.w-26,2)
- g.setColor(unpack(Art.rgba('border',.42)))
+ g.setColor(unpack(Art.rgba('ochre_dark',.77)))
+ g.rectangle('fill',r.x+14,r.y+7,r.w-28,2)
+ g.setColor(unpack(Art.rgba('border',.34)))
  g.setLineWidth(1)
- g.line(r.x+13,r.y+r.h-9,r.x+r.w-13,r.y+r.h-9)
+ g.line(r.x+11,r.y+18,r.x+11,r.y+r.h-17)
+ g.line(r.x+16,r.y+r.h-11,r.x+r.w-16,r.y+r.h-11)
+ for _,pin in ipairs({r.x+22,r.x+r.w-22}) do
+  g.setColor(unpack(Art.rgba('ochre_dark',.92)))
+  g.circle('fill',pin,r.y+14,3.6)
+  g.setColor(unpack(Art.rgba('ochre_light',.9)))
+  g.circle('fill',pin-.7,r.y+13.3,1.1)
+ end
 end
 local function pointer_over(rect)
  if not (love.mouse and love.mouse.getPosition) then return false end
@@ -1340,13 +1352,23 @@ local function action_button(u,a,rect)
  local isPrimary=a.slot=='primary'
  -- Every visible control uses the same rectangular hitbox as the
  -- authoritative controller action table; no decorative overlay eats input.
- -- Give even disabled actions a light leaf underneath: their semi-transparent
- -- shared widget fill would otherwise sit directly on the dark desk.
- panel(rect,isPrimary and a.enabled and Art.rgba('ochre_light',.98)
-   or parchment,nil,5)
- MenuSurface.item(rect,{primary=isPrimary,disabled=not a.enabled,
-   active=a.enabled and pointer_over(rect)})
- if a.slot~='context' and a.enabled then
+ -- Header controls are small letterpress tabs. Gameplay actions stay
+ -- the existing large click targets. Both use rect for paint and input.
+ if a.slot=='header' then
+  g.setColor(unpack(Art.rgba('ink',.30)))
+  g.rectangle('fill',rect.x+3,rect.y+4,rect.w,rect.h,2)
+  panel(rect,parchment,Art.rgba('border',.76),2)
+  MenuSurface.item(rect,{style='editorial',disabled=not a.enabled,
+    active=a.enabled and pointer_over(rect)})
+  g.setColor(unpack(Art.rgba('ochre_dark',.74)))
+  g.rectangle('fill',rect.x+10,rect.y+5,rect.w-20,2)
+ else
+  panel(rect,isPrimary and a.enabled and Art.rgba('ochre_light',.98)
+    or parchment,nil,5)
+  MenuSurface.item(rect,{primary=isPrimary,disabled=not a.enabled,
+    active=a.enabled and pointer_over(rect)})
+ end
+ if a.slot~='context' and a.enabled and a.slot~='header' then
   local stripe=a.id=='bank' and Art.rgba('sage',.90) or Art.rgba('ochre',.94)
   g.setColor(unpack(stripe))
   g.rectangle('fill',rect.x+8,rect.y+4,rect.w-16,4,2)
@@ -1658,29 +1680,40 @@ function V.draw(u)
   local heading=d.actor=='opponent' and 'OPPONENT · PLAYING'
    or 'OPPONENT · WAITING'
   if d.winner then heading=d.winner=='opponent' and 'OPPONENT · WON' or 'OPPONENT · LOST' end
-  write_fitted(heading,{x=mr.x+16,y=mr.y+11,w=mr.w-32,h=26},
-   21,14,paper_ink)
-  write_fitted('Banked  '..d.scores.opponent..' pt',
-   {x=mr.x+16,y=mr.y+45,w=mr.w-32,h=30},27,18,paper_ink)
-  write_fitted('At risk  '..(d.actor=='opponent' and s.pot or 0)..' pt',
-   {x=mr.x+16,y=mr.y+78,w=mr.w-32,h=24},20,14,paper_warning)
-  g.setColor(unpack(Art.rgba('border',.55)))
+  write_fitted(heading,{x=mr.x+22,y=mr.y+12,w=mr.w-44,h=28},
+   23,15,paper_ink)
+  -- Paired columns make banked and provisional totals readable at a glance.
+  local half=(mr.w-56)*.5
+  local lx,rx=mr.x+22,mr.x+34+half
+  write_fitted('BANKED',{x=lx,y=mr.y+51,w=half,h=23},
+   18,13,paper_muted)
+  write_fitted(d.scores.opponent..' pt',
+   {x=lx,y=mr.y+75,w=half,h=43},35,22,paper_ink)
+  write_fitted('AT RISK',{x=rx,y=mr.y+51,w=half,h=23},
+   18,13,paper_muted)
+  write_fitted((d.actor=='opponent' and s.pot or 0)..' pt',
+   {x=rx,y=mr.y+75,w=half,h=43},35,22,paper_warning)
+  g.setColor(unpack(Art.rgba('border',.43)))
   g.setLineWidth(1)
-  g.line(mr.x+16,mr.y+109,mr.x+mr.w-16,mr.y+109)
+  g.line(mr.x+22+half+5,mr.y+53,mr.x+22+half+5,mr.y+119)
+  g.line(mr.x+22,mr.y+126,mr.x+mr.w-22,mr.y+126)
   if d.actor=='opponent' and not d.winner then
-   -- Same diegetic sheet contains the score AND the latest visible move.
    write_fitted(d.move or 'PREPARING',
-     {x=mr.x+16,y=mr.y+119,w=mr.w-32,h=34},24,16,paper_ink)
-   write_fitted(d.intent or '',
-     {x=mr.x+16,y=mr.y+155,w=mr.w-32,h=29},18,12,paper_muted)
+     {x=mr.x+22,y=mr.y+137,w=mr.w-44,h=32},25,17,paper_ink)
    local last=d.selected_points and ('Selected: +'..d.selected_points..' pt')
-     or d.last_take and ('Last set aside: +'..d.last_take..' pt ('..d.last_count..' dice)')
-     or 'Waiting for dice'
-   write_fitted(last,{x=mr.x+16,y=mr.y+194,w=mr.w-32,h=24},17,12,paper_muted)
+     or d.last_take and ('Set aside: +'..d.last_take..' pt ('..d.last_count..' dice)')
+     or d.intent or 'Waiting for dice'
+   write_fitted(last,{x=mr.x+22,y=mr.y+178,w=mr.w-44,h=29},
+     19,13,paper_muted)
   else
-   write_fitted('Next rival move after your turn',
-     {x=mr.x+16,y=mr.y+136,w=mr.w-32,h=29},
-     18,12,paper_muted)
+   write_fitted('Next move after your turn',
+     {x=mr.x+22,y=mr.y+139,w=mr.w-44,h=32},
+     22,15,paper_muted)
+   if d.last_take then
+    write_fitted('Last set aside: +'..d.last_take..' pt',
+     {x=mr.x+22,y=mr.y+182,w=mr.w-44,h=25},
+     18,13,paper_muted)
+   end
   end
  end
  write_fitted('TARGET',layout.objective_caption,18,14,paper_muted)

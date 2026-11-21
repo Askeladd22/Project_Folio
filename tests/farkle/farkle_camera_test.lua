@@ -33,18 +33,18 @@ for _,width in ipairs{1280,1920,2560} do
  local right=V.project(extents[2]+.4,extents[3]-.4,scene.box.border_height)
  local farScale=select(4,V.project(0,region.y_back,.6))
  local nearScale=select(4,V.project(0,region.y_front,.6))
- -- In the 0.965 rad raised-seat view, perspective remains legible:
+ -- In the 0.90 rad closer player-seat view, perspective remains legible:
  -- far-side dice do not vanish, and the front lip is less dominant.
- assert(nearScale/farScale>1.20 and nearScale/farScale<1.23,
+ assert(nearScale/farScale>1.45 and nearScale/farScale<1.55,
   'player-seat camera must preserve perspective without excessive flattening')
  local fraction=(right-left)*k/width
- assert(fraction>=.79 and fraction<=.83,'rear board should occupy 79–83% of screen width')
+ assert(fraction>=.56 and fraction<=.60,'rear board width should match the reference perspective')
  assert(math.abs(cy+rear*k-(layout.host.y+layout.host.h)*factor)<1,'rear rail disconnected from portrait')
  -- Compare actual projected surfaces, not the larger render viewport.
  local seamLeft=V.project(extents[1]-.4,extents[3],0)
  local seamRight=V.project(extents[2]+.4,extents[3],0)
  assert(math.abs((cx+seamLeft*k)+(cx+seamRight*k)-width)<1 and
-  cx+seamLeft*k>175*factor and cx+seamLeft*k<250*factor,
+  cx+seamLeft*k>380*factor and cx+seamLeft*k<430*factor,
   'reframed rear wood must stay symmetric around the table')
  local _,apron=V.project(0,extents[4]+.4,-scene.box.border_height)
  local gap=layout.footer.y*factor-(cy+apron*k)

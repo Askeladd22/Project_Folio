@@ -10,6 +10,28 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.107] - 2026-11-21
+
+**Status:** draft branch `feat/engraver-table-diegetic-hud-0.1.107`;
+no main merge without visual review.
+
+### Changed
+- Reframed the g3d tabletop to follow the supplied visual reference:
+  lowered far edge, deeper foreground trapezoid, taller woodcut rival.
+  `pitch=0.90`, `distance=24` with shared perspective for physical
+  dice, drawing and picking; six D6 and scoring unchanged.
+- Redesigned the player/Opponent ledgers as two pinned papers on the
+  left, paired score totals and clearer rival moves; right-hand
+  Rules/Pause now use engraved letterpress tabs. Footer hitboxes and
+  direct mouse throws remain unchanged.
+- Reviewed `666mayn/LOVE2d-ultimate-ui-template` (MIT software, assets
+  separately licensed); no vendoring or duplicate UI/input managers.
+- Updated art/technical and geometry regressions. English-only UI.
+
+### QA
+- Lua 5.4/LuaJIT, Python/versioning, LÖVE/Mesa: pending PR CI.
+- Windows 720p/1080p mouse picking and visual reference UAT: not run.
+
 ## [0.1.106] - 2026-11-21
 
 **Status:** draft follow-up on `test/dice-pile-stability-0.1.106`; `main` is unchanged.
