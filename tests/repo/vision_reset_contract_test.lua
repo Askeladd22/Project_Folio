@@ -25,11 +25,9 @@ if f then f:close() end
 f=io.open('resources/models/old_wooden_table.glb','rb')
 assert(f==nil,'historical test-only 9 MiB GLB reappeared')
 if f then f:close() end
-local version=assert(read('version.txt'):match('^(%d+%.%d+%.%d+)%s*
-),
+local version=assert(read('version.txt'):match('^(%d+%.%d+%.%d+)%s*$'),
  'version.txt must contain a release SemVer')
-local major,minor,patch=version:match('^(%d+)%.(%d+)%.(%d+)
-)
+local major,minor,patch=version:match('^(%d+)%.(%d+)%.(%d+)$')
 major,minor,patch=tonumber(major),tonumber(minor),tonumber(patch)
 assert(major>0 or minor>1 or patch>=104,
  'the creative-reset contract requires a version at least 0.1.104')
