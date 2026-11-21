@@ -1,7 +1,7 @@
 -- Symmetric duel must reuse the production Farkle scorer and D6 state.
 local R=require('src.farkle.rules')
 local UI=require('src.farkle.ui')
-local AI=require('experiments.merchant_duel.ai')
+local AI=require('experiments.opponent_duel.ai')
 local Controller=require('src.farkle.controller')
 local function eq(a,b) assert(a==b,tostring(a)..' ~= '..tostring(b)) end
 local solo=R.new('build')
@@ -11,11 +11,11 @@ local s=R.new('duel')
 eq(s.mode,'duel')
 s.duel_target=500
 eq(s.bank,0)
-local user={game=s,duel={actor='player',scores={player=0,merchant=0},target=500}}
+local user={game=s,duel={actor='player',scores={player=0,opponent=0},target=500}}
 local actions=UI.hud.actions.build(user)
 local map={}
 for _,a in ipairs(actions) do map[a.id]=a end
-assert(map.roll and map.help and map.runmenu,'player can throw physical dice')
+assert(not map.roll and map.help and map.runmenu,'player must throw through physical grip')
 assert(R.start(s))
 local faces={1,2,3,4,5,6}
 assert(R.settle(s,faces))
@@ -28,9 +28,9 @@ assert(ok and total==200 and minimum==0)
 assert(Controller.duel_bank(user))
 eq(s.bank,200)
 eq(s.phase,'ended')
-user.duel.actor='merchant'
+user.duel.actor='opponent'
 actions=UI.hud.actions.build(user)
-for _,a in ipairs(actions) do assert(a.slot=='header','merchant must not get player buttons') end
+for _,a in ipairs(actions) do assert(a.slot=='header','opponent must not get player buttons') end
 assert(R.next_turn(s))
 s.bank=0
 assert(R.start(s))
@@ -60,7 +60,7 @@ assert(Controller.duel_bank(user))
 eq(s.bank,500)
 eq(s.phase,'won')
 assert(not R.next_turn(s),'winner cannot keep playing')
-user.duel.winner='merchant'
+user.duel.winner='opponent'
 for _,a in ipairs(UI.hud.actions.build(user)) do
  assert(a.slot=='header','finished duel accepts only non-gameplay controls')
 end
@@ -81,13 +81,13 @@ assert(R.settle(stakes,{2,2,3,3,4,6}))
 eq(stakes.pot,0)
 eq(stakes.phase,'ended')
 
-local ai_state={phase='decision',actor='merchant',pot=30,score={merchant=490},target=500,used={[1]=true}}
+local ai_state={phase='decision',actor='opponent',pot=30,score={opponent=490},target=500,used={[1]=true}}
 eq(AI.decide(ai_state),'bank')
-ai_state.score.merchant=0
+ai_state.score.opponent=0
 assert(AI.decide(ai_state)=='bank' or AI.decide(ai_state)=='roll')
 local layout=UI.layout.build()
 assert(UI.layout.validate(layout))
 assert(layout.tray.x<20 and layout.tray.w>1900 and layout.tray.y+layout.tray.h>1000,
  'camera needs full-width immersive physical playfield')
-assert(layout.merchant_panel and layout.duel_turn)
+assert(layout.opponent_panel and layout.duel_turn)
 print('PASS symmetric Farkle duel: scoring, hot dice, winner, input guards and immersive HUD contract')

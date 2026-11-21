@@ -27,7 +27,7 @@ local function exact(source,fragment,where)
  assert(source:find(fragment,1,true),where..' lost: '..fragment)
 end
 local buttons={
- actions={"'help'","'runmenu'","'roll'","'take'",
+ actions={"'help'","'runmenu'","'take'",
       "'bank'","'next'","'rescue'","'fail'","'retryphysical'",
       "'medaluse'"},
  modals={"'weighted'","'engraved'","'medal'","'none'","'close'",
@@ -70,16 +70,12 @@ assert(escape_hold<escape_marquee and escape_marquee<escape_selection
 assert(c:find("self.modal='run'",1,true),'Esc must open pause')
 assert(not c:find("love.event.quit()",1,true),
  'Escape from a run must not quit the application')
-local space=pos("if k=='space' then")
-local take=pos("if self.buttons['take']")
-local roll=pos("if self.buttons['roll']")
-local next_turn=pos("if self.buttons['next']")
-local rescue=pos("if self.buttons['rescue']")
-assert(space<take and take<roll and roll<next_turn and next_turn<rescue,
- 'Space must prioritize take/roll/next/rescue')
+assert(not c:find("self.buttons['roll']",1,true),
+ 'automatic throw shortcut must not reappear')
+assert(not c:find("space='roll'",1,true),
+ 'space may never bypass physical pickup')
 for _,key in ipairs({"if k=='f7'","if k=='f8'","if k=='tab'","if k=='f'",
-                      "if k=='space'","if k=='return'",
-                      "or k=='kpenter'","space='roll'","a='take'",
+                      "if k=='return'","or k=='kpenter'","a='take'",
                       "n='next'","m='rescue'"}) do
  exact(c,key,'keyboard shortcut')
 end

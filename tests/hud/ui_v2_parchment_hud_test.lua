@@ -72,32 +72,29 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  Res.init(1920,1080)
  Res.refresh(w,h)
  drawCalls={}
- mouseX,mouseY=Res.to_screen(layout.single_action.x+layout.single_action.w/2,
-  layout.single_action.y+layout.single_action.h/2)
+ mouseX,mouseY=Res.to_screen(layout.help.x+layout.help.w/2,
+  layout.help.y+layout.help.h/2)
  local game=R.new()
  local ui={game=game,presentation=P.new(game)}
  local oldBank,oldPot,oldPhase=game.bank,game.pot,game.phase
  Hud.draw(ui)
  assert(pushes==pops,'Folio HUD leaked graphics state')
  assert(matchingFill(layout.score_panel),'scorecard must use ink-on-parchment')
- assert(activeFill(layout.single_action),'roll button should react to hover using screen-to-virtual mapping')
+ assert(ui.buttons.help and ui.buttons.help.enabled,'help must remain interactive')
  assert(not activeFill(layout.secondary),'disabled action should never show hover')
- assert(ui.buttons.roll and not ui.buttons.bank)
+ assert(not ui.buttons.roll and not ui.buttons.bank)
  assert(ui.buttons.help and ui.buttons.runmenu and not ui.buttons.folio)
- assert(ui.buttons.roll.enabled)
+ assert(ui.buttons.help.enabled)
  assert(game.bank==oldBank and game.pot==oldPot and game.phase==oldPhase,
   'rendering is not allowed to change the Farkle state')
- for _,id in ipairs{'roll','help','runmenu'} do
+ for _,id in ipairs{'help','runmenu'} do
   local rect=ui.buttons[id]
   assert(Surface.within(rect,1920,1080),'off-viewport '..id)
   assert(Layout.overlap(layout.tray,rect)==0 or
    (rect.y>=layout.footer.y and rect.y>=layout.tray.y+layout.tray.h-100),
    'action must not obscure the central D6 field: '..id)
  end
- assert(ui.buttons.roll.x==layout.single_action.x and
-   ui.buttons.roll.y==layout.single_action.y and
-   ui.buttons.roll.w==layout.single_action.w and
-   ui.buttons.roll.h==layout.single_action.h,'visual/input rectangles drifted')
+ assert(not ui.buttons.roll,'the grip is physical, not a screen-space button')
 end
 local f=assert(io.open('src/farkle/ui.lua','rb'))
 local source=f:read('*a');f:close()
@@ -107,4 +104,4 @@ assert(source:find("Dialogs.overlay(u,hits)",1,true))
 assert(source:find("Indicators.draw(u,hits)",1,true))
 assert(not source:find("hud_minimal",1,true))
 love=oldLove
-print('PASS Merchant HUD ink/parchment, hover mapping, hitboxes and score at three sizes')
+print('PASS Opponent HUD ink/parchment, hover mapping, hitboxes and score at three sizes')

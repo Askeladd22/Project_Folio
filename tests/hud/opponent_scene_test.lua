@@ -1,41 +1,27 @@
 local S=require('src.farkle.ui').opponent_scene
 local L=require('src.farkle.ui').layout.build()
-local room,merchant,monk=S.room_path,S.portrait_path('merchant'),S.portrait_path('monk')
-local rival=S.portrait_path('rival')
+local room,opponent,monk=S.room_path,S.portrait_path('opponent'),S.portrait_path('monk')
 local function exists(paths) return function(p) return paths[p] or false end end
-assert(S.default_id=='rival' and S.validate_id(nil)=='rival',
- 'unassigned/default opponent must be generic Rivale, never Mercante')
-assert(rival=='resources/opponents/rival.png')
-local placeholder=S.resolve(nil,exists({[room]=true,[merchant]=true}))
-assert(placeholder.id=='rival' and placeholder.portrait==merchant and
- placeholder.room==room and not placeholder.legacy,
- 'generic rival may reuse existing Merchant art without adopting its identity')
-local supplied=S.resolve(nil,exists({[room]=true,[merchant]=true,[rival]=true}))
-assert(supplied.id=='rival' and supplied.portrait==rival and not supplied.legacy,
- 'a dedicated rival.png must override the temporary artwork alias')
-local legacy=S.resolve('merchant',exists({}))
-assert(legacy.id=='merchant' and legacy.legacy and
- legacy.room==S.legacy_room and not legacy.portrait,
- 'legacy Merchant composite is only valid for explicitly named Merchant')
-local generic_fallback=S.resolve(nil,exists({}))
-assert(generic_fallback.id=='rival' and generic_fallback.legacy and
- generic_fallback.room==S.legacy_room and not generic_fallback.portrait,
- 'fallback artwork must not change the generic logical identity')
-assert(S.resolve('merchant',exists({[room]=true})).legacy)
-local a=S.resolve('merchant',exists({[room]=true,[merchant]=true}))
+assert(S.default_id=='opponent' and S.validate_id(nil)=='opponent',
+ 'generic opponent must be the only default identity')
+assert(opponent=='resources/opponents/opponent.png')
+local current=S.resolve(nil,exists({[room]=true,[opponent]=true}))
+assert(current.id=='opponent' and current.portrait==opponent and
+ current.room==room and not current.legacy)
+local fallback=S.resolve(nil,exists({[room]=true}))
+assert(fallback.id=='opponent' and fallback.legacy and
+ fallback.room==room and not fallback.portrait,
+ 'missing default portrait may show only the clean room')
+local a=S.resolve('opponent',exists({[room]=true,[opponent]=true}))
 local b=S.resolve('monk',exists({[room]=true,[monk]=true}))
-assert(a.room==room and b.room==room and a.portrait==merchant and
- b.portrait==monk and a.portrait~=b.portrait and not a.legacy and not b.legacy)
+assert(a.portrait~=b.portrait and not a.legacy and not b.legacy)
 local ok,err=pcall(S.resolve,'monk',exists({[monk]=true}))
-assert(not ok and err:find(room,1,true),
- 'other opponent cannot use JPEG with Merchant already inside')
+assert(not ok and err:find(room,1,true),'missing room should fail clearly')
 ok,err=pcall(S.resolve,'monk',exists({[room]=true}))
-assert(not ok and err:find(monk,1,true),'missing PNG must fail explicitly')
+assert(not ok and err:find(monk,1,true),'missing extra opponent portrait must fail')
 local controller=assert(io.open('src/farkle/controller.lua','rb'))
 local controller_source=controller:read('*a');controller:close()
-assert(controller_source:find('self:setOpponentVisual(params.opponent_id)',1,true) and
- not controller_source:find("params.opponent_id or 'merchant'",1,true),
- 'new run must use the neutral default rather than silently select Merchant')
+assert(controller_source:find('self:setOpponentVisual(params.opponent_id)',1,true))
 for _,id in ipairs({'../monk','Monk','monk.png','',12}) do
  assert(not pcall(S.validate_id,id),'invalid filename injection allowed')
 end
@@ -67,7 +53,7 @@ local g={
   cache.passes[#cache.passes+1]={shader=activeShader,shadow=cache.uniforms.shadowPass}
  end,
 }
-S.draw_portrait(legacy,L,g)
+S.draw_portrait(fallback,L,g)
 local failing={}
 for k,v in pairs(g) do failing[k]=v end
 failing.newShader=function() error('shader compile failed') end
@@ -78,7 +64,7 @@ S.draw_portrait(a,L,g,{x=0,y=0,breath=0})
 S.draw_portrait(b,L,g,{x=0,y=0,breath=0})
 S.draw_portrait(a,L,g,{x=0,y=0,breath=0})
 assert(cache.images==2 and cache.draws==6 and
- cache.paths[1]==merchant and cache.paths[2]==monk,
+ cache.paths[1]==opponent and cache.paths[2]==monk,
  'portraits must be independent and cached per filename')
 assert(cache.shaderSource:find('inkTone',1,true) and
  cache.shaderSource:find('paperTone',1,true) and
@@ -95,4 +81,4 @@ for i,pass in ipairs(cache.passes) do
   'both shadow and portrait must be drawn with the correct shader pass')
 end
 assert(activeShader==nil,'portrait shader must not leak into later draws')
-print('PASS swap opponent PNG without baked Merchant or changes to 3D gameplay')
+print('PASS swap opponent PNG without baked Opponent or changes to 3D gameplay')
