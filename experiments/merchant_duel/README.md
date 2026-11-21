@@ -47,7 +47,10 @@ luajit tests/labs/merchant_duel_ai_test.lua
 
 Il test copre transizioni, subset illegali, incasso, Farkle, hot dice,
 vittoria, soglie di rischio, 216 esiti per 3 dadi, partite seedate.
-**La presenza di un test non prova il suo esito; consultare CI.**
+**Risultato verificato:** PASS Lua 5.4 e LuaJIT nella CI run
+44892339140. La suite globale fallisce su una assertion del tavolo
+preesistente (`wooden_board_contract_test.lua:7`); questo lab resta
+isolato e non corregge quel problema fuori scope.
 
 ## Gate per integrazione nel prototipo
 
