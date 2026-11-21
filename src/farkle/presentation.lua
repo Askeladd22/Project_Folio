@@ -111,6 +111,21 @@ local H={}
 function H.reward_active(s) return s.phase=='upgrade' or s.phase=='medal' end
 function H.help_sections(s)
  local p=R.points;local c=R.contracts[s.stage];local rows={}
+ if s.mode=='duel' then
+  for v=1,6 do rows[v]={v,p.kind[3][v],p.kind[4][v],p.kind[5][v],p.kind[6][v]} end
+  return {
+   {title='Duello al Mercante',lines={'Il primo giocatore a incassare 500 punti vince.',
+    'Giocate a turni alterni con le stesse regole e sei dadi fisici.',
+    'Seleziona con il mouse o i tasti 1–6. Accantona [A].',
+    'Incassa [Invio] oppure rilancia [Spazio].',
+    'Nessuna medaglia, dado pesato o commissione nel duello.'}},
+   {title='Combinazioni',rows=rows,lines={'Un 1 vale 10 punti e un 5 vale 5 punti.',
+    'Ogni dado scelto appartiene a una sola combinazione valida.'}},
+   {title='Rischio',lines={'Farkle: perdi soltanto i punti non incassati del turno.',
+    'Hot dice: puoi rilanciare tutti e sei i dadi.',
+    'Il Mercante incassa o rilancia in base al rischio del prossimo tiro.'}}
+  }
+ end
  for v=1,6 do rows[v]={v,p.kind[3][v],p.kind[4][v],p.kind[5][v],p.kind[6][v]} end
  return {
   {title='How to play',lines={
@@ -140,6 +155,11 @@ function H.commission_closed(s)
 end
 function H.state_text(u)
  local s=u.game
+ if u.duel then
+  if u.duel.winner then return u.duel.winner=='player' and 'Hai vinto il duello a Farkle.' or 'Il Mercante ha vinto il duello.' end
+  if u.duel.actor=='merchant' then return u.duel.intent or 'Il Mercante gioca.' end
+  if s.phase=='ended' then return 'Turno concluso. Ora tocca al Mercante.' end
+ end
  if u.physicalFailure then return u.physicalFailure end
  if u.physicalNotice then return u.physicalNotice end
  if s.phase=='lost' then return 'Commission failed: no turns left. The run ends here.' end
