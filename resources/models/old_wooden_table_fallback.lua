@@ -3,6 +3,10 @@
 -- resources/models/old_wooden_table_game_ready_asset.glb for that asset.
 -- Visual only: physical board/walls and six dice keep their existing bounds.
 local M={}
+-- Original, low-poly trestle inspired by the KIFIR medieval table.
+-- Tone references the Alex Krush wood albedo; neither author supplied
+-- these procedural vertices or textures.
+M.finish={plank_tints={.54,.58,.56},underside=.70,trestle=.55}
 local function quad(out,a,b,c,d,tint,ext)
  local ux,uy,uz=b[1]-a[1],b[2]-a[2],b[3]-a[3]
  local vx,vy,vz=c[1]-a[1],c[2]-a[2],c[3]-a[3]
@@ -43,13 +47,13 @@ function M.mesh(extents)
  for i=1,count do
   local a=y1+(y2-y1)*(i-1)/count+.018
   local b=y1+(y2-y1)*i/count-.018
-  local shade=({.91,.96,.93})[i]
+  local shade=M.finish.plank_tints[i]
   block(v,x1,x2,a,b,-.15,.003,shade,extents)
  end
  -- Narrow apron is only furniture, *not* a wall that contains a die.
  local inset=1.05
- block(v,x1+inset,x2-inset,y1+.35,y1+.58,-.31,-.15,.67,extents)
- block(v,x1+inset,x2-inset,y2-.58,y2-.35,-.31,-.15,.67,extents)
+ block(v,x1+inset,x2-inset,y1+.35,y1+.58,-.31,-.15,.45,extents)
+ block(v,x1+inset,x2-inset,y2-.58,y2-.35,-.31,-.15,.45,extents)
  -- Trestle stance is 1.7:1, rather than the 2.31:1 dice-field ratio.
  local cx=(x1+x2)*.5;local cy=(y1+y2)*.5
  local halfX=math.min((x2-x1)*.28,(y2-y1)*.48)
@@ -58,12 +62,20 @@ function M.mesh(extents)
  for _,sx in ipairs({-1,1}) do
   for _,sy in ipairs({-1,1}) do
    local px=cx+sx*halfX;local py=cy+sy*halfY
-   block(v,px-leg,px+leg,py-leg,py+leg,-1.78,-.31,.75,extents)
-   block(v,px-1.05,px+1.05,py-.30,py+.30,-1.88,-1.67,.71,extents)
+   block(v,px-leg,px+leg,py-leg,py+leg,-1.78,-.31,.47,extents)
+   block(v,px-1.05,px+1.05,py-.30,py+.30,-1.88,-1.67,.43,extents)
   end
  end
  -- Central low stretcher evokes a period trestle; most stays off camera.
- block(v,cx-halfX+leg,cx+halfX-leg,cy-.21,cy+.21,-1.58,-1.37,.63,extents)
+ block(v,cx-halfX+leg,cx+halfX-leg,cy-.21,cy+.21,-1.58,-1.37,.40,extents)
+ -- Heavy cross-braced end trestles, purely decorative and beneath z=0.
+ for _,sx in ipairs({-1,1}) do
+  local px=cx+sx*halfX
+  block(v,px-.61,px+.61,cy-halfY-.65,cy-halfY+.65,
+   -1.60,-1.40,.49,extents)
+  block(v,px-.61,px+.61,cy+halfY-.65,cy+halfY+.65,
+   -1.60,-1.40,.49,extents)
+ end
  return {verts=v,min={x1,y1,-1.88},max={x2,y2,.003},unlit=false}
 end
 return M

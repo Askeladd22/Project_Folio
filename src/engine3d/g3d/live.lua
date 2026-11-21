@@ -300,17 +300,31 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
    end
    floor_texture=self.opponentWood
    if style=='old_wooden' then
-    -- Alex Krush's real GLB takes precedence when installed from the
-    -- companion ZIP; never stretch all supporting furniture with the top.
+    -- Prefer the user's KIFIR table (the wider tabletop is its long Z
+    -- axis); reuse the separate Alex Krush wood albedo when installed.
+    -- Model is ornamental: physical six-D6 bounds are unchanged.
+    local medieval='resources/models/medieval_table_folio.glb'
+    local walnut='resources/models/medieval_table_folio_wood.jpg'
     local path='resources/models/old_wooden_table_game_ready_asset.glb'
-    if love.filesystem.getInfo(path,'file') then
+    if love.filesystem.getInfo(medieval,'file') then
+     self.table_prop=require('src.engine3d.g3d.glb_loader').load(
+      self.g3d,medieval,function(model)
+       Scenery.remap_axes(model,{2,-1,3})
+       Scenery.place_table(model,extents,.18,.003)
+       -- Original KIFIR supports are much deeper than this fixed
+       -- 2.5D crop. Keep the authored silhouette but shorten legs
+       -- entirely below the existing tabletop / collision plane.
+       Scenery.compact_table(model,.26)
+       Scenery.keep_old_support_proportions(model,.75)
+      end,{max_texture=1024,texture_override=walnut})
+    elseif love.filesystem.getInfo(path,'file') then
      self.table_prop=require('src.engine3d.g3d.glb_loader').load(self.g3d,path,function(model)
       Scenery.place_table(model,extents,.18,.003)
       Scenery.keep_old_support_proportions(model,.70)
      end,{max_texture=1024})
     else
-     -- Functional tracked reference table: thin top, traditional trestles.
-     -- This is an original approximation, NOT the uploaded GLB geometry.
+     -- Procedural dark walnut trestle, self-contained and renderer-safe.
+     -- Not a copy of either downloaded GLB.
      local model=require('resources.models.old_wooden_table_fallback').mesh(extents)
      self.table_prop=self.g3d.newModel(model.verts,self.opponentWood)
     end

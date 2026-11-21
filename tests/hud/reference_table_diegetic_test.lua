@@ -7,8 +7,8 @@ local fit=require('src.farkle.tabletop').tray_view.fit
 local Opp=UI.opponent_scene
 assert(UI.layout.validate(L))
 assert(L.host.h==650 and L.tray.y==580 and L.tray.h==475)
-assert(L.score_panel.x==L.opponent_panel.x)
-assert(L.score_panel.y+L.score_panel.h<L.opponent_panel.y)
+assert(L.score_panel.x==38 and L.opponent_panel.x==1342)
+assert(UI.layout.overlap(L.score_panel,L.opponent_panel)==0)
 assert(L.opponent_panel.y+L.opponent_panel.h<L.tray.y)
 assert(UI.layout.overlap(L.score_panel,L.tray)==0)
 assert(UI.layout.overlap(L.opponent_panel,L.tray)==0)

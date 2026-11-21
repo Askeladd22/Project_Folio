@@ -139,7 +139,7 @@ function M.build(which)
    -- The 3D floor and its physical hitbox stay completely separate.
    single_action=rect(720,993,480,75),
    -- One paper ledger for the rival, no redundant top-center turn banner.
-   opponent_panel=rect(38,190,540,164),
+   opponent_panel=rect(1342,114,540,164),
    secured_caption=rect(60,27,216,20),
    secured_value=rect(60,48,216,48),
    risk_caption=rect(313,27,235,20),

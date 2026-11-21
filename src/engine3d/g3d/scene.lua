@@ -316,7 +316,7 @@ local S={}
 -- press furniture around it (the dream merges table and press bed).
 local PALETTE={
  opponent={.24,.22,.24},wooden={.34,.22,.14},wooden_compact={.34,.22,.14},
- old_wooden={.30,.22,.17},
+ old_wooden={.29,.20,.145},
  book={.76,.67,.51},current={.35,.215,.12},
  A={.31,.18,.095},B={.48,.33,.20},C={.52,.43,.255},
 }
@@ -324,7 +324,7 @@ local PALETTE={
 -- Unlike the old painter's manuscript rubrics these meshes share g3d depth.
 local FLOORS={
  opponent={.70,.62,.60},wooden={.80,.73,.64},wooden_compact={.80,.73,.64},
- old_wooden={.72,.62,.51},
+ old_wooden={.42,.33,.27},
  book={.88,.79,.64},current={.36,.29,.22},
  A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
 }
@@ -335,7 +335,7 @@ function S.floor_vertices(mesh,extents,style)
  if style=='old_wooden' then
   for _,v in ipairs(out) do
    v[3]=-.026 -- hidden receiver behind the visible wood, not a collider
-   v[9],v[10],v[11],v[12]=.62,.52,.41,1
+   v[9],v[10],v[11],v[12]=.37,.32,.27,1
   end
   return out
  end

@@ -27,6 +27,20 @@ presente sopra un tavolo compatto, mentre punteggio e comandi restano
 fissi sullo schermo. La prospettiva del tavolo e il picking condividono
 la stessa proiezione; il cambiamento è solo di inquadratura.
 
+**0.1.109 — Tavolo a cavalletti e composizione bilanciata (reversibile):**
+il vecchio fallback in primo piano usa tinte noce più scure, tre
+assi con variazioni leggere e supporti pesanti. Nessuna modifica
+ai collider o alla proiezione della camera. I pannelli del giocatore
+e dell'Opponent, entrambi piccoli e bruno-inchiostro, sono collocati
+ai lati opposti del ritratto, liberando la Venezia illustrata sulla
+sinistra. Il modello `medieval_table_folio.glb` (KIFIR) e la
+texture `medieval_table_folio_wood.jpg` (dal modello Alex Krush)
+possono essere installati **facoltativamente** senza alterare la
+logica del duello; gli originali restano fuori da Git, con obbligo
+di attribuzione CC BY 4.0. Le normal/roughness/metallic non sono
+usate dal renderer attuale. Il GLB Medieval Market fornito è una
+scena con tenda e oggetti: non è adatto come sostituto unico.
+
 **0.1.108 — Riduzione dell'ingombro HUD (sperimentale):** in risposta
 allo screenshot reale a 1605×896, i due registri mantengono i dati del
 duello ma occupano meno altezza: 154 px giocatore, 164 px rivale,

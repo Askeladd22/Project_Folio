@@ -12,9 +12,10 @@ assert(L.score_panel.h==154 and L.opponent_panel.h==164,
  'the two ledgers must remain deliberately compact')
 assert((L.score_panel.h+L.opponent_panel.h)<335,
  'paper would again dominate the printshop room')
-assert(L.score_panel.y+L.score_panel.h<L.opponent_panel.y and
+assert(Layout.overlap(L.score_panel,L.opponent_panel)==0 and
+ L.opponent_panel.x>L.score_panel.x+L.score_panel.w and
  L.opponent_panel.y+L.opponent_panel.h<L.tray.y,
- 'player and rival slips must not overlap each other or the real D6')
+ 'player and rival rails must flank the character, clear of physical D6')
 for _,r in ipairs{
  L.secured_caption,L.secured_value,L.risk_caption,L.risk_value,
  L.objective_caption,L.objective_value,L.turns_caption,L.turns_value,
