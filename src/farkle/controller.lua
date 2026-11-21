@@ -163,13 +163,14 @@ function U:onPhysicalFailure(event)
  self.mouseThrow=nil
  self.marquee=nil
  self.dragSelected=nil
- self.state='physics_error';self:log('physical_failure',event.reason)
+ self.state='physics_error';self.physicalFailure=event and event.reason or 'Errore fisico: riprova il tiro';self:log('physical_failure',self.physicalFailure)
 end
 function U:retry_physical()
  if self.state~='physics_error' then return end
  local indices={}
  for i=1,#dice do if self.activePhysical and self.activePhysical[i] then indices[#indices+1]=i end end
  if #indices==0 then return false end
+ self.physicalFailure=nil
  self:begin_physical(indices,true)
 end
 function U:update_duel(dt)
@@ -307,7 +308,7 @@ function U:mousepressed(x,y,b)
   if b==1 and self.state~='rolling' then
    local vx,vy=Res.to_virtual(x,y)
    for id,r in pairs(self.buttons) do
-    if (id=='help' or id=='runmenu') and r.enabled and
+    if (id=='help' or id=='runmenu' or id=='retryphysical') and r.enabled and
      vx>=r.x and vx<=r.x+r.w and vy>=r.y and vy<=r.y+r.h then r.fn();return end
    end
   end
