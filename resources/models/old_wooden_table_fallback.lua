@@ -34,7 +34,7 @@ local function block(out,x1,x2,y1,y2,z1,z2,tint,ext)
 end
 function M.mesh(extents)
  assert(type(extents)=='table' and #extents==4,'table limits required')
- local x1,x2,y1,y2=unpack(extents)
+ local x1,x2,y1,y2=extents[1],extents[2],extents[3],extents[4]
  assert(x1<x2 and y1<y2,'invalid board size')
  local v={}
  -- An understated old tavern tabletop, adapted separately to the immutable
