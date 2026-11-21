@@ -63,6 +63,7 @@ function U:reset(mode)
  self.marquee=nil
  self.dragSelected=nil
  self.game=R.new(mode)
+ if mode=='duel' then self.game.duel_target=500 end
  self.duel=mode=='duel' and {actor='player',scores={player=0,merchant=0},target=self.game.duel_target,wait=0,intent='Il Mercante attende il tuo lancio.'} or nil
  self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
  self.modal=nil;self.lastLoss=nil;self.lastBank=nil;self.physicalFailure=nil;self.physicalNotice=nil
@@ -72,6 +73,16 @@ function U:reset(mode)
  D.stage_opening(dice)
  self:sync();self:log('new')
  self:log('session_seed',self.sessionSeed or 'unknown')
+end
+function U:duel_bank()
+ local s=self.game
+ if not self.duel or s.mode~='duel' or not R.bank_status(s) then return false end
+ if next(s.selected) and not R.take(s) then return false end
+ s.bank=s.bank+s.pot
+ s.pot=0
+ s.phase=s.bank>=self.duel.target and 'won' or 'ended'
+ s.last='Punti incassati nel duello.'
+ return true
 end
 function U:act(name,fn)
  local pot=self.game.pot;local bank=self.game.bank
@@ -181,6 +192,7 @@ function U:update_duel(dt)
  if s.phase=='ended' then
   d.scores[d.actor]=s.bank
   assert(R.next_turn(s),'duel turn must close before actor swap')
+  s.turn=1 -- do not import the solo four-turn limit into a symmetric duel
   d.actor=d.actor=='player' and 'merchant' or 'player'
   s.bank=d.scores[d.actor]
   s.entered=s.bank>0
@@ -216,7 +228,7 @@ function U:update_duel(dt)
   local action=d.pending_action
   d.pending_action=nil
   if action=='bank' then
-   self:act('bank',function() return R.bank_turn(s) end)
+   self:act('bank',function() return self:duel_bank() end)
   else
    assert(self:request(),'merchant physical reroll must start')
   end
