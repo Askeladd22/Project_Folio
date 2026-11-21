@@ -383,7 +383,9 @@ function U:mousepressed(x,y,b)
  if not self.modal and not H.reward_active(self.game) and self.state~='rolling' then
   local vx,vy=Res.to_virtual(x,y)
   for _,button in pairs(self.buttons) do
-   if button.enabled and vx>=button.x and vx<=button.x+button.w and
+   if button.enabled and type(button.x)=='number' and type(button.y)=='number' and
+      type(button.w)=='number' and type(button.h)=='number' and
+      vx>=button.x and vx<=button.x+button.w and
       vy>=button.y and vy<=button.y+button.h then button.fn();return end
   end
  end
