@@ -12,8 +12,8 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 
 ## [0.1.108] - 2026-11-21
 
-**Stato:** revisione HUD/UX su `feat/hud-clarity-0.1.108`,
-PR draft verso `main`. Nessun nuovo sistema di gioco.
+**Stato:** [PR draft #164](https://github.com/Askeladd22/Project_Folio/pull/164)
+su `feat/hud-clarity-0.1.108` verso `main`. Nessun nuovo sistema di gioco.
 
 ### Modificato
 - Due registri compattati: la scheda giocatore passa da 205
