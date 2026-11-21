@@ -79,3 +79,20 @@ Introdotta una struttura di ricerca e validazione **documentale**, non è stata 
   controllo che la vecchia denominazione non sia più utilizzata nei componenti attivi.
 - **Storia:** non riscrivere i commit precedenti né i titoli storici dei log;
   le sigle dei branch originali rimangono identificatori di provenienza.
+
+## D-003 — Single Opponent Duel entry and legible turns (21 November 2026)
+
+- **Baseline:** `main@3864304e84175eca31569949fe5ee0b950aacd16`, v0.1.100.
+- **Approved in chat:** replace the two game entries with a single Opponent Duel, English-only game UI, scored physical dice left on the tabletop and slower, explained Opponent decisions.
+- **Unchanged:** canonical six-D6 Farkle scoring, g3d physics and AI bank/reroll policy. The old solo commission mode is kept internally for regression and R&D only; no new health, cards or permanent roguelite progression is implied.
+- **Presentation:** show selection preview, set-aside gain, current unbanked total, secure score and risk decision in separate timed beats.
+- **Gate:** full Lua/LuaJIT, Mesa and Windows LÖVE visual/manual tests before merge. Not a claim of measured competitiveness or a finished run structure.
+
+## D-004 — Table eye-line and paper ledgers; retired campaign selector (21 November 2026)
+
+- **Baseline:** `feat/unified-opponent-duel-english-0.1.101@64a97bd52d3dcbf8a9fd5145c36e81a30218fc53`.
+- **Explicitly requested:** improve tabletop perspective and diegetic UI/UX; remove obsolete source and dated documentation without destroying research provenance.
+- **Choice:** fixed perspective `pitch=0.965`, six real D6 and shared projection/picking unchanged. Separate gameplay score from presentation; replace floating status-card styling with paper ledgers and an engraved wager ruler.
+- **Cleanup evidence:** the selectable campaign page is unreachable after New Game routes directly to `scriptorium`; delete only that page, its now-unused schema, translations and registration, plus the tests that incorrectly required the dead page. Historical solo scorer and R&D experiments remain executable in isolation.
+- **Not deleted:** historical research reports, experiments and their CI; source of truth remains `docs/project_vision.md`, `docs/farkle_rules.md`, implementation and changelog.
+- **Gate:** Lua 5.4, LuaJIT, Python and Mesa CI on the exact SHA; Windows visual acceptance at 1280×720 / 1920×1080 / ultrawide; test physical pickup, rear parked dice and readable opponent intention before merge.

@@ -61,7 +61,7 @@ local function read(path)
  local h=assert(io.open(path,'rb'));local s=h:read('*a');h:close()
  return s
 end
-assert(read('README.md'):find('30 file Lua',1,true),
+assert(read('README.md'):find('30 Lua source files',1,true),
  'README module count must match source_structure_test (30)')
 assert(read('docs/technical.md'):find('src/engine3d/die_collision.lua',1,true),
  'technical map must include the production pair-contact solver')

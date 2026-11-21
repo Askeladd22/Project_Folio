@@ -57,10 +57,10 @@ pending.manualRoll={count=3}
 local p=items(pending)
 assert(not p.roll,
  'P2 must not allow the automatic roll during physical partial release')
-assert(A.state(pending):find('3 dadi',1,true),
+assert(A.state(pending):find('3 dice',1,true),
  'manual physical release needs a dedicated status')
 pending.mouseThrow={held={1,2,3},group=true}
-assert(A.state(pending):find('GRUPPO DI 3',1,true),
+assert(A.state(pending):find('GROUP OF 3',1,true),
  'physical selection state must not be confused with scoring')
 local errorOwner=owner(R.new())
 errorOwner.physicalFailure='Invalid physical faces'

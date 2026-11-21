@@ -45,6 +45,30 @@ function D.stage_opening(entries)
   b.asleep=true;b._grabbed=nil;b._manual_pending=nil
  end
 end
+-- Keep scored dice physically on the board instead of replacing them with UI icons.
+-- Their die IDs and settled face orientation are unchanged; they cannot be
+-- picked up or included in subsequent throws until the next turn/hot dice.
+function D.stage_kept(entries,used)
+ for i,entry in ipairs(entries or {}) do
+  if used and used[i] then
+   local b=entry.body
+   if b and b.position then
+    local lowest=math.huge
+    for _,v in ipairs(b) do lowest=math.min(lowest,v[3]) end
+    if lowest<math.huge then
+     b.position[1]=(i-3.5)*2.0
+     b.position[2]=-4.45
+     b.position[3]=-lowest
+     for axis=1,3 do b.velocity[axis]=0;b.angular[axis]=0 end
+     b.asleep=true;b.sleep_timer=999
+     -- The existing solver treats an unreleased body as kinematic, keeping
+     -- accepted faces stable while other dice physically roll nearby.
+     b._manual_pending=true
+    end
+   end
+  end
+ end
+end
 function D.install(build)
  for i,entry in ipairs(dice) do
   local die=entry.die;die.faceValueMap=D.values(build,i);die.pipMap=die.faceValueMap

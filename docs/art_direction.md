@@ -33,6 +33,24 @@ presente sopra un tavolo compatto, mentre punteggio e comandi restano
 fissi sullo schermo. La prospettiva del tavolo e il picking condividono
 la stessa proiezione; il cambiamento è solo di inquadratura.
 
+**0.1.102 — Framing del duello:** camera prospettica vincolata, con
+`pitch=0.965`, `yaw=0` e `distance=52`. Il bordo posteriore rimane
+agganciato alla stanza disegnata e i sei D6 mantengono coordinate
+identiche per mesh, silhouette e input. La lieve elevazione dell'occhio
+riduce l'imponenza della fascia anteriore, senza trasformare la scena
+in un piano dall'alto.
+
+**0.1.102 — UI diegetica:** due fogli-contabilità appoggiati alla
+composizione della bottega raccontano banca e rischio; un foglietto
+separato illustra il turno e le scelte dell'Opponent. Pergamena,
+inchiostro, doppie righe sottili e righello inciso sostituiscono il
+lessico dei pannelli digitali senza perdere accessibilità, numeri,
+azioni o stato del tiro. La nota delle scelte dell'Opponent compare
+**solo** durante il suo turno; il giocatore legge una breve istruzione
+incisa sulla fascia anteriore del tavolo. I toast che duplicano banca
+o Farkle sono soppressi durante il duello. Nessun nuovo asset, stato di gameplay o carta
+obbligatoria è introdotto.
+
 - Fondale senza personaggi: `resources/scenes/printshop-room.png`.
 - Ritratto intercambiabile: `resources/opponents/<id>.png`.
 - Menu: `resources/ui/menu_manuzio.png`.
@@ -202,7 +220,7 @@ carta impressa nel 1496 non è garantita dal semplice TTF.
 
 ### Ambiti
 
-Menu principale, impostazioni, selezione delle commissioni, splash,
+Menu principale, impostazioni, ingresso diretto al duello, splash,
 HUD della partita, dialoghi, folio e toast. Nessuna modifica alla
 logica Farkle, ai dadi fisici o agli input.
 

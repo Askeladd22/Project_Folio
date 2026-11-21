@@ -8,7 +8,6 @@ GM.new=function(...) manager=new(...);return manager end
 local N=require('src.core.navigation')
 local Menu=require('src.screens.frontend').main_menu
 local Settings=require('src.screens.frontend').settings
-local Choose=require('src.screens.frontend').campaign_select
 local U=require('src.farkle.controller')
 local State=require('src.core.runtime_state').settings
 local assets={}
@@ -58,19 +57,17 @@ local function scenario(w,h)
   assert(love.graphics.getWidth()==w and love.graphics.getHeight()==h,'settings unexpectedly resized window')
  end
  N.go('settings');Settings:draw();local items=up(Settings.draw,'layout_cache').section_items;click(items[#items]);wait()
- assert(manager.current_name=='main_menu');menu('new-game');wait();assert(manager.current_name=='campaign_select');shot(w..'-commissions')
- Choose:draw();local layout=up(Choose.draw,'layout_cache')
+ assert(manager.current_name=='main_menu');menu('new-game');wait()
+ assert(manager.current_name=='scriptorium' and U.game and U.game.mode=='duel',
+  'New Game must launch the single Opponent Duel')
+ shot(w..'-opponent-duel')
  if not baseline then
-  assert(#layout.items==2 and layout.items[1].label=='Farkle Roguelite' and layout.items[2].kind=='back')
-  say('PASS only Farkle and Back are present')
+  assert(U.duel and U.duel.actor=='player' and U.duel.target==500)
+  assert(not package.loaded['src.features.scriptorium.module'] and
+   not package.loaded['src.content.commissions'] and not package.loaded['src.core.save_state'])
+  say('PASS '..w..' New Game opens Opponent Duel with canonical Farkle')
  end
- click(layout.items[#layout.items]);wait();assert(manager.current_name=='main_menu')
- if not baseline then
-  menu('new-game');wait();Choose:draw();click(up(Choose.draw,'layout_cache').items[1]);assert(manager.current_name=='scriptorium' and U.game)
-  wait(.3);shot(w..'-farkle')
-  assert(not package.loaded['src.features.scriptorium.module'] and not package.loaded['src.content.commissions'] and not package.loaded['src.core.save_state'])
-  say('PASS '..w..' navigation, Farkle start and chromatic isolation')
- end
+ N.go('main_menu');wait()
 end
 local load0,update0,draw0=love.load,love.update,love.draw
 local co,pending,elapsed,frames
@@ -79,7 +76,8 @@ function love.load()
  if baseline then
   manager:register('startup_splash',require('src.screens.startup_splash'))
   local frontend=require('src.screens.frontend')
-  for _,name in ipairs{'main_menu','settings','campaign_select'} do manager:register(name,frontend.modules[name]) end
+  for _,name in ipairs{'main_menu','settings'} do manager:register(name,frontend.modules[name]) end
+  manager:register('scriptorium',U)
   N.go('startup_splash')
  else assert(manager.current_name=='startup_splash','normal boot must start at splash') end
  if not baseline then
@@ -94,9 +92,10 @@ function love.load()
   scenario(1920,1080);scenario(1280,720)
   if not baseline then
    local settings=State.get();settings.accessibility.big_text=true;State.set(settings);State.apply()
-   N.go('campaign_select');wait();Choose:draw();local l=up(Choose.draw,'layout_cache')
-   shot('1280-commissions-big-text');click(l.items[#l.items]);assert(manager.current_name=='main_menu')
-   say('PASS 720p Big Text keeps Back accessible')
+   N.go('main_menu');wait();menu('new-game');wait()
+   assert(manager.current_name=='scriptorium' and U.game.mode=='duel')
+   shot('1280-opponent-duel-big-text');N.go('main_menu');wait()
+   say('PASS 720p Big Text keeps Opponent Duel accessible')
    settings.accessibility.big_text=false;State.set(settings);State.apply()
   end
   if not baseline then

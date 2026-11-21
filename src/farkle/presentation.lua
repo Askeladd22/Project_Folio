@@ -114,16 +114,16 @@ function H.help_sections(s)
  if s.mode=='duel' then
   for v=1,6 do rows[v]={v,p.kind[3][v],p.kind[4][v],p.kind[5][v],p.kind[6][v]} end
   return {
-   {title='Duello al Opponent',lines={'Il primo giocatore a incassare 500 punti vince.',
-    'Giocate a turni alterni con le stesse regole e sei dadi fisici.',
-    'Seleziona con il mouse o i tasti 1–6. Accantona [A].',
-    'Incassa [Invio] oppure afferra e rilancia i dadi con il destro.',
-    'Nessuna medaglia, dado pesato o commissione nel duello.'}},
-   {title='Combinazioni',rows=rows,lines={'Un 1 vale 10 punti e un 5 vale 5 punti.',
-    'Ogni dado scelto appartiene a una sola combinazione valida.'}},
-   {title='Rischio',lines={'Farkle: perdi soltanto i punti non incassati del turno.',
-    'Hot dice: puoi rilanciare tutti e sei i dadi.',
-    'Il Opponent incassa o rilancia in base al rischio del prossimo tiro.'}}
+   {title='Opponent Duel',lines={'The first player to bank 500 points wins.',
+    'Take turns with the same Farkle rules and six physical dice.',
+    'Select dice with the mouse or keys 1–6; Set Aside [A].',
+    'Bank [Enter], or grab the free dice with right-click and throw.',
+    'Set-aside dice stay on the rear of the table until the next turn.'}},
+   {title='Combinations',rows=rows,lines={'A single 1 scores 10 points; a single 5 scores 5.',
+    'Each selected die belongs to exactly one scoring combination.'}},
+   {title='Risk & choices',lines={'Farkle loses only the unbanked points of this turn.',
+    'Hot dice let you throw all six again while your points stay at risk.',
+    'The Opponent selects dice, weighs risk, then banks or rerolls.'}}
   }
  end
  for v=1,6 do rows[v]={v,p.kind[3][v],p.kind[4][v],p.kind[5][v],p.kind[6][v]} end
@@ -131,7 +131,7 @@ function H.help_sections(s)
   {title='How to play',lines={
    '1. Right-click a die, move the mouse, then release to throw. Throw all six.',
    '2. Select a combination: click the dice or press 1–6.',
-   '3. Press Set aside [A]. Selected dice leave the tray.',
+   '3. Press Set Aside [A]. Set-aside dice stay on the table.',
    '4. Physically grab and throw the remaining dice or Bank [Enter].',
    'You can also bank a valid selection without setting it aside first.',
    'Banked points are safe. Turn points remain at risk.',
@@ -156,9 +156,9 @@ end
 function H.state_text(u)
  local s=u.game
  if u.duel then
-  if u.duel.winner then return u.duel.winner=='player' and 'Hai vinto il duello a Farkle.' or 'Il Opponent ha vinto il duello.' end
-  if u.duel.actor=='opponent' then return u.duel.intent or 'Il Opponent gioca.' end
-  if s.phase=='ended' then return 'Turno concluso. Ora tocca al Opponent.' end
+  if u.duel.winner then return u.duel.winner=='player' and 'You won the Farkle duel.' or 'The Opponent won the duel.' end
+  if u.duel.actor=='opponent' then return u.duel.intent or 'Opponent is playing.' end
+  if s.phase=='ended' then return 'Turn over. Opponent plays next.' end
  end
  if u.physicalFailure then return u.physicalFailure end
  if u.physicalNotice then return u.physicalNotice end
@@ -431,8 +431,8 @@ function F.draw(s,p,x,y,w,h,txt,target)
   g.setColor(Art.rgba('ochre',pulse*.5));g.setLineWidth(2)
   g.rectangle('line',x+5,y+5,w-10,h-10,2)
  end
- txt(s.bank..' assicurati',x+w*.15,y+h*.90,w*.72,math.max(12,math.floor(w*.039)),Art.rgba('forest',1),'center')
- txt(s.pot..' a rischio',x+w*.15,y+h*.94,w*.72,math.max(12,math.floor(w*.039)),Art.rgba('risk',1),'center')
+ txt(s.bank..' banked',x+w*.15,y+h*.90,w*.72,math.max(12,math.floor(w*.039)),Art.rgba('forest',1),'center')
+ txt(s.pot..' at risk',x+w*.15,y+h*.94,w*.72,math.max(12,math.floor(w*.039)),Art.rgba('risk',1),'center')
  g.setLineWidth(1)
  return {fixed=fixed,wet=wet}
 end

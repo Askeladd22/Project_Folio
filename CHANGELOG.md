@@ -10,6 +10,36 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.102] - 2026-11-21
+
+**State:** continuation of draft PR #158 on `feat/unified-opponent-duel-english-0.1.101`. No merge to main.
+
+### Changed
+- Raised the player-seat perspective from 0.90 to 0.965 rad, preserving one physical g3d/picking projection, a fixed rear seam and accessible D6 scale.
+- Restyled the player/opponent banked-risk ledger and Opponent move as ink-on-parchment sheets; added engraved stakes divisions and removed an unused backdrop behind header actions.
+- Removed the unreachable campaign-selection frontend (~344 source lines), its schema/localization/registration and its obsolete menu-specific tests. New Game still enters only Opponent Duel.
+- Synced active technical/art-direction docs and preserved historical research records instead of deleting experimental provenance.
+- Repaired the Mesa Opponent screenshot fixture: it now boots `duel` and captures actual player bank, 3D kept dice and the rival's selection/set-aside/decision stages, rather than the retired solo-mode HUD.
+- Removed the redundant Opponent-move note from the player's turn, gave front-rail instructions a readable ink strip and suppressed dueling score toasts that duplicated the printed ledger.
+
+### Verification
+- Automated Lua 5.4/LuaJIT, Python and Mesa gates: pending for this commit.
+- Windows LÖVE UAT and human assessment of physical dice/paper hierarchy: not run.
+
+## [0.1.101] - 2026-11-21
+
+**Status:** Opponent Duel as the sole player-facing mode; English HUD; visible table-kept dice; readable staged AI actions. Branch `feat/unified-opponent-duel-english-0.1.101`.
+
+### Changed
+- New Game launches the six-D6 Opponent Duel directly (first to bank 500 points). The standalone Farkle Roguelite menu option is retired; historical commission logic remains for tests/research.
+- Scored dice remain visible on the physical g3d tabletop, parked at the back instead of appearing only as separate 2D portraits.
+- Opponent now reviews the roll, highlights chosen dice, sets them aside, explains the bank/reroll decision and acts in legible beats. The HUD shows last set-aside gain, secure score, at-risk pot and action reasoning.
+- Translated gameplay notices, modal controls, help and HUD into English.
+
+### Verification
+- **PASS on code commit `17a5209e8754e299588ca6dd448dbbce0b9e3b5c`:** GitHub Actions [run 44909332235](https://github.com/Askeladd22/Project_Folio/actions/runs/44909332235), version/changelog, syntax, Lua 5.4, LuaJIT, lint, Python, LÖVE/Mesa dice and Opponent table smoke, with screenshot artifact. The documentation-only follow-up commit requires its own CI confirmation.
+- **Manual gate remains:** Windows real pickup, all dice/hot dice, collision behavior, AI pace, pause, high contrast/big text and 1280×720/1920×1080/ultrawide screenshots.
+
 ## [0.1.100] - 2026-11-21
 
 **Stato:** follow-up di coerenza a 0.1.99, sul branch `fix/opponent-naming-audit-0.1.100`, senza variazioni a punteggi, fisica o gameplay.

@@ -198,12 +198,12 @@ assert(type(require('src.core.runtime_state').ui.scale)=='function')
 assert(type(require('src.core.runtime_state').store.codec.decode)=='function')
 assert(type(require('src.core.engine_bridge').roll_events.complete)=='function')
 local frontend=require('src.data.frontend_schema')
-assert(frontend.menu.assets and frontend.campaign.campaigns and frontend.splash.assets)
+assert(frontend.menu.assets and not frontend.campaign and frontend.splash.assets)
 assert(require('src.data.dice_schema').tray.main)
 local surfaces=require('src.screens.folio_surface')
 local menus=require('src.screens.frontend')
 assert(menus.menu_surface==surfaces.menu_surface,'frontend must reuse shared surfaces')
-for _,name in ipairs{'main_menu','campaign_select','settings'} do
+for _,name in ipairs{'main_menu','settings'} do
  assert(menus.modules[name]==menus[name] and type(menus[name].draw)=='function')
 end
 assert(type(surfaces.page_layout.get)=='function' and type(surfaces.miniature_2d.new)=='function')
@@ -217,4 +217,4 @@ local startup=entry:read('*a');entry:close()
 assert(not startup:find('src.core.renderer_lab_boot',1,true)
  and not startup:find('experiments.',1,true),
  'normal startup must not dispatch into unavailable experiment modules')
-print('PASS source structure: exactly 29 modules, shared APIs, lazy GPU and isolated startup')
+print('PASS source structure: 30 modules, single-entry frontend and isolated startup')

@@ -87,7 +87,7 @@ sceglie se incassare o rilanciare e rischia di perdere il bottino del
 turno con un Farkle. Rendering unico **g3d**; nessun ripristino
 di painter/fallback legacy.
 
-La partita attuale usa commissioni sul tavolo da gioco. L'avversario generico porta l'identità tecnica neutra **Opponent**; il ritratto attuale è sostituibile e non definisce un archetipo narrativo canonico.
+Dalla 0.1.101 l'unico ingresso giocabile è un duello Farkle contro Opponent, primo a 500 punti bancati. Le commissioni restano una baseline di ricerca e regressione, non una seconda modalità. L'avversario generico porta l'identità tecnica neutra **Opponent**; il ritratto attuale è sostituibile e non definisce un archetipo narrativo canonico.
 Il bilanciamento di obiettivi e progressione è ancora provvisorio.
 
 ## Incontri e poste — principi forti, regolamento ancora aperto

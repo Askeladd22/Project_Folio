@@ -33,12 +33,12 @@ for _,width in ipairs{1280,1920,2560} do
  local right=V.project(extents[2]+.4,extents[3]-.4,scene.box.border_height)
  local farScale=select(4,V.project(0,region.y_back,.6))
  local nearScale=select(4,V.project(0,region.y_front,.6))
- -- In the player-seat 0.90 rad preset, depth foreshortening is
- -- milder than the previous 1.16 rad near/far ratio.
- assert(nearScale/farScale>1.16 and nearScale/farScale<1.22,
+ -- In the 0.965 rad raised-seat view, perspective remains legible:
+ -- far-side dice do not vanish, and the front lip is less dominant.
+ assert(nearScale/farScale>1.20 and nearScale/farScale<1.23,
   'player-seat camera must preserve perspective without excessive flattening')
  local fraction=(right-left)*k/width
- assert(fraction>=.75 and fraction<=.82,'rear board should occupy 75–82% of screen width')
+ assert(fraction>=.79 and fraction<=.83,'rear board should occupy 79–83% of screen width')
  assert(math.abs(cy+rear*k-(layout.host.y+layout.host.h)*factor)<1,'rear rail disconnected from portrait')
  -- Compare actual projected surfaces, not the larger render viewport.
  local seamLeft=V.project(extents[1]-.4,extents[3],0)

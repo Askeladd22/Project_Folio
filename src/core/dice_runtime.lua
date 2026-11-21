@@ -855,7 +855,7 @@ local function setup_game_manager()
     game_manager:register("scriptorium", Scriptorium)
     game_manager:register("startup_splash", require("src.screens.startup_splash"))
     local frontend = require("src.screens.frontend")
-    for _, name in ipairs({"main_menu", "campaign_select", "settings"}) do
+    for _, name in ipairs({"main_menu", "settings"}) do
         game_manager:register(name, frontend.modules[name])
     end
 end
@@ -1004,7 +1004,7 @@ function love.draw()
         g.setShader()
         g.setColor(.96,.82,.50,.92)
         local label='Renderer: g3d'
-        label=label..'  |  Dadi: '..live_g3d.material_mode..' [F10]'..' | Smusso: '..(live_g3d.bevel_enabled and 'ON' or 'OFF')..' [F11]'
+        label=label..'  |  Dice: '..live_g3d.material_mode..' [F10]'..' | Bevel: '..(live_g3d.bevel_enabled and 'ON' or 'OFF')..' [F11]'
         g.print(label,15,g.getHeight()-24)
         g.pop()
     end
@@ -1136,7 +1136,8 @@ function rollAllDice(max_dice, roll_indices, recovery, technical, gesture)
     -- Opponent AI and technical retries use this automatic physics launch path.
     Scriptorium.manualRoll=nil
     for _,entry in ipairs(dice) do
-        entry.body._manual_pending=false
+        -- Set-aside dice stay kinematic; clear pending only for active dice.
+        if not entry.kept then entry.body._manual_pending=false end
         entry.body._grabbed=false
     end
     local rnd = (love and love.math and love.math.random) or math.random

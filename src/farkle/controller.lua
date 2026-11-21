@@ -33,16 +33,16 @@ function OpponentAI.best_option(options)
 end
 function OpponentAI.decide(s)
  if s.score.opponent+s.pot>=s.target then
-  return 'bank','Raggiungo l’obiettivo.'
+  return 'bank','Banking reaches the target.'
  end
  local available=0
  for i=1,6 do if not s.used[i] then available=available+1 end end
  if available==0 then available=6 end
  local o=outcome[available]
  if o[3]<=o[2]*s.pot then
-  return 'bank',('Rischio %d/%d, meglio incassare.'):format(o[2],o[1])
+  return 'bank',('Farkle risk: %d/%d. Bank the points.'):format(o[2],o[1])
  end
- return 'roll',('Rischio %d/%d, tento un rilancio.'):format(o[2],o[1])
+ return 'roll',('Farkle risk: %d/%d. Push for more.'):format(o[2],o[1])
 end
 -- The new folio interface is the only gameplay HUD.
 -- No environment-controlled HUD variant and no F6 layout switch.
@@ -65,7 +65,7 @@ function U:enter(params)
   self:setOpponentVisual(params.opponent_id)
  end
  if not self.game or (params and params.new_run) then
-  self:reset(params and params.mode or 'build')
+  self:reset(params and params.mode or 'duel')
  end
 end
 function U:log(event,detail)
@@ -75,6 +75,9 @@ function U:log(event,detail)
 end
 function U:sync()
  for i,d in ipairs(dice or {}) do d.kept=self.game.used[i] or (self.medalHeld and self.medalHeld[i]) or false end
+ -- Kept dice are still real 3D bodies. Park them on the rear of the table,
+ -- away from the throwing area; the logical hand/score remains authoritative.
+ if self.duel and next(self.game.used) then D.stage_kept(dice,self.game.used) end
  if self.game.phase~='rolling' then self.state=self.game.phase=='fresh' and 'waiting' or 'placing' end
  self:sync_presentation()
 end
@@ -84,7 +87,9 @@ function U:sync_presentation()
  local event=Presentation.observe(self.presentation,self.game,self.hits,RuntimeUI.reduced_animations())
  if event then Audio.play_farkle(event) end
 end
-function U:shouldDrawTrayDie(index) return not (self.game and self.game.used[index]) end
+function U:shouldDrawTrayDie(index)
+ return self.duel ~= nil or not (self.game and self.game.used[index])
+end
 function U:reset(mode)
  if self.state=='rolling' then return end
  Audio.stop_dice('shake',.045)
@@ -93,9 +98,11 @@ function U:reset(mode)
  self.manualRoll=nil
  self.marquee=nil
  self.dragSelected=nil
+ mode=mode or 'duel'
  self.game=R.new(mode)
  if mode=='duel' then self.game.duel_target=500 end
- self.duel=mode=='duel' and {actor='player',scores={player=0,opponent=0},target=self.game.duel_target,wait=0,intent='Il Opponent attende il tuo lancio.'} or nil
+ self.duel=mode=='duel' and {actor='player',scores={player=0,opponent=0},target=self.game.duel_target,
+  wait=0,move='YOUR TURN',intent='Grab and throw your dice.',last_take=nil,last_count=0} or nil
  self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
  self.modal=nil;self.lastLoss=nil;self.lastBank=nil;self.physicalFailure=nil;self.physicalNotice=nil
  self.id=os.date('%Y%m%d-%H%M%S')..'-'..math.floor(love.timer.getTime()*1000)
@@ -112,7 +119,7 @@ function U:duel_bank()
  s.bank=s.bank+s.pot
  s.pot=0
  s.phase=s.bank>=self.duel.target and 'won' or 'ended'
- s.last='Punti incassati nel duello.'
+ s.last='Duel points banked.'
  return true
 end
 function U:act(name,fn)
@@ -131,11 +138,15 @@ function U:act(name,fn)
    d.wait=.95
    if self.game.phase=='won' then
     d.winner=d.actor
-    d.intent=d.actor=='player' and 'Hai battuto il Opponent!' or 'Il Opponent ha vinto la sfida.'
-   else d.intent=d.actor=='player' and 'Hai incassato. Tocca al Opponent.' or 'Il Opponent ha incassato.' end
+    d.intent=d.actor=='player' and 'You won the duel!' or 'Opponent won the duel!'
+   else d.intent=d.actor=='player' and 'Points secured. Opponent plays next.' or 'Opponent banked its points.' end
   end
-  if name=='bank' then Toasts.show('Punti incassati: +'..(self.lastBank or 0))
-   elseif name=='accept_bust' then Toasts.show('Farkle: punti a rischio perduti') end
+  -- Duel scores and Farkle losses are already in the printed ledgers.
+  -- Keep old toasts only for the historical solo regression mode.
+  if not self.duel then
+   if name=='bank' then Toasts.show('Banked: +'..(self.lastBank or 0)..' pts')
+   elseif name=='accept_bust' then Toasts.show('Farkle: turn points lost') end
+  end
  end
 end
 function U:begin_physical(indices,technical,gesture,manual)
@@ -205,7 +216,7 @@ function U:onPhysicalFailure(event)
  self.mouseThrow=nil
  self.marquee=nil
  self.dragSelected=nil
- self.state='physics_error';self.physicalFailure=event and event.reason or 'Errore fisico: riprova il tiro';self:log('physical_failure',self.physicalFailure)
+ self.state='physics_error';self.physicalFailure='Physical roll failed: retry with the same dice.';self:log('physical_failure',self.physicalFailure)
 end
 function U:retry_physical()
  if self.state~='physics_error' then return end
@@ -227,40 +238,65 @@ function U:update_duel(dt)
   d.actor=d.actor=='player' and 'opponent' or 'player'
   s.bank=d.scores[d.actor]
   s.entered=s.bank>0
+  d.pending_take=nil;d.pending_action=nil;d.selected_points=nil
+  d.last_take=nil;d.last_count=0
   self.lastLoss=nil;self.lastBank=nil
   self.presentation=Presentation.new(s)
   D.stage_opening(dice)
   self:sync()
-  d.intent=d.actor=='player' and 'Tocca a te: sfida il Opponent.' or 'Il Opponent prepara il lancio.'
-  d.wait=.7
+  d.move=d.actor=='player' and 'YOUR TURN' or 'PREPARING'
+  d.intent=d.actor=='player' and 'Grab and throw your dice.' or 'Opponent prepares a fresh throw.'
+  d.wait=d.actor=='opponent' and 1.6 or 0
   self:log('duel_actor',d.actor)
   return
  end
  if d.actor~='opponent' then return end
  if s.phase=='fresh' then
-  d.intent='Il Opponent lancia i dadi.'
+  d.move='THROWING'
+  d.intent='Opponent throws the physical dice.'
   assert(self:request(),'opponent physical roll must start')
  elseif s.phase=='ready' and not s.scored then
-  local option=OpponentAI.best_option(R.options(s))
-  assert(option,'ready throw needs at least one legal option')
-  for _,id in ipairs(option.ids) do assert(R.toggle(s,id)) end
-  self:act('take',function() return R.take(s) end)
-  d.intent=('Il Opponent accantona %d punti.'):format(option.points)
-  d.wait=.95
+  if d.pending_take then
+   local option=d.pending_take
+   d.pending_take=nil
+   self:act('take',function() return R.take(s) end)
+   d.selected_points=nil
+   d.last_take=option.points
+   d.last_count=#option.ids
+   d.move=('SET ASIDE +%d PT'):format(option.points)
+   d.intent=('Turn total: %d points at risk.'):format(s.pot)
+   d.wait=2.0
+  else
+   local option=OpponentAI.best_option(R.options(s))
+   assert(option,'ready throw needs at least one legal option')
+   for _,id in ipairs(option.ids) do assert(R.toggle(s,id)) end
+   d.pending_take=option
+   d.selected_points=option.points
+   d.move=('SELECTING %d DICE'):format(#option.ids)
+   d.intent=('Selection worth +%d points.'):format(option.points)
+   d.wait=1.8 -- leave physical selection outlines visible before taking
+  end
  elseif s.phase=='ready' and s.scored then
   if not d.pending_action then
    local action,reason=OpponentAI.decide({phase='decision',pot=s.pot,
     actor='opponent',score={opponent=s.bank},target=d.target,used=s.used})
    d.pending_action=action
-   d.intent=(action=='bank' and 'Il Opponent incassa. ' or 'Il Opponent rilancia. ')..reason
-   d.wait=.95 -- reveal intention before the action, not afterwards
+   d.move=action=='bank' and 'DECISION: BANK' or 'DECISION: REROLL'
+   d.intent=reason
+   d.wait=2.0 -- show risk assessment before the action, not afterwards
    return
   end
   local action=d.pending_action
   d.pending_action=nil
   if action=='bank' then
+   local gained=s.pot
    self:act('bank',function() return self:duel_bank() end)
+   d.move=('BANKED +%d PT'):format(gained)
+   d.intent=('Secure total: %d points.'):format(d.scores.opponent)
+   d.wait=2.0
   else
+   d.move='REROLLING'
+   d.intent=('Risking %d points on the next throw.'):format(s.pot)
    assert(self:request(),'opponent physical reroll must start')
   end
  end
@@ -319,12 +355,18 @@ function U:onDiceSettled(values)
  Presentation.accepted(self.presentation,accepted)
  if s.phase=='ended' or s.phase=='lost' then self.lastLoss=pot end
  self.activePhysical=nil;self.manualRoll=nil;self.marquee=nil;self.dragSelected=nil;self.dice_results={};self:sync();self:log('settled',table.concat(s.hand,'/'))
+ if self.duel and self.duel.actor=='opponent' and s.phase=='ready' then
+  self.duel.move='READING THE ROLL'
+  self.duel.intent='Looking for a scoring combination.'
+  self.duel.wait=1.3
+ end
  if s.phase=='ended' or s.phase=='lost' then
   if self.duel then
-   self.duel.intent=self.duel.actor=='opponent' and 'Il Opponent fa Farkle.' or 'Farkle: perdi i punti a rischio.'
-   self.duel.wait=.9
+   self.duel.move='FARKLE'
+   self.duel.intent=self.duel.actor=='opponent' and 'Opponent lost its unbanked points.' or 'Your unbanked points are lost.'
+   self.duel.wait=2.2
   end
-  Toasts.show('Farkle: turno concluso')
+  if not self.duel then Toasts.show('Farkle: turn over') end
  end
  return true
 end

@@ -1,5 +1,7 @@
 # Regolamento Farkle di Project Folio
 
+> **Update 0.1.101 (21 November 2026):** The sole player-facing mode is **Opponent Duel**, first to 500 banked points with alternating turns and canonical six-D6 Farkle scoring. The three-commission progression below remains only as a historical regression baseline, not as another selectable mode. The live game UI is English-only; this R&D rules document keeps its Italian text for provenance.
+
 > I percorsi di audit e archivio riportati come codice si riferiscono ai
 > materiali locali citati nel rapporto originale, assenti dalla copia corrente.
 
@@ -63,7 +65,7 @@ Il primo incasso riuscito registra l'ingresso. Un Farkle o un incasso rifiutato 
 
 ## Commissioni e progressione solitaria
 
-**Stato implementato (baseline corrente):** nessun avversario artificiale; la sfida deriva da commissioni e turni limitati. La nuova direzione con figure animate è progettuale e va confrontata con questa baseline, non confusa con il regolamento già operativo.
+**Baseline storica (non selezionabile dalla 0.1.101):** in questa modalità di test la sfida deriva da commissioni e turni limitati; non è il duello attualmente giocabile. La nuova direzione con figure animate è progettuale e va confrontata con questa baseline, non confusa con il regolamento già operativo.
 
 | Commissione | Obiettivo assicurato | Turni | Ingresso | Incassi successivi | Condizione da incassare |
 |---|---:|---:|---:|---:|---|

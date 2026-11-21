@@ -108,11 +108,11 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
    'action outside the front lip obstructs the D6 field: '..a.label)
  end
  local labels=table.concat(textDrawn,' | ')
- assert(labels:find('ASSICURATI',1,true) and
-   labels:find('A RISCHIO',1,true) and
-   labels:find('OBIETTIVO',1,true) and
+ assert(labels:find('BANKED',1,true) and
+   labels:find('AT RISK',1,true) and
+   labels:find('TARGET',1,true) and
    labels:find('100 pt',1,true) and
-   labels:find('TURNI RIMASTI',1,true) and
+   labels:find('TURNS LEFT',1,true) and
    labels:find('4',1,true))
  local function painted(target)
   for _,r in ipairs(rectangles) do
@@ -154,7 +154,7 @@ for _,r in ipairs(rectangles) do
  end
 end
 assert(not footerInFlight,'empty command plaque visible while six D6 roll')
-assert(table.concat(textDrawn,' '):find('I dadi stanno rotolando',1,true),
+assert(table.concat(textDrawn,' '):find('The dice are rolling',1,true),
  'roll status must remain readable without a panel')
 assert(R.settle(game,{1,5,2,3,4,6}))
 game.medal='retry'
@@ -186,7 +186,7 @@ Hud.draw(u)
 assert(not u.buttons.roll and not u.buttons.take and not u.buttons.choices)
 assert(R.toggle(game,3))
 Hud.draw(u)
-assert(u.buttons.take.enabled and u.buttons.take.label=='Accantona · 5 pt')
+assert(u.buttons.take.enabled and u.buttons.take.label=='Set Aside · 5 pt')
 assert(R.take(game) and game.pot==20)
 Hud.draw(u)
 assert(not u.buttons.roll and u.buttons.bank.enabled,'only physical pickup may reroll')
@@ -203,24 +203,24 @@ footerNotice=nil
 Hud.draw(u)
 assert(u.buttons.take and not u.buttons.bank)
 assert(u.buttons.take.x+u.buttons.take.w/2==center,'a lone scoring control must be centered')
-assert(footerNotice and footerNotice:find('completano',1,true),'partial group needs a next step')
+assert(footerNotice and footerNotice:find('complete the combination',1,true),'partial group needs a next step')
 assert(R.toggle(hand,6))
 footerNotice=nil
 Hud.draw(u)
-assert(footerNotice and footerNotice:find('Deseleziona',1,true),'impossible set needs a correction')
+assert(footerNotice and footerNotice:find('Deselect',1,true),'impossible set needs a correction')
 assert(R.toggle(hand,6) and R.toggle(hand,3))
 for i=1,5 do assert(R.toggle(hand,i)) end
 local function check_selection(points)
  textDrawn={};footerNotice=nil
  Hud.draw(u)
- assert(u.buttons.take.label=='Accantona · '..points..' pt',
+ assert(u.buttons.take.label=='Set Aside · '..points..' pt',
    'the primary action must quote the exact uncommitted group score')
  assert(hand.pot==0,'preview changed the amount at risk')
  assert(math.abs((u.buttons.take.x+u.buttons.bank.x+u.buttons.bank.w)/2-center)<1,
    'the actual visible action pair must be centered without a medal')
  assert(not footerNotice or footerNotice=='',
    'the button details already preview the decisions; do not echo them below')
- assert(u.buttons.take.label=='Accantona · '..points..' pt',
+ assert(u.buttons.take.label=='Set Aside · '..points..' pt',
    'valid selection must preserve the actual scoring amount')
 end
 check_selection(50)
@@ -235,7 +235,7 @@ assert(R.take(hand))
 textDrawn={};footerNotice=nil
 Hud.draw(u)
 assert(not u.buttons.roll and u.buttons.bank.enabled)
-assert(not footerNotice or not footerNotice:find('Scegli i dadi',1,true),
+assert(not footerNotice or not footerNotice:find('Select highlighted dice',1,true),
  'additional scoring dice are optional once the player may roll or bank')
 -- Keep pick headroom above the rear seam for physical dice in flight.
 assert(layout.host.y+layout.host.h-layout.tray.y==60,
