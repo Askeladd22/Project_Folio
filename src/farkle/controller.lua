@@ -12,7 +12,38 @@ local MouseThrow=Interaction.single
 local Marquee=Interaction.selection
 local GroupThrow=Interaction.group
 local Toasts=require('src.farkle.presentation').toast_messages
-local MerchantAI=require('experiments.merchant_duel.ai')
+-- Production policy is intentionally self-contained. The independently
+-- tested laboratory remains in its own directory; runtime must not import it.
+local MerchantAI = {}
+local outcome = {
+ [1]={6,4,15}, [2]={36,16,180}, [3]={216,60,1850},
+ [4]={1296,204,18310}, [5]={7776,600,197195},
+ [6]={46656,1080,2399175},
+}
+function MerchantAI.best_option(options)
+ local best
+ for _,o in ipairs(options) do
+  if not best or o.points>best.points
+   or (o.points==best.points and o.remaining>best.remaining)
+   or (o.points==best.points and o.remaining==best.remaining and o.mask<best.mask) then
+   best=o
+  end
+ end
+ return best
+end
+function MerchantAI.decide(s)
+ if s.score.merchant+s.pot>=s.target then
+  return 'bank','Raggiungo l’obiettivo.'
+ end
+ local available=0
+ for i=1,6 do if not s.used[i] then available=available+1 end end
+ if available==0 then available=6 end
+ local o=outcome[available]
+ if o[3]<=o[2]*s.pot then
+  return 'bank',('Rischio %d/%d, meglio incassare.'):format(o[2],o[1])
+ end
+ return 'roll',('Rischio %d/%d, tento un rilancio.'):format(o[2],o[1])
+end
 -- The new folio interface is the only gameplay HUD.
 -- No environment-controlled HUD variant and no F6 layout switch.
 local U={state='waiting',buttons={},dice_results={}}
