@@ -44,7 +44,10 @@ branch `feat/immersive-merchant-duel-ui-0.1.98`. Nessun merge in
   il turno automatico del Mercante.
 
 ### Verifiche
-- Test statici e automatici: **IN ATTESA DI CI su questo branch**.
+- **PASS** GitHub Actions #44901312567 (commit `b67fd3dacdbaf276e484b7081f58fa340150803a`):
+  versionamento/changelog, lint, test Lua 5.4, LuaJIT, test Python,
+  GPU dice smoke Mesa e composizione/interazione tavolo Mesa.
+  La nota non sostituisce il playtest Windows/LÖVE.
 - **DA VERIFICARE MANUALMENTE** su Windows/LÖVE: contatto visivo
   Mercante/tavolo, selezione e gesto fisico su tutti i bordi,
   cartiglio non invasivo, corretta turnazione, vittoria/sconfitta
