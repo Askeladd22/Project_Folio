@@ -18,7 +18,7 @@ end
 dice={}
 for i=1,6 do dice[i]={body=body(),kept=false} end
 U.game=R.new('build')
-U.state='waiting';U.buttons={roll={enabled=true}}
+U.state='waiting';U.buttons={}
 U.mouseThrow=nil;U.manualRoll=nil;U.presentation=nil
 U.logicalRollId=0;U.physicalAttemptId=0
 U.sync_presentation=function()end
