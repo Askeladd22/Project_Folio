@@ -13,7 +13,7 @@ local function free_ids(s)
  return ids
 end
 local function next_actor(s)
- s.actor=s.actor=='player' and 'merchant' or 'player'
+ s.actor=s.actor=='player' and 'opponent' or 'player'
  s.pot=0
  s.used={}
  s.options=nil
@@ -25,7 +25,7 @@ function Duel.new(target)
  target=target or 500
  assert(type(target)=='number' and target%1==0 and target>0,'target must be a positive integer')
  return {target=target,actor='player',phase='roll',turn=1,pot=0,
-  score={player=0,merchant=0},used={},options=nil,last_roll=nil,
+  score={player=0,opponent=0},used={},options=nil,last_roll=nil,
   winner=nil,events={},roll_count=0}
 end
 function Duel.available(s)

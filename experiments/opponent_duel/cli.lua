@@ -1,8 +1,8 @@
 -- Terminal-playable experiment. Run from repository root:
---   lua5.4 experiments/merchant_duel/cli.lua [seed] [target]
+--   lua5.4 experiments/opponent_duel/cli.lua [seed] [target]
 -- Not connected to 3D dice: use this to playtest decisions before integration.
-local Duel=require('experiments.merchant_duel.duel')
-local AI=require('experiments.merchant_duel.ai')
+local Duel=require('experiments.opponent_duel.duel')
+local AI=require('experiments.opponent_duel.ai')
 local seed=tonumber(arg and arg[1]) or os.time()
 local target=tonumber(arg and arg[2]) or 500
 local state=Duel.new(target)
@@ -12,19 +12,19 @@ local function next_die()
  x=(x*48271)%2147483647
  return (x%6)+1
 end
-print(('Folio: sfida al Mercante | seed %d | obiettivo %d'):format(seed,target))
+print(('Folio: sfida al Opponent | seed %d | obiettivo %d'):format(seed,target))
 print('Punti FOLIO: 1=10, 5=5. Non si applica il punteggio di KCD2.')
 while not state.winner do
  local actor=state.actor
  if state.phase=='roll' then
   if actor=='player' then
-   print(('\nTU %d | MERCANTE %d | a rischio %d'):format(
-    state.score.player,state.score.merchant,state.pot))
+   print(('\nTU %d | OPPONENT %d | a rischio %d'):format(
+    state.score.player,state.score.opponent,state.pot))
    io.write('Premi Invio per lanciare (q per uscire): ')
    local answer=io.read()
    if answer==nil or answer=='q' then break end
   else
-   print(('\nIl Mercante lancia (%d pt a rischio).'):format(state.pot))
+   print(('\nIl Opponent lancia (%d pt a rischio).'):format(state.pot))
   end
   local ids={}
   for id=1,6 do if not state.used[id] then ids[#ids+1]=id end end
@@ -34,12 +34,12 @@ while not state.winner do
   for i,id in ipairs(ids) do summary[#summary+1]='#'..id..'='..faces[i] end
   print(table.concat(summary,'  '))
   assert(Duel.roll(state,faces))
-  if state.phase=='roll' then print(actor=='player' and 'FARKLE! Passi il turno.' or 'Il Mercante fa FARKLE.') end
+  if state.phase=='roll' then print(actor=='player' and 'FARKLE! Passi il turno.' or 'Il Opponent fa FARKLE.') end
  elseif state.phase=='select' then
-  if actor=='merchant' then
+  if actor=='opponent' then
    local option=assert(AI.best_option(state.options))
    assert(Duel.select(state,option.mask))
-   print(('Il Mercante accantona %d pt (%d dadi).'):format(option.points,#option.ids))
+   print(('Il Opponent accantona %d pt (%d dadi).'):format(option.points,#option.ids))
   else
    local best=assert(AI.best_option(state.options))
    io.write(('Scelta suggerita: %s (%d pt). Inserisci ID dadi separati da virgola, o Invio per suggerimento: '):format(
@@ -56,9 +56,9 @@ while not state.winner do
    if not Duel.select(state,mask) then print('Selezione non valida: usa soltanto una combinazione Farkle.') end
   end
  elseif state.phase=='decision' then
-  if actor=='merchant' then
+  if actor=='opponent' then
    local action,reason=AI.decide(state)
-   print(('Mercante: %s | %s'):format(action=='bank' and 'INCASSA' or 'RILANCIA',reason))
+   print(('Opponent: %s | %s'):format(action=='bank' and 'INCASSA' or 'RILANCIA',reason))
    assert(action=='bank' and Duel.bank(state) or Duel.continue(state))
   else
    io.write(('Hai %d pt a rischio. [i]ncassa o [r]ilancia? '):format(state.pot))
@@ -71,7 +71,7 @@ while not state.winner do
  end
 end
 if state.winner then
- print(('\n%s VINCE! Tu: %d | Mercante: %d'):format(
-  state.winner=='player' and 'GIOCATORE' or 'MERCANTE',
-  state.score.player,state.score.merchant))
+ print(('\n%s VINCE! Tu: %d | Opponent: %d'):format(
+  state.winner=='player' and 'GIOCATORE' or 'OPPONENT',
+  state.score.player,state.score.opponent))
 end

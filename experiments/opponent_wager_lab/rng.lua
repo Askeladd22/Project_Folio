@@ -1,4 +1,4 @@
--- Deterministic Park-Miller RNG, independent streams for player dice and Merchant box.
+-- Deterministic Park-Miller RNG, independent streams for player dice and Opponent box.
 local M={}
 function M.new_rng(seed)
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed<2147483647,

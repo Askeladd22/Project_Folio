@@ -1,4 +1,4 @@
-# Laboratorio: duello Farkle contro il Mercante (v0.1.97)
+# Laboratorio: duello Farkle contro il Opponent (v0.1.97)
 
 **Stato: esperimento isolato, NON collegato alla scena LÖVE/g3d.**
 Baseline: `main` commit `3b2175731c12eef8809842e1e1976529b4a506bc` (2026-11-21).
@@ -8,14 +8,14 @@ Baseline: `main` commit `3b2175731c12eef8809842e1e1976529b4a506bc` (2026-11-21).
 Dalla radice del repository, con Lua 5.4 o LuaJIT:
 
 ```sh
-lua5.4 experiments/merchant_duel/cli.lua 1234 500
+lua5.4 experiments/opponent_duel/cli.lua 1234 500
 ```
 
 `1234` è il seed e `500` è un obiettivo **prototipale** configurabile.
 In ogni tiro sono mostrati gli ID fisici 1–6. Il giocatore può scegliere
 qualunque sottoinsieme valido digitando gli ID separati da virgole,
 oppure usare la selezione suggerita. Poi decide se incassare o rilanciare.
-Il Mercante compie le stesse azioni, senza conoscere i risultati futuri.
+Il Opponent compie le stesse azioni, senza conoscere i risultati futuri.
 
 ## Contratto tecnico
 
@@ -24,7 +24,7 @@ Il Mercante compie le stesse azioni, senza conoscere i risultati futuri.
   almeno il target. Ogni giocatore ha un punteggio sicuro.
 - `ai.lua` sceglie il subset con **massimo punteggio immediato** tra
   le opzioni valide fornite da `src/farkle/rules.lua`.
-- Il Mercante incassa se ciò basta a vincere, altrimenti confronta
+- Il Opponent incassa se ciò basta a vincere, altrimenti confronta
   incasso immediato con **un solo rilancio seguito da incasso**:
   `gain_sum > pot * bust_count`. I valori sono enumerazioni teoriche
   per D6 uniformi normali e punteggio Folio; non misure del solver 3D.
@@ -40,9 +40,9 @@ Il Mercante compie le stesse azioni, senza conoscere i risultati futuri.
 ## QA
 
 ```sh
-lua5.4 tests/labs/merchant_duel_ai_test.lua
+lua5.4 tests/labs/opponent_duel_ai_test.lua
 # oppure
-luajit tests/labs/merchant_duel_ai_test.lua
+luajit tests/labs/opponent_duel_ai_test.lua
 ```
 
 Il test copre transizioni, subset illegali, incasso, Farkle, hot dice,
@@ -58,11 +58,11 @@ isolato e non corregge quel problema fuori scope.
    confronto politica casuale / soglia fissa / one-step,
    vantaggio misurabile e nessuna strategia ovvia che domina.
 2. **Umano:** giocatori capaci di motivare la prossima decisione del
-   Mercante prima della sua azione, almeno su una raccolta di stati
+   Opponent prima della sua azione, almeno su una raccolta di stati
    ingannevoli; raccogliere errori e ambiguità.
 3. **Engine:** adattare turni e feedback all'`src/farkle/controller.lua`
    mantenendo identità fisica, evento `dice.roll_accepted`, proiezione,
-   selezione, target e HUD coerenti. I dadi del Mercante vanno
+   selezione, target e HUD coerenti. I dadi del Opponent vanno
    lanciati fisicamente, non assegnati con un RNG separato in produzione.
 
-Vedi `research/merchant_ai_kcd2_2026-11-21.md` per fonti, analisi e limiti.
+Vedi `research/opponent_ai_kcd2_2026-11-21.md` per fonti, analisi e limiti.

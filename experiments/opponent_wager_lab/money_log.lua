@@ -1,21 +1,21 @@
 -- Versioned V4 CSVs, deliberately separate from V2/V3/Corrector and runs.csv.
 local M={}
-M.MATCHES='merchant_v4_matches.csv'
-M.HANDS='merchant_v4_hands.csv'
-M.LEDGER='merchant_v4_transactions.csv'
-M.POLICY='merchant_v4_policy.csv'
-M.DECISIONS='merchant_v4_dice_decisions.csv'
+M.MATCHES='opponent_v4_matches.csv'
+M.HANDS='opponent_v4_hands.csv'
+M.LEDGER='opponent_v4_transactions.csv'
+M.POLICY='opponent_v4_policy.csv'
+M.DECISIONS='opponent_v4_dice_decisions.csv'
 local match_keys={'id','seed','raises_enabled','winner','reason','hands',
- 'artist_hands','merchant_hands','artist_denari','merchant_denari','pot_denari','raises','folds'}
+ 'artist_hands','opponent_hands','artist_denari','opponent_denari','pot_denari','raises','folds'}
 local hand_keys={'id','seed','hand','winner','reason','award_denari','raised',
- 'artist_balance_denari','merchant_balance_denari','initial_offer','final_offer',
+ 'artist_balance_denari','opponent_balance_denari','initial_offer','final_offer',
  'artist_result','artist_farkle','artist_rerolls'}
 local ledger_keys={'match','seed','step','hand','actor','action','amount',
  'balance_before','balance_after','pot_before','pot_after','reason'}
 local decision_keys={'id','seed','step','hand','actor','action','provisional','dice_available',
  'offer','player_result','probability','threshold','outcome','symbol','raised','pot_awarded_denari'}
 local policy_keys={'id','seed','step','hand','actor','action','offer','chance',
- 'artist_wins','merchant_wins','artist_balance','merchant_balance','reason'}
+ 'artist_wins','opponent_wins','artist_balance','opponent_balance','reason'}
 local function safe(v)
  v=tostring(v==nil and '' or v)
  if v:find('[,"\r\n]') then return '"'..v:gsub('"','""')..'"' end
@@ -45,13 +45,13 @@ function M.next_id(fs)
 end
 function M.save(fs,m)
  assert(m.phase=='over' and not m.saved,'save once after finished match')
- local outcome=require('experiments.merchant_wager_lab.money_duel').record(m)
+ local outcome=require('experiments.opponent_wager_lab.money_duel').record(m)
  local hand_rows=rows(hand_keys,m.wager.hands,function(h)
   local base_hand=m.base.completed_hands[h.hand] or {}
   return {id=m.id,seed=m.seed,hand=h.hand,winner=h.winner,reason=h.reason,
    award_denari=h.award,raised=h.raised and 'yes' or 'no',
    artist_balance_denari=h.balances.artist,
-   merchant_balance_denari=h.balances.merchant,
+   opponent_balance_denari=h.balances.opponent,
    initial_offer=base_hand.initial_offer,final_offer=base_hand.offer,
    artist_result=base_hand.player_result,
    artist_farkle=base_hand.player_farkle and 'yes' or 'no',

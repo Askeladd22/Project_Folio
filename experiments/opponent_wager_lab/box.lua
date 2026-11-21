@@ -1,4 +1,4 @@
--- Public 20-character box for the Merchant's V3 counteroffers.
+-- Public 20-character box for the Opponent's V3 counteroffers.
 local M={}
 M.symbols={
  {id='V10',label='V10',points=10,count=6},
@@ -23,7 +23,7 @@ M.profiles={
 }
 function M.for_profile(profile)
  profile=profile or 'legacy'
- local points=assert(M.profiles[profile],'unknown Merchant offer profile')
+ local points=assert(M.profiles[profile],'unknown Opponent offer profile')
  local symbols={}
  for i,n in ipairs(counts) do
   local value=points[i] or 0

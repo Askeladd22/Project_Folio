@@ -1,14 +1,14 @@
--- Merchant Duel V4 / Project Folio. Only the surviving playable laboratory.
--- Reuses Project Folio printshop, swappable Merchant portrait and Aldine Aetna / Cardo.
--- Farkle rules and Merchant token logic remain in their tested headless modules.
+-- Opponent Duel V4 / Project Folio. Only the surviving playable laboratory.
+-- Reuses Project Folio printshop, swappable Opponent portrait and Aldine Aetna / Cardo.
+-- Farkle rules and Opponent token logic remain in their tested headless modules.
 local source=love.filesystem.getSource()
 package.path=source..'/../../?.lua;'..package.path
-local Money=require('experiments.merchant_wager_lab.money_duel')
-local Log=require('experiments.merchant_wager_lab.money_log')
-local Sim=require('experiments.merchant_wager_lab.money_simulate')
-local Currency=require('experiments.merchant_wager_lab.currency')
+local Money=require('experiments.opponent_wager_lab.money_duel')
+local Log=require('experiments.opponent_wager_lab.money_log')
+local Sim=require('experiments.opponent_wager_lab.money_simulate')
+local Currency=require('experiments.opponent_wager_lab.currency')
 local Rules=require('src.farkle.rules')
-local Box=require('experiments.merchant_wager_lab.box')
+local Box=require('experiments.opponent_wager_lab.box')
 
 local W,H=1280,720
 local P={
@@ -124,11 +124,11 @@ local function new_game(seed)
 end
 local function phase_help(m)
  if m.phase=='betting' then
-  return 'Gioca con la posta base o alzala volontariamente: il Mercante pareggia sempre.'
+  return 'Gioca con la posta base o alzala volontariamente: il Opponent pareggia sempre.'
  elseif m.phase=='player' then
   return 'Scegli i dadi da accantonare. Incassa o rilancia: un Farkle azzera il provvisorio.'
- elseif m.phase=='merchant_decision' then
-  return 'Hai incassato. Il Mercante sta valutando la propria controfferta.'
+ elseif m.phase=='opponent_decision' then
+  return 'Hai incassato. Il Opponent sta valutando la propria controfferta.'
  elseif m.phase=='hand_end' then
   return 'La prova è stata assegnata. Il patrimonio è aggiornato nel libro mastro.'
  end
@@ -147,26 +147,26 @@ local function draw_frame(x,y,w,h)
 end
 local function draw_header(m)
  draw_frame(35,18,1210,76)
- printat('Il Mercante e la posta',53,24,font.title,P.ink)
+ printat('Il Opponent e la posta',53,24,font.title,P.ink)
  printat('UNA SCOMMESSA NELLA BOTTEGA VENEZIANA',56,66,font.small,P.soft)
  printat(('MANO %d DI 3'):format(m.base.hand.number),750,36,font.label,P.soft,180,'center')
- printat(('PROVE  %d  :  %d'):format(m.base.hands_won.artist,m.base.hands_won.merchant),
+ printat(('PROVE  %d  :  %d'):format(m.base.hands_won.artist,m.base.hands_won.opponent),
   945,33,font.head,P.ink,258,'right')
 end
-local function draw_merchant(m)
+local function draw_opponent(m)
  draw_frame(968,111,277,472)
  fillrect(980,123,252,241,P.paperShade,3)
- if art.merchant then
-  draw_fit(art.merchant,980,119,252,240,1)
+ if art.opponent then
+  draw_fit(art.opponent,980,119,252,240,1)
  else
-  printat('IL MERCANTE',988,220,font.title,P.soft,236,'center')
+  printat('IL OPPONENT',988,220,font.title,P.soft,236,'center')
  end
  rule(982,369,247)
- printat('IL MERCANTE',989,378,font.head,P.ink,235,'center')
+ printat('IL OPPONENT',989,378,font.head,P.ink,235,'center')
  printat('Offerta attuale',987,415,font.small,P.soft)
  printat(('%d punti'):format(m.base.hand.offer),986,431,font.head,P.wine)
  printat('Patrimonio',987,470,font.small,P.soft)
- printat(format_cash(m.wager.wallet.merchant),986,488,font.body,P.ink,232)
+ printat(format_cash(m.wager.wallet.opponent),986,488,font.body,P.ink,232)
  local remain=Box.remaining(m.base.box)
  printat(('Cassa: %d token disponibili'):format(#m.base.box.draw_pile),986,540,font.small,P.soft,230)
 end
@@ -175,7 +175,7 @@ local function draw_offer(m)
  local h=m.base.hand;local w=m.wager
  printat('LA SFIDA',57,127,font.label,P.soft)
  rule(57,158,872)
- printat('OFFERTA DEL MERCANTE',58,171,font.small,P.soft)
+ printat('OFFERTA DEL OPPONENT',58,171,font.small,P.soft)
  printat(tostring(h.offer),58,193,font.big,P.ink)
  printat('punti da raggiungere',60,257,font.small,P.soft)
  rule(433,174,1,P.paperShade)
@@ -185,11 +185,11 @@ local function draw_offer(m)
   printat(w.raised and '4 soldi iniziali + 2 soldi a testa di rialzo' or
    '2 soldi a testa già depositati',476,246,font.small,P.soft,448)
   printat(w.raised and 'Posta concordata: ora lancia i dadi.' or
-   'Il rialzo è facoltativo: il Mercante lo pareggia senza interrompere la prova.',
+   'Il rialzo è facoltativo: il Opponent lo pareggia senza interrompere la prova.',
    56,294,font.body,P.ink,855)
  elseif m.phase=='player' then
   printat('La posta è già concordata: ora contano i dadi.',477,246,font.small,P.soft,438)
-  printat('Il Mercante può controbattere soltanto dopo il tuo incasso.',
+  printat('Il Opponent può controbattere soltanto dopo il tuo incasso.',
    56,294,font.body,P.ink,855)
  else
   printat('Le lire sono la posta; i punti decidono chi vince.',477,246,font.small,P.soft,442)
@@ -235,7 +235,7 @@ local function draw_controls(m)
   button('take','ACCANTONA [A]',278,y,204,48,'quiet',Money.can_take(m))
   button('bank','INCASSA [I]',494,y,216,48,'primary',Money.can_bank(m))
   button('fold','RITIRATI [P]',722,y,204,48,'danger',true)
- elseif m.phase=='merchant_decision' then
+ elseif m.phase=='opponent_decision' then
   button('advance','RISOLVI LA CONTROFFERTA [C]',48,y,500,48,'primary')
  elseif m.phase=='hand_end' then
   button('next','PROSSIMA MANO [N]',48,y,395,48,'primary')
@@ -255,13 +255,13 @@ local function draw_result(m)
  fillrect(176,186,879,321,P.shadow,6,0.77)
  draw_frame(192,196,848,290)
  printat(heading,222,218,font.small,P.soft,784,'center')
- printat(winner=='artist' and 'Vince l’Incisore' or 'Vince il Mercante',
+ printat(winner=='artist' and 'Vince l’Incisore' or 'Vince il Opponent',
   220,246,font.title,winner=='artist' and P.olive or P.wine,790,'center')
  local h=m.wager.hands[#m.wager.hands]
  printat('POSTA ASSEGNATA   '..format_cash(h and h.award or 0),
   220,323,font.head,P.ink,790,'center')
  printat('PROVE CONQUISTATE     INCISORE '..m.base.hands_won.artist..
-  ' : '..m.base.hands_won.merchant..' MERCANTE',
+  ' : '..m.base.hands_won.opponent..' OPPONENT',
   221,370,font.body,P.soft,788,'center')
  printat(m.phase=='over' and 'L’incontro è finito. Il libro mastro conserva tutti i movimenti.' or
   'La prossima prova comincia con una nuova puntata di 2 soldi per parte.',
@@ -272,7 +272,7 @@ local function draw_overlay(m)
  fillrect(0,0,W,H,P.shadow,0,0.72)
  draw_frame(224,102,833,518)
  local title=app.overlay=='ledger' and 'LIBRO MASTRO DELLA BOTTEGA' or
-  app.overlay=='settings' and 'NUOVO INCONTRO' or 'CASSA TIPOGRAFICA DEL MERCANTE'
+  app.overlay=='settings' and 'NUOVO INCONTRO' or 'CASSA TIPOGRAFICA DEL OPPONENT'
  printat(title,253,127,font.title,P.ink,770)
  rule(253,190,768)
  if app.overlay=='settings' then
@@ -295,7 +295,7 @@ local function draw_overlay(m)
    local codes={ANTE='Deposito',RAISE='Rialzo',CALL='Accettazione',
     REFUND='Restituzione',FOLD='Ritiro',PAYOUT='Vincita'}
    local str=('%02d  Mano %d · %s · %s · %s'):format(i,e.hand,
-    e.actor=='artist' and 'Incisore' or e.actor=='merchant' and 'Mercante' or 'Tavolo',
+    e.actor=='artist' and 'Incisore' or e.actor=='opponent' and 'Opponent' or 'Tavolo',
     codes[e.action] or e.action,format_cash(e.amount))
    printat(str,258,246+(i-start)*29,font.small,P.ink,745)
   end
@@ -340,7 +340,7 @@ local function press(id)
  elseif id=='roll' then Money.roll(m)
  elseif id=='take' then Money.take(m)
  elseif id=='bank' then Money.bank(m)
- elseif id=='advance' then Money.advance_merchant(m)
+ elseif id=='advance' then Money.advance_opponent(m)
  elseif id=='next' then Money.next_hand(m)
  end
 end
@@ -361,7 +361,7 @@ function love.load(args)
  font.label=asset_font('resources/font/Cardo-Regular.ttf',19)
  font.small=asset_font('resources/font/Cardo-Regular.ttf',16)
  art.room=asset_image('resources/scenes/printshop-room.png')
- art.merchant=asset_image('resources/opponents/merchant.png')
+ art.opponent=asset_image('resources/opponents/opponent.png')
  new_game(app.seed)
 end
 function love.update(dt)
@@ -389,7 +389,7 @@ function love.draw()
  local m=app.money
  draw_header(m)
  draw_offer(m)
- draw_merchant(m)
+ draw_opponent(m)
  draw_dice(m)
  draw_wallet(m)
  draw_controls(m)

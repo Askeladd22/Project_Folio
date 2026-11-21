@@ -1,16 +1,16 @@
 -- V4: Venetian wagering layered over the EXISTING V3 Farkle / type-box duel.
 -- This module never changes V3's approved scoring, 20 token composition or AI.
-local Duel=require('experiments.merchant_wager_lab.duel')
-local Box=require('experiments.merchant_wager_lab.box')
-local Wager=require('experiments.merchant_wager_lab.wager')
-local Currency=require('experiments.merchant_wager_lab.currency')
+local Duel=require('experiments.opponent_wager_lab.duel')
+local Box=require('experiments.opponent_wager_lab.box')
+local Wager=require('experiments.opponent_wager_lab.wager')
+local Currency=require('experiments.opponent_wager_lab.currency')
 local M={}
 local function note(m,actor,decision,reason)
  local entry={step=#m.policy_log+1,hand=m.base.hand.number,actor=actor,
   action=decision,reason=reason,offer=m.base.hand.offer,
-  artist_wins=m.base.hands_won.artist,merchant_wins=m.base.hands_won.merchant,
+  artist_wins=m.base.hands_won.artist,opponent_wins=m.base.hands_won.opponent,
   chance=Box.probability_to_exceed(m.base.box,60,m.base.hand.offer),
-  artist_balance=m.wager.wallet.artist,merchant_balance=m.wager.wallet.merchant}
+  artist_balance=m.wager.wallet.artist,opponent_balance=m.wager.wallet.opponent}
  m.policy_log[#m.policy_log+1]=entry
  m.message=reason
  return entry
@@ -67,7 +67,7 @@ function M.propose(m)
  if not M.can_propose(m) then return false end
  assert(Wager.raise(m.wager,'artist','Player raises before first roll'))
  note(m,'artist','voluntary_raise',
-  ('Rialzo volontario di 2 soldi, pareggiato dal Mercante. Offerta: %d punti.'):format(m.base.hand.offer))
+  ('Rialzo volontario di 2 soldi, pareggiato dal Opponent. Offerta: %d punti.'):format(m.base.hand.offer))
  return true
 end
 function M.start_dice(m)
@@ -97,8 +97,8 @@ function M.bank(m)
  if m.phase~='player' or not Duel.bank(m.base) then return false end
  sync(m);return true
 end
-function M.advance_merchant(m)
- if m.phase~='merchant_decision' or not Duel.advance_merchant(m.base) then return false end
+function M.advance_opponent(m)
+ if m.phase~='opponent_decision' or not Duel.advance_opponent(m.base) then return false end
  sync(m);return true
 end
 function M.next_hand(m)
@@ -116,13 +116,13 @@ function M.can_roll(m) return m.phase=='player' and Duel.can_roll(m.base) end
 function M.can_take(m) return m.phase=='player' and Duel.can_take(m.base) end
 function M.can_bank(m) return m.phase=='player' and Duel.can_bank(m.base) end
 function M.can_toggle(m,id) return m.phase=='player' and Duel.can_toggle(m.base,id) end
-function M.can_advance(m) return m.phase=='merchant_decision' end
+function M.can_advance(m) return m.phase=='opponent_decision' end
 function M.record(m)
  assert(m.phase=='over')
  return {id=m.id,seed=m.seed,winner=m.winner,reason=m.end_reason,
   hands=#m.wager.hands,raises_enabled=m.raises_enabled and 'yes' or 'no',
-  artist_hands=m.base.hands_won.artist,merchant_hands=m.base.hands_won.merchant,
-  artist_denari=m.wager.wallet.artist,merchant_denari=m.wager.wallet.merchant,
+  artist_hands=m.base.hands_won.artist,opponent_hands=m.base.hands_won.opponent,
+  artist_denari=m.wager.wallet.artist,opponent_denari=m.wager.wallet.opponent,
   pot_denari=m.wager.pot,raises=(function()
    local n=0;for _,e in ipairs(m.wager.ledger) do if e.action=='RAISE' then n=n+1 end end;return n end)(),
   folds=(function()local n=0;for _,e in ipairs(m.wager.ledger) do if e.action=='FOLD' then n=n+1 end end;return n end)()}

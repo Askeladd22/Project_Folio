@@ -1,8 +1,8 @@
--- V3 asymmetrical best-of-three Merchant duel; the production Farkle module
+-- V3 asymmetrical best-of-three Opponent duel; the production Farkle module
 -- remains the sole authority for the Artist's six-die turns.
 local Rules=require('src.farkle.rules')
-local RNG=require('experiments.merchant_wager_lab.rng')
-local Box=require('experiments.merchant_wager_lab.box')
+local RNG=require('experiments.opponent_wager_lab.rng')
+local Box=require('experiments.opponent_wager_lab.box')
 local M={}
 
 local INITIAL_DRAW=2
@@ -12,8 +12,8 @@ local function selected_count(turn)
  local n=0;for _ in pairs(turn.selected) do n=n+1 end;return n
 end
 local function record_player(m,action,provisional,available,outcome)
- local row={hand=m.hand.number,player_score=m.score.player,merchant_score=m.score.merchant,
-  score_diff=m.score.merchant-m.score.player,provisional=provisional or 0,
+ local row={hand=m.hand.number,player_score=m.score.player,opponent_score=m.score.opponent,
+  score_diff=m.score.opponent-m.score.player,provisional=provisional or 0,
   dice_available=available or 0,action=action,outcome=outcome or '',
   offer=m.hand.offer,actor='artist',step=#m.decisions+1}
  m.hand.player_decisions[#m.hand.player_decisions+1]=row
@@ -30,13 +30,13 @@ local function finish_hand(m,winner,reason)
  local h=m.hand
  h.winner=winner;h.end_reason=reason
  if winner=='artist' then m.hands_won.artist=m.hands_won.artist+1
- else m.hands_won.merchant=m.hands_won.merchant+1 end
+ else m.hands_won.opponent=m.hands_won.opponent+1 end
  m.completed_hands[#m.completed_hands+1]=h
  if m.hands_won.artist>=TARGET_HAND_WINS then finish_match(m,'artist','best_of_three')
- elseif m.hands_won.merchant>=TARGET_HAND_WINS then finish_match(m,'merchant','best_of_three')
+ elseif m.hands_won.opponent>=TARGET_HAND_WINS then finish_match(m,'opponent','best_of_three')
  elseif h.number>=3 then
-  if m.hands_won.artist>m.hands_won.merchant then finish_match(m,'artist','three_hands')
-  else finish_match(m,'merchant','three_hands') end
+  if m.hands_won.artist>m.hands_won.opponent then finish_match(m,'artist','three_hands')
+  else finish_match(m,'opponent','three_hands') end
  else m.phase='hand_end' end
 end
 
@@ -44,8 +44,8 @@ local function begin_hand(m,number)
  m.hand={number=number,initial_symbols={},symbols={},initial_offer=0,offer=0,
   player_result=nil,player_farkle=false,player_rerolls=0,char_draws=0,
   counteroffers=0,x_count=0,opening_x_discarded=0,opening_draw_count=0,
-  opening_numeric_symbols={},merchant_decisions={},merchant_continues=0,
-  merchant_withdrawals=0,player_decisions={}}
+  opening_numeric_symbols={},opponent_decisions={},opponent_continues=0,
+  opponent_withdrawals=0,player_decisions={}}
  -- EX-001 opt-in experimental opening. Baseline unchanged by default.
  local numerics=0
  repeat
@@ -72,10 +72,10 @@ local function begin_hand(m,number)
  m.phase='player'
  if m.hand.x_count>0 and m.opening_x_mode=='baseline' then
   m.hand.player_result=0
-  m.last_merchant_action='Offerta iniziale fallita: è uscito X.'
+  m.last_opponent_action='Offerta iniziale fallita: è uscito X.'
   finish_hand(m,'artist','initial_x')
  else
-  m.last_merchant_action='Offerta iniziale: '..m.hand.offer..' punti ('..
+  m.last_opponent_action='Offerta iniziale: '..m.hand.offer..' punti ('..
    table.concat(m.hand.initial_symbols,' ')..').'
  end
 end
@@ -87,17 +87,17 @@ function M.new(seed,id,box_profile,opts)
  assert(type(seed)=='number' and seed%1==0 and seed>=1 and seed<2147483647,
   'seed must be integer 1..2147483646')
  local player_rng=RNG.new_rng(seed)
- local merchant_seed=1+((seed*48271)%2147483646)
- local merchant_rng=RNG.new_rng(merchant_seed)
- local m={id=id or 1,seed=seed,player_rng=player_rng,merchant_rng=merchant_rng,
-  box=Box.new(merchant_rng,box_profile),opening_x_mode=opening_x_mode,
-  phase='player',round=1,score={player=0,merchant=0},
-  hands_won={artist=0,merchant=0},reserve={artist=4,merchant=4},
-  deposited={artist=1,merchant=1},pot=2,initial_pot=2,max_pot=2,
-  completed_hands={},decisions={},counteroffers=0,merchant_withdrawals=0,x_draws=0,
-  last_merchant_action='',saved=false}
+ local opponent_seed=1+((seed*48271)%2147483646)
+ local opponent_rng=RNG.new_rng(opponent_seed)
+ local m={id=id or 1,seed=seed,player_rng=player_rng,opponent_rng=opponent_rng,
+  box=Box.new(opponent_rng,box_profile),opening_x_mode=opening_x_mode,
+  phase='player',round=1,score={player=0,opponent=0},
+  hands_won={artist=0,opponent=0},reserve={artist=4,opponent=4},
+  deposited={artist=1,opponent=1},pot=2,initial_pot=2,max_pot=2,
+  completed_hands={},decisions={},counteroffers=0,opponent_withdrawals=0,x_draws=0,
+  last_opponent_action='',saved=false}
  m.reserve.artist=m.reserve.artist-m.deposited.artist
- m.reserve.merchant=m.reserve.merchant-m.deposited.merchant
+ m.reserve.opponent=m.reserve.opponent-m.deposited.opponent
  begin_hand(m,1)
  return m
 end
@@ -127,7 +127,7 @@ function M.roll(m)
  record_player(m,reroll and 'rilancia' or 'lancia',previous,count,outcome)
  if t.phase~='ready' then
   m.hand.player_farkle=true;m.hand.player_result=0
-  if m.hand.offer>0 then finish_hand(m,'merchant','artist_farkle')
+  if m.hand.offer>0 then finish_hand(m,'opponent','artist_farkle')
   else finish_hand(m,'artist','tie_after_farkle') end
  end
  return true
@@ -155,24 +155,24 @@ function M.bank(m)
  m.hand.player_result=turn.bank
  m.score.player=m.score.player+turn.bank
  local result=m.hand.player_result
- if m.hand.offer>result then finish_hand(m,'merchant','offer_higher')
+ if m.hand.offer>result then finish_hand(m,'opponent','offer_higher')
  elseif m.hand.offer==result then finish_hand(m,'artist','tie_goes_to_artist')
- else m.phase='merchant_decision' end
+ else m.phase='opponent_decision' end
  return true
 end
 
 -- Exact chance of eventually beating the player's score before drawing X from
 -- the remaining public box; the policy thresholds are fixed, not adaptive to
--- hidden cards or variant. A hand-score deficit makes the Merchant more willing
+-- hidden cards or variant. A hand-score deficit makes the Opponent more willing
 -- to risk the current offer.
 function M.decision_threshold(m)
- if m.hands_won.merchant<m.hands_won.artist then return 0.30 end
- if m.hands_won.merchant>m.hands_won.artist then return 0.65 end
+ if m.hands_won.opponent<m.hands_won.artist then return 0.30 end
+ if m.hands_won.opponent>m.hands_won.artist then return 0.65 end
  return 0.50
 end
 
 function M.preview_decision(m)
- assert(m.phase=='merchant_decision','Merchant decision is not available')
+ assert(m.phase=='opponent_decision','Opponent decision is not available')
  local chance=Box.probability_to_exceed(m.box,m.hand.player_result,m.hand.offer)
  local threshold=M.decision_threshold(m)
  return {chance=chance,threshold=threshold,
@@ -180,25 +180,25 @@ function M.preview_decision(m)
   needed=m.hand.player_result-m.hand.offer}
 end
 
-function M.advance_merchant(m)
- if m.phase~='merchant_decision' then return false end
+function M.advance_opponent(m)
+ if m.phase~='opponent_decision' then return false end
  local decision=M.preview_decision(m)
  local row={hand=m.hand.number,offer=m.hand.offer,player_result=m.hand.player_result,
   gap=m.hand.player_result-m.hand.offer,remaining=Box.remaining(m.box),
   probability=decision.chance,threshold=decision.threshold,action=decision.action,
-  symbol='',added=0,actor='merchant',step=#m.decisions+1,
-  player_score=m.score.player,merchant_score=m.score.merchant}
- m.hand.merchant_decisions[#m.hand.merchant_decisions+1]=row
+  symbol='',added=0,actor='opponent',step=#m.decisions+1,
+  player_score=m.score.player,opponent_score=m.score.opponent}
+ m.hand.opponent_decisions[#m.hand.opponent_decisions+1]=row
  m.decisions[#m.decisions+1]=row
  if decision.action=='withdraw' then
-  m.hand.merchant_withdrawals=m.hand.merchant_withdrawals+1
-  m.merchant_withdrawals=m.merchant_withdrawals+1
-  m.last_merchant_action=('Rinuncia: probabilità %.1f%% sotto soglia %.0f%%.'):format(
+  m.hand.opponent_withdrawals=m.hand.opponent_withdrawals+1
+  m.opponent_withdrawals=m.opponent_withdrawals+1
+  m.last_opponent_action=('Rinuncia: probabilità %.1f%% sotto soglia %.0f%%.'):format(
    decision.chance*100,decision.threshold*100)
-  finish_hand(m,'artist','merchant_withdraws')
+  finish_hand(m,'artist','opponent_withdraws')
   return true
  end
- m.hand.merchant_continues=m.hand.merchant_continues+1
+ m.hand.opponent_continues=m.hand.opponent_continues+1
  local card=Box.draw(m.box)
  m.hand.symbols[#m.hand.symbols+1]=card.id
  m.hand.char_draws=m.hand.char_draws+1
@@ -207,14 +207,14 @@ function M.advance_merchant(m)
  row.symbol=card.id;row.added=card.points
  if card.id=='X' then
   m.hand.x_count=m.hand.x_count+1;m.x_draws=m.x_draws+1
-  m.last_merchant_action='Controfferta fallita: estratto X, mano dell’Artista.'
+  m.last_opponent_action='Controfferta fallita: estratto X, mano dell’Artista.'
   finish_hand(m,'artist','counteroffer_x')
  elseif card.points>0 then
   m.hand.offer=m.hand.offer+card.points
-  m.last_merchant_action=('Controfferta %s: +%d, offerta %d.'):format(card.id,card.points,m.hand.offer)
-  if m.hand.offer>m.hand.player_result then finish_hand(m,'merchant','counteroffer_wins')
-  elseif m.hand.offer==m.hand.player_result then m.phase='merchant_decision'
-  else m.phase='merchant_decision' end
+  m.last_opponent_action=('Controfferta %s: +%d, offerta %d.'):format(card.id,card.points,m.hand.offer)
+  if m.hand.offer>m.hand.player_result then finish_hand(m,'opponent','counteroffer_wins')
+  elseif m.hand.offer==m.hand.player_result then m.phase='opponent_decision'
+  else m.phase='opponent_decision' end
  end
  return true
 end
@@ -225,14 +225,14 @@ function M.fold_artist(m)
  if m.phase~='player' then return false end
  m.hand.player_result=0
  record_player(m,'ritirata',m.turn.pot,Rules.count_free(m.turn),'Concede la prova')
- finish_hand(m,'merchant','artist_fold')
+ finish_hand(m,'opponent','artist_fold')
  return true
 end
-function M.fold_merchant(m)
+function M.fold_opponent(m)
  if m.phase~='player' then return false end
  m.hand.player_result=0
- m.last_merchant_action='Il Mercante rinuncia alla prova.'
- finish_hand(m,'artist','merchant_fold')
+ m.last_opponent_action='Il Opponent rinuncia alla prova.'
+ finish_hand(m,'artist','opponent_fold')
  return true
 end
 
@@ -242,14 +242,14 @@ function M.next_hand(m)
  return true
 end
 
-function M.total_sheets(m) return m.reserve.artist+m.reserve.merchant+m.pot end
+function M.total_sheets(m) return m.reserve.artist+m.reserve.opponent+m.pot end
 function M.record(m)
  assert(m.phase=='over','record only a completed V3 match')
  return {id=m.id,seed=m.seed,initial_pot=m.initial_pot,hands_played=#m.completed_hands,
-  artist_hands=m.hands_won.artist,merchant_hands=m.hands_won.merchant,
+  artist_hands=m.hands_won.artist,opponent_hands=m.hands_won.opponent,
   winner=m.winner,reason=m.end_reason,total_counteroffers=m.counteroffers,
-  merchant_withdrawals=m.merchant_withdrawals,x_draws=m.x_draws,
-  merchant_hand_win_pct=100*m.hands_won.merchant/#m.completed_hands,
-  pot_awarded=m.pot_at_end,artist_sheets=m.reserve.artist,merchant_sheets=m.reserve.merchant}
+  opponent_withdrawals=m.opponent_withdrawals,x_draws=m.x_draws,
+  opponent_hand_win_pct=100*m.hands_won.opponent/#m.completed_hands,
+  pot_awarded=m.pot_at_end,artist_sheets=m.reserve.artist,opponent_sheets=m.reserve.opponent}
 end
 return M
