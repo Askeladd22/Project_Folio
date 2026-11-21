@@ -85,7 +85,7 @@ jobs:
       - name: Opponent table interaction and composition (Mesa)
         env:
           MANUSCRIPT_FARKLE_HUD_SMOKE: '1'
-          PROJECT_FOLIO_MERCHANT_REVIEW: '1'
+          PROJECT_FOLIO_OPPONENT_REVIEW: '1'
           MANUSCRIPT_AUDIT_OUT: ${{ runner.temp }}/opponent-table
           LIBGL_ALWAYS_SOFTWARE: '1'
           ALSOFT_DRIVERS: 'null'

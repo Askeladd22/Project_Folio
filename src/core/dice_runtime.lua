@@ -1133,7 +1133,7 @@ local function pick_spawn_for_region(region, rnd, forced_side)
 end
 
 function rollAllDice(max_dice, roll_indices, recovery, technical, gesture)
-    -- Automatic Space/technical retries preserve the existing launch path.
+    -- Opponent AI and technical retries use this automatic physics launch path.
     Scriptorium.manualRoll=nil
     for _,entry in ipairs(dice) do
         entry.body._manual_pending=false

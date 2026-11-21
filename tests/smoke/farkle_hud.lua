@@ -395,7 +395,7 @@ function M.install(U)
  function love.load()
   load()
   co=coroutine.create(function()
-   if os.getenv('PROJECT_FOLIO_MERCHANT_REVIEW')=='1' then
+   if os.getenv('PROJECT_FOLIO_OPPONENT_REVIEW')=='1' then
     opponent_selection(1280,720)
     opponent_selection(1680,720)
    elseif os.getenv('MANUSCRIPT_UI_V2_REVIEW_CAPTURE')=='1' then
@@ -451,7 +451,7 @@ function M.install(U)
  function love.draw()
   draw();frames=frames+1
   local p=U.trayProjection
-  if p and os.getenv('PROJECT_FOLIO_MERCHANT_REVIEW')~='1' then
+  if p and os.getenv('PROJECT_FOLIO_OPPONENT_REVIEW')~='1' then
     local width,height=love.graphics.getDimensions()
    for _,v in ipairs(p.points) do
     local x,y=p.cx+v[1]*p.scale,p.cy+v[2]*p.scale

@@ -10,6 +10,19 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.100] - 2026-11-21
+
+**Stato:** follow-up di coerenza a 0.1.99, sul branch `fix/opponent-naming-audit-0.1.100`, senza variazioni a punteggi, fisica o gameplay.
+
+### Modificato
+- Il test del posizionamento dei sei dadi iniziali mantiene le asserzioni ma adotta il nome neutro `opponent_opening_dice_test.lua`.
+- Il percorso di screenshot Mesa usa `PROJECT_FOLIO_OPPONENT_REVIEW` in workflow e smoke, senza cambiare i casi di acquisizione.
+- Rimossi il vecchio riferimento testuale al tasto Spazio nel runtime e la falsa fixture `roll` nel test della presa diretta.
+
+### Verifiche
+- Audit della baseline `main@7261bc7864171b5ec37cb8a04d89e20fc7d9bbc4`: CI della precedente PR #156 riuscita sullo SHA `8e37428444921368fd6b56a62c8a909a67124091`, incluso lo smoke Mesa.
+- **NON ESEGUITI per questo nuovo commit:** test Lua 5.4 e LuaJIT, smoke Mesa e verifica Windows/LÖVE. Richiesta nuova CI; UAT Windows resta aperta.
+
 ## [0.1.99] - 2026-11-21
 
 **Stato:** refactor denominazione Opponent, controllo fisico obbligatorio e cleanup selettivo.
