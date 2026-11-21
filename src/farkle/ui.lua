@@ -130,24 +130,24 @@ function M.build(which)
    portrait_lift=35,
    rear_span=1220,
    -- One unified scorecard: the risk total is not stranded below the table.
-   score_panel=rect(38,18,540,205),
+   score_panel=rect(38,20,540,154),
    -- One engraved progress track shows what is saved vs still at risk.
    -- No new resources or RNG: both segments come from committed points.
-   stakes_caption=rect(60,174,498,23),
-   stakes_track=rect(60,200,498,12),
+   stakes_caption=rect(60,146,498,14),
+   stakes_track=rect(60,163,498,7),
    -- The wagering figures are large enough to read at a glance.
    -- The 3D floor and its physical hitbox stay completely separate.
    single_action=rect(720,993,480,75),
    -- One paper ledger for the rival, no redundant top-center turn banner.
-   opponent_panel=rect(38,240,540,224),
-   secured_caption=rect(60,27,216,22),
-   secured_value=rect(60,51,216,52),
-   risk_caption=rect(313,27,235,22),
-   risk_value=rect(313,51,235,52),
-   objective_caption=rect(60,116,216,18),
-   objective_value=rect(60,135,216,32),
-   turns_caption=rect(313,116,235,18),
-   turns_value=rect(313,135,235,32),
+   opponent_panel=rect(38,190,540,164),
+   secured_caption=rect(60,27,216,20),
+   secured_value=rect(60,48,216,48),
+   risk_caption=rect(313,27,235,20),
+   risk_value=rect(313,48,235,48),
+   objective_caption=rect(60,102,216,16),
+   objective_value=rect(60,119,216,24),
+   turns_caption=rect(313,102,235,16),
+   turns_value=rect(313,119,235,24),
    help=rect(1510,32,145,46),
    runmenu=rect(1682,32,158,46),
    book=rect(44,107,1832,944),
@@ -164,8 +164,8 @@ function M.build(which)
    -- viewport. Keep the *front* border aligned with the command rail.
    -- This is screen-space picking only: no world or physics changes.
   tray=rect(8,580,1904,475),
-  message=rect(470,969,980,20),
-  idle_message=rect(470,969,980,20),
+  message=rect(470,967,980,24),
+  idle_message=rect(470,967,980,24),
   context_actions={rect(414,993,185,36),rect(414,1032,185,36)},
   primary=rect(620,993,410,75),
   secondary=rect(1046,993,460,75),
@@ -1432,7 +1432,7 @@ local function compact_status(u)
  if u.duel and s.phase=='ended' then return 'Turn over · Opponent prepares to throw.' end
  if s.phase=='rolling' then return 'The dice are rolling…' end
  if s.phase=='fresh' then
-  return 'Right-click: grab and throw · Left-drag: select a group'
+  return 'Right-click: grab & throw  ·  Left-drag: select dice'
  end
  if s.phase=='rescue' then return 'FARKLE · Use the Corrector or accept the loss.' end
  if s.phase=='ended' then return 'Turn over · Continue with [N].' end
@@ -1603,15 +1603,18 @@ local function draw_table_footer(u,layout,actions)
  -- explanation. Avoid duplicating tiny text on the front wood rail.
  local notice=u.duel and u.duel.actor=='opponent' and '' or compact_status(u)
  if notice~='' then
-  if visible_controls==0 then
-   -- A short dark ink strip, inset into the wooden apron, replaces the
-   -- low-contrast bare text shown by the old floating HUD.
-   g.setColor(unpack(Art.rgba('earth_dark',.88)))
-   g.rectangle('fill',notice_rect.x,notice_rect.y-3,
-     notice_rect.w,notice_rect.h+6,2)
-  end
-  write_fitted(notice,notice_rect,choosing and 23 or 22,15,
-    (s.phase=='rescue' or s.phase=='lost') and Art.rgba('clay') or pale,
+  -- High contrast on walnut and on the foreground wooden board;
+  -- note and buttons occupy only the existing near-edge strip.
+  g.setColor(unpack(Art.rgba('ink',.36)))
+  g.rectangle('fill',notice_rect.x+3,notice_rect.y+3,
+    notice_rect.w,notice_rect.h+5,2)
+  g.setColor(unpack(Art.rgba('surface',.96)))
+  g.rectangle('fill',notice_rect.x,notice_rect.y-3,
+    notice_rect.w,notice_rect.h+5,2)
+  g.setColor(unpack(Art.rgba('ochre_dark',.85)))
+  g.rectangle('fill',notice_rect.x+7,notice_rect.y+2,4,notice_rect.h-5)
+  write_fitted(notice,notice_rect,26,19,
+    (s.phase=='rescue' or s.phase=='lost') and paper_warning or paper_ink,
     'center')
  end
  local primary,secondary=layout.primary,layout.secondary
@@ -1662,12 +1665,17 @@ function V.draw(u)
  draw_room(visual.room,depth)
  OpponentScene.draw_portrait(visual,layout,g,depth)
  draw_table_shadow(g)
- -- Keep both sides of the wager in one legible scorecard.
+ -- Slim score slip: show who acts without masking the central woodcut.
  ledger_sheet(layout.score_panel,Art.rgba('surface',.93))
+ if u.duel and u.duel.actor=='player' and not u.duel.winner then
+  g.setColor(unpack(Art.rgba('sage',.92)))
+  g.rectangle('fill',layout.score_panel.x+5,layout.score_panel.y+13,
+    4,layout.score_panel.h-26,1)
+ end
  g.setColor(unpack(Art.rgba('border',.48)))
  g.setLineWidth(1)
- g.line(298,29,298,164)
- g.line(56,110,560,110)
+ g.line(298,28,298,143)
+ g.line(56,99,560,99)
   write_fitted(u.duel and 'YOU · BANKED' or 'BANKED',layout.secured_caption,21,15,paper_muted)
  write_fitted((u.duel and u.duel.scores.player or s.bank)..' pt',layout.secured_value,47,27,paper_ink)
  write_fitted('AT RISK',layout.risk_caption,21,15,paper_muted)
@@ -1676,43 +1684,49 @@ function V.draw(u)
  local c=d and {target=d.target,limit=0} or R.contracts[s.stage]
  if d then
   local mr=layout.opponent_panel
-  ledger_sheet(mr,Art.rgba('surface',.95))
+  ledger_sheet(mr,Art.rgba('surface',.94))
+  if d.actor=='opponent' and not d.winner then
+   g.setColor(unpack(Art.rgba('sage',.92)))
+   g.rectangle('fill',mr.x+5,mr.y+13,4,mr.h-26,1)
+  end
   local heading=d.actor=='opponent' and 'OPPONENT · PLAYING'
    or 'OPPONENT · WAITING'
   if d.winner then heading=d.winner=='opponent' and 'OPPONENT · WON' or 'OPPONENT · LOST' end
-  write_fitted(heading,{x=mr.x+22,y=mr.y+12,w=mr.w-44,h=28},
-   23,15,paper_ink)
-  -- Paired columns make banked and provisional totals readable at a glance.
+  write_fitted(heading,{x=mr.x+22,y=mr.y+9,w=mr.w-44,h=26},
+   22,16,paper_ink)
+  -- Equal hierarchy for both sides, with all actual duel data retained.
   local half=(mr.w-56)*.5
   local lx,rx=mr.x+22,mr.x+34+half
-  write_fitted('BANKED',{x=lx,y=mr.y+51,w=half,h=23},
-   18,13,paper_muted)
+  write_fitted('BANKED',{x=lx,y=mr.y+38,w=half,h=18},17,14,paper_muted)
   write_fitted(d.scores.opponent..' pt',
-   {x=lx,y=mr.y+75,w=half,h=43},35,22,paper_ink)
-  write_fitted('AT RISK',{x=rx,y=mr.y+51,w=half,h=23},
-   18,13,paper_muted)
+   {x=lx,y=mr.y+57,w=half,h=37},34,22,paper_ink)
+  write_fitted('AT RISK',{x=rx,y=mr.y+38,w=half,h=18},17,14,paper_muted)
   write_fitted((d.actor=='opponent' and s.pot or 0)..' pt',
-   {x=rx,y=mr.y+75,w=half,h=43},35,22,paper_warning)
+   {x=rx,y=mr.y+57,w=half,h=37},34,22,paper_warning)
   g.setColor(unpack(Art.rgba('border',.43)))
   g.setLineWidth(1)
-  g.line(mr.x+22+half+5,mr.y+53,mr.x+22+half+5,mr.y+119)
-  g.line(mr.x+22,mr.y+126,mr.x+mr.w-22,mr.y+126)
+  g.line(mr.x+22+half+5,mr.y+40,mr.x+22+half+5,mr.y+94)
+  g.line(mr.x+22,mr.y+97,mr.x+mr.w-22,mr.y+97)
   if d.actor=='opponent' and not d.winner then
    write_fitted(d.move or 'PREPARING',
-     {x=mr.x+22,y=mr.y+137,w=mr.w-44,h=32},25,17,paper_ink)
+     {x=mr.x+22,y=mr.y+101,w=mr.w-44,h=24},24,17,paper_ink)
+   write_fitted(d.intent or '',
+     {x=mr.x+22,y=mr.y+125,w=mr.w-44,h=18},18,13,paper_muted)
    local last=d.selected_points and ('Selected: +'..d.selected_points..' pt')
      or d.last_take and ('Set aside: +'..d.last_take..' pt ('..d.last_count..' dice)')
-     or d.intent or 'Waiting for dice'
-   write_fitted(last,{x=mr.x+22,y=mr.y+178,w=mr.w-44,h=29},
-     19,13,paper_muted)
+     or 'Waiting for dice'
+   write_fitted(last,{x=mr.x+22,y=mr.y+145,w=mr.w-44,h=15},
+     15,12,paper_muted)
   else
-   write_fitted('Next move after your turn',
-     {x=mr.x+22,y=mr.y+139,w=mr.w-44,h=32},
-     22,15,paper_muted)
+   local summary=d.winner and
+     (d.winner=='opponent' and 'The rival reached the target'
+       or 'You reached the target')
+     or 'Rival plays after your turn'
+   write_fitted(summary,
+     {x=mr.x+22,y=mr.y+107,w=mr.w-44,h=29},22,15,paper_ink)
    if d.last_take then
     write_fitted('Last set aside: +'..d.last_take..' pt',
-     {x=mr.x+22,y=mr.y+182,w=mr.w-44,h=25},
-     18,13,paper_muted)
+     {x=mr.x+22,y=mr.y+139,w=mr.w-44,h=21},18,13,paper_muted)
    end
   end
  end
@@ -1722,7 +1736,7 @@ function V.draw(u)
  write_fitted(u.duel and (u.duel.actor=='player' and 'YOU' or 'OPPONENT') or turns_remaining(s,c),
   layout.turns_value,29,20,paper_ink)
  g.setColor(unpack(Art.rgba('border',.40)))
- g.line(56,171,560,171)
+ g.line(56,144,560,144)
  write_fitted('TOWARD TARGET · BANKED / AT RISK',
    layout.stakes_caption,17,13,paper_muted)
  draw_stakes_track(u.duel and {bank=u.duel.scores.player,pot=u.duel.actor=='player' and s.pot or 0}

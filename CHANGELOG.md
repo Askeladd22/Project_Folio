@@ -10,6 +10,37 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.108] - 2026-11-21
+
+**Stato:** revisione HUD/UX su `feat/hud-clarity-0.1.108`,
+PR draft verso `main`. Nessun nuovo sistema di gioco.
+
+### Modificato
+- Due registri cartacei compattati: la scheda giocatore passa da 205
+  a 154 px e quella dell'Opponent da 224 a 164 px. I fogli
+  continuano a mostrare banca, rischio, obiettivo, turno, progresso
+  e informazioni della mossa avversaria.
+- Le istruzioni del lancio sono abbreviate e stampate con inchiostro
+  scuro su carta chiara lungo il bordo anteriore. Il messaggio
+  rimane nella zona di comando e non intercetta il tavoliere.
+- Una sottile incisione salvia identifica il lato che sta agendo
+  senza aggiungere animazioni né modificare turni e punteggi.
+- Rival dialogo: move, intent e ultimo set restano visibili
+  nello stesso registro; nelle fasi di attesa è esplicitato
+  quando il rivale giocherà.
+
+### Ricerca
+- Verificato il progetto `666mayn/LOVE2d-g3d-map-editor`: editor
+  voxel LÖVE/g3d, codice MIT con font separatamente licenziato.
+  **Non integrato**: utile per eventuali futuri strumenti di scena,
+  non per la UI di partita o il picking dei dadi.
+
+### Verifiche
+- Test di layout, stati di turno, tipografia, risoluzioni e
+  regressioni Farkle: **in attesa della CI della PR**.
+- Review manuale Windows dei dadi e della leggibilità 720p/1080p:
+  **da eseguire**.
+
 ## [0.1.107] - 2026-11-21
 
 **Status:** draft branch `feat/engraver-table-diegetic-hud-0.1.107`;
