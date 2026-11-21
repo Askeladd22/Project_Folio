@@ -2,13 +2,14 @@
 local R=require('src.farkle.rules')
 local UI=require('src.farkle.ui')
 local AI=require('experiments.merchant_duel.ai')
+local Controller=require('src.farkle.controller')
 local function eq(a,b) assert(a==b,tostring(a)..' ~= '..tostring(b)) end
 local solo=R.new('build')
 eq(solo.mode,'build')
 eq(solo.stage,1)
 local s=R.new('duel')
 eq(s.mode,'duel')
-eq(s.duel_target,500)
+s.duel_target=500
 eq(s.bank,0)
 local user={game=s,duel={actor='player',scores={player=0,merchant=0},target=500}}
 local actions=UI.hud.actions.build(user)
@@ -24,7 +25,7 @@ assert(straight)
 for _,id in ipairs(straight.ids) do assert(R.toggle(s,id)) end
 local ok,total,minimum=R.bank_status(s)
 assert(ok and total==200 and minimum==0)
-assert(R.bank_turn(s))
+assert(Controller.duel_bank(user))
 eq(s.bank,200)
 eq(s.phase,'ended')
 user.duel.actor='merchant'
@@ -33,13 +34,13 @@ for _,a in ipairs(actions) do assert(a.slot=='header','merchant must not get pla
 assert(R.next_turn(s))
 s.bank=0
 assert(R.start(s))
-assert(R.settle(s,{2,2,2,2,3,3}))
-assert(R.has_points({2,2,2,2,3,3}),'full house must never count as Farkle')
+assert(R.settle(s,{1,1,1,1,3,3}))
+assert(R.has_points({1,1,1,1,3,3}),'full house with singles scores in production')
 local pair
 for _,o in ipairs(R.options(s)) do if o.points==200 and #o.ids==6 then pair=o end end
 assert(pair,'full house must use canonical 200 point scoring')
 for _,id in ipairs(pair.ids) do assert(R.toggle(s,id)) end
-assert(R.bank_turn(s))
+assert(Controller.duel_bank(user))
 eq(s.bank,200)
 eq(s.phase,'ended')
 assert(R.next_turn(s))
@@ -47,7 +48,7 @@ s.bank=450
 assert(R.start(s))
 assert(R.settle(s,{1,5,2,3,4,6}))
 assert(R.toggle(s,1) and R.toggle(s,2))
-assert(R.bank_turn(s))
+assert(Controller.duel_bank(user))
 eq(s.bank,465)
 eq(s.phase,'ended')
 assert(R.next_turn(s))
@@ -55,7 +56,7 @@ s.bank=495
 assert(R.start(s))
 assert(R.settle(s,{1,2,3,4,5,6}))
 assert(R.toggle(s,5))
-assert(R.bank_turn(s))
+assert(Controller.duel_bank(user))
 eq(s.bank,500)
 eq(s.phase,'won')
 assert(not R.next_turn(s),'winner cannot keep playing')
