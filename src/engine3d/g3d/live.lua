@@ -292,14 +292,29 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   -- The former floor and carving JPGs were deleted with that art split:
   -- only the retained shared wood texture is part of the GPU tray.
   local floor_texture=self.white
-  if style=='merchant' or style=='wooden' or style=='wooden_compact' then
+  if style=='merchant' or style=='wooden' or style=='wooden_compact' or style=='old_wooden' then
    if not self.merchantWood then
     self.merchantWood=g.newImage('resources/textures/wood.png',{mipmaps=true})
     self.merchantWood:setFilter('linear','linear')
     self.merchantWood:setMipmapFilter('linear')
    end
    floor_texture=self.merchantWood
-   if style=='wooden' or style=='wooden_compact' then
+   if style=='old_wooden' then
+    -- Alex Krush's real GLB takes precedence when installed from the
+    -- companion ZIP; never stretch all supporting furniture with the top.
+    local path='resources/models/old_wooden_table_game_ready_asset.glb'
+    if love.filesystem.getInfo(path,'file') then
+     self.table_prop=require('src.engine3d.g3d.glb_loader').load(self.g3d,path,function(model)
+      Scenery.place_table(model,extents,.18,.003)
+      Scenery.keep_old_support_proportions(model,.70)
+     end,{max_texture=1024})
+    else
+     -- Functional tracked reference table: thin top, traditional trestles.
+     -- This is an original approximation, NOT the uploaded GLB geometry.
+     local model=require('resources.models.old_wooden_table_fallback').mesh(extents)
+     self.table_prop=self.g3d.newModel(model.verts,self.merchantWood)
+    end
+   elseif style=='wooden' or style=='wooden_compact' then
     -- A user-provided optimized/original GLB keeps its atlas. The bundled
     -- low-poly fallback gets a readable plank floor instead of a faux slab.
     -- The physics plane remains at z=0: never raise the visual tabletop.
@@ -446,7 +461,7 @@ function M:_draw_scene(args)
    if self.table_prop then
     -- Wood's support surface and the imported geometry share the physical
     -- tabletop height; shadows never land on an invisible raised slab.
-    if args.style=='wooden' or args.style=='wooden_compact' then
+    if args.style=='wooden' or args.style=='wooden_compact' or args.style=='old_wooden' then
      self.floor_model:draw()
     end
     self.table_prop:draw()

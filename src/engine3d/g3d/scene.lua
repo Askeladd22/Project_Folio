@@ -316,6 +316,7 @@ local S={}
 -- press furniture around it (the dream merges table and press bed).
 local PALETTE={
  merchant={.24,.22,.24},wooden={.34,.22,.14},wooden_compact={.34,.22,.14},
+ old_wooden={.30,.22,.17},
  book={.76,.67,.51},current={.35,.215,.12},
  A={.31,.18,.095},B={.48,.33,.20},C={.52,.43,.255},
 }
@@ -323,6 +324,7 @@ local PALETTE={
 -- Unlike the old painter's manuscript rubrics these meshes share g3d depth.
 local FLOORS={
  merchant={.70,.62,.60},wooden={.80,.73,.64},wooden_compact={.80,.73,.64},
+ old_wooden={.72,.62,.51},
  book={.88,.79,.64},current={.36,.29,.22},
  A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
 }
@@ -330,6 +332,13 @@ function S.floor_vertices(mesh,extents,style)
  local x1,x2,y1,y2=unpack(extents)
  local color=FLOORS[style] or FLOORS.book
  local out=mesh.floor_vertices(x1,x2,y1,y2)
+ if style=='old_wooden' then
+  for _,v in ipairs(out) do
+   v[3]=-.026 -- hidden receiver behind the visible wood, not a collider
+   v[9],v[10],v[11],v[12]=.62,.52,.41,1
+  end
+  return out
+ end
  -- Full GLB: leave its own UV-mapped albedo visible; this dark receiver
  -- sits below the physical floor and fills rare gaps in the imported mesh.
  if style=='wooden_full' then
@@ -381,6 +390,7 @@ function S.style_vertices(mesh,extents,height,style)
  -- Thin decorative housing; the underlying collision walls do not change.
  local width=style=='book' and .32 or style=='current' and .28
   or style=='C' and .13 or style=='merchant' and .28
+  or style=='old_wooden' and .06
   or style=='wooden_compact' and .08
   or style=='wooden' and .14 or .40
  local v=mesh.tray_border_vertices(x1,x2,y1,y2,width,height,8)
@@ -518,6 +528,27 @@ end
 -- Pure decorative adjustment: compress the supporting structure and apron
 -- *below* the tabletop. The planar six-D6 collider remains untouched.
 -- The affine transform preserves top height and updates normals correctly.
+-- The Alex Krush table has a 1.60 aspect ratio, the physical play
+-- field about 2.31. Stretch the upper tabletop to the existing bounds
+-- while easing lower supports back to their original proportions.
+-- Only vertices/normals change; collision data is not read or written.
+function S.keep_old_support_proportions(model,factor)
+ factor=factor or .70
+ assert(factor>0 and factor<=1,'invalid support proportion factor')
+ local top,bottom=model.max[3],model.min[3]
+ local span=math.max(.001,(top-bottom)*.16)
+ local cx=(model.min[1]+model.max[1])*.5
+ for _,v in ipairs(model.verts) do
+  local t=math.max(0,math.min(1,(v[3]-(top-span))/span))
+  local width=factor+(1-factor)*t
+  v[1]=cx+(v[1]-cx)*width
+  local nx,ny,nz=v[6]/width,v[7],v[8]
+  local len=math.sqrt(nx*nx+ny*ny+nz*nz)
+  if len>1e-8 then v[6],v[7],v[8]=nx/len,ny/len,nz/len end
+ end
+ return model
+end
+
 function S.compact_table(model,factor)
  factor=factor or .22
  assert(factor>0 and factor<=1,'invalid decorative support compression')

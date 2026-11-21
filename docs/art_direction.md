@@ -70,6 +70,26 @@ I colori delle facce dei dadi, dello stato di selezione e dei
 pulsanti devono restare leggibili in alto contrasto. Nessun
 filtro fotografico indiscriminato per fingere materiali storici.
 
+## Tavolo in uso — Old Wooden Table (proposta v0.1.96)
+
+Il candidato originale dell'utente, attribuito ad Alex Krush,
+viene preferito alla pesante cornice Pixel Life per il suo
+aspetto da tavolo di gioco vissuto e non da banco da lavoro.
+Il piano è ampio quanto il campo fisico dei sei D6, mentre
+gambe e fascia mantengono proporzioni autonome; una cornice
+grafica sottile suggerisce i limiti della superficie senza
+nascondere i dadi. La scena, il Mercante e la camera non cambiano.
+
+**Stato artistico non canonico:** la variante F8 `old_wooden`
+mostra l'asset originale solo se installato localmente.
+Senza GLB viene caricata una struttura di riserva creata
+per il progetto, non l'asset di Alex Krush. L'integrazione
+ufficiale richiede confronto su screenshot reali, texture
+leggibile a 720p e test del lancio Windows.
+
+Licenza e distinzione dei materiali in
+`resources/models/OLD_WOODEN_TABLE_CREDITS.md`.
+
 ## Tavolo — Variante B «Compatta» (v0.1.95)
 
 **Obiettivo visivo:** tavolo da gioco ravvicinato, non banco da lavoro.

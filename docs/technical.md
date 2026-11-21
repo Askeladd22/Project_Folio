@@ -81,6 +81,36 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
+## Tavolo v0.1.96 — Old Wooden Table (laboratorio reversibile)
+
+**Ipotesi:** un vecchio tavolo rustico con fascia leggera e sostegni
+proporzionati rende il gioco più credibile rispetto al precedente
+`wooden_compact`, senza cambiare il lancio dei sei dadi.
+
+Il preset `old_wooden` viene proposto all'avvio. F8 ripristina
+`wooden_compact` e le altre varianti, come confronto A/B. Il rendering
+g3d usa il GLB `resources/models/old_wooden_table_game_ready_asset.glb`
+quando presente (file originale fornito separatamente), e altrimenti
+una **geometria sostitutiva esplicitamente originale e semplificata**
+(`resources/models/old_wooden_table_fallback.lua`). Non confondere
+la seconda con i triangoli/texture dell'asset dell'autore.
+
+La differenza di proporzione è reale: il GLB è circa 1,60:1,
+mentre il tavoliere fisico misura 28 × 12,1 (2,31:1).
+La conversione `Scenery.keep_old_support_proportions` estende il
+piano superiore ai confini già esistenti, ma impedisce che le
+gambe vengano allargate nella stessa misura. Il fallback segue
+lo stesso principio con una superficie ampia e un cavalletto
+sottostante da ~1,7:1. L'import resta visivo e non definisce
+collider o fattori RNG.
+
+**Gate:** test stile F8, estensione del piano, normali, profondità,
+proporzioni dei sostegni, CI Lua/Mesa e screenshot con sei dadi.
+La prova diretta del GLB in Windows non è coperta dalla CI se
+il file non è tracciato; installare l'asset dallo ZIP e verificare
+texture, orientamento, collisioni percepite e leggibilità delle facce.
+Non promuovere il nuovo modello a canonico prima del playtest.
+
 ## UI v0.1.95 — Variante B «Compatta» del tavolo
 
 **Decisione utente:** selezionata la variante B in risposta allo screenshot

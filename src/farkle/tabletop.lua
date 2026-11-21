@@ -2,8 +2,8 @@ local Bundle = {}
 Bundle.tray_workshop = (function()
 -- Temporary visual workshop. No physics, gameplay, camera or RNG ownership.
 -- The compact player-seat table is the A/B default; F8 retains the full table.
-local W={current='wooden_compact'}
-local order={'wooden_compact','wooden','book','current','A','B','C'}
+local W={current='old_wooden'}
+local order={'old_wooden','wooden_compact','wooden','book','current','A','B','C'}
 -- F8 remains the gameplay-facing switch for g3d book/tray skins.
 function W.cycle()
  for i,id in ipairs(order) do
