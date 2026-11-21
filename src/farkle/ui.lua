@@ -1142,7 +1142,9 @@ function M.build(u)
    bank_detail='Incasso non disponibile'
   end
   add('bank','Incassa '..total..' pt',ok,
-   function() u:act('bank',function() return R.bank_turn(s) end) end,
+   function() u:act('bank',function()
+    return u.duel and u:duel_bank() or R.bank_turn(s)
+   end) end,
    'secondary',bank_detail)
  end
  return a
