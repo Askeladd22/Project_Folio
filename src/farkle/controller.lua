@@ -74,7 +74,10 @@ function U:log(event,detail)
  love.filesystem.append('runs.csv',table.concat({self.id,s.mode,s.stage,s.turn,s.build,s.medal,event,s.bank,s.pot,tostring(detail or '')},',')..'\n')
 end
 function U:sync()
- for i,d in ipairs(dice or {}) do d.kept=self.game.used[i] or (self.medalHeld and self.medalHeld[i]) or false end
+ for i,d in ipairs(dice or {}) do
+  d.kept=self.game.used[i] or (self.medalHeld and self.medalHeld[i]) or false
+  if d.body and not self.game.used[i] then d.body._kept_solid=nil end
+ end
  -- Kept dice are still real 3D bodies. Park them on the rear of the table,
  -- away from the throwing area; the logical hand/score remains authoritative.
  if self.duel and next(self.game.used) then D.stage_kept(dice,self.game.used) end

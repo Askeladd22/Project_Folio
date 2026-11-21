@@ -145,9 +145,11 @@ function C.sweep(a,b,old_a,old_b)
 end
 
 local function inverse_mass(body)
+ if body._kept_solid then return 0 end
  return body.mass and body.mass>0 and 1/body.mass or 0
 end
 local function inverse_inertia(body)
+ if body._kept_solid then return 0 end
  return body.theta and body.theta>0 and 1/body.theta or 0
 end
 local function effective_mass(a,b,ra,rb,axis)
@@ -168,8 +170,8 @@ function C.resolve(world,a,b,index_a,index_b,hit,dt,emitted_pairs)
  if hit.swept then
   -- Rewind the two translations to the first swept contact.
   -- Keep their current orientation; no mutation of gameplay RNG.
-  a.position=vector(addscaled(hit.old_a,hit.da,hit.toi))
-  b.position=vector(addscaled(hit.old_b,hit.db,hit.toi))
+  if not a._kept_solid then a.position=vector(addscaled(hit.old_a,hit.da,hit.toi)) end
+  if not b._kept_solid then b.position=vector(addscaled(hit.old_b,hit.db,hit.toi)) end
  else
   local im_a,im_b=inverse_mass(a),inverse_mass(b)
   local im=im_a+im_b
@@ -202,8 +204,8 @@ function C.resolve(world,a,b,index_a,index_b,hit,dt,emitted_pairs)
     if emitted_pairs then emitted_pairs[pair_key]=true end
     world.on_contact(world,'pair',index_a,index_b,-speed)
    end
-   a:push(-impulse,ra)
-   b:push(impulse,rb)
+   if not a._kept_solid then a:push(-impulse,ra) end
+   if not b._kept_solid then b:push(impulse,rb) end
    local tang=at_point(b,rb)-at_point(a,ra)
    tang=tang-n*(tang..n)
    local length=tang:abs()
@@ -216,8 +218,8 @@ function C.resolve(world,a,b,index_a,index_b,hit,dt,emitted_pairs)
      local mu=sqrt(max(0,fa)*max(0,fb))
      local jt=min(length/denom_t,mu*j)
      local friction=t*jt
-     a:push(friction,ra)
-     b:push(-friction,rb)
+     if not a._kept_solid then a:push(friction,ra) end
+     if not b._kept_solid then b:push(-friction,rb) end
     end
    end
    a._last_collision={other=index_b}
@@ -240,12 +242,12 @@ function C.resolve(world,a,b,index_a,index_b,hit,dt,emitted_pairs)
    world.ccd_safety_stops=(world.ccd_safety_stops or 0)+1
   end
   local remain=max(0,1-hit.toi)*dt
-  a.position=a.position+a.velocity*remain
-  b.position=b.position+b.velocity*remain
+  if not a._kept_solid then a.position=a.position+a.velocity*remain end
+  if not b._kept_solid then b.position=b.position+b.velocity*remain end
  end
  if not a.asleep or not b.asleep then
-  a.asleep=false;b.asleep=false
-  a.sleep_timer=0;b.sleep_timer=0
+  if not a._kept_solid then a.asleep=false;a.sleep_timer=0 end
+  if not b._kept_solid then b.asleep=false;b.sleep_timer=0 end
  end
  return true
 end
@@ -266,10 +268,14 @@ function C.solve(world,old_positions,dt,emitted_pairs)
   local touched=false
   for i=1,#world-1 do
    local a=world[i]
-   if not a._manual_pending then
+   -- Held dice are excluded; scored dice have zero inverse mass,
+   -- retain their orientation, but remain genuine collision obstacles.
+   if not a._manual_pending or a._kept_solid then
     for j=i+1,#world do
      local b=world[j]
-     if not b._manual_pending and not (a.asleep and b.asleep) then
+     if (not b._manual_pending or b._kept_solid)
+       and not (a._kept_solid and b._kept_solid)
+       and not (a.asleep and b.asleep) then
       local hit
       if pass==1 and old_positions and old_positions[i] and old_positions[j] then
        hit=C.sweep(a,b,old_positions[i],old_positions[j])

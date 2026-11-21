@@ -289,3 +289,14 @@ sempre la stanza pulita con un PNG indipendente.
 scommessa o un encounter competitivo. Quei sistemi restano aperti
 nella [visione](project_vision.md). I ritratti e la stanza non
 devono alterare le hitbox o la fisica dei dadi.
+
+### 0.1.103 — Compact Opponent ledger
+
+The rival's score, at-risk amount, selected gain and announced action
+now share **one compact parchment** on the right of the printshop. The
+redundant centre "Turn · Opponent" placard and second floating action
+card are no longer painted. The left ledger already displays whose
+turn it is; this preserves a quiet view of the engraved portrait.
+Scored dice are fixed *solid* kinematic objects on the 3D table; active
+dice collide with them, but they cannot be moved or rerolled. Ordinary
+held dice remain non-colliding until release.

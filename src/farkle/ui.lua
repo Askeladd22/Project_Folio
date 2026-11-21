@@ -138,9 +138,8 @@ function M.build(which)
    -- The wagering figures are large enough to read at a glance.
    -- The 3D floor and its physical hitbox stay completely separate.
    single_action=rect(720,993,480,75),
-   opponent_panel=rect(1410,114,454,151),
-   opponent_action=rect(1410,281,454,110),
-   duel_turn=rect(655,38,610,54),
+   -- One paper ledger for the rival, no redundant top-center turn banner.
+   opponent_panel=rect(1502,113,360,235),
    secured_caption=rect(60,27,216,22),
    secured_value=rect(60,51,216,52),
    risk_caption=rect(313,27,235,22),
@@ -202,7 +201,7 @@ function M.validate(layout)
    'turns_caption','turns_value','shelf_label','score_panel',
    'stakes_caption','stakes_track',
    'footer','footer_trim','single_action','idle_message',
-   'opponent_panel','opponent_action','duel_turn'}
+   'opponent_panel'}
   for _,name in ipairs(required) do
    local r=layout[name]
    if not r or r.w<=0 or r.h<=0 or not M.contains(bounds,r) then
@@ -1655,29 +1654,34 @@ function V.draw(u)
  local c=d and {target=d.target,limit=0} or R.contracts[s.stage]
  if d then
   local mr=layout.opponent_panel
-  ledger_sheet(mr,Art.rgba('surface',.93))
-  write_fitted('OPPONENT',{x=mr.x+18,y=mr.y+8,w=mr.w-36,h=26},22,16,paper_ink)
-  write_fitted('Banked: '..d.scores.opponent..' pt',{x=mr.x+18,y=mr.y+43,w=mr.w-36,h=33},28,20,paper_ink)
-  write_fitted('At risk: '..(d.actor=='opponent' and s.pot or 0)..' pt',
-   {x=mr.x+18,y=mr.y+82,w=mr.w-36,h=23},20,15,paper_warning)
-  local last=d.selected_points and ('Selecting: +'..d.selected_points..' pt')
-    or d.last_take and ('Last set aside: +'..d.last_take..' pt ('..d.last_count..' dice)')
-    or (d.actor=='opponent' and 'PREPARING' or 'WAITING')
-  write_fitted(last,{x=mr.x+18,y=mr.y+113,w=mr.w-36,h=27},18,13,paper_muted)
-  -- The rival's move is written only while they are actually playing.
-  -- On the player's turn this area reveals the printshop artwork instead
-  -- of displaying a contradictory "Opponent Move / Your Turn" note.
+  ledger_sheet(mr,Art.rgba('surface',.95))
+  local heading=d.actor=='opponent' and 'OPPONENT · PLAYING'
+   or 'OPPONENT · WAITING'
+  if d.winner then heading=d.winner=='opponent' and 'OPPONENT · WON' or 'OPPONENT · LOST' end
+  write_fitted(heading,{x=mr.x+16,y=mr.y+11,w=mr.w-32,h=26},
+   21,14,paper_ink)
+  write_fitted('Banked  '..d.scores.opponent..' pt',
+   {x=mr.x+16,y=mr.y+45,w=mr.w-32,h=30},27,18,paper_ink)
+  write_fitted('At risk  '..(d.actor=='opponent' and s.pot or 0)..' pt',
+   {x=mr.x+16,y=mr.y+78,w=mr.w-32,h=24},20,14,paper_warning)
+  g.setColor(unpack(Art.rgba('border',.55)))
+  g.setLineWidth(1)
+  g.line(mr.x+16,mr.y+109,mr.x+mr.w-16,mr.y+109)
   if d.actor=='opponent' and not d.winner then
-   local ar=layout.opponent_action
-   ledger_sheet(ar,Art.rgba('surface',.94))
-   write_fitted('OPPONENT MOVE',{x=ar.x+15,y=ar.y+9,w=ar.w-30,h=21},16,13,paper_muted)
-   write_fitted(d.move or 'WAITING',{x=ar.x+15,y=ar.y+34,w=ar.w-30,h=31},23,17,paper_ink)
-   write_fitted(d.intent or '',{x=ar.x+15,y=ar.y+75,w=ar.w-30,h=22},17,12,paper_muted)
+   -- Same diegetic sheet contains the score AND the latest visible move.
+   write_fitted(d.move or 'PREPARING',
+     {x=mr.x+16,y=mr.y+119,w=mr.w-32,h=34},24,16,paper_ink)
+   write_fitted(d.intent or '',
+     {x=mr.x+16,y=mr.y+155,w=mr.w-32,h=29},18,12,paper_muted)
+   local last=d.selected_points and ('Selected: +'..d.selected_points..' pt')
+     or d.last_take and ('Last set aside: +'..d.last_take..' pt ('..d.last_count..' dice)')
+     or 'Waiting for dice'
+   write_fitted(last,{x=mr.x+16,y=mr.y+194,w=mr.w-32,h=24},17,12,paper_muted)
+  else
+   write_fitted('Next rival move after your turn',
+     {x=mr.x+16,y=mr.y+136,w=mr.w-32,h=29},
+     18,12,paper_muted)
   end
-  ledger_sheet(layout.duel_turn,Art.rgba('surface',.94))
-  write_fitted(d.winner and (d.winner=='player' and 'YOU WON THE DUEL' or 'OPPONENT WINS')
-   or ('TURN · '..(d.actor=='player' and 'YOU' or 'OPPONENT')),
-   layout.duel_turn,24,17,paper_ink,'center')
  end
  write_fitted('TARGET',layout.objective_caption,18,14,paper_muted)
  write_fitted(c.target..' pt',layout.objective_value,29,20,paper_gold)
