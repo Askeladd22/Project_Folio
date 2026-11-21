@@ -21,7 +21,7 @@ local near=P.from_body(4,body,project,100,100,10,faces,false)
 assert(P.pick({near,h},120,130)==4 and P.pick({h,near},120,130)==4,
  'the visible die wins independent of iteration order')
 
--- Two separated, grounded D6 at the right side of the merchant table.
+-- Two separated, grounded D6 at the right side of the opponent table.
 -- At this pixel the camera sees the top of die 2 before the side of die 1,
 -- even though die 1's centre is nearer according to camera-space Z.
 local view=require('src.engine3d.view')

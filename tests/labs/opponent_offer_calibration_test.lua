@@ -1,8 +1,8 @@
--- A/B calibrated Merchant token points, canonical Farkle stays unchanged.
-local Box=require('experiments.merchant_wager_lab.box')
-local RNG=require('experiments.merchant_wager_lab.rng')
-local Money=require('experiments.merchant_wager_lab.money_duel')
-local Sim=require('experiments.merchant_wager_lab.money_simulate')
+-- A/B calibrated Opponent token points, canonical Farkle stays unchanged.
+local Box=require('experiments.opponent_wager_lab.box')
+local RNG=require('experiments.opponent_wager_lab.rng')
+local Money=require('experiments.opponent_wager_lab.money_duel')
+local Sim=require('experiments.opponent_wager_lab.money_simulate')
 local Rules=require('src.farkle.rules')
 local function equal(a,b)
  assert(#a==#b)
@@ -27,7 +27,7 @@ end
 assert(old_sum==360 and new_sum==370,
  'new token value distribution must preserve mean within 3%')
 local m=Money.new(101,1,{raises_enabled=false})
-assert(m.base.box.profile=='tail','V4 should use calibrated Merchant tokens')
+assert(m.base.box.profile=='tail','V4 should use calibrated Opponent tokens')
 local legacy=Money.new(101,1,{raises_enabled=false,box_profile='legacy'})
 assert(legacy.base.box.profile=='legacy')
 -- Seeded shuffle must remain identical by kind; only values change.
@@ -49,7 +49,7 @@ local synthetic_old={draw_pile={
  {kind=5,id='X',points=0},
 },discard={},symbols=old.symbols,random=RNG.new_rng(6)}
 assert(Box.probability_to_exceed(synthetic_old,50,0)<0.5)
--- The full range of canonical Farkle scorings is unchanged by Merchant calibration.
+-- The full range of canonical Farkle scorings is unchanged by Opponent calibration.
 assert(Rules.points.single[1]==10)
 assert(Rules.points.single[5]==5)
 assert(Rules.points.kind[3][1]==75)
@@ -57,4 +57,4 @@ assert(Rules.points.kind[6][6]==750)
 local report=Sim.calibration_report(4,101)
 assert(report:find('tail | balanced',1,true))
 assert(report:find('legacy | balanced',1,true))
-print('PASS Merchant calibration: 20 tokens, rare V55, consistent probability, V4 default and unchanged Farkle')
+print('PASS Opponent calibration: 20 tokens, rare V55, consistent probability, V4 default and unchanged Farkle')

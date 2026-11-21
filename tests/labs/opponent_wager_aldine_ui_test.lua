@@ -16,9 +16,9 @@ graphics.printf=draw_text
 love={
  graphics=graphics,
  filesystem={
-  getSource=function() return 'experiments/merchant_wager_lab' end,
+  getSource=function() return 'experiments/opponent_wager_lab' end,
   getInfo=function() return nil end,
-  getSaveDirectory=function() return 'merchant-ui-regression' end,
+  getSaveDirectory=function() return 'opponent-ui-regression' end,
   read=function() return '' end,
   write=function()return true end,
   append=function() return true end,
@@ -28,7 +28,7 @@ love={
  math={random=function() return 101 end},
  event={quit=function() end},
 }
-dofile('experiments/merchant_wager_lab/main.lua')
+dofile('experiments/opponent_wager_lab/main.lua')
 assert(love.load and love.draw and love.keypressed and love.mousepressed)
 love.load({'--seed','101'})
 love.draw()
@@ -38,9 +38,9 @@ local function saw(text)
  end
  return false
 end
-assert(saw('Il Mercante e la posta'))
+assert(saw('Il Opponent e la posta'))
 assert(saw('POSTA SUL TAVOLO'))
-assert(saw('OFFERTA DEL MERCANTE'))
+assert(saw('OFFERTA DEL OPPONENT'))
 assert(saw('6 D6'))
 assert(saw('IL TUO PATRIMONIO'))
 assert(not saw('V2 —') and not saw('Il Correttore'),'removed prototypes must not be in the UI')
@@ -67,4 +67,4 @@ assert(saw('DISATTIVATI'))
 love.keypressed('return')
 printed={};love.draw()
 assert(saw('SEED 202') and saw('rialzi disattivati'))
-print('PASS merchant Aldine scene: no legacy menu, wager prominence, book ledger, cassa overlay and replay')
+print('PASS opponent Aldine scene: no legacy menu, wager prominence, book ledger, cassa overlay and replay')

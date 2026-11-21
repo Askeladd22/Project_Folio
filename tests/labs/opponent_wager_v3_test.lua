@@ -1,9 +1,9 @@
 -- Regression coverage for the retained V3 offer/counteroffer core.
--- V2 and Correttore UI experiments have been removed from Merchant Wager Lab.
+-- V2 and Correttore UI experiments have been removed from Opponent Wager Lab.
 local Rules=require('src.farkle.rules')
-local Duel=require('experiments.merchant_wager_lab.duel')
-local Box=require('experiments.merchant_wager_lab.box')
-local RNG=require('experiments.merchant_wager_lab.rng')
+local Duel=require('experiments.opponent_wager_lab.duel')
+local Box=require('experiments.opponent_wager_lab.box')
+local RNG=require('experiments.opponent_wager_lab.rng')
 local function count_kind(box)
  local stock=Box.remaining(box)
  local discard=Box.discarded(box)
@@ -51,7 +51,7 @@ assert(d.hand.player_result==10 and d.hand.winner=='artist')
 assert(d.hand.end_reason=='tie_goes_to_artist')
 assert(d.phase=='hand_end')
 assert(Duel.next_hand(d))
--- Merchant's special X is not a playable player card.
+-- Opponent's special X is not a playable player card.
 local initial_x
 for seed=1,200 do
  local trial=Duel.new(seed)
@@ -60,19 +60,19 @@ end
 assert(initial_x and initial_x.hand.winner=='artist')
 assert(initial_x.hand.end_reason=='initial_x')
 local force=fresh()
-force.phase='merchant_decision'
+force.phase='opponent_decision'
 force.hand.offer=10
 force.hand.player_result=20
 force.box.draw_pile={card(5),card(4)}
 local p=Duel.preview_decision(force)
 assert(p.chance==0.5 and p.action=='continue')
-assert(Duel.advance_merchant(force))
-assert(force.hand.winner=='merchant' and force.hand.offer==50)
+assert(Duel.advance_opponent(force))
+assert(force.hand.winner=='opponent' and force.hand.offer==50)
 local decline=fresh()
-assert(Duel.fold_artist(decline) and decline.hand.winner=='merchant')
+assert(Duel.fold_artist(decline) and decline.hand.winner=='opponent')
 assert(not Duel.fold_artist(decline))
 local resignation=fresh()
-assert(Duel.fold_merchant(resignation) and resignation.hand.winner=='artist')
+assert(Duel.fold_opponent(resignation) and resignation.hand.winner=='artist')
 local a,b=RNG.new_rng(1234),RNG.new_rng(1234)
 for _=1,30 do assert(a(1,6)==b(1,6)) end
-print('PASS Merchant V3 retained core: canonical Farkle, box conservation, X, exact odds, counteroffer, folds and seeded RNG')
+print('PASS Opponent V3 retained core: canonical Farkle, box conservation, X, exact odds, counteroffer, folds and seeded RNG')

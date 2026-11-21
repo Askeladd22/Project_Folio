@@ -1,4 +1,4 @@
--- Prevent deleted Merchant-era files from crashing the production g3d renderer.
+-- Prevent deleted Opponent-era files from crashing the production g3d renderer.
 local function read(path)
  local file=assert(io.open(path,'rb'),'missing production asset: '..path)
  local bytes=file:read('*a');file:close();return bytes
@@ -14,23 +14,23 @@ local portrait_shader=read('resources/shaders/woodcut_portrait.glsl')
 for _,path in ipairs({
  'resources/textures/wood.png',
  'resources/scenes/printshop-room.png',
- 'resources/opponents/merchant.png',
+ 'resources/opponents/opponent.png',
 }) do
  assert(#read(path)>16,'production image unexpectedly small: '..path)
 end
 assert(renderer:find("g.newImage('resources/textures/wood.png'",1,true),
  'the real g3d tabletop must load a tracked and existing wood texture')
-assert(renderer:find('floor_texture=self.merchantWood',1,true),
- 'the Merchant floor still needs the wood texture binding')
+assert(renderer:find('floor_texture=self.opponentWood',1,true),
+ 'the Opponent floor still needs the wood texture binding')
 for _,old in ipairs({
- 'resources/merchant/wood-floor.jpg',
- 'resources/merchant/carving.jpg',
+ 'resources/opponent/wood-floor.jpg',
+ 'resources/opponent/carving.jpg',
 }) do
  assert(not renderer:find(old,1,true),
   'renderer still loads removed file '..old)
 end
 assert(not renderer:find('self.carving',1,true) and
- not scenery:find('merchant_carving',1,true),
+ not scenery:find('opponent_carving',1,true),
  'removed carved plank must not create a missing-asset model')
 assert(renderer:find('self.floor_model:draw()',1,true),
  'the physical floor still needs to be rendered in the 3D depth pass')
@@ -50,4 +50,4 @@ assert(opponent:find("S.room_path='resources/scenes/printshop-room.png'",1,true)
 assert(opponent:find("g.newShader('resources/shaders/woodcut_portrait.glsl')",1,true) and
  portrait_shader:find('smoothstep(0.12, 0.88, luminance)',1,true),
  'portrait should render as a warm, replaceable woodcut rather than a pasted monochrome cutout')
-print('PASS Merchant g3d uses tracked wood and independent character, no retired JPG assets')
+print('PASS Opponent g3d uses tracked wood and independent character, no retired JPG assets')

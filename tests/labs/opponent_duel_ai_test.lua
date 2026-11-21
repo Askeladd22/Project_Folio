@@ -1,6 +1,6 @@
--- Pure Lua tests: lua5.4 tests/labs/merchant_duel_ai_test.lua
-local Duel=require('experiments.merchant_duel.duel')
-local AI=require('experiments.merchant_duel.ai')
+-- Pure Lua tests: lua5.4 tests/labs/opponent_duel_ai_test.lua
+local Duel=require('experiments.opponent_duel.duel')
+local AI=require('experiments.opponent_duel.ai')
 local Scoring=require('src.farkle.rules').scoring
 local function eq(a,b,msg) assert(a==b,(msg or 'mismatch')..' | '..tostring(a)..' ~= '..tostring(b)) end
 
@@ -18,7 +18,7 @@ eq(s.phase,'decision')
 assert(not Duel.select(s,Duel.mask_from_ids({1})))
 assert(Duel.bank(s))
 eq(s.score.player,10)
-eq(s.actor,'merchant')
+eq(s.actor,'opponent')
 assert(Duel.roll(s,{2,2,3,3,4,6})) -- no 1, no 5, no triple/pairs/straight
 eq(s.actor,'player')
 eq(s.phase,'roll')
@@ -31,13 +31,13 @@ eq(s.phase,'finished')
 assert(not Duel.roll(s,{1,1,1,1,1,1}))
 
 -- One-roll policy has no special win-probability manipulation.
-local state={phase='decision',pot=20,actor='merchant',
- score={merchant=0,player=0},target=500,
+local state={phase='decision',pot=20,actor='opponent',
+ score={opponent=0,player=0},target=500,
  used={[1]=true,[2]=true,[3]=true,[4]=true,[5]=true}}
 eq(AI.decide(state),'bank')
 state.used={} -- six dice remain (hot) => cheap additional-roll risk
 eq(AI.decide(state),'roll')
-state.score.merchant=490
+state.score.opponent=490
 eq(AI.decide(state),'bank')
 local winnerOption=AI.best_option(Scoring.options({1,5,2,3,4,6},{1,2,3,4,5,6}))
 assert(winnerOption and winnerOption.points>0 and winnerOption.mask>0)
@@ -52,7 +52,7 @@ assert(Duel.continue(hot))
 eq(Duel.available(hot),6)
 assert(Duel.roll(hot,{2,2,3,3,4,6}))
 eq(hot.score.player,0) -- losing unbanked hot points
-eq(hot.actor,'merchant')
+eq(hot.actor,'opponent')
 
 -- Canonical three-die distribution spot-check: 60 busts / 216,
 -- sum of best selectable points 1850. No other scoring table is used.
@@ -84,7 +84,7 @@ local function replay(seed)
    assert(Duel.select(state,option.mask))
   elseif state.phase=='decision' then
    local action
-   if state.actor=='merchant' then action=AI.decide(state)
+   if state.actor=='opponent' then action=AI.decide(state)
    else action=(state.pot>=45 or Duel.available(state)<=2) and 'bank' or 'roll' end
    if action=='bank' then assert(Duel.bank(state))
    else assert(Duel.continue(state)) end
@@ -92,7 +92,7 @@ local function replay(seed)
  end
  assert(state.winner and steps<12000,'match must terminate')
  assert(state.score[state.winner]>=state.target)
- return state.winner..':'..state.score.player..':'..state.score.merchant..':'..steps
+ return state.winner..':'..state.score.player..':'..state.score.opponent..':'..steps
 end
 for seed=1,50 do eq(replay(seed),replay(seed),'seeded replay') end
-print('merchant_duel_ai_test: PASS')
+print('opponent_duel_ai_test: PASS')

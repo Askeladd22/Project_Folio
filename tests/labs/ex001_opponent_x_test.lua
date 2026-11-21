@@ -1,7 +1,7 @@
 -- EX-001 deterministic smoke and invariants for A/B without changing src/.
-local Money=require('experiments.merchant_wager_lab.money_duel')
-local Box=require('experiments.merchant_wager_lab.box')
-local Sim=require('experiments.ex001_merchant_x_lab.simulate')
+local Money=require('experiments.opponent_wager_lab.money_duel')
+local Box=require('experiments.opponent_wager_lab.box')
+local Sim=require('experiments.ex001_opponent_x_lab.simulate')
 local n=0
 local function test(name,fn) fn();n=n+1;print('PASS EX-001 '..name) end
 local function eq(a,b) assert(a==b,tostring(a)..' != '..tostring(b)) end
@@ -76,12 +76,12 @@ test('all four policies complete both arms',function()
    local a=Sim.play(seed,'baseline',p)
    local b=Sim.play(seed,'redraw',p)
    assert(a.winner and b.winner)
-   eq(a.wager.wallet.artist+a.wager.wallet.merchant,480)
-   eq(b.wager.wallet.artist+b.wager.wallet.merchant,480)
+   eq(a.wager.wallet.artist+a.wager.wallet.opponent,480)
+   eq(b.wager.wallet.artist+b.wager.wallet.opponent,480)
   end
  end
 end)
-test('counteroffer X still busts the Merchant',function()
+test('counteroffer X still busts the Opponent',function()
  local seen=false
  for seed=1,350 do
   local m=Sim.play(seed,'redraw','balanced')

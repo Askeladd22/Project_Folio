@@ -1,4 +1,4 @@
--- Headless regression: merchant reframe and silhouette-only score feedback.
+-- Headless regression: opponent reframe and silhouette-only score feedback.
 local Layout=require('src.farkle.ui').layout
 local Opponent=require('src.farkle.ui').opponent_scene
 local Scene=require('src.engine3d.g3d.scene').scenery
@@ -30,11 +30,11 @@ assert(not score:find('g.line(',1,true) and not score:find('glyph()',1,true),
  'scoring indicators must have no detached under-die strokes')
 assert(score:find("g.polygon('line',m.outline)",1,true),
  'selection must follow the physical silhouette')
-local vertices=Scene.style_vertices(Mesh,{-14,14,-6.05,6.05},.74,'merchant')
+local vertices=Scene.style_vertices(Mesh,{-14,14,-6.05,6.05},.74,'opponent')
 assert(#vertices>0)
 local xmax=-math.huge
 for _,v in ipairs(vertices) do xmax=math.max(xmax,v[1]) end
-assert(xmax<=14.281,'merchant decorative rail too thick')
+assert(xmax<=14.281,'opponent decorative rail too thick')
 local oldDice,oldYaw,oldPitch,oldDistance,oldProjection=dice,View.yaw,View.pitch,View.distance,View.projection
 dice={{body={position={0,0,.47},{.47,.47,.47}}}}
 local schema=require('src.data.dice_schema').scene
@@ -98,4 +98,4 @@ Overlay.draw(u,{hit})
 assert(strokes.lines==0 and strokes.polygons==4,
  'scoring selection must remain outlined without hover')
 love=savedLove
-print('PASS merchant refinement: clean markers, thinner rim, 720p/1080p/ultrawide projection, replaceable portrait')
+print('PASS opponent refinement: clean markers, thinner rim, 720p/1080p/ultrawide projection, replaceable portrait')
