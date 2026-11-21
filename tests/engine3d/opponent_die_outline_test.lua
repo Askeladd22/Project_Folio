@@ -40,12 +40,35 @@ local function settled(index,x,y)
  return P.from_body(index,b,view.project,0,0,1000,faces,true)
 end
 local side,top=settled(1,8.96,.03),settled(2,8,0)
--- With the new overhead framing, (818,-30) lies inside BOTH
--- transformed silhouettes; the old (818,-88) point is outside die 1.
-assert(P.pick({side},818,-30)==1 and P.pick({top},818,-30)==2,
- 'fixture needs two overlapping hulls in the current camera')
-assert(P.pick({side,top},818,-30)==2 and P.pick({top,side},818,-30)==2,
- 'the visible top face must win over the neighboring die with the nearer centre')
+-- A fixed screen pixel silently stops being meaningful after a
+-- legitimate camera change. Find a true overlapping point from BOTH
+-- current silhouettes, then ensure surface depth wins in either order.
+local function bounds(hit)
+ local xmin,ymin,xmax,ymax=math.huge,math.huge,-math.huge,-math.huge
+ for i=1,#hit.outline,2 do
+  local x,y=hit.outline[i],hit.outline[i+1]
+  xmin,ymin=math.min(xmin,x),math.min(ymin,y)
+  xmax,ymax=math.max(xmax,x),math.max(ymax,y)
+ end
+ return xmin,ymin,xmax,ymax
+end
+local a,b,c,d=bounds(side)
+local e,f,g,hh=bounds(top)
+local overlapX,overlapY
+for px=math.ceil(math.max(a,e)),math.floor(math.min(c,g)),3 do
+ for py=math.ceil(math.max(b,f)),math.floor(math.min(d,hh)),3 do
+  if P.pick({side},px,py)==1 and P.pick({top},px,py)==2
+    and P.pick({side,top},px,py)==2 then
+   overlapX,overlapY=px,py;break
+  end
+ end
+ if overlapX then break end
+end
+assert(overlapX and overlapY,
+ 'fixture requires overlapping projected D6 where the top face is visible')
+assert(P.pick({side,top},overlapX,overlapY)==2 and
+ P.pick({top,side},overlapX,overlapY)==2,
+ 'the visible die must win independently of iteration order')
 local Model=require('src.farkle.ui').overlay.model
 local R=require('src.farkle.rules')
 local game=R.new()
