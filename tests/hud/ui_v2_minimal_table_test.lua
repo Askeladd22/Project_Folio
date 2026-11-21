@@ -154,7 +154,7 @@ for _,r in ipairs(rectangles) do
  end
 end
 assert(not footerInFlight,'empty command plaque visible while six D6 roll')
-assert(table.concat(textDrawn,' '):find('I dadi stanno rotolando',1,true),
+assert(table.concat(textDrawn,' '):find('The dice are rolling',1,true),
  'roll status must remain readable without a panel')
 assert(R.settle(game,{1,5,2,3,4,6}))
 game.medal='retry'
@@ -203,11 +203,11 @@ footerNotice=nil
 Hud.draw(u)
 assert(u.buttons.take and not u.buttons.bank)
 assert(u.buttons.take.x+u.buttons.take.w/2==center,'a lone scoring control must be centered')
-assert(footerNotice and footerNotice:find('completano',1,true),'partial group needs a next step')
+assert(footerNotice and footerNotice:find('complete the combination',1,true),'partial group needs a next step')
 assert(R.toggle(hand,6))
 footerNotice=nil
 Hud.draw(u)
-assert(footerNotice and footerNotice:find('Deseleziona',1,true),'impossible set needs a correction')
+assert(footerNotice and footerNotice:find('Deselect',1,true),'impossible set needs a correction')
 assert(R.toggle(hand,6) and R.toggle(hand,3))
 for i=1,5 do assert(R.toggle(hand,i)) end
 local function check_selection(points)
@@ -235,7 +235,7 @@ assert(R.take(hand))
 textDrawn={};footerNotice=nil
 Hud.draw(u)
 assert(not u.buttons.roll and u.buttons.bank.enabled)
-assert(not footerNotice or not footerNotice:find('Scegli i dadi',1,true),
+assert(not footerNotice or not footerNotice:find('Select highlighted dice',1,true),
  'additional scoring dice are optional once the player may roll or bank')
 -- Keep pick headroom above the rear seam for physical dice in flight.
 assert(layout.host.y+layout.host.h-layout.tray.y==60,

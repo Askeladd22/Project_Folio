@@ -12,9 +12,9 @@ local function mock_width(str,px)
 end
 local plain,px,cut=Fit.fit('Bank 100 pt',mock_width,24,12,610,34)
 assert(plain=='Bank 100 pt' and not cut and px<=24)
-local shrunk,small,cut2=Fit.fit('Prossima commissione [N]',
+local shrunk,small,cut2=Fit.fit('Next Commission [N]',
  mock_width,48,12,390,34)
-assert(not cut2 and shrunk=='Prossima commissione [N]' and small<48)
+assert(not cut2 and shrunk=='Next Commission [N]' and small<48)
 local accented,_,shortened=Fit.fit(string.rep('è',40),
  mock_width,20,14,130,24)
 assert(shortened and accented:sub(-3)=='...')
