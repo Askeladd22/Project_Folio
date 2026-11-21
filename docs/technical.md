@@ -338,3 +338,24 @@ a scored die stays where it was if its existing pose is collision-free.
 Only newly scored or genuinely obstructed dice receive a new slot.
 SAT/CCD, actual throws and scoring probabilities are unchanged.
 Regression: `tests/engine3d/six_die_crowding_test.lua`.
+
+## 0.1.107 — Lower tabletop and paired engraver ledgers
+
+- Locked g3d camera: `pitch=0.90`, `distance=24`, yaw 0;
+  unchanged six-D6 physics and rules. Board projection, 3D rendering,
+  picking and mouse dragging continue to use one view matrix.
+- Opponent table: far rail y=650 in the 1920×1080 virtual canvas.
+  Shared picking rectangle `{x=8,y=580,w=1904,h=475}`; player and
+  rival ledgers are separate paper slips at x=38, y=18 and y=240,
+  clear of the tabletop. No additional scene/sidebar assets.
+- `Rules`/`Pause` are small ink-on-paper letterpress tabs using
+  the original authoritative hit rectangles. Scoring and opponent
+  narration never change in the HUD.
+- Reviewed upstream
+  [LOVE2d-ultimate-ui-template](https://github.com/666mayn/LOVE2d-ultimate-ui-template/tree/23933190ba9bd9e9972557ab2e0abc2092c009be):
+  pure-Lua MIT code with separately licensed placeholder media.
+  Its in-game editor/menu/settings/input systems would duplicate ours.
+  **No third-party code or assets were copied**; retain the existing
+  shared-geometry layout design.
+- CI gates: layout/visual scale at 720p/1080p, Lua and headless Mesa
+  smoke. Windows gameplay and screenshot match require human review.

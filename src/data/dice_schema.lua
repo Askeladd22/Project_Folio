@@ -62,11 +62,12 @@ return {
         tray_camera = {
             locked = true,
             yaw = 0.00,
-            -- A restrained raised player-seat view: larger far-side dice
-            -- and less foreground dominance, with the same g3d projection
-            -- used for dice picking, throwing and the visible board.
-            pitch = 0.965,
-            distance = 52,
+            -- Player-seat framing of the 21-Nov reference:
+            -- low rear rail, deep near apron and a pronounced trapezoid.
+            -- The same g3d perspective owns visible D6, mouse pickup,
+            -- real motion, GPU projection and collision geometry.
+            pitch = 0.90,
+            distance = 24,
         },
         box = {
             half_x = 14.5,

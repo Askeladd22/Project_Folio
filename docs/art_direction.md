@@ -27,22 +27,26 @@ presente sopra un tavolo compatto, mentre punteggio e comandi restano
 fissi sullo schermo. La prospettiva del tavolo e il picking condividono
 la stessa proiezione; il cambiamento è solo di inquadratura.
 
-**0.1.102 — Framing del duello:** camera prospettica vincolata, con
-`pitch=0.965`, `yaw=0` e `distance=52`. Il bordo posteriore rimane
-agganciato alla stanza disegnata e i sei D6 mantengono coordinate
-identiche per mesh, silhouette e input. La lieve elevazione dell'occhio
-riduce l'imponenza della fascia anteriore, senza trasformare la scena
-in un piano dall'alto.
+**0.1.107 — Tavolo di riferimento:** la camera prospettica
+vincolata usa `pitch=0.90`, `yaw=0`, `distance=24`. Il bordo
+posteriore scende alla quota virtuale 650/1080 mentre la superficie
+si apre fino al primo piano. Il ritratto xilografico può occupare
+fino a 580 pixel verticali. Mesh, ombre, dati fisici e picking
+dei sei D6 condividono una sola proiezione.
 
-**0.1.103 — UI diegetica corrente:** un foglio-contabilità per il giocatore
-e un foglio più compatto per l'Opponent mostrano banca, rischio e scelta. Pergamena,
-inchiostro, doppie righe sottili e righello inciso sostituiscono il
-lessico dei pannelli digitali senza perdere accessibilità, numeri,
-azioni o stato del tiro. La nota delle scelte dell'Opponent compare
-**solo** durante il suo turno; il giocatore legge una breve istruzione
-incisa sulla fascia anteriore del tavolo. I toast che duplicano banca
-o Farkle sono soppressi durante il duello. Nessun nuovo asset, stato di gameplay o carta
-obbligatoria è introdotto.
+**0.1.107 — Registri diegetici:** player e Opponent sono due fogli
+sottilmente fissati a sinistra, uno sotto l'altro e sopra il bordo
+posteriore. I valori `BANKED` e `AT RISK` del rivale sono
+affiancati, con la sua decisione immediatamente sotto. A destra
+restano i cartigli `Rules` e `Pause`. Niente pannelli sovrapposti
+ai dadi, testo duplicato o nuova meccanica. La UI del gioco rimane
+interamente in inglese.
+
+I dati del giocatore sono sempre originati da Farkle, quelli del rivale
+dal controller del duello: la componente diegetica non inventa numeri.
+Il precedente framing 0.1.102 e gli HUD 0.1.103 sono consultabili
+nella cronologia Git. Questa è una revisione del prototipo attivo,
+non la decisione finale sulla fantasy.
 
 - Fondale senza personaggi: `resources/scenes/printshop-room.png`.
 - Ritratto intercambiabile: `resources/opponents/<id>.png`.
