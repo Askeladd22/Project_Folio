@@ -62,3 +62,20 @@ Introdotta una struttura di ricerca e validazione **documentale**, non è stata 
 - **Approvazione:** richiesta esplicita dell'utente nel turno
   «basta chiamare l'avversario default Mercante. crea incomprensioni!
   modifica anche il codice».
+
+## D-002 — Denominazione Opponent e presa fisica obbligatoria (21 novembre 2026)
+
+- **Baseline:** `main@1dae4428f24cdb280cd5afc5374a951bd1686f52`, 0.1.98.
+- **Decisione esplicita:** sostituire il nome generico «Mercante» con **Opponent** nel codice,
+  nell'HUD e nella documentazione corrente; superare la precedente scelta D-001
+  `rival` come ID iniziale. L'avversario rimane una figura sostituibile.
+- **Interazione:** rimuovere pulsante e scorciatoia per lancio automatico umano;
+  iniziare ogni tiro prendendo fisicamente uno o più dadi. Resta il lancio fisico
+  autonomo dell'IA e la possibilità di recupero tecnico.
+- **Cleanup approvato:** ritirare dalla working tree le implementazioni di
+  Battute Gemelle (EX-BG-001) e Tre Prove / Riserva (EX-TP-001) con gate G3
+  negativo, lasciando intatti report, risultati, commit e tag Git storici.
+- **Gate ancora aperto:** test suite completa, Windows/LÖVE, confronto visivo,
+  controllo che la vecchia denominazione non sia più utilizzata nei componenti attivi.
+- **Storia:** non riscrivere i commit precedenti né i titoli storici dei log;
+  le sigle dei branch originali rimangono identificatori di provenienza.

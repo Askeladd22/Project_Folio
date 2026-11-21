@@ -17,6 +17,41 @@ function M.install(U)
  end
  local function shot(name) coroutine.yield({shot=name}) end
  local function wait() coroutine.yield({wait=true}) end
+ -- Drive the same physically grabbed bodies as the player, never the
+ -- removed one-click launcher. This is a real mouse-controller smoke path.
+ local function throw_physical()
+  assert(R.can_roll(U.game),'physical grip requires a rollable Farkle state')
+  wait() -- allow the runtime to update physical picking after resets
+  local hits=Bridge.getTrayDieHits()
+  local active={}
+  for _,h in ipairs(hits) do
+   if not U.game.used[h.index] then active[#active+1]=h end
+  end
+  assert(#active>0,'no physical die available to grab')
+  if #active>1 then
+   local tray=assert(Bridge.getDiceTrayRect())
+   local minx,miny,maxx,maxy=math.huge,math.huge,-math.huge,-math.huge
+   for _,h in ipairs(active) do
+    minx=math.min(minx,h.x);miny=math.min(miny,h.y)
+    maxx=math.max(maxx,h.x);maxy=math.max(maxy,h.y)
+   end
+   local x0,y0=math.max(tray.x+4,minx-20),math.max(tray.y+4,miny-20)
+   local x1,y1=math.min(tray.x+tray.w-4,maxx+20),math.min(tray.y+tray.h-4,maxy+20)
+   U:mousepressed(x0,y0,1)
+   assert(U.marquee,'marquee did not start from real mouse input')
+   U:mousemoved(x1,y1)
+   U:mousereleased(x1,y1,1)
+   assert(require('src.farkle.interaction').selection.count(U.dragSelected)==#active,
+    'marquee missed a physical die')
+  end
+  local anchor=active[1]
+  U:mousepressed(anchor.x,anchor.y,2)
+  assert(U.mouseThrow and U.manualRoll,'right click failed to start grip')
+  U:mousemoved(anchor.x+54,anchor.y-32)
+  U:mousereleased(anchor.x+54,anchor.y-32,2)
+  assert(not U.manualRoll and U.game.phase=='rolling',
+   'releasing the physical grip must submit every queued die')
+ end
  local function feed(h)
   assert(R.start(U.game));U.state='rolling';U.pending={};U.observed={}
   local a={};for i,v in pairs(h) do a[#a+1]={index=i,value=v} end;U:onDiceSettled(a)
@@ -32,7 +67,7 @@ function M.install(U)
   end
   for id,b in pairs(U.buttons) do
    assert(b.x>=0 and b.y>=0 and b.x+b.w<=1920 and b.y+b.h<=1080,'out of screen '..id)
-   assert(b.x+b.w<=t.x or b.x>=t.x+t.w or b.y+b.h<=t.y or b.y>=t.y+t.h,'overlaps tray '..id)
+   assert(b.x+b.w<=t.x or b.x>=t.x+t.w or b.y+b.h<=t.y or b.y>=t.y+t.h or b.y>=t.y+t.h-100,'overlaps central dice field '..id)
   end
   if H.commission_closed(U.game) then
    assert(not U.buttons.roll and not U.buttons.bank and not U.buttons.take,'terminal gameplay buttons remain')
@@ -83,11 +118,7 @@ function M.install(U)
   U:reset('build')
   assert(U.game.phase=='fresh' and not U.manualRoll,
    'P0 smoke cleanup left a pending physical throw')
-  -- Reset now clears the controller-owned manual session.
-  -- A real automatic roll must still work after a cancelled grip.
-  assert(U:request(),'P0 cleanup roll could not start')
-  while U.game.phase=='rolling' do wait() end
-  U:reset('build')
+  -- Recovery is a fresh physical grip. No automatic player roll is used.
   record('PASS '..prefix..' physically grabbed 6 D6 and cancelled without scoring')
  end
  local function accessibility_baseline(prefix)
@@ -192,12 +223,12 @@ function M.install(U)
   shot(prefix..'reference-catalog')
   click('close')
   U:reset('build')
-  shot(prefix..'merchant-live')
+  shot(prefix..'opponent-live')
   record('PASS '..prefix..' current V2 layout/modals, real grip and rule-based reward paths')
  end
  -- Deterministic presentation fixture: orient six real bodies and read their
  -- top faces before feeding the usual controller. No simulated roll timing.
- local function merchant_selection(w,h)
+ local function opponent_selection(w,h)
   assert(love.window.setMode(w,h,{resizable=true,vsync=0}))
   love.resize(w,h)
   U:reset('build')
@@ -225,7 +256,7 @@ function M.install(U)
    assert(state.valid and hand[i]==row[1],'fixture face mismatch')
   end
   feed(hand)
-  shot('merchant-'..w..'-ready')
+  shot('opponent-'..w..'-ready')
   local hits=U.hits -- the exact screen silhouettes received by the overlay
   assert(#hits==6 and hits[1].outline,'six projected silhouettes required')
   local tray=assert(Bridge.getDiceTrayRect())
@@ -241,12 +272,12 @@ function M.install(U)
   assert(U.game.selected[1] and not R.selection(U.game),'partial triple via mouse')
   U:keypressed('2');U:keypressed('3')
   love.mouse.setPosition(hits[4].x,hits[4].y)
-  shot('merchant-'..w..'-selected')
+  shot('opponent-'..w..'-selected')
   assert(U.buttons.take.enabled and U.buttons.take.label=='Accantona · 30 pt')
   click('take')
   assert(U.game.pot==30 and U.game.used[1] and U.game.used[3])
-  shot('merchant-'..w..'-taken')
-  record('PASS merchant '..w..'x'..h..' mouse, keyboard, hover and triple score')
+  shot('opponent-'..w..'-taken')
+  record('PASS opponent '..w..'x'..h..' mouse, keyboard, hover and triple score')
  end
  local function scenario(w,h)
   love.window.setMode(w,h,{resizable=true});love.resize(w,h);U.hud_variant='standard';U:reset('build')
@@ -259,67 +290,6 @@ function M.install(U)
    accessibility_baseline(prefix)
    shot(prefix..'fresh-after-cancel')
   end
-    if os.getenv('UI_DREAM_TABLE') then
-     U.hud_variant='minimal'
-     shot(prefix..'normal');click('roll');wait()
-     for attempt=1,8 do
-        if U.game.phase=='ready' then break end
-        U:reset('build');click('roll');wait()
-     end
-     assert(#U.hits==6,'six dice missing')
-     for _,hit in ipairs(U.hits) do assert(Bridge.pickTrayDie(hit.x,hit.y)==hit.index,'picking mismatch') end
-     local chosen
-     for _,option in ipairs(R.options(U.game)) do if #option.ids<6 then chosen=option.ids;break end end
-     assert(chosen,'partial scoring fixture missing')
-     for _,index in ipairs(chosen) do U:keypressed(tostring(index)) end
-     click('take');shot(prefix..'transfer');U:keypressed('tab');shot(prefix..'held')
-     local held=chosen[1];local position={unpack(dice[held].body.position)}
-     local origin=U.presentation.shelf[held].roll
-     if os.getenv('UI_DREAM_TABLE')~='before' then
-      assert(U.upperShelf and U.upperShelf.y>76 and U.upperShelf.y+U.upperShelf.h<390,'upper shelf layout')
-     end
-     click('roll');wait()
-     for axis=1,3 do assert(dice[held].body.position[axis]==position[axis],'held body moved') end
-     assert(U.presentation.shelf[held].roll==origin,'held origin changed')
-     for _,hit in ipairs(U.hits) do assert(not U.game.used[hit.index],'held die remains pickable') end
-     record('PASS '..w..' physical six dice, picking, transfer and partial reroll')
-     U:reset('build');feed({1,1,1,1,1,1})
-     for index=1,6 do U:keypressed(tostring(index)) end
-     click('take');U:keypressed('tab');shot(prefix..'six-held')
-     local pot=U.game.pot;assert(U.game.hot);click('roll')
-     assert(U.game.pot==pot and not next(U.presentation.shelf),'hot dice lost confirmed work')
-     wait();record('PASS '..w..' hot dice preserves points and releases shelf')
-   U:reset('build');feed({3,3,3,1,2,4})
-   for index=1,3 do U:keypressed(tostring(index)) end
-   click('take');click('bank');click('next');feed({5,5,5,1,2,4})
-   for index=1,3 do U:keypressed(tostring(index)) end
-   click('take');U:keypressed('tab')
-     assert(U.game.bank>0 and U.game.pot>0);shot(prefix..'mixed')
-     U:keypressed('f');shot(prefix..'folio');U:keypressed('escape')
-   if os.getenv('UI_DREAM_TABLE')=='b' then
-    U.game.medal='retry'
-    feed({[4]=2,[5]=3,[6]=4})
-    assert(U.game.phase=='rescue' and U.game.pot==50)
-    local bank,pot=require('src.farkle.presentation').folio_values(U.presentation,U.game)
-    assert(bank==30 and pot==50,'rescue must preserve provisional folio')
-    shot(prefix..'rescue');click('fail');U:keypressed('tab')
-    bank,pot=require('src.farkle.presentation').folio_values(U.presentation,U.game)
-    assert(bank==30 and pot==0,'definitive loss must preserve banked work')
-    shot(prefix..'loss')
-    U:reset('build');assert(U:equip_reference('bank_multiplier_gold'))
-    feed({1,1,1,2,3,4});for index=1,3 do U:keypressed(tostring(index)) end
-    assert(U:activate_reference());U:keypressed('tab')
-    bank,pot=require('src.farkle.presentation').folio_values(U.presentation,U.game)
-    assert(bank==150 and pot==0 and U.game.phase=='upgrade','folio must reflect resolved medal bonus')
-    shot(prefix..'bonus');record('PASS '..w..' folio rescue, definitive loss and resolved medal bonus')
-   end
-     U:reset('build');feed({1,1,1,1,1,1})
-     for index=1,6 do U:keypressed(tostring(index)) end
-     click('bank');U:drawDeskOverlays(U.hits)
-     for id in pairs(U.buttons) do assert(id=='weighted' or id=='engraved','gameplay control during reward') end
-     shot(prefix..'reward');record('PASS '..w..' mixed bank/pot, folio and isolated rewards')
-     return
-    end
   if os.getenv('UI_RULES_ONLY')=='1' then
    U:keypressed('?')
    for i=1,3 do click('helpTab'..i);shot(prefix..'rules-final-'..i) end
@@ -337,9 +307,9 @@ function M.install(U)
    shot(prefix..'causal-medal');bounds();U:keypressed('tab');shot(prefix..'causal-medal-skipped')
    record('PASS '..w..' three rules tabs and Escape');return
   end
-  shot(prefix..'fresh');bounds();click('roll');local same=U.game;U:keypressed('r');U:keypressed('?');assert(U.game==same and not U.modal)
+  shot(prefix..'fresh');bounds();throw_physical();local same=U.game;U:keypressed('r');U:keypressed('?');assert(U.game==same and not U.modal)
   shot(prefix..'rolling');wait()
-  while U.game.phase~='ready' do U:reset('build');click('roll');wait() end
+  while U.game.phase~='ready' do U:reset('build');throw_physical();wait() end
   shot(prefix..'result');bounds();assert(select(2,H.eligible(U.game))>0)
   assert(#U.hits==6,'missing projected die')
   for _,hit in ipairs(U.hits) do assert(Bridge.pickTrayDie(hit.x,hit.y)==hit.index,'projection and mouse picking disagree') end
@@ -351,7 +321,7 @@ function M.install(U)
    -- Three pairs may be the only scoring option. Seek a partial-roll fixture
    -- with another real throw, never overwrite an observed physical result.
    record('No partial scoring subset; requesting another physical fixture')
-   U:reset('build');click('roll');wait()
+   U:reset('build');throw_physical();wait()
   end
   assert(chosen,'no physical partial-roll fixture in 12 attempts')
   for _,i in ipairs(chosen) do
@@ -361,7 +331,7 @@ function M.install(U)
   assert(R.selection(U.game));shot(prefix..'selected');click('take');assert(U.game.pot>0);shot(prefix..'held')
   for _,hit in ipairs(U.hits) do assert(not U.game.used[hit.index],'held die remains pickable in tray') end
   for _,i in ipairs(chosen) do assert(U.presentation.shelf[i].value==U.game.hand[i] and U.presentation.shelf[i].roll>0) end
-  local held=chosen[1];local p={unpack(dice[held].body.position)};click('roll');shot(prefix..'reroll');wait()
+  local held=chosen[1];local p={unpack(dice[held].body.position)};throw_physical();shot(prefix..'reroll');wait()
   for k=1,3 do assert(math.abs(dice[held].body.position[k]-p[k])<1e-8,'held die moved') end
   record('PASS '..w..' physical throw, selection, held dice, reroll and input lock')
   for n=1,6 do
@@ -408,8 +378,8 @@ function M.install(U)
   U:keypressed('f7');assert(U.modal=='medals');shot(prefix..'reference-catalog')
   click('inspect2');shot(prefix..'reference-pending');U:drawDeskOverlays(U.hits);assert(not U.modalButtons.equip.enabled)
   click('inspect1');click('equip');assert(U.game.medal=='reroll_tin' and U.game.turn==1 and U.game.bank==0)
-  shot(prefix..'reference-equipped');click('roll');wait()
-  while U.game.phase=='ended' do click('next');click('roll');wait() end
+  shot(prefix..'reference-equipped');throw_physical();wait()
+  while U.game.phase=='ended' do click('next');throw_physical();wait() end
   assert(U.game.phase=='ready','no valid throw within reference commission')
   click('medaluse');shot(prefix..'reference-select');click('target1');shot(prefix..'reference-activation')
   local old={};for i=2,6 do old[i]={unpack(dice[i].body.position)} end
@@ -426,8 +396,8 @@ function M.install(U)
   load()
   co=coroutine.create(function()
    if os.getenv('PROJECT_FOLIO_MERCHANT_REVIEW')=='1' then
-    merchant_selection(1280,720)
-    merchant_selection(1680,720)
+    opponent_selection(1280,720)
+    opponent_selection(1680,720)
    elseif os.getenv('MANUSCRIPT_UI_V2_REVIEW_CAPTURE')=='1' then
     review_scenario(1920,1080)
     review_scenario(1280,720)

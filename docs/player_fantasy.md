@@ -54,7 +54,7 @@ Il Farkle attuale è un **mezzo** per incarnare la fantasy. Non dobbiamo conserv
 - **World Structure:** le run avranno progressione e incontri leggibili, non una sequenza indistinta di tiri. La struttura definitiva è aperta.
 - **Swelling Power:** durante la run il giocatore può costruire nuove possibilità sui dadi; non soltanto moltiplicatori. Le modifiche già presenti (es. Inciso/Pesato) rimangono dichiarate e verificabili.
 - **Mastery, not accommodation:** la competenza deve crescere nel giocatore. Niente RNG accomodante, rubber-banding nascosto, risultati fissati dall'HUD o compensazioni non dichiarate.
-- **Niente HP canonici** e niente avversari decorativi spacciati per competitori completi. Il Mercante, se introdotto come rivale, deve poter **agire comprensibilmente e vincere**.
+- **Niente HP canonici** e niente avversari decorativi spacciati per competitori completi. Il Opponent, se introdotto come rivale, deve poter **agire comprensibilmente e vincere**.
 - **Fisica ≠ controllo assicurato:** tenere, muovere e scuotere i dadi influenza il moto simulato, ma non è dimostrato che permetta di ottenere facce prefissate. Non promettere ciò che non abbiamo misurato.
 
 ## 6. Come deve comportarsi l'interfaccia
@@ -63,11 +63,11 @@ Il Farkle attuale è un **mezzo** per incarnare la fantasy. Non dobbiamo conserv
 
 | Momento | Informazione essenziale | Indicazione visiva | Cosa evitare |
 |---|---|---|---|
-| Prima del tiro | Dadi disponibili, presa fisica e lancio rapido | Gesti del mouse riconoscibili, comandi brevi | Tutorial invasivo, HUD che copre il piano |
+| Prima del tiro | Dadi disponibili e presa fisica obbligatoria | Gesti del mouse riconoscibili, comandi brevi | Tutorial invasivo, HUD che copre il piano |
 | Dado in mano | Numero di dadi, scuotimento **davvero** rilevato, possibilità di rilascio | Badge vicino alla mano, nei bordi schermo | Feedback fittizio su «lancio perfetto» |
 | Dadi fermi | Facce leggibili e selezioni valide / parziali / non valide | Contorni sull'oggetto reale | Linee decorative scollegate dai dadi |
 | Dopo una scelta | Punti al sicuro, punti a rischio, obiettivo | **Un'unica scorecard** e barra proporzionale `sicuri + provvisori` | Numeri ripetuti in cinque pannelli |
-| Incassa / rilancia | Valore esatto e conseguenza del comando | Due azioni prominenti e contestuali | Raccomandazione automatica «scelta migliore» |
+| Incassa / rilancia | Valore esatto e conseguenza del comando | Incassa come scelta esplicita; rilancio mediante presa diretta | Raccomandazione automatica «scelta migliore» |
 | Farkle | Perdita **solo** del provvisorio, separata dai punti già assicurati | Contrasto e testo chiaro, senza ambiguità | Animazione che suggerisce una regola diversa |
 
 La barra introdotta nella proposta `v0.1.91` mostra esclusivamente **punti effettivamente incassati** e **provvisorio già accantonato** rispetto all'obiettivo. Un dado semplicemente selezionato non crea ancora provvisorio. I segmenti sono limitati all'obiettivo: i valori numerici nella scorecard rimangono autorevoli anche se il totale lo supera.
@@ -97,7 +97,7 @@ Misurare comprensione delle azioni del rivale, differenza nelle strategie pruden
 | Inquadratura leggermente più dall'alto e HUD ingrandito | **Implementata in baseline** |
 | Barra visiva `sicuri / a rischio` nella scorecard | **Implementata su branch v0.1.91; CI e UAT da verificare** |
 | Destrezza capace di piegare le probabilità in modo riproducibile | **Ipotesi non misurata** |
-| Duello col Mercante, posta, libri e rivali asimmetrici | **Progettazione aperta** |
+| Duello col Opponent, posta, libri e rivali asimmetrici | **Progettazione aperta** |
 
 **Prossimo gate:** QA della barra e delle azioni senza coprire i dadi, poi EX-F01. Non aggiungere nuove abilità fisiche o valute finché non sappiamo se il gesto attuale riesce a incarnare la promessa.
 

@@ -2,7 +2,7 @@
 -- Research only: use the production Farkle rules and existing encounter engine.
 local E=require('experiments.encounter_ac_lab.engine')
 local Rules=require('src.farkle.rules')
-local RNG=require('experiments.merchant_wager_lab.rng')
+local RNG=require('experiments.opponent_wager_lab.rng')
 local M={}
 M.dice_policies={'prudent','balanced','daring'}
 M.claim_policies={'first','informed'}

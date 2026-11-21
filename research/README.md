@@ -34,7 +34,7 @@ Domanda (RQ) → ricerca documentata (R) → confronto (C) → prototipo isolato
 
 Ogni record include ID, data, commit SHA, autore/revisore, collegamenti a fonti e output, stato (**proposto / in ricerca / in prova / approvato / respinto / sospeso**).
 
-**Primo tema RQ-001:** comprendere se il duello del Mercante debba usare un'offerta a token, prove contese oppure un confronto fra sistemi di dadi; usare Merchant V4 ed Encounter C come baseline.
+**Primo tema RQ-001:** comprendere se il duello del Opponent debba usare un'offerta a token, prove contese oppure un confronto fra sistemi di dadi; usare Opponent V4 ed Encounter C come baseline.
 
 **Avvertenza sul corpus storico:** vecchi file di ricerca ricordati da altri documenti non sono presenti nella main esaminata il 9 novembre 2026. Non considerarli esistenti senza recuperarli esplicitamente dalla cronologia e verificarne lo status.
 
@@ -45,3 +45,7 @@ Ogni record include ID, data, commit SHA, autore/revisore, collegamenti a fonti 
 - [.github/workflows/](../.github/workflows/) contiene gli automatismi di regressione esistenti.
 - Non modificare src/, lib/, risorse artistiche o la fisica solo per avviare una ricerca.
 - Ogni PR, **anche documentale**, segue [docs/versioning.md](../docs/versioning.md): bump versione e changelog.
+
+**Pulizia 0.1.99:** i report EX-BG-001 ed EX-TP-001 rimangono prove storiche,
+mentre i due laboratori eseguibili con gate negativo sono rimossi dalla working tree.
+I risultati non diventano conclusioni canoniche, e gli SHA originari restano recuperabili.

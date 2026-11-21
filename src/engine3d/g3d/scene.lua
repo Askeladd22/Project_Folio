@@ -312,10 +312,10 @@ Parts.scenery = (function()
 -- Pure geometry for F8 tray skins; never changes physical collision geometry.
 -- GPU scene remains independent from Farkle rules, fixed stepping and picking.
 local S={}
--- Merchant tints multiply wood.png: walnut gaming top, ink-blackened
+-- Opponent tints multiply wood.png: walnut gaming top, ink-blackened
 -- press furniture around it (the dream merges table and press bed).
 local PALETTE={
- merchant={.24,.22,.24},wooden={.34,.22,.14},wooden_compact={.34,.22,.14},
+ opponent={.24,.22,.24},wooden={.34,.22,.14},wooden_compact={.34,.22,.14},
  old_wooden={.30,.22,.17},
  book={.76,.67,.51},current={.35,.215,.12},
  A={.31,.18,.095},B={.48,.33,.20},C={.52,.43,.255},
@@ -323,7 +323,7 @@ local PALETTE={
 -- Plain, non-textured floors keep the physical dice visually prominent.
 -- Unlike the old painter's manuscript rubrics these meshes share g3d depth.
 local FLOORS={
- merchant={.70,.62,.60},wooden={.80,.73,.64},wooden_compact={.80,.73,.64},
+ opponent={.70,.62,.60},wooden={.80,.73,.64},wooden_compact={.80,.73,.64},
  old_wooden={.72,.62,.51},
  book={.88,.79,.64},current={.36,.29,.22},
  A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
@@ -389,7 +389,7 @@ function S.style_vertices(mesh,extents,height,style)
  local x1,x2,y1,y2=unpack(extents)
  -- Thin decorative housing; the underlying collision walls do not change.
  local width=style=='book' and .32 or style=='current' and .28
-  or style=='C' and .13 or style=='merchant' and .28
+  or style=='C' and .13 or style=='opponent' and .28
   or style=='old_wooden' and .06
   or style=='wooden_compact' and .08
   or style=='wooden' and .14 or .40
@@ -415,9 +415,9 @@ function S.style_vertices(mesh,extents,height,style)
    end
   end
  end
- -- The illustration supplies the merchant's far end. Join its wood directly
+ -- The illustration supplies the opponent's far end. Join its wood directly
  -- to the physical floor instead of laying a second crossbar across it.
- if style=='merchant' then
+ if style=='opponent' then
   local sides={}
   for i=8*3*6+1,#v do
    local point=v[i]

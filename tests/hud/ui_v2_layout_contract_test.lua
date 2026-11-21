@@ -1,11 +1,11 @@
--- Contract of the shipping Merchant table; retired P1 layouts are not selectable.
+-- Contract of the shipping Opponent table; retired P1 layouts are not selectable.
 local Layout=require('src.farkle.ui').layout
 local Res=require('src.core.navigation').resolution
 local Scene=require('src.data.dice_schema').scene
 
 local layout=Layout.build()
-assert(layout.name=='table_minimal','shipping Merchant layout must have its canonical identity')
-assert(Layout.validate(layout),'shipping Merchant table layout is invalid')
+assert(layout.name=='table_minimal','shipping Opponent layout must have its canonical identity')
+assert(Layout.validate(layout),'shipping Opponent table layout is invalid')
 assert(layout.tray.x==8 and layout.tray.y==505
  and layout.tray.w==1904 and layout.tray.h==545
  and layout.tray.y+layout.tray.h==1050,
@@ -61,4 +61,4 @@ assert(not pcall(Layout.build,'single_folio'),
  'retired sidebar layout must not be selectable')
 assert(not pcall(Layout.build,'unknown'),'invalid layout names must fail')
 Res.refresh(1920,1080)
-print('PASS active Merchant table geometry and viewport mapping without P1 A/B layout')
+print('PASS active Opponent table geometry and viewport mapping without P1 A/B layout')

@@ -3,7 +3,7 @@
 -- No use of the reserved EX-002 confirmation seeds 2000..6999.
 local E=require('experiments.encounter_ac_lab.engine')
 local X=require('experiments.ex002_reactivity_lab.simulate')
-local RNG=require('experiments.merchant_wager_lab.rng')
+local RNG=require('experiments.opponent_wager_lab.rng')
 local M={}
 M.first_seed=10000
 M.last_seed=13000

@@ -9,7 +9,7 @@ versione 0.1.76; protocollo in [research/EX-003.md](../../research/EX-003.md).
 Verificare se **sapere come sta giocando il Rivale** cambia le
 decisioni del rischio Farkle. L'incisore usa sei D6 canonici
 in entrambe le condizioni. Il nome generico è **Rivale**;
-il personaggio specifico Mercante non è il benchmark.
+il personaggio specifico Opponent non è il benchmark.
 
 - **D (nuovo controllo):** 6 turni Farkle a testa, incassi in
   punti e confronto dei totali. Il Rivale tira veramente i

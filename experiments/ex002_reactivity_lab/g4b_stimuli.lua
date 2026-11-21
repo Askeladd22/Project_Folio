@@ -3,7 +3,7 @@
 -- Holdout 2000..6999 is strictly excluded.
 local G=require('experiments.ex002_reactivity_lab.g4_stimuli')
 local X=require('experiments.ex002_reactivity_lab.simulate')
-local RNG=require('experiments.merchant_wager_lab.rng')
+local RNG=require('experiments.opponent_wager_lab.rng')
 local B={}
 B.practice_count=2
 B.test_count=12

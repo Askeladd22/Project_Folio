@@ -33,7 +33,7 @@ local center=layout.tray.x+layout.tray.w/2
 for _,r in ipairs{layout.footer,layout.footer_trim,layout.single_action,
                   layout.idle_message,layout.message} do
  assert(math.abs(r.x+r.w/2-center)<=3,
-  'merchant table element does not share tray central axis')
+  'opponent table element does not share tray central axis')
 end
 assert(math.abs((layout.context_actions[1].x+
  layout.secondary.x+layout.secondary.w)/2-center)<=3,
@@ -53,7 +53,7 @@ local game=R.new()
 local u={game=game,presentation=P.new(game)}
 local actions=A.build(u)
 for _,a in ipairs(actions) do buttons[a.id]=a end
-assert(buttons.roll and buttons.bank and buttons.help and buttons.runmenu)
+assert(not buttons.roll and buttons.bank and buttons.help and buttons.runmenu)
 assert(not buttons.folio,'no always-visible folio panel in player mode')
 
 local savedLove=love
@@ -70,7 +70,9 @@ local function mock_font(pt)
   getWrap=function(_,s)return #tostring(s)*pt*.48,{tostring(s)}end,
  }
 end
-love={graphics=setmetatable({
+love={filesystem={getInfo=function(path)
+ return path=='resources/scenes/printshop-room.png' and {type='file'} or nil
+end},graphics=setmetatable({
  getDimensions=function()return width,height end,
  getWidth=function()return width end,
  getHeight=function()return height end,
@@ -95,13 +97,12 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  textDrawn,rectangles={},{}
  Hud.draw(u)
  assert(push==pop,'compact table leaks graphics state')
- assert(u.buttons.roll and not u.buttons.bank and u.buttons.help
+ assert(not u.buttons.roll and not u.buttons.bank and u.buttons.help
   and u.buttons.runmenu and not u.buttons.folio)
- assert(u.buttons.roll.x==layout.single_action.x and
-        u.buttons.roll.y==layout.single_action.y)
+ assert(not u.buttons.roll,'the player cannot trigger a button-based throw')
  local launchCount=0
  for _,label in ipairs(textDrawn) do if label=='Lancia i sei dadi' then launchCount=launchCount+1 end end
- assert(launchCount==1,'opening instruction should appear once')
+ assert(launchCount==0,'the removed automatic-roll button must stay absent')
  for _,a in pairs(u.buttons) do
   assert(Layout.overlap(a,layout.tray)==0 or a.y>=layout.footer.y,
    'action outside the front lip obstructs the D6 field: '..a.label)
@@ -121,8 +122,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
   return false
  end
  assert(painted(layout.score_panel),'shared scorecard not drawn')
- assert(painted(layout.footer),'compact command plaque not drawn')
- assert(painted(layout.footer_trim),'command plaque trim not drawn')
+ assert(not painted(layout.footer),'a launcher-only plaque must not appear before physical pickup')
+ assert(not painted(layout.footer_trim),'unused launcher trim must not occupy the table')
  for _,obsolete in ipairs{'COMMISSIONE','MANOSCRITTO','STRUMENTI','FOLIO 1'} do
   assert(not labels:find(obsolete,1,true),
    'obsolete panel visible on player table: '..obsolete)
@@ -188,7 +189,7 @@ Hud.draw(u)
 assert(u.buttons.take.enabled and u.buttons.take.label=='Accantona · 5 pt')
 assert(R.take(game) and game.pot==20)
 Hud.draw(u)
-assert(u.buttons.roll.enabled and u.buttons.roll.label=='Rilancia 3 dadi')
+assert(not u.buttons.roll and u.buttons.bank.enabled,'only physical pickup may reroll')
 local hand=R.new()
 assert(R.start(hand) and R.settle(hand,{1,1,3,3,3,6}))
 u.game=hand
@@ -233,7 +234,7 @@ assert(u.buttons.medaluse.x==layout.context_actions[1].x and u.buttons.take.x==l
 assert(R.take(hand))
 textDrawn={};footerNotice=nil
 Hud.draw(u)
-assert(u.buttons.roll.enabled and u.buttons.bank.enabled)
+assert(not u.buttons.roll and u.buttons.bank.enabled)
 assert(not footerNotice or not footerNotice:find('Scegli i dadi',1,true),
  'additional scoring dice are optional once the player may roll or bank')
 -- Keep pick headroom above the rear seam for physical dice in flight.

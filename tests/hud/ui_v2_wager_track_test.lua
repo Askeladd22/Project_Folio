@@ -16,7 +16,9 @@ local function fakeFont(px)
   getHeight=function()return px end,
   getWrap=function(_,s)return 100,{tostring(s)} end}
 end
-love={graphics=setmetatable({
+love={filesystem={getInfo=function(path)
+ return path=='resources/scenes/printshop-room.png' and {type='file'} or nil
+end},graphics=setmetatable({
  getDimensions=function()return 1920,1080 end,
  getWidth=function()return 1920 end,
  getHeight=function()return 1080 end,

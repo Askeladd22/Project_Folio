@@ -107,7 +107,7 @@ end)()
 
 -- Table and HUD geometry
 Parts.layout = (function()
--- Merchant-table geometry and the retained single-folio HUD contract.
+-- Opponent-table geometry and the retained single-folio HUD contract.
 -- Layout is presentation-only: g3d, rules and input stay authoritative.
 local M={virtual_w=1920,virtual_h=1080}
 
@@ -138,7 +138,7 @@ function M.build(which)
    -- The wagering figures are large enough to read at a glance.
    -- The 3D floor and its physical hitbox stay completely separate.
    single_action=rect(720,993,480,75),
-   merchant_panel=rect(1410,114,454,151),
+   opponent_panel=rect(1410,114,454,151),
    duel_turn=rect(655,38,610,54),
    secured_caption=rect(60,27,216,22),
    secured_value=rect(60,51,216,52),
@@ -201,7 +201,7 @@ function M.validate(layout)
    'turns_caption','turns_value','shelf_label','score_panel',
    'stakes_caption','stakes_track',
    'footer','footer_trim','single_action','idle_message',
-   'merchant_panel','duel_turn'}
+   'opponent_panel','duel_turn'}
   for _,name in ipairs(required) do
    local r=layout[name]
    if not r or r.w<=0 or r.h<=0 or not M.contains(bounds,r) then
@@ -433,13 +433,13 @@ return Parts
 end)()
 Bundle.opponent_scene = (function()
 -- Data-driven visual layer only; never mutates Farkle or g3d geometry.
--- The shipping composite JPEG already contains the Merchant. Other
+-- The shipping composite JPEG already contains the Opponent. Other
 -- opponents REQUIRE a clean room, so two figures can never overlap.
 local Art=require('src.data.frontend_schema').palette
 local S={}
-S.default_id='rival'
+S.default_id='opponent'
 S.room_path='resources/scenes/printshop-room.png'
-S.legacy_room='resources/merchant/table-host.jpg'
+S.legacy_room=S.room_path
 function S.validate_id(id)
  if id==nil then return S.default_id end
  assert(type(id)=='string' and id:match('^[a-z][a-z0-9_]*$'),
@@ -457,25 +457,16 @@ function S.resolve(id,exists)
  id=S.validate_id(id)
  assert(type(exists)=='function','file-existence function required')
  local png=S.portrait_path(id)
- local clean_room=exists(S.room_path)
- -- The generic rival temporarily shares the existing illustrated portrait.
- -- A future rival.png takes precedence automatically; explicit 'merchant'
- -- remains a separately selectable character/legacy-art identity.
- if id==S.default_id and not exists(png) and exists(S.portrait_path('merchant')) then
-  png=S.portrait_path('merchant')
+ if not exists(S.room_path) then
+  error('Missing clean background '..S.room_path,2)
  end
- if clean_room and exists(png) then
+ if exists(png) then
   return {id=id,room=S.room_path,portrait=png,legacy=false}
  end
- -- Preserve the historical composite fallback for headless/minimal builds.
- -- The logical identity stays 'rival' for the generic default; 'merchant'
- -- remains a separate explicit selection. Normal builds use modular art.
- if id==S.default_id or id=='merchant' then
-  return {id=id,room=S.legacy_room,portrait=nil,legacy=true}
- end
- if not exists(S.room_path) then
-  error('Missing clean background '..S.room_path..
-   '; current JPEG contains the Merchant and cannot host '..id,2)
+ -- Keep a room-only fallback for the default. Optional opponents need
+ -- their own transparent portrait; never draw a baked-in old character.
+ if id==S.default_id then
+  return {id=id,room=S.room_path,portrait=nil,legacy=true}
  end
  error('Missing transparent portrait '..png,2)
 end
@@ -1077,7 +1068,7 @@ function M.build(u)
  if H.reward_active(s) then return a end
  add('help','Regole [?]',not block,function() u.modal='help' end,'header')
  add('runmenu','Pausa [Esc]',not block,function() u.modal='run' end,'header')
- if u.duel and (u.duel.actor=='merchant' or u.duel.winner or s.phase=='ended') and not u.physicalFailure then return a end
+ if u.duel and (u.duel.actor=='opponent' or u.duel.winner or s.phase=='ended') and not u.physicalFailure then return a end
  -- Folio remains accessible with [F] via the modal dispatcher.
  if s.medal~='none' then
   local d=Medals.get(s.medal)
@@ -1092,7 +1083,7 @@ function M.build(u)
    function() u:retry_physical() end,'primary','Recupero tecnico, non Farkle')
  elseif s.phase=='rescue' then
   add('rescue','Usa Correttore [M]',true,
-   function() u:request(true) end,'primary','Salva il turno')
+   function() u:request(true,nil,true) end,'primary','Salva il turno · poi afferra i dadi')
   add('fail','Accetta Farkle',true,
    function() u:act('accept_bust',function() return R.fail(s) end) end,
    'secondary','Perdi i punti a rischio')
@@ -1120,15 +1111,6 @@ function M.build(u)
    add('take',label,
      pts~=nil,function() u:act('take',function() return R.take(s) end) end,
      'primary',detail)
-  else
-   local can=R.can_roll(s) and u.manualRoll==nil
-   local label=s.hot and 'Rilancia sei dadi' or
-     (s.phase=='fresh' and 'Lancia i sei dadi' or
-       'Rilancia '..R.count_free(s)..' dadi')
-   if can then
-    add('roll',label,true,function() u:request() end,
-     'primary','[Spazio] · Destro: presa fisica')
-   end
   end
   local ok,total,min=R.bank_status(s)
   -- Existing Farkle rules permit banking a VALID selected combination
@@ -1400,12 +1382,12 @@ local function compact_status(u)
   return Actions.state(u)
  end
  if u.physicalFailure then return 'Tiro non valido: usa Riprova tiro fisico.' end
- if u.duel and u.duel.winner then return u.duel.winner=='player' and 'VITTORIA · Hai battuto il Mercante!' or 'SCONFITTA · Il Mercante ha vinto.' end
- if u.duel and u.duel.actor=='merchant' then return u.duel.intent or 'Il Mercante sta giocando.' end
- if u.duel and s.phase=='ended' then return 'Turno concluso · Il Mercante prepara i dadi.' end
+ if u.duel and u.duel.winner then return u.duel.winner=='player' and 'VITTORIA · Hai battuto il Opponent!' or 'SCONFITTA · Il Opponent ha vinto.' end
+ if u.duel and u.duel.actor=='opponent' then return u.duel.intent or 'Il Opponent sta giocando.' end
+ if u.duel and s.phase=='ended' then return 'Turno concluso · Il Opponent prepara i dadi.' end
  if s.phase=='rolling' then return 'I dadi stanno rotolando…' end
  if s.phase=='fresh' then
-  return 'Spazio: lancio rapido · Destro: afferra · Trascina sinistro: seleziona gruppo'
+  return 'Tasto destro: afferra e rilascia il dado · Sinistro: seleziona un gruppo'
  end
  if s.phase=='rescue' then return 'FARKLE · Usa il Correttore o accetta la perdita.' end
  if s.phase=='ended' then return 'Turno concluso · Continua con [N].' end
@@ -1437,15 +1419,15 @@ local function compact_status(u)
  if #keys==0 then return '' end
  return 'Scegli i dadi segnati · clic o tasti '..table.concat(keys,' ')
 end
-local merchant_room,room_edges,active_room_path
+local opponent_room,room_edges,active_room_path
 local atmosphere_shader
 local function draw_room(path,depth)
  local g=love.graphics
  local w,h=Layout.virtual_w,Layout.virtual_h
  if active_room_path~=path then
-  merchant_room=g.newImage(path)
+  opponent_room=g.newImage(path)
   active_room_path=path
-  local iw,ih=merchant_room:getWidth(),merchant_room:getHeight()
+  local iw,ih=opponent_room:getWidth(),opponent_room:getHeight()
   -- Mirror only a strip of the empty room past the composition on
   -- non-16:9 windows. Never duplicate the host or rescale the seam.
   local side,top,base=math.max(1,math.floor(iw*.09)),
@@ -1454,7 +1436,7 @@ local function draw_room(path,depth)
    top=g.newQuad(0,0,iw,top,iw,ih),base=g.newQuad(0,ih-base,iw,base,iw,ih),
    side=side,top_h=top,base_h=base}
  end
- local iw,ih=merchant_room:getWidth(),merchant_room:getHeight()
+ local iw,ih=opponent_room:getWidth(),opponent_room:getHeight()
  local x,y=Res.to_virtual(0,0)
  g.push()
  if depth then
@@ -1476,13 +1458,13 @@ local function draw_room(path,depth)
   atmosphere_shader:send('dreamTime',time)
   g.setShader(atmosphere_shader)
  end
- g.draw(merchant_room,0,0,0,w/iw,h/ih)
+ g.draw(opponent_room,0,0,0,w/iw,h/ih)
  if x<-.001 then
-  g.draw(merchant_room,room_edges.left,0,0,0,x/room_edges.side,h/ih)
-  g.draw(merchant_room,room_edges.right,w-x,0,0,x/room_edges.side,h/ih)
+  g.draw(opponent_room,room_edges.left,0,0,0,x/room_edges.side,h/ih)
+  g.draw(opponent_room,room_edges.right,w-x,0,0,x/room_edges.side,h/ih)
  elseif y<-.001 then
-  g.draw(merchant_room,room_edges.top,0,0,0,w/iw,y/room_edges.top_h)
-  g.draw(merchant_room,room_edges.base,0,h-y,0,w/iw,y/room_edges.base_h)
+  g.draw(opponent_room,room_edges.top,0,0,0,w/iw,y/room_edges.top_h)
+  g.draw(opponent_room,room_edges.base,0,h-y,0,w/iw,y/room_edges.base_h)
  end
  if atmosphere_shader then g.setShader() end
  g.pop()
@@ -1637,17 +1619,17 @@ function V.draw(u)
  local d=u.duel
  local c=d and {target=d.target,limit=0} or R.contracts[s.stage]
  if d then
-  local mr=layout.merchant_panel
+  local mr=layout.opponent_panel
   panel(mr,Art.rgba('surface',.93),border_ink,6)
-  write_fitted('MERCANTE',{x=mr.x+18,y=mr.y+8,w=mr.w-36,h=26},22,16,paper_ink)
-  write_fitted('Sicuri: '..d.scores.merchant..' pt',{x=mr.x+18,y=mr.y+43,w=mr.w-36,h=33},28,20,paper_ink)
-  write_fitted('A rischio: '..(d.actor=='merchant' and s.pot or 0)..' pt',
+  write_fitted('OPPONENT',{x=mr.x+18,y=mr.y+8,w=mr.w-36,h=26},22,16,paper_ink)
+  write_fitted('Sicuri: '..d.scores.opponent..' pt',{x=mr.x+18,y=mr.y+43,w=mr.w-36,h=33},28,20,paper_ink)
+  write_fitted('A rischio: '..(d.actor=='opponent' and s.pot or 0)..' pt',
    {x=mr.x+18,y=mr.y+82,w=mr.w-36,h=23},20,15,paper_warning)
-  write_fitted(d.actor=='merchant' and 'STA GIOCANDO' or 'IN ATTESA',
+  write_fitted(d.actor=='opponent' and 'STA GIOCANDO' or 'IN ATTESA',
    {x=mr.x+18,y=mr.y+117,w=mr.w-36,h=23},18,14,paper_muted)
   panel(layout.duel_turn,Art.rgba('earth_dark',.86),Art.rgba('ochre',.65),4)
-  write_fitted(d.winner and (d.winner=='player' and 'HAI VINTO IL DUELLO' or 'IL MERCANTE VINCE')
-   or ('TURNO · '..(d.actor=='player' and 'TU' or 'MERCANTE')),
+  write_fitted(d.winner and (d.winner=='player' and 'HAI VINTO IL DUELLO' or 'IL OPPONENT VINCE')
+   or ('TURNO · '..(d.actor=='player' and 'TU' or 'OPPONENT')),
    layout.duel_turn,24,17,Art.rgba('paper'),'center')
  end
  write_fitted('OBIETTIVO',layout.objective_caption,18,14,paper_muted)

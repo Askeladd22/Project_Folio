@@ -87,7 +87,7 @@ sceglie se incassare o rilanciare e rischia di perdere il bottino del
 turno con un Farkle. Rendering unico **g3d**; nessun ripristino
 di painter/fallback legacy.
 
-La partita attuale usa commissioni sul tavolo da gioco. L'avversario generico si chiama **Rivale**: non viene identificato automaticamente con il personaggio Mercante.
+La partita attuale usa commissioni sul tavolo da gioco. L'avversario generico porta l'identità tecnica neutra **Opponent**; il ritratto attuale è sostituibile e non definisce un archetipo narrativo canonico.
 Il bilanciamento di obiettivi e progressione è ancora provvisorio.
 
 ## Incontri e poste — principi forti, regolamento ancora aperto
@@ -226,7 +226,7 @@ Le figure possono provenire da xilografie, allegorie, emblemi, capilettera, racc
 **Archetipi puramente esplorativi:**
 
 - **La Fortuna:** provocatoria, imprevedibile, amante delle poste audaci.
-- **Il Mercante:** calcolatore, attento alle quote e all'opportunità di ritirarsi.
+- **Il Opponent:** calcolatore, attento alle quote e all'opportunità di ritirarsi.
 - **Il Satiro:** spaccone, divertito dai rilanci e dalle sfide assurde.
 - **Il Re o l'imperatore:** orgoglioso, sensibile alle sconfitte pubbliche.
 - **Il Filosofo:** argomentativo, ossessionato da ordine e probabilità.

@@ -2,7 +2,7 @@
 -- Invariants, legal Farkle, opponent genuine turns, paired streams.
 local Rules=require('src.farkle.rules')
 local E=require('experiments.encounter_ac_lab.engine')
-local RNG=require('experiments.merchant_wager_lab.rng')
+local RNG=require('experiments.opponent_wager_lab.rng')
 local P=require('experiments.ex003_duel_lab.policy')
 local D=require('experiments.ex003_duel_lab.direct')
 local S=require('experiments.ex003_duel_lab.simulate')

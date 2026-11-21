@@ -78,7 +78,7 @@ aspetto da tavolo di gioco vissuto e non da banco da lavoro.
 Il piano è ampio quanto il campo fisico dei sei D6, mentre
 gambe e fascia mantengono proporzioni autonome; una cornice
 grafica sottile suggerisce i limiti della superficie senza
-nascondere i dadi. La scena, il Mercante e la camera non cambiano.
+nascondere i dadi. La scena, il Opponent e la camera non cambiano.
 
 **Stato artistico non canonico:** la variante F8 `old_wooden`
 mostra l'asset originale solo se installato localmente.
@@ -227,7 +227,7 @@ richiedono più un pacchetto grafico esterno da installare.
 
 1. `resources/scenes/printshop-room.png` — bottega pulita,
    **senza personaggi**.
-2. `resources/opponents/merchant.png` — Mercante con canale alfa
+2. `resources/opponents/opponent.png` — Opponent con canale alfa
    indipendente, davanti al fondale e dietro al tavolo 3D.
 3. Tavolo, sei D6 g3d e HUD — livelli separati, nessuna modifica
    agli eventi fisici o ai punteggi.
@@ -241,29 +241,29 @@ il rapporto d'aspetto.
 ### Selezione dell'avversario
 
 L'identità di default è **Rivale** (`opponent_id='rival'`), un
-segnaposto neutro: **Mercante** non è il nome di tutti gli avversari.
-Il PNG `merchant.png` è ancora usato *provvisoriamente* per il default
+segnaposto neutro: **Opponent** non è il nome di tutti gli avversari.
+Il PNG `opponent.png` è ancora usato *provvisoriamente* per il default
 finché non esisterà `resources/opponents/rival.png`, che verrà preferito
 automaticamente. La grafica esistente non attribuisce al default le
-meccaniche del Mercante.
+meccaniche del Opponent.
 
 ```lua
 require('src.core.navigation').go('scriptorium',{new_run=true})
--- Soltanto quando si vuole esplicitamente il personaggio Mercante:
-require('src.core.navigation').go('scriptorium',{new_run=true,opponent_id='merchant'})
+-- Soltanto quando si vuole esplicitamente il personaggio Opponent:
+require('src.core.navigation').go('scriptorium',{new_run=true,opponent_id='opponent'})
 -- Oppure nella scena corrente:
-require('src.farkle.controller'):setOpponentVisual('merchant')
+require('src.farkle.controller'):setOpponentVisual('opponent')
 ```
 
 Il modulo `src/farkle/ui.lua`, sezione `opponent_scene`, risolve
 fondale e ritratto. Un ID non disponibile non deve mostrare il
-Mercante dietro a un altro personaggio: in assenza dell'immagine
+Opponent dietro a un altro personaggio: in assenza dell'immagine
 richiesta il loader segnala l'errore esplicitamente.
 
-Il vecchio composito `resources/merchant/table-host.jpg` resta un
+Il vecchio composito `resources/opponent/table-host.jpg` resta un
 **fallback tecnico di compatibilità** per `rival` quando non sono disponibili
-gli asset modulari, e per `merchant` quando è selezionato esplicitamente.
-Il composito contiene già il Mercante: non è un ritratto neutro e non
+gli asset modulari, e per `opponent` quando è selezionato esplicitamente.
+Il composito contiene già il Opponent: non è un ritratto neutro e non
 va impiegato per creare altri personaggi. In produzione si preferisce
 sempre la stanza pulita con un PNG indipendente.
 

@@ -288,17 +288,17 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
   -- The single opaque GPU floor replaces the historical overlaid 2D book
   -- ornaments. It participates in the SAME depth buffer as walls and dice.
-  -- Merchant imagery now lives in the independent 2D opponent layer.
+  -- Opponent imagery now lives in the independent 2D opponent layer.
   -- The former floor and carving JPGs were deleted with that art split:
   -- only the retained shared wood texture is part of the GPU tray.
   local floor_texture=self.white
-  if style=='merchant' or style=='wooden' or style=='wooden_compact' or style=='old_wooden' then
-   if not self.merchantWood then
-    self.merchantWood=g.newImage('resources/textures/wood.png',{mipmaps=true})
-    self.merchantWood:setFilter('linear','linear')
-    self.merchantWood:setMipmapFilter('linear')
+  if style=='opponent' or style=='wooden' or style=='wooden_compact' or style=='old_wooden' then
+   if not self.opponentWood then
+    self.opponentWood=g.newImage('resources/textures/wood.png',{mipmaps=true})
+    self.opponentWood:setFilter('linear','linear')
+    self.opponentWood:setMipmapFilter('linear')
    end
-   floor_texture=self.merchantWood
+   floor_texture=self.opponentWood
    if style=='old_wooden' then
     -- Alex Krush's real GLB takes precedence when installed from the
     -- companion ZIP; never stretch all supporting furniture with the top.
@@ -312,7 +312,7 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
      -- Functional tracked reference table: thin top, traditional trestles.
      -- This is an original approximation, NOT the uploaded GLB geometry.
      local model=require('resources.models.old_wooden_table_fallback').mesh(extents)
-     self.table_prop=self.g3d.newModel(model.verts,self.merchantWood)
+     self.table_prop=self.g3d.newModel(model.verts,self.opponentWood)
     end
    elseif style=='wooden' or style=='wooden_compact' then
     -- A user-provided optimized/original GLB keeps its atlas. The bundled
@@ -330,7 +330,7 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
      if style=='wooden_compact' then
       Scenery.compact_table(model,.22)
      end
-     self.table_prop=self.g3d.newModel(model.verts,self.merchantWood)
+     self.table_prop=self.g3d.newModel(model.verts,self.opponentWood)
     end
    else
     -- Keep the previous marble table available as the F8 'book' variant.

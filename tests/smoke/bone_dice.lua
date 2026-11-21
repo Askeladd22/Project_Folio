@@ -90,9 +90,9 @@ function S.install()
    renderer:draw{
     entries=entries,extents={-5.5,5.5,-3.5,3.5},height=.74,
     viewport={x=0,y=0,w=960,h=620},cx=480,cy=310,scale=210,
-    view=view,style='merchant',offset=0,
+    view=view,style='opponent',offset=0,
    }
-   -- Compare actual merchant-floor pixels with an empty-tray capture. Probe
+   -- Compare actual opponent-floor pixels with an empty-tray capture. Probe
    -- outside the cube's silhouette, where a player can see the cast shadow.
    local function check_table_shadows()
     local body=Geometry.newD6Body(.8):set({0,0,.5},{0,0,0},{0,0,0})
@@ -101,7 +101,7 @@ function S.install()
      renderer:draw{
       entries=items,extents=extents or {-4,4,-3,3},height=.74,
       viewport={x=0,y=0,w=384,h=288},cx=192,cy=144,scale=48,
-      view=flatView,style='merchant',offset=0,
+      view=flatView,style='opponent',offset=0,
      }
      return renderer.canvas:newImageData()
     end
@@ -135,7 +135,7 @@ function S.install()
     local edge=capture({die},{-2,2,-3,3})
     local _,_,_,outside=edge:getPixel(360,215)
     assert(outside==0,'cast shadow escaped the tray')
-    print(('PASS GPU merchant shadows: grounded %.3f, raised %.3f, former contact %.3f')
+    print(('PASS GPU opponent shadows: grounded %.3f, raised %.3f, former contact %.3f')
      :format(contact,cast,residual))
     empty:release();resting:release();raised:release();moved:release();edge:release()
    end
@@ -169,7 +169,7 @@ function S.install()
     renderer:draw{
      entries=focused,extents={-1.5,1.5,-1.5,1.5},height=.74,
      viewport={x=0,y=0,w=128,h=128},cx=64,cy=64,scale=64,
-     view=flatView,style='merchant',offset=0,
+     view=flatView,style='opponent',offset=0,
     }
     local data=renderer.canvas:newImageData()
     local expected=build=='normal' and 2 or 1
@@ -192,7 +192,7 @@ function S.install()
    renderer:draw{
     entries=entries,extents={-5.5,5.5,-3.5,3.5},height=.74,
     viewport={x=0,y=0,w=960,h=620},cx=480,cy=310,scale=210,
-    view=view,style='merchant',offset=0,
+    view=view,style='opponent',offset=0,
    }
    local preview=g.newCanvas(640,414)
    g.push('all')

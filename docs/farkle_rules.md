@@ -68,7 +68,7 @@ Il primo incasso riuscito registra l'ingresso. Un Farkle o un incasso rifiutato 
 | Commissione | Obiettivo assicurato | Turni | Ingresso | Incassi successivi | Condizione da incassare |
 |---|---:|---:|---:|---:|---|
 | Salterio per la parrocchia | 100 | 4 | 0 | 0 | Nessuna |
-| Libro di ore del mercante | 150 | 5 | 40 | 20 | Un gruppo di almeno tre uguali |
+| Libro di ore del opponent | 150 | 5 | 40 | 20 | Un gruppo di almeno tre uguali |
 | Codice di rappresentanza | 200 | 5 | 50 | 25 | Un ciclo di hot dice |
 
 **Tutti questi numeri sono parametri di test, non valori bilanciati.** Gli obiettivi iniziali derivano dalla vecchia scala divisa per dieci; le nuove combinazioni impediscono di considerarla una conversione equivalente. I turni sono conservati. L'HUD segnala «parametri test».
@@ -77,7 +77,7 @@ Punti e requisito possono essere incassati in turni differenti. Tris, poker, cin
 
 Dopo il Salterio si sceglie la modifica del dado 1; dopo il Libro di ore il Correttore oppure nessuna medaglia. In «Senza mod» si prosegue senza queste ricompense.
 
-## Modalità proposta: Duello al Mercante (branch 0.1.98)
+## Modalità proposta: Duello al Opponent (branch 0.1.98)
 
 **Stato sperimentale, non canonico per le commissioni.** La sfida
 opzionale usa gli stessi sei D6 e la stessa tabella delle combinazioni.
@@ -85,7 +85,7 @@ I due contendenti alternano turni, incassano punti separatamente,
 perdono soltanto i provvisori con Farkle; hot dice immutati. Vince
 chi raggiunge per primo **500 punti assicurati**. Non applica soglie
 di ingresso né i limiti di turni delle commissioni, non assegna medaglie
-e non modifica gli esiti fisici. Il Mercante sceglie combinazioni
+e non modifica gli esiti fisici. Il Opponent sceglie combinazioni
 valide e incasso/rilancio con una policy probabilistica one-step.
 La soglia 500 è un parametro di **playtest non bilanciato**.
 Questa sezione documenta il branch; non sostituisce la visione canonica.

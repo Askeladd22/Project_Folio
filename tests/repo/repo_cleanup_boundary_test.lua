@@ -57,7 +57,7 @@ for _,path in ipairs{
  'src/engine3d/g3d/live.lua',
  'resources/textures/wood.png',
  'resources/scenes/printshop-room.png',
- 'resources/opponents/merchant.png',
+ 'resources/opponents/opponent.png',
  'resources/dice/1.png',
 } do
  local f=assert(io.open(path,'rb'),'active engine asset deleted: '..path)

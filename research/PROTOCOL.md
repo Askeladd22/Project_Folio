@@ -13,7 +13,7 @@ Aprire un ID RQ-###. Definire:
 - criteri osservabili di successo/fallimento (non solo sensazioni);
 - cosa NON verrà toccato.
 
-Esempio: «Le decisioni del Mercante in Encounter C sono più prevedibili **senza diventare banali** di quelle di Merchant V4?». Va misurata la comprensione dei giocatori e la differenza di performance fra policy, oltre all'equilibrio.
+Esempio: «Le decisioni del Opponent in Encounter C sono più prevedibili **senza diventare banali** di quelle di Opponent V4?». Va misurata la comprensione dei giocatori e la differenza di performance fra policy, oltre all'equilibrio.
 
 ## 2. Deep research — ricerca delle evidenze
 
@@ -25,7 +25,7 @@ Consegnare una sintesi **pro**, **contro**, **evidenza insufficiente**. Ogni pro
 
 ## 3. Confronto controllato
 
-Confrontare sempre (a) Farkle/commissioni correnti, (b) Merchant Wager V4, (c) Encounter C e (d) eventuale nuovo candidato; Encounter A e P4ND0RA servono da comparatori di design con vincoli distinti.
+Confrontare sempre (a) Farkle/commissioni correnti, (b) Opponent Wager V4, (c) Encounter C e (d) eventuale nuovo candidato; Encounter A e P4ND0RA servono da comparatori di design con vincoli distinti.
 
 Punteggio **solo dopo raccolta delle evidenze**. Scala descrittiva 0–4 per:
 - qualità delle decisioni significative (peso 20);

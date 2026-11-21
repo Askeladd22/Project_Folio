@@ -1,3 +1,5 @@
+**Archiviazione 0.1.99:** protocollo e risultati storici conservati; il laboratorio eseguibile e relativi test/CI sono stati rimossi dalla working tree (gate G3 negativo). Ripristinabili dal commit di ricerca citato sotto.
+
 # EX-BG-001 — RQ-001, Battute Gemelle: primo gate numerico
 
 **Data:** 2026-11-10 · **Stato:** eseguito, screening G3 negativo; decisione provvisoria **sospendere / non integrare**.
@@ -22,7 +24,7 @@
 | Baseline | Accoppiamento delle decisioni | Limite pertinente |
 |---|---|---|
 | Farkle/commissioni | nessun rivale | decisioni contro soglie |
-| Merchant V4 | cassa e controfferta post-incasso | poca risposta durante il turno |
+| Opponent V4 | cassa e controfferta post-incasso | poca risposta durante il turno |
 | Encounter C | tre prove comuni | risorsa avversaria poco vincolata |
 | Battute Gemelle | k del Leader impone limite al Rispondente | possibile STOP dominante; ritmo Farkle modificato |
 
@@ -112,7 +114,7 @@ divertimento con persone. **G5 — NON APPROVATO**.
    evidenzia una debolezza, non una conclusione universale.
 4. Pareggio a favore del Leader, cap tre e best-of-three
    sono parametri di prototipo, non bilanciati.
-5. Nessuna comparazione quantitativa diretta con Merchant V4
+5. Nessuna comparazione quantitativa diretta con Opponent V4
    o Encounter C è stata eseguita in questo ciclo.
 6. La win rate vicino al 50% non equivale a profondità;
    il controllo casuale può perdere per semplici errori

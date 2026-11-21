@@ -6,7 +6,7 @@ Parts.progress = (function()
 local Progress={}
 Progress.contracts={
  {name='Parish Psalter',target=100,limit=4,entry_min=0,bank_min=0,provisional=true,condition='Banked points only'},
- {name="Merchant's Book of Hours",target=150,limit=5,entry_min=40,bank_min=20,provisional=true,condition='Bank at least one group of 3 or more matching dice'},
+ {name="Opponent's Book of Hours",target=150,limit=5,entry_min=40,bank_min=20,provisional=true,condition='Bank at least one group of 3 or more matching dice'},
  {name='Presentation Codex',target=200,limit=5,entry_min=50,bank_min=25,provisional=true,condition='Bank after at least one hot dice cycle'}
 }
 function Progress.minimum(s)
@@ -223,7 +223,7 @@ function R.bank_status(s)
 end
 local function turn(s)
  s.phase='fresh';s.pot=0;s.used={};s.selected={};s.hand={};s.hot=false;s.scored=false;s.turnGroup=false;s.turnHot=false
- s.last='Roll six dice. Select only scoring dice.'
+ s.last='Grab and throw all six dice. Select only scoring dice.'
 end
 function R.new(mode)
  local s={mode=mode or 'build',stage=1,turn=1,bank=0,build='normal',medal='none',medalUsed=false,group=false,hotBank=false,entered=false}

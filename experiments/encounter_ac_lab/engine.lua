@@ -1,7 +1,7 @@
 -- Project Folio: A (divide-and-choose) and C (contested proofs).
 -- Research-only. Production Farkle rules are imported, never forked.
 local Rules=require('src.farkle.rules')
-local RNG=require('experiments.merchant_wager_lab.rng')
+local RNG=require('experiments.opponent_wager_lab.rng')
 local E={}
 E.LANES={'Capilettera','Miniatura','Marca tipografica'}
 E.PAIRS={{1,2},{1,3},{2,3}}

@@ -2,7 +2,7 @@
 -- paired seed policy contrasts. NOT a causal D-C estimate and NOT mastery.
 local E=require('experiments.encounter_ac_lab.engine')
 local Rules=require('src.farkle.rules')
-local RNG=require('experiments.merchant_wager_lab.rng')
+local RNG=require('experiments.opponent_wager_lab.rng')
 local Direct=require('experiments.ex003_duel_lab.direct')
 local Policy=require('experiments.ex003_duel_lab.policy')
 local M={}

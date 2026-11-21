@@ -114,25 +114,25 @@ function H.help_sections(s)
  if s.mode=='duel' then
   for v=1,6 do rows[v]={v,p.kind[3][v],p.kind[4][v],p.kind[5][v],p.kind[6][v]} end
   return {
-   {title='Duello al Mercante',lines={'Il primo giocatore a incassare 500 punti vince.',
+   {title='Duello al Opponent',lines={'Il primo giocatore a incassare 500 punti vince.',
     'Giocate a turni alterni con le stesse regole e sei dadi fisici.',
     'Seleziona con il mouse o i tasti 1–6. Accantona [A].',
-    'Incassa [Invio] oppure rilancia [Spazio].',
+    'Incassa [Invio] oppure afferra e rilancia i dadi con il destro.',
     'Nessuna medaglia, dado pesato o commissione nel duello.'}},
    {title='Combinazioni',rows=rows,lines={'Un 1 vale 10 punti e un 5 vale 5 punti.',
     'Ogni dado scelto appartiene a una sola combinazione valida.'}},
    {title='Rischio',lines={'Farkle: perdi soltanto i punti non incassati del turno.',
     'Hot dice: puoi rilanciare tutti e sei i dadi.',
-    'Il Mercante incassa o rilancia in base al rischio del prossimo tiro.'}}
+    'Il Opponent incassa o rilancia in base al rischio del prossimo tiro.'}}
   }
  end
  for v=1,6 do rows[v]={v,p.kind[3][v],p.kind[4][v],p.kind[5][v],p.kind[6][v]} end
  return {
   {title='How to play',lines={
-   '1. Press Space to roll all six dice.',
+   '1. Right-click a die, move the mouse, then release to throw. Throw all six.',
    '2. Select a combination: click the dice or press 1–6.',
    '3. Press Set aside [A]. Selected dice leave the tray.',
-   '4. Reroll the remaining dice or Bank [Enter].',
+   '4. Physically grab and throw the remaining dice or Bank [Enter].',
    'You can also bank a valid selection without setting it aside first.',
    'Banked points are safe. Turn points remain at risk.',
    'Reach the target within the turns shown above.'}},
@@ -156,9 +156,9 @@ end
 function H.state_text(u)
  local s=u.game
  if u.duel then
-  if u.duel.winner then return u.duel.winner=='player' and 'Hai vinto il duello a Farkle.' or 'Il Mercante ha vinto il duello.' end
-  if u.duel.actor=='merchant' then return u.duel.intent or 'Il Mercante gioca.' end
-  if s.phase=='ended' then return 'Turno concluso. Ora tocca al Mercante.' end
+  if u.duel.winner then return u.duel.winner=='player' and 'Hai vinto il duello a Farkle.' or 'Il Opponent ha vinto il duello.' end
+  if u.duel.actor=='opponent' then return u.duel.intent or 'Il Opponent gioca.' end
+  if s.phase=='ended' then return 'Turno concluso. Ora tocca al Opponent.' end
  end
  if u.physicalFailure then return u.physicalFailure end
  if u.physicalNotice then return u.physicalNotice end
@@ -167,7 +167,7 @@ function H.state_text(u)
  if s.phase=='advance' then return 'Commission delivered. Continue with Next.' end
  if s.phase=='upgrade' or s.phase=='medal' then return 'Commission delivered. Choose your reward on the right.' end
  if s.phase=='rolling' then return u.retry and 'Rerolling the weighted die…' or 'The dice are rolling…' end
- if s.phase=='fresh' then return 'Roll all six dice to begin your turn.' end
+ if s.phase=='fresh' then return 'Right-click each die to grab and throw it.' end
  if s.phase=='ended' then
   if u.lastLoss~=nil then return u.lastLoss>0 and ('FARKLE · '..u.lastLoss..' unbanked points lost.') or 'FARKLE · Turn over, no points accumulated.' end
   return 'Banked '..(u.lastBank or 0)..' points. Continue to the next turn.'

@@ -4,14 +4,14 @@ Percorsi di produzione ricontrollati il 18 novembre 2026. Documento tecnico di r
 Questo documento descrive i componenti del prototipo corrente.
 La [visione](project_vision.md) raccoglie la direzione narrativa e progettuale.
 
-## Modalità sperimentale: duello al Mercante (branch 0.1.98)
+## Modalità sperimentale: duello al Opponent (branch 0.1.98)
 
 **Stato: proposta in PR, non ancora stabilizzata.** Dal selettore
 partita, `mode='duel'` avvia una sfida a 500 punti assicurati con
 turni alternati. `src/farkle/rules.lua` mantiene il punteggio canonico
 e applica le sole eccezioni del duello (niente commissioni o limite
 turni, vittoria immediata al target). Il controller usa una policy interna, ricavata e verificata nel
-laboratorio `experiments/merchant_duel/ai.lua`, durante il turno avversario, ma
+laboratorio `experiments/opponent_duel/ai.lua`, durante il turno avversario, ma
 lancia sempre i medesimi dadi fisici tramite
 `U:request → onRollRequest → dice.roll_accepted`, evitando un RNG
 separato o facce artificiali. La semantica dei comandi di lancio manuale
@@ -19,7 +19,7 @@ rimane esclusiva del giocatore.
 
 La scena viene proiettata con `pitch=0.90` radianti,
 `tray=(8,505,1904,545)` nel viewport virtuale 1920×1080,
-`rear_span=1740` e bordo posteriore vincolato al Mercante. Il cartiglio
+`rear_span=1740` e bordo posteriore vincolato al Opponent. Il cartiglio
 si sovrappone agli ultimi 100 px della zona di gioco: il controller
 testa le hitbox dei comandi prima dei gesti di presa del dado in quella
 striscia. **Gate umano obbligatorio:** verificare che nessun dado
@@ -334,7 +334,7 @@ con gesti che puntano al bordo posteriore.
 
 ## UI: anteprima delle decisioni (0.1.89)
 
-Il Tavolo del Mercante presenta le conseguenze della selezione attraverso
+Il Tavolo del Opponent presenta le conseguenze della selezione attraverso
 `src/farkle/ui.lua`, senza introdurre una seconda fonte per il punteggio:
 `hud.actions.build` legge soltanto `rules.selection_option` e
 `rules.bank_status`. Sui dadi selezionati validi il comando **Accantona**
@@ -385,9 +385,9 @@ illustrazioni rimangono elementi 2D.
   `resources/shaders/dice_lit.glsl` forniscono il rendering.
 - `resources/dice/1.png` … `6.png` forniscono le facce D6.
 - `resources/scenes/printshop-room.png` è il fondale della bottega senza persone;
-  `resources/opponents/merchant.png` è il PNG del personaggio Mercante, riutilizzato temporaneamente come illustrazione del default generico `rival` finché non esiste `resources/opponents/rival.png` (preferito automaticamente quando disponibile). L'ID `merchant` resta selezionabile solo esplicitamente.
+  `resources/opponents/opponent.png` è il ritratto modulare dell'identità predefinita neutra `opponent`. Un altro personaggio richiede un PNG trasparente dedicato. Se il ritratto di default manca, resta visibile la stanza pulita, senza reincorporare un personaggio nel fondale.
 - `resources/textures/wood.png` è la texture condivisa dal tavoliere 3D
-  e dal laboratorio g3d. I vecchi JPEG del Mercante per legno e intaglio
+  e dal laboratorio g3d. I vecchi JPEG del Opponent per legno e intaglio
   sono stati eliminati e non devono più essere caricati. Il PNG storico
   `resources/textures/wood_floor.png` non ha consumer individuati
   e rimane reperibile nel commit `d767b7c8`, non nel tree corrente.
@@ -488,12 +488,12 @@ I laboratori presenti sono isolati dal gioco e conservano ciascuno il proprio RE
 
 | Laboratorio attuale | Scopo |
 |---|---|
-| [Battute Gemelle](../experiments/battute_gemelle_lab/README.md) | Valutazione headless del rischio STOP/CONTINUE in RQ-001 |
+| [Battute Gemelle — archivio](../research/EX-BG-001.md) | Screening G3 negativo, codice ritirato dalla working tree |
 | [Encounter Research A/C](../experiments/encounter_ac_lab/README.md) | Offerte divise e prove contese, senza modificare il Farkle canonico |
-| [EX-001 Merchant X](../experiments/ex001_merchant_x_lab/README.md) | A/B del ridisegno iniziale X del Mercante |
-| [Mercante e posta](../experiments/merchant_wager_lab/README.md) | Duello asimmetrico V4, isolato dalla produzione |
+| [EX-001 Opponent X](../experiments/ex001_opponent_x_lab/README.md) | A/B del ridisegno iniziale X del Opponent |
+| [Opponent e posta](../experiments/opponent_wager_lab/README.md) | Duello asimmetrico V4, isolato dalla produzione |
 | [P4ND0RA](../experiments/p4ndora_1to1/README.md) | Confronto tra Farkle a sei D6 e sacchetto del rivale |
-| [Tre Prove / Riserva finita](../experiments/tre_prove_reserve_lab/README.md) | Esperimento EX-TP-001 a riserva pubblica limitata |
+| [Tre Prove / Riserva — archivio](../research/EX-TP-001.md) | Screening negativo, implementazione ritirata |
 
 Il rapporto della [QA del 3 novembre](https://github.com/Askeladd22/Project_Folio/blob/36ea51a283d82df5d53ddccb1791a978b38d8e89/docs/WINDOWS_QA_CAPTURE_REVIEW_20261103.md)
 descrive le acquisizioni presenti in `audits/ui-v2-review/`.
@@ -514,7 +514,6 @@ l'inventario della UI legacy o la roadmap F6.
 
 ### Gesti e tasti
 
-- **Spazio:** lancio o azione contestuale consentita dal Farkle.
 - **Click sinistro:** selezione di dadi per punteggio; trascinamento
   sulla superficie per scegliere più dadi fisici (marquee).
 - **Tasto destro:** presa e rilascio/lancio manuale di un dado o gruppo.
@@ -532,7 +531,7 @@ l'inventario della UI legacy o la roadmap F6.
 
 Gli identificatori sono parte del contratto di regressione e non
 vanno confusi con nuove funzioni approvate:
-`help`, `runmenu`, `folio`, `roll`, `take`,
+`help`, `runmenu`, `folio`, `take`,
 `bank`, `next`, `rescue`, `fail`, `retryphysical`,
 `medaluse`.
 
@@ -575,3 +574,16 @@ dal motore Farkle. Esc non deve mai terminare brutalmente LÖVE.
 
 *Nuovi controlli e modifiche alle scorciatoie devono essere sincronizzati
 con la UI effettiva e i test. Questo documento non prescrive nuove regole.*
+
+## 0.1.99 — Lancio esclusivamente tramite presa fisica
+
+Il giocatore non dispone più di pulsante né scorciatoia per avviare un lancio automatico.
+Con il tasto destro afferra un dado e lo rilascia; per più dadi usa prima la selezione
+multipla trascinando con il sinistro. Restano **A** (accantona), **Invio** (incassa),
+**N** (prossimo turno), **Esc** (annulla/pause). Il lancio autonomo dell'Opponent AI
+resta separato dall'input fisico umano. Un recupero fisico del giocatore permette
+nuovamente la presa diretta, senza aggiungere un tasto di lancio rapido.
+
+I laboratori a screening G3 negativo [Battute Gemelle](../research/EX-BG-001.md)
+e [Tre Prove / Riserva](../research/EX-TP-001.md) restano tracciati nella ricerca;
+i relativi sorgenti eseguibili, test e workflow sono archiviati nella cronologia Git.
