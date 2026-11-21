@@ -3,8 +3,8 @@ local Workshop=require('src.farkle.tabletop').tray_workshop
 local saved=Workshop.current
 assert(Workshop.current=='wooden_compact',
  'compact option B must be the default until human visual approval')
-Workshop.current='wooden_compact'
-for _,expected in ipairs{'wooden','book','current','A','B','C','wooden_compact'} do
+Workshop.current='old_wooden'
+for _,expected in ipairs{'wooden_compact','wooden','book','current','A','B','C','old_wooden'} do
  local actual=Workshop.cycle()
  assert(actual==expected and Workshop.current==expected,
   'F8 style cycle changed at '..expected)
