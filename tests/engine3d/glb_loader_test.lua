@@ -27,9 +27,7 @@ Scenery.place_table(box,{-14,14,-6.05,6.05},.28)
 assert(math.abs(box.max[3])<1e-9 and box.verts[2][3]==0,'table top must be flush with the old floor')
 assert(box.min[1]<-14.28 and box.max[1]>14.28 and box.min[2]<-6.33 and box.max[2]>6.33,
  'table top must extend under the whole tray and rim')
-local f=io.open('resources/models/old_wooden_table.glb','rb')
-if f then
- local real=L.parse(f:read('*a'));f:close()
- assert(#real.verts==1772*3 and real.image and #real.image>1000,'sample table not parsed')
-end
-print('PASS GLB loader: binary chunks, accessors, node transforms, Z-up and base colour texture')
+-- An inline, deterministic glTF/GLB fixture covers parsing, transformation
+-- and coordinate conversion without a 9 MiB museum model in Git.
+-- Keep testing the real optional external model in manual Windows QA.
+print('PASS GLB loader: generated GLB chunks, accessors, transforms and Z-up')

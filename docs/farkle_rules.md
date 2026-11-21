@@ -1,11 +1,11 @@
 # Regolamento Farkle di Project Folio
 
-> **Update 0.1.101 (21 November 2026):** The sole player-facing mode is **Opponent Duel**, first to 500 banked points with alternating turns and canonical six-D6 Farkle scoring. The three-commission progression below remains only as a historical regression baseline, not as another selectable mode. The live game UI is English-only; this R&D rules document keeps its Italian text for provenance.
+> **Baseline tecnica 0.1.103; direzione creativa riaperta il 21 novembre 2026:** il gioco giocabile è **Opponent Duel**, primo a 500 punti bancati, con sei D6 e punteggio Farkle. Le tre commissioni sono solo una regressione storica. **Il Farkle non è più un vincolo per il gioco futuro**: questa tabella descrive il software e i test attuali. La UI rimane solo in inglese.
 
 > I percorsi di audit e archivio riportati come codice si riferiscono ai
 > materiali locali citati nel rapporto originale, assenti dalla copia corrente.
 
-Versione 0.4, 15 ottobre 2026; **nota di contesto aggiornata al 30 ottobre 2026**. Questo documento consolida la consegna «Nuovo regolamento Farkle». Le regole implementate sono approvate; la taratura delle commissioni è provvisoria. La direzione futura degli incontri con miniature, descritta in [INCONTRI_E_SEGNI.md](../research/INCONTRI_E_SEGNI.md), **non modifica questa tabella né costituisce implementazione di un nuovo sistema di combattimento**.
+Versione 0.4, 15 ottobre 2026; **nota di contesto aggiornata al 30 ottobre 2026**. Questo documento consolida la consegna «Nuovo regolamento Farkle». Le regole implementate sono approvate; la taratura delle commissioni è provvisoria. La vecchia proposta «Incontri e Segni» non è un file presente nella main né una regola approvata; consultare l'archivio Git se serve ricostruirla.
 
 ## Punteggio nello stesso lancio
 
@@ -79,10 +79,10 @@ Punti e requisito possono essere incassati in turni differenti. Tris, poker, cin
 
 Dopo il Salterio si sceglie la modifica del dado 1; dopo il Libro di ore il Correttore oppure nessuna medaglia. In «Senza mod» si prosegue senza queste ricompense.
 
-## Modalità proposta: Duello al Opponent (branch 0.1.98)
+## Modalità corrente: Opponent Duel (dal 0.1.101)
 
-**Stato sperimentale, non canonico per le commissioni.** La sfida
-opzionale usa gli stessi sei D6 e la stessa tabella delle combinazioni.
+**Stato implementato nella baseline 0.1.103, non vincolante per il redesign.**
+La modalità selezionabile usa sei D6 e la tabella delle combinazioni.
 I due contendenti alternano turni, incassano punti separatamente,
 perdono soltanto i provvisori con Farkle; hot dice immutati. Vince
 chi raggiunge per primo **500 punti assicurati**. Non applica soglie
@@ -90,13 +90,16 @@ di ingresso né i limiti di turni delle commissioni, non assegna medaglie
 e non modifica gli esiti fisici. Il Opponent sceglie combinazioni
 valide e incasso/rilancio con una policy probabilistica one-step.
 La soglia 500 è un parametro di **playtest non bilanciato**.
-Questa sezione documenta il branch; non sostituisce la visione canonica.
+La condizione di vittoria appartiene al prototipo attuale e non alla
+nuova visione aperta.
 
-## Integrazione futura con gli incontri — nessuna modifica alle regole presenti
+## Idee d'incontro storiche (non approvate)
 
-**Direzione approvata:** le figure di un libro potranno diventare avversari che utilizzano intenzioni e Segni, mentre il giocatore manterrà il Farkle con i suoi dadi e l'incasso. Le regole di punteggio, la disgiunzione delle combinazioni, il significato del Farkle, gli hot dice, le mappe fisiche delle facce e i modificatori esistenti **restano la fonte canonica**. Nessuna conversione punti→danno, costo di sigillatura/rasura, salute, limitazione di rilanci o condizione speciale di vittoria è approvata da questo documento.
-
-Le attuali commissioni (Salterio/Libro di ore/Codice) con target, limiti e soglie rappresentano lo **stato del software**, non la forma finale del libro popolato da miniature. Non trasferire automaticamente i 4/5 turni a ciascun nuovo incontro. Se una futura regola di nemico cambia la convenienza di incassare, deve essere descritta e testata separatamente, evitando premi che annullino il rischio del Farkle o un obbligo universale di rilanciare. Vedere [Incontri e Segni](../research/INCONTRI_E_SEGNI.md).
+Le vecchie ipotesi di miniature, Segni, poste, conversione punti→danno
+e combattimento erano brainstorming e non modificano le regole correnti.
+Con la direttiva D-005 **nessuna struttura di incontro precedente
+rimane obbligatoria**. Le descrizioni precedenti sono recuperabili
+nel documento [v0.1.103](https://github.com/Askeladd22/Project_Folio/blob/ac814220a721f2946914d5c4a1ac9e389f40a8f6/docs/farkle_rules.md).
 
 ## Dadi e medaglia esistenti
 

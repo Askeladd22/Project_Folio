@@ -1,6 +1,6 @@
 # Project Folio
 
-*Project Folio* is a work-in-progress dice roguelite set in Renaissance Venice. An engraver works on woodcuts by day; at night, figures from books challenge the player to dice duels.
+*Project Folio* is a prototype about **an engraver in Renaissance Venice**. The creative direction is being reopened: dice roguelite, Farkle, dream encounters and the Opponent Duel are the **current playable baseline**, not fixed features for the final game. See the [living design brief](docs/project_vision.md).
 
 ## Play
 
@@ -18,4 +18,4 @@ Install [LÖVE 11.x](https://love2d.org/). On Windows, run `run_game.cmd`; other
 
 The production code comprises **30 Lua source files** under `src/`: [controller](src/farkle/controller.lua), [HUD](src/farkle/ui.lua), [Farkle rules](src/farkle/rules.lua), [3D dice](src/farkle/dice.lua), and [main menu](src/screens/frontend.lua). Historical research prototypes remain in `experiments/`, not as alternate playable modes.
 
-[Technical map](docs/technical.md) · [Farkle rules / historical baseline](docs/farkle_rules.md) · [Vision](docs/project_vision.md) · [Changelog](CHANGELOG.md) · [Third-party licenses](lib/licenses/)
+[Technical map](docs/technical.md) · [Farkle rules / prototype baseline](docs/farkle_rules.md) · [Open creative brief](docs/project_vision.md) · [Changelog](CHANGELOG.md) · [Third-party licenses](lib/licenses/)

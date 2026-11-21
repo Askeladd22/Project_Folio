@@ -1,6 +1,6 @@
 # Registro delle domande e decisioni — Folio R&D
 
-**Regola:** la parola «approvato» richiede un'esplicita decisione registrata del team. Un test positivo non basta. Le questioni qui elencate non cambiano la visione canonica.
+**Regola:** «approvato» richiede una decisione esplicita registrata. D-001–D-004 sono storiche; **D-005 aggiorna direttamente la visione**, su richiesta dell'utente. Un test positivo non basta.
 
 | ID | Domanda | Stato | Prossima prova |
 |---|---|---|---|
@@ -96,3 +96,25 @@ Introdotta una struttura di ricerca e validazione **documentale**, non è stata 
 - **Cleanup evidence:** the selectable campaign page is unreachable after New Game routes directly to `scriptorium`; delete only that page, its now-unused schema, translations and registration, plus the tests that incorrectly required the dead page. Historical solo scorer and R&D experiments remain executable in isolation.
 - **Not deleted:** historical research reports, experiments and their CI; source of truth remains `docs/project_vision.md`, `docs/farkle_rules.md`, implementation and changelog.
 - **Gate:** Lua 5.4, LuaJIT, Python and Mesa CI on the exact SHA; Windows visual acceptance at 1280×720 / 1920×1080 / ultrawide; test physical pickup, rear parked dice and readable opponent intention before merge.
+
+## D-005 — Riapertura radicale della visione (21 novembre 2026)
+
+- **Decisione esplicita dell'utente:** possiamo ripensare da zero genere,
+  Farkle, duel, somiglianze, tono, personaggi, poste, struttura e matrici.
+  **Unico requisito identitario confermato:** «Sei un incisore nella
+  Venezia rinascimentale».
+- **Baseline software:** `main@ac814220a721f2946914d5c4a1ac9e389f40a8f6`,
+  v0.1.103. Nessuna nuova regola o narrativa è implementata da D-005.
+- **Effetto sulle decisioni D-001–D-004:** rimangono vere cronologicamente
+  e per il comportamento della build 0.1.103, ma **non obbligano** le
+  prossime iterazioni creative. La precedente approvazione della fantasy
+  del giocatore di dadi del 20 novembre è riaperta, non negata nel passato.
+- **Ipotesi da confrontare:** Maestro del rischio, Maestro dell'impronta
+  (collezione di matrici, versione trasformazione letterale ancora aperta),
+  Arte e inganno. Non dichiarare un vincitore senza playtest.
+- **Revisione del repository:** sfoltire documentazione operativa storica,
+  conservando la provenienza tramite commit e report `research/`.
+  Rimuovere solo asset/strumenti senza consumer attivi documentati;
+  non alterare `src/` per un nuovo concept senza gate.
+- **Prossimo gate:** pitch ciechi e brevi prototipi di payoff, scelta
+  registrata in un successivo record e solo allora eventuale sviluppo.

@@ -4,13 +4,13 @@ Percorsi di produzione ricontrollati il 21 novembre 2026. Documento tecnico di r
 Questo documento descrive i componenti del prototipo corrente.
 La [visione](project_vision.md) raccoglie la direzione narrativa e progettuale.
 
-## Current player-facing mode — Opponent Duel (0.1.102)
+## Current player-facing mode — Opponent Duel (0.1.103 baseline)
 
 New Game routes directly to `scriptorium` with `mode='duel'` and generic ID `opponent`. The old three-commission prototype remains in the rules for regression and R&D comparison but is **not selectable in the game menu**. The live UI and help are English-only; historical research records retain their original language.
 
 Both sides use the canonical six-D6 scorer and the same g3d accepted physical results. The player uses direct right-click pickup/release only. A scored die stays on the tabletop: `D.stage_kept` parks its physical body along the rear edge while the existing kinematic input guard prevents movement during subsequent throws. Kept IDs/faces remain authoritative, and the old detached 2D accepted-dice register is hidden during duels.
 
-The Opponent follows observable phases: review settled roll → highlight scoring dice and preview points → set aside and display the at-risk total → announce bank/reroll decision and risk reasoning → act. Dedicated panels show the last gain, banked score, current pot and action. Timed beats change presentation only, not Farkle scoring or AI decision thresholds.
+The Opponent follows observable phases: review settled roll → highlight scoring dice and preview points → set aside and display the at-risk total → announce bank/reroll decision and risk reasoning → act. A compact paper ledger shows the rival's last gain, banked score, current pot and action. Timed beats change presentation only, not Farkle scoring or AI decision thresholds.
 
 **Gates:** full Lua/LuaJIT and Python regression suites, Mesa screenshots and Windows LÖVE visual/manual tests with six hot dice, actor change, Farkle, pausing during intentions, 50 physical throws, large text and 1280×720/1920×1080/ultrawide displays. CI passing does not replace playtest.
 
@@ -104,275 +104,14 @@ dell'inquadratura. Lo studio P1 A/B `open_codex` e il relativo avvio con
 `single_folio` non fa più parte della geometria o del rendering della UI;
 il Folio resta accessibile tramite [F] e le finestre di dialogo.
 
-## Tavolo v0.1.96 — Old Wooden Table (laboratorio reversibile)
+## Scelte storiche non più normative
 
-**Ipotesi:** un vecchio tavolo rustico con fascia leggera e sostegni
-proporzionati rende il gioco più credibile rispetto al precedente
-`wooden_compact`, senza cambiare il lancio dei sei dadi.
-
-Il preset `old_wooden` viene proposto all'avvio. F8 ripristina
-`wooden_compact` e le altre varianti, come confronto A/B. Il rendering
-g3d usa il GLB `resources/models/old_wooden_table_game_ready_asset.glb`
-quando presente (file originale fornito separatamente), e altrimenti
-una **geometria sostitutiva esplicitamente originale e semplificata**
-(`resources/models/old_wooden_table_fallback.lua`). Non confondere
-la seconda con i triangoli/texture dell'asset dell'autore.
-
-La differenza di proporzione è reale: il GLB è circa 1,60:1,
-mentre il tavoliere fisico misura 28 × 12,1 (2,31:1).
-La conversione `Scenery.keep_old_support_proportions` estende il
-piano superiore ai confini già esistenti, ma impedisce che le
-gambe vengano allargate nella stessa misura. Il fallback segue
-lo stesso principio con una superficie ampia e un cavalletto
-sottostante da ~1,7:1. L'import resta visivo e non definisce
-collider o fattori RNG.
-
-**Gate:** test stile F8, estensione del piano, normali, profondità,
-proporzioni dei sostegni, CI Lua/Mesa e screenshot con sei dadi.
-La prova diretta del GLB in Windows non è coperta dalla CI se
-il file non è tracciato; installare l'asset dallo ZIP e verificare
-texture, orientamento, collisioni percepite e leggibilità delle facce.
-Non promuovere il nuovo modello a canonico prima del playtest.
-
-## UI v0.1.95 — Variante B «Compatta» del tavolo
-
-**Decisione utente:** selezionata la variante B in risposta allo screenshot
-v0.1.94, nel quale la fascia anteriore, le gambe e i giunti del legno
-occupavano troppo spazio rispetto ai dadi.
-
-**Cambio isolato e reversibile:** il `tray_workshop` apre ora
-`wooden_compact`, mentre premendo **F8** si può passare a `wooden`
-(il modello grande originale), quindi alle altre varianti già esistenti.
-Non viene creata una seconda camera, un renderer alternativo o una
-configurazione fisica dei dadi.
-
-- `Scenery.place_table` continua a dimensionare la stessa geometria
-  derivata Pixel Life sul piano fisico. Solo dopo questo allineamento,
-  `Scenery.compact_table(model,0.22)` comprime verticalmente la
-  struttura grafica (fascia, gambe) sotto la superficie. Mantiene
-  esattamente la quota superiore e ricalcola le normali per la trasformazione
-  affine. Il valore 0.22 è un **parametro estetico**, non un coefficiente
-  fisico.
-- La superficie conserva il rettangolo fisico, con **sei** tavole
-  visive invece di otto, giunzioni da 0.012 e UV continue. L'intenzione
-  è ridurre l'effetto «strisce» senza cancellare il materiale.
-- Il bordo grafico della variante compatta passa da 0.14 a **0.08**
-  unità mondo; l'altezza della parete rimane quella fisica
-  (`scene.box.border_height=0.74`) per non suggerire falsi confini.
-
-**Limite della scelta:** il piano superiore non viene ristretto in X/Y.
-Una riduzione indipendente renderebbe visivamente possibile lanciare
-fuori da una collisione invisibile. L'intervento agisce sull'**ingombro
-dell'arredo**, non sui limiti del campo da gioco né sulle dimensioni
-dello screenshot.
-
-**QA automatico:** `tests/engine3d/wooden_board_contract_test.lua`
-controlla quota superiore, profondità di fascia, normale dei vertici,
-continuità UV, altezza dei bordi e dimensioni della superficie;
-`tests/farkle/tray_workshop_cycle_test.lua` protegge la reversibilità
-F8; `tests/engine3d/g3d_live_test.lua` include la nuova skin.
-L'esito della CI e delle catture Mesa deve essere riportato in PR.
-Rimane aperto il test umano Windows con sei dadi in movimento e nella
-zona posteriore del tavolo.
-
-## Tavolo v0.1.94 — piano grafico e fisico allineati
-
-La variante `wooden` di v0.1.93 portava il piano decorativo
-a z=+0,24 sopra il piano fisico (z=0). Questo poteva produrre
-intersezioni visive con i dadi. La correzione conserva le
-coordinate fisiche e modifica esclusivamente il renderer:
-
-- fallback incluso: silhouette a z=-0,018, otto assi
-  sul ricevitore z=0 con altezza decorativa +0,006,
-  e sottili giunzioni. Il depth buffer resta condiviso;
-- GLB completo opzionale: piano superiore a z=+0,005
-  con texture UV originale e ricevitore a z=-0,018
-  che non copre il piano importato.
-
-`tests/engine3d/wooden_board_contract_test.lua` ora
-verifica i due percorsi e il bordo fisico invariato.
-Il GLB ottimizzato allegato separatamente conserva UV
-e 4538 triangoli, senza normal/roughness PBR che il
-loader esistente non applica. Nessuna logica di punteggio
-o collisione nuova. Il comfort Windows resta da verificare.
-
-## Tavolo di legno game-ready, v0.1.93 (esperimento F8)
-
-**Scelta visiva:** variante `wooden` selezionata come default nel
-`tray_workshop`; `book` continua a mostrare il precedente tavolo
-decorativo in marmo. Premere **F8** per confrontare le due varianti e
-gli skin `current/A/B/C` senza riavviare, senza modificare il gameplay.
-
-**Origine:** `wooden_table_game_ready_asset.glb` allegato dall'utente,
-Pixel Life, CC BY 4.0. La sorgente completa da 12 MB non è inclusa
-nella PR: una silhouette triangolare *derivata*, compressa e tracciata
-in `resources/models/wooden_table_mesh.lua`, è utilizzata come
-fallback autosufficiente. La superficie usa la texture `wood.png`
-del progetto anziché l'atlante PBR originale. L'originale completo
-può essere aggiunto localmente in
-`resources/models/wooden_table_game_ready_asset.glb`, che verrà
-caricato dal loader GLB esistente (senza nuovo renderer). Per
-attribuzioni e modifiche vedere
-`resources/models/WOODEN_TABLE_CREDITS.md`.
-
-**Separazione di responsabilità:** `src/engine3d/g3d/live.lua`
-gestisce soltanto la scelta dell'asset grafico. Il modello
-decorativo ha un bordino rialzato (+0,24 unità mondo), mentre
-il `floor_model` rimane sul piano fisico `z=0` per ombre e
-contatto coerenti anche dove la mesh semplificata è aperta.
-Rimangono attive le pareti fisiche e il loro bordo visivo
-sottile. Nessuna variazione a `dice_schema`, contatti,
-hitbox, proiezione, RNG o Farkle.
-
-**Verifiche:** `tests/engine3d/wooden_board_contract_test.lua`
-e `scripts/tests/test_wooden_table_asset.py`, oltre alla
-suite F8 e agli screenshot Mesa. La compatibilità dei
-materiali del modello originale completo, le licenze di
-distribuzione e la leggibilità Windows sono ancora gate umani.
-
-## UI 0.1.92 — Board centrata e Rivale davvero dietro il tavolo
-
-**Diagnosi delle catture 1280×720:** le precedenti correzioni di
-`pitch` lasciavano il tavolo nella fascia più bassa dello schermo
-e una distanza vuota tra il bordo posteriore e il PNG dell'avversario.
-La board sembrava un pannello sospeso davanti alla bottega.
-
-**Geometria corretta:** in `src/engine3d/view.lua` la coordinata
-verticale proiettata include `cos(pitch)*y - sin(pitch)*z`;
-per un piano orizzontale, ridurre pitch verso 0 espande
-la profondità visibile. La proposta passa da 1.16 a
-`pitch=0.80`, con `distance=52`, `yaw=0` e camera bloccata.
-
-**Composizione:** il bordo posteriore scende in termini di
-quota numerica da 662 a **520** (sale sullo schermo). Il
-Rivale ha un limite di altezza **470** e `portrait_lift=40`:
-il suo bordo basso termina solo 5 unità virtuali sopra il
-retro del tavolo, anziché fluttuare 61 unità sopra.
-Nel modello proiettivo, la superficie passa da circa 319
-a **403 unità virtuali di profondità**, mantenendo una scala
-di circa **494** contro 503. Sono grandezze del proiettore,
-**non** risultati di comfort o divertimento misurati.
-
-**Viewport fisico:** il vecchio `tray=(60,538,1800,426)`
-iniziava più in basso del nuovo bordo posteriore (520),
-impedendo il picking dei dadi vicino al retro. Per questo
-l'area di schermo, condivisa tra rendering 3D e selezione
-mouse, è ora `(60,470,1800,494)`; la posizione del bordo
-anteriore **non cambia** (y=964). Le collisioni e le
-posizioni fisiche dei dadi nel mondo restano identiche.
-Niente doppia proiezione o spostamento grafico scollegato
-dall'input.
-
-**Gate:** test Lua per scala, bordi del tray, dadi sul retro,
-limiti ritratto, allineamento con comandi e stabilità del
-lancio; smoke Mesa e confronto screenshot; UAT manuale
-Windows per comodità dei gesti e chiarezza in movimento.
-Questa composizione è un **esperimento**, non una scelta
-canonica confermata dal playtest.
-
-## UI 0.1.91 — Visualizzare la posta senza aumentare i controlli
-
-La scorecard è ora un **unico pannello** con punteggio sicuro, provvisorio,
-obiettivo, turni rimasti e una piccola barra proporzionale. La barra
-mostra in **salvia** i punti **già incassati** (`game.bank`) e in
-**cinabro** i punti **già accantonati ma a rischio** (`game.pot`),
-con segmenti consecutivi limitati all'obiettivo della commissione.
-La scelta corrente, se non confermata, **non** compare nella barra.
-
-La barra e le etichette sono soltanto letture del modello autorevole;
-non influenzano il tiro, le regole, le facce, le probabilità o le
-condizioni di incasso. Le cifre restano visibili e complete anche quando
-la somma supera l'obiettivo. L'elemento è interno alla scorecard e non
-introduce un nuovo pannello, una valuta o un consiglio di gioco.
-
-`tests/hud/ui_v2_wager_track_test.lua` verifica la barra a zero, con
-posta sicura e a rischio, oltre l'obiettivo e con una selezione ancora
-provvisoria; `tests/hud/ui_v2_minimal_table_test.lua` ne verifica
-la geometria. Restano richiesti controllo screenshot 720p/1080p,
-alto contrasto e playtest umano. La promessa che guida questa scelta
-è descritta in [Fantasy del giocatore](player_fantasy.md).
-
-## UI 0.1.90 — HUD leggibile e tavolo abbassato
-
-**Problema osservato:** in un fermo immagine a 1654×930 il pannello
-punteggi e le etichette Accantona/Incassa risultavano troppo piccoli;
-la riga al di sotto dei pulsanti duplicava le conseguenze gia presenti
-nelle azioni. Il bordo posteriore del tavolo era troppo vicino al
-ritratto dell'avversario, facendo percepire il lancio come diretto verso
-la sua figura.
-
-**Intervento:** il layout resta `table_minimal`, senza sidebar.
-La scorecard passa a 540×154 virtuali e le due cifre principali usano
-una gerarchia maggiore. I controlli occupano una placca piu leggibile
-(1140×110, sotto il campo dei dadi), con label da 34 punti nominali
-e una riga superiore per *solo* stato e indicazioni non gia presenti
-nelle action. La tipografia dei dati passa al leggibile Cardo;
-Aldine Aetna rimane negli elementi editoriali. Lo status valido
-non ripete le due anteprime Accantona/Incassa.
-
-**Camera e presa:** il rettangolo fisico `tray` resta
-`(60,538,1800,426)`, incluse coordinate di picking e selezione.
-Solo la proiezione e cambiata: la quota del bordo posteriore passa
-da **614 a 662** punti virtuali e il `pitch` canonico della camera
-da **1.00 a 1.16 rad** (prima iterazione: **1.12**, poi regolato a **1.16** per una vista leggermente più dall'alto). `yaw=0.00`, `distance=52` e lock restano invariati. Il `portrait_lift` aumenta da 48 a 96:
-il Rivale resta alla quota originale mentre il tavolo scende,
-creando 61 punti virtuali di separazione invece di trascinare
-in basso anche il ritratto. La combinazione mantiene la dimensione
-proiettata dei dadi, altrimenti ridotta da un abbassamento puro, e
-riduce la sensazione che il lancio avvenga sul ritratto. In
-`src/farkle/tabletop.lua` resta un unico fit per mesh/picking;
-nessuna traslazione scollegata del renderer o modifica alla fisica.
-
-**QA:** `tests/hud/ui_v2_minimal_table_test.lua` protegge dimensioni,
-riga status e nuova quota; `tests/hud/ui_v2_projection_comfort_test.lua`
-controlla il fit comune, lo spazio utile e il pick rect invariato; ora vincola il preset 1.16, la profondità apparente del piano e la vicinanza del bordo frontale ai comandi.
-Le prove headless non dimostrano il comfort del mouse o l'aspetto
-finale sul monitor: serve QA visiva e lanci ripetuti su Windows, anche
-con gesti che puntano al bordo posteriore.
-
-## UI: anteprima delle decisioni (0.1.89)
-
-Il Tavolo del Opponent presenta le conseguenze della selezione attraverso
-`src/farkle/ui.lua`, senza introdurre una seconda fonte per il punteggio:
-`hud.actions.build` legge soltanto `rules.selection_option` e
-`rules.bank_status`. Sui dadi selezionati validi il comando **Accantona**
-mostra punti a rischio dopo l'azione e dadi ancora liberi; **Incassa**
-mostra i punti assicurabili e dichiara la fine del turno. Sotto le soglie,
-il testo indica quanti punti mancano. L'HUD contestuale ripete in forma
-compatta le due alternative, comprese le selezioni parziali o non valide.
-
-La seconda iterazione rende visibile il controllo fisico già
-supportato: nel tavolo il passaggio del puntatore su un dado realmente
-afferrabile evidenzia la sagoma proiettata, mentre trascinare il tasto
-sinistro distingue la **selezione fisica di gruppo** dalla selezione
-di punteggio. Durante la presa col destro, il badge vicino al puntatore
-mostra il numero di dadi trattenuti; mostra «SCOSSA RILEVATA» soltanto
-quando il detector di inversioni ha registrato un evento recente
-(finestra di 0,70 s). L'etichetta resta entro lo schermo e non altera
-il picking. Lo stato contestuale spiega presa, scuotimento, rilascio
-e annullamento con Esc.
-
-Il badge è un resoconto del gesto reale, **non** un indicatore di
-«faccia desiderata», probabilità migliorata o qualità predetta del
-lancio. Lo stato di shake viene letto, non creato, dall'HUD.
-Gli stati di selezione e le transizioni restano del controller;
-la medesima UI non può spostare né assegnare una faccia ai dadi.
-
-Le etichette sono **anteprime**: non eseguono `rules.take` o
-`rules.bank_turn` durante il disegno, non modificano il lancio fisico e
-non alterano le hitbox. I pulsanti eseguono le azioni esclusivamente
-attraverso le callback già esistenti del controller. Il colore ocra sul
-comando primario è un indizio visivo aggiuntivo, non l'unico mezzo per
-distinguere le azioni; resta disponibile la modalità alto contrasto.
-
-Regressioni interessate:
-`tests/hud/ui_v2_decision_preview_test.lua` per soglie, incasso diretto
-e hot dice; `tests/hud/ui_v2_minimal_table_test.lua` per la leggibilità
-dei feedback e la geometria. Da verificare ancora con LÖVE reale su Windows:
-etichette a 1280×720, testo grande, ultrawide, contrasto e picking fisico.
-
-La proposta di fantasy-first è **ricerca**, non gameplay:
-`research/RQ-002_FANTASY_FIRST_UI.md`.
+Le varianti di tavolo, le versioni intermedie della UI e i precedenti
+esperimenti P1/P2 (0.1.89–0.1.96) non sono specifiche alternative in
+produzione. Cronologia integrale nel
+[documento 0.1.103](https://github.com/Askeladd22/Project_Folio/blob/ac814220a721f2946914d5c4a1ac9e389f40a8f6/docs/technical.md)
+e nel [changelog](../CHANGELOG.md). Il comportamento attuale è descritto
+dal codice, dall'inventario dei controlli qui sotto e dai test.
 
 ## Rendering e risorse
 
@@ -572,19 +311,6 @@ dal motore Farkle. Esc non deve mai terminare brutalmente LÖVE.
 
 *Nuovi controlli e modifiche alle scorciatoie devono essere sincronizzati
 con la UI effettiva e i test. Questo documento non prescrive nuove regole.*
-
-## 0.1.99 — Lancio esclusivamente tramite presa fisica
-
-Il giocatore non dispone più di pulsante né scorciatoia per avviare un lancio automatico.
-Con il tasto destro afferra un dado e lo rilascia; per più dadi usa prima la selezione
-multipla trascinando con il sinistro. Restano **A** (accantona), **Invio** (incassa),
-**N** (prossimo turno), **Esc** (annulla/pause). Il lancio autonomo dell'Opponent AI
-resta separato dall'input fisico umano. Un recupero fisico del giocatore permette
-nuovamente la presa diretta, senza aggiungere un tasto di lancio rapido.
-
-I laboratori a screening G3 negativo [Battute Gemelle](../research/EX-BG-001.md)
-e [Tre Prove / Riserva](../research/EX-TP-001.md) restano tracciati nella ricerca;
-i relativi sorgenti eseguibili, test e workflow sono archiviati nella cronologia Git.
 
 ## 0.1.103 — Solid set-aside dice, consolidated rival UI
 

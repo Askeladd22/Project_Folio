@@ -10,6 +10,42 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.104] - 2026-11-21
+
+**Status:** draft redesign/cleanup PR from
+`main@ac814220a721f2946914d5c4a1ac9e389f40a8f6`. **No main merge.**
+
+### Creative direction (no gameplay implementation)
+- **D-005 user-authorized reset:** the only fixed identity is **an engraver in
+  Renaissance Venice**. Farkle, six D6, Opponent Duel, dreams, tone, loot,
+  the printing cabinet and genre are now proposals for future comparison,
+  not irrevocable commitments. The v0.1.103 running Farkle prototype remains
+  the controlled baseline, unchanged in `src/`.
+- Rewrote the living vision and player-fantasy brief into competing falsifiable
+  hypotheses (risk mastery, engraved-impression cabinet, craft & deception).
+  No winner is asserted and no narrative transformation is implemented.
+
+### Repository simplification
+- Removed `scripts/run_hud_comparison.py`, an unreferenced executable that
+  attempted to launch the retired Standard-vs-Minimal HUD comparison.
+- Removed the **9.1 MiB test-only** `resources/models/old_wooden_table.glb`.
+  It was not loaded by the shipping renderer (which uses the procedural
+  fallback or an independently installed `*_game_ready_asset.glb`).
+  The GLB parser test already uses a generated deterministic binary fixture;
+  a real historical sample remains recoverable at `ac814220`.
+- Pruned historical UI/table milestone sections from the **active** technical
+  manual and art direction, retaining current operations and links to
+  commit-pinned original documentation. Updated old/contradictory
+  opponent and Farkle design-language descriptions.
+- Updated repository and GLB regression guards for both retired artifacts.
+  Kept primary research reports, connected laboratories, attribution files,
+  30 production Lua source modules and other active tests.
+
+### Verification
+- GitHub Actions / Lua 5.4 / LuaJIT / Python / Mesa checks: **pending for this SHA**.
+- Windows LÖVE physical playtest and new-fantasy human playtests: **not run**.
+- No C/C++ production source files; C++-specific review is not applicable.
+
 ## [0.1.103] - 2026-11-21
 
 **Status:** proposed follow-up on `fix/diegetic-hud-solid-kept-dice-0.1.103`, no main merge.
