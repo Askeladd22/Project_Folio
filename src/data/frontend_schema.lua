@@ -265,7 +265,7 @@ return {
         audio_toggle = "toggle",
         audio_confirm = "confirm",
         audio_hover = "hover",
-        navigation_new_game = "campaign_select",
+        navigation_new_game = "scriptorium",
         navigation_continue = "scriptorium",
         navigation_settings = "settings",
         music_track_id = "main_menu",
@@ -357,17 +357,10 @@ Parts.campaign = (function()
 return {
     campaigns = {
         {
-            id = "farkle-prototype",
-            mode = "build",
-            title = "Farkle Roguelite",
-            detail = "Playable prototype · three commissions",
-            implemented = true,
-        },
-        {
             id = "opponent-duel",
             mode = "duel",
-            title = "Duello al Opponent",
-            detail = "Sei D6 · primo a 500 punti · sfida sperimentale",
+            title = "Opponent Duel",
+            detail = "Six physical D6 · first to bank 500 points wins",
             implemented = true,
         },
     },
@@ -389,7 +382,7 @@ return {
         },
         subtitle = {
             key = "campaign_select.subtitle",
-            default = "Choose Commission",
+            default = "Start a Duel",
         },
         item_back = {
             key = "campaign_select.item.back",

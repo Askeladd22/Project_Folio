@@ -359,7 +359,8 @@ local function begin_new_game()
             love.math.setRandomSeed(seed)
         end
     end)
-    Navigation.go(NAVIGATION_NEW_GAME)
+    -- The Farkle core now serves a single playable mode: Opponent Duel.
+    Navigation.go(NAVIGATION_NEW_GAME, {new_run = true, mode = "duel", opponent_id = "opponent"})
 end
 
 local function continue_game()
@@ -1016,7 +1017,7 @@ end
 local function start_campaign(campaign_id)
     for _, item in ipairs(Campaigns) do
         if item.id == campaign_id and item.implemented then
-            Navigation.go(CAMPAIGN_MODULE, {new_run = true, mode = item.mode or 'build', opponent_id = item.mode=='duel' and 'opponent' or nil})
+            Navigation.go(CAMPAIGN_MODULE, {new_run = true, mode = 'duel', opponent_id = 'opponent'})
             return
         end
     end
