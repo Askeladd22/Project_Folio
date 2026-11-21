@@ -187,9 +187,9 @@ local Medals=Parts.medals
 R.points=Scoring.points
 R.score=Scoring.score
 function R.has_points(values)
- local c={};for _,v in ipairs(values) do if v==1 or v==5 then return true end;c[v]=(c[v] or 0)+1;if c[v]>=3 then return true end end
- local pairCount=0;for _,n in pairs(c) do if n==2 then pairCount=pairCount+1 end end
- return #values==6 and pairCount==3
+ -- A full-house 4+2 without singles is also scoring; let the canonical
+ -- enumerator decide, rather than maintaining a second partial scorer.
+ return #Scoring.options(values)>0
 end
 function R.count_free(s) local n=0;for i=1,6 do if not s.used[i] then n=n+1 end end;return n end
 function R.options(s)
@@ -211,7 +211,7 @@ function R.selection(s)
  local o=R.selection_option(s);if o then return o.points,o.group end
 end
 function R.bank_status(s)
- local minimum=Progress.minimum(s)
+ local minimum=s.mode=='duel' and 0 or Progress.minimum(s)
  local selected=next(s.selected)~=nil;local pts=R.selection(s)
  local total=s.pot+(pts or 0)
  if s.phase~='ready' then return false,total,minimum,'Turn not ready' end
@@ -226,7 +226,7 @@ local function turn(s)
  s.last='Roll six dice. Select only scoring dice.'
 end
 function R.new(mode)
- local s={mode=mode or 'build',stage=1,turn=1,bank=0,build='normal',medal='none',medalUsed=false,group=false,hotBank=false,entered=false}
+ local s={mode=mode or 'build',stage=1,turn=1,bank=0,build='normal',medal='none',medalUsed=false,group=false,hotBank=false,entered=false,duel_target=500}
  turn(s);return s
 end
 local function next_stage(s)
@@ -244,7 +244,7 @@ end
 function R.fail(s)
  if s.phase~='rescue' and s.phase~='rolling' then return false end
  s.pot=0;s.turnGroup=false;s.turnHot=false;s.selected={};s.last='FARKLE: turn points lost. Banked points are safe.'
- s.phase=s.turn>=R.contracts[s.stage].limit and 'lost' or 'ended';return true
+ s.phase=s.mode=='duel' and 'ended' or (s.turn>=R.contracts[s.stage].limit and 'lost' or 'ended');return true
 end
 function R.settle(s,values)
  if s.phase~='rolling' then return false end
@@ -283,7 +283,9 @@ function R.bank_turn(s)
  if next(s.selected) then assert(R.take(s)) end
  s.entered=true
  s.bank=s.bank+s.pot;s.pot=0;s.group=s.group or s.turnGroup;s.hotBank=s.hotBank or s.turnHot
- if Progress.completed(s) then
+ if s.mode=='duel' then
+  s.phase=s.bank>=s.duel_target and 'won' or 'ended'
+ elseif Progress.completed(s) then
   s.phase=Progress.completion_phase(s)
  else s.phase=s.turn>=Progress.contracts[s.stage].limit and 'lost' or 'ended' end
  s.last='Points banked and manuscript progress secured.';return true
