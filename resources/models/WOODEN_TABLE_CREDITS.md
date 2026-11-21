@@ -9,8 +9,8 @@
 
 - Il modello utente `wooden_table_game_ready_asset.glb` (~12 MB, originale completo) è stato analizzato; **non è incluso integralmente nella PR**.
 - `resources/models/wooden_table_mesh.lua` conserva una silhouette geometrica **derivata** dall'originale attraverso clustering dei vertici e quantizzazione. La variante tracciata è circa 243 vertici geometrici, 497 triangoli prima di scartare eventuali triangoli degeneri; la texture originale NON è riprodotta.
-- Finitura di gioco: texture `resources/textures/wood.png` già presente nel progetto, con colore e illuminazione del renderer g3d. Il materiale finale può quindi differire dal render Sketchfab.
-- Su una copia locale dotata del GLB completo nel percorso `resources/models/wooden_table_game_ready_asset.glb`, il renderer può usare l'asset originale attraverso il caricatore glTF esistente. Il fallback tracciato evita di dipendere da quella copia.
+- Finitura fallback: texture `resources/textures/wood.png` già presente nel progetto, con otto assi e giunzioni scure; il materiale può differire dal render Sketchfab.
+- Una copia locale con l'originale GLB o il derivato ottimizzato in `resources/models/wooden_table_game_ready_asset.glb` usa il caricatore glTF esistente. Il GLB ottimizzato, consegnato separatamente, mantiene 4538 triangoli e UV originali; il colore è ridotto a 1024² e le mappe PBR non supportate sono escluse. Il binario non è inserito nella PR e non è necessario per il fallback.
 - Le due varianti sono esclusivamente decorative. Piano di contatto, muro fisico, caratteristiche e risultati dei D6 rimangono governati dalla scena fisica di Folio.
 
 **Identificazione del file originale analizzato:** SHA-256 `939270f79a7b821657b141d2305e13057effdb6f3a746e327afc5e31d1af2369`.
