@@ -1,6 +1,7 @@
 
 require('lib.core')
 local Physics = require("src.engine3d.physics")
+local DieCollisions = require("src.engine3d.die_collision")
 local FpsBounds = require('src.engine3d.bounds').fps
 local Geometry = require("src.engine3d.geometry")
 local view = require("src.engine3d.view")
@@ -381,12 +382,9 @@ local function get_world_extents_for_region(region)
 end
 
 local function constrain_dice_to_regions()
-    if not is_scriptorium_active() then
-        return
-    end
-    if not dice or #dice == 0 then
-        return
-    end
+    if not is_scriptorium_active() then return false end
+    if not dice or #dice == 0 then return false end
+    local corrected_any = false
 
     for i = 1, #dice do
         local die_entry = dice[i]
@@ -451,11 +449,13 @@ local function constrain_dice_to_regions()
             end
 
             if corrected then
+                corrected_any = true
                 -- A sub-contact-scale correction must not restart the sleep clock.
                 require('src.engine3d.bounds').containment.apply(body,px,py,vx,vy,body._supported)
             end
         end
     end
+    return corrected_any
 end
 
 local function get_usable_dice_map()
@@ -688,7 +688,12 @@ local function configure_dice_box()
         play_physical_impact(kind, first, second, speed)
     end
     box.after_step = function(_,dt)
-        constrain_dice_to_regions()
+        -- Boundary correction can put a die back inside another die.
+        -- Finalise contacts AFTER containment and BEFORE telling the
+        -- rules that the physical roll has settled. No new RNG or toss.
+        if constrain_dice_to_regions() then
+            DieCollisions.solve(box,nil,dt)
+        end
         if physicalResolution then checkDiceSettled(dt) end
     end
 end

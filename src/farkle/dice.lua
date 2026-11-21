@@ -50,6 +50,24 @@ end
 -- Their die IDs and settled face orientation are unchanged; they cannot be
 -- picked up or included in subsequent throws until the next turn/hot dice.
 function D.stage_kept(entries,used)
+ -- Staging is a teleport, NOT a physics step. It must not put a scored,
+ -- immovable die inside an active die and then hope that the solver wakes.
+ -- Probe the real oriented D6 shapes before committing to a rear slot.
+ local Collision=require('src.engine3d.die_collision')
+ local rear_y=-4.45
+ local function vacant(entry,index,x,y)
+  local body=entry.body
+  if #body<8 then return true end -- miniature fixtures cannot support SAT
+  body.position[1],body.position[2]=x,y
+  for j,other in ipairs(entries) do
+   local test=other.body
+   if j~=index and test and test.position and #test>=8
+     and Collision.overlap(body,test) then
+    return false
+   end
+  end
+  return true
+ end
  for i,entry in ipairs(entries or {}) do
   if used and used[i] then
    local b=entry.body
@@ -57,13 +75,23 @@ function D.stage_kept(entries,used)
     local lowest=math.huge
     for _,v in ipairs(b) do lowest=math.min(lowest,v[3]) end
     if lowest<math.huge then
-     b.position[1]=(i-3.5)*2.0
-     b.position[2]=-4.45
+     local target_x=(i-3.5)*2.0
+     local chosen_x
+     -- Prefer the familiar numbered rear-row slot. If an unscored
+     -- stationary die occupies it, choose another place in that row.
+     -- Eleven safe alternate locations cover the six-D6 board without
+     -- nudging the already scored dice or changing their faces.
+     local candidates={target_x,-10,-8,-6,-4,-2,0,2,4,6,8,10}
      b.position[3]=-lowest
+     for _,x in ipairs(candidates) do
+      if vacant(entry,i,x,rear_y) then chosen_x=x;break end
+     end
+     assert(chosen_x,'no collision-free rear slot for a kept D6')
+     b.position[1],b.position[2]=chosen_x,rear_y
      for axis=1,3 do b.velocity[axis]=0;b.angular[axis]=0 end
      b.asleep=true;b.sleep_timer=999
-     -- Distinguish a stable scored collider from an ordinary held die:
-     -- both are kinematic, but only the scored one is solid to active dice.
+     -- A scored D6 is kinematic but SOLID to the next moving die;
+     -- an unreleased die is kinematic and NON-colliding instead.
      b._manual_pending=true
      b._kept_solid=true
     end

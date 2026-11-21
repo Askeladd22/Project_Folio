@@ -12,7 +12,7 @@ The Opponent pauses between reading its roll, highlighting chosen dice, setting 
 
 ## Run locally
 
-Install [LÖVE 11.x](https://love2d.org/). On Windows, run `run_game.cmd`; otherwise run `love .` from the repository root.
+Install [LÖVE 11.x](https://love2d.org/). On Windows, **double-click `run_game.vbs`** to open the game without a Command Prompt window. Use `run_game.cmd` only for diagnostics (it intentionally keeps a command window), or run `love .` from the repository root on other systems. The Windows launcher checks `LOVE_EXE`, then the standard LÖVE installation paths, then `love.exe` on `PATH`.
 
 ## Code and design
 

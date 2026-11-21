@@ -10,6 +10,21 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.105] - 2026-11-21
+
+**Status:** branch `fix/dice-penetration-and-quiet-windows-launch-0.1.105`; draft PR. No main merge.
+
+### Fixed
+- The SAT pair solver no longer skips two sleeping dice when their oriented boxes still overlap. A sleeping overlap receives positional correction without a spurious impulse or forced wake-up.
+- `stage_kept` now probes the physical D6 collider before choosing a rear-row slot, selecting a deterministic vacant alternative instead of teleporting a scored solid cube into a stationary neighbour. Fixed six-D6 scoring, face orientation and pickup semantics are unchanged.
+- A final non-swept SAT correction runs **only when** tray-region containment actually moved a die, and **before** settling the dice. This prevents new overlaps without doubling SAT work on ordinary frames.
+- Added `run_game.vbs`, a Windows GUI launcher that starts `love.exe` directly without a visible CMD window; preserved `run_game.cmd` for diagnostics.
+
+### Validation
+- Pending: targeted asleep/kept/containment regression and Lua 5.4/LuaJIT, Python, LÖVE/Mesa CI on the exact PR head.
+- Windows mouse throws, six-dice pile-up, kept row, console-free launcher: **manual UAT not run**.
+- No changes to the engraver fantasy, Farkle points or C++ sources.
+
 ## [0.1.104] - 2026-11-21
 
 **Status:** draft redesign/cleanup PR from
