@@ -36,7 +36,6 @@ local settings=require('src.data.frontend_schema').settings
 local schemas={
  {name='menu',assets=frontend.menu.assets,primary='font_text',support='font_fallback'},
  {name='settings',assets=settings.assets,primary='font_text',support='font_fallback'},
- {name='campaign',assets=frontend.campaign.assets,primary='font_text',support='font_fallback'},
  {name='splash',assets=frontend.splash.assets,primary='title_font_primary',support='title_font_fallback'},
 }
 for _,schema in ipairs(schemas) do
@@ -71,7 +70,7 @@ for name,section in pairs{register=register,hud=table_hud} do
 end
 local menu=read('src/screens/frontend.lua')
 local _, loader_count = menu:gsub('local function load_font%(', '')
-assert(loader_count == 1, 'frontend must share one font candidate/fallback loader across three screens')
+assert(loader_count == 1, 'frontend must share a font candidate/fallback loader across menu and settings')
 assert(menu:find('fonts.subtitle = load_font({FONT_TEXT, FONT_FALLBACK}',1,true))
 assert(menu:find('fonts.footer = load_font({FONT_TEXT, FONT_FALLBACK}',1,true))
 
