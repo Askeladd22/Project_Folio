@@ -10,6 +10,28 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.99] - 2026-11-21
+
+**Stato:** refactor denominazione Opponent, controllo fisico obbligatorio e cleanup selettivo.
+Branch `refactor/opponent-direct-throw-cleanup-0.1.99`, PR di verifica separata.
+
+### Modificato
+- Identità dell'avversario uniformata a Opponent in codice/UI e documentazione corrente;
+  vecchi identificatori storici Git rimangono tracciabili nella cronologia.
+- Il lancio del giocatore nasce esclusivamente dalla presa e dal rilascio fisico
+  dei dadi; IA e recupero tecnico restano percorsi espliciti e separati.
+- Aggiornati i contratti di input e la denominazione delle risorse riutilizzate.
+
+### Rimosso
+- Pulsante e scorciatoia di lancio rapido del giocatore.
+- Codice, test e CI dei laboratori Battute Gemelle ed EX-TP-001 con gate negativo;
+  risultati e protocolli rimangono disponibili in `research/` e nella cronologia Git.
+
+### Verifiche
+- **IN ATTESA DI CI sul branch.** Non attribuire PASS a esecuzioni precedenti.
+- **DA VERIFICARE:** presa/rilascio di tutti i dadi, giro IA, Farkle, recupero tecnico,
+  resize, screenshot e gioco completo su Windows/LÖVE.
+
 ## [0.1.98] - 2026-11-21
 
 **Stato:** proposta giocabile UI/UX + primo Mercante con dadi fisici,

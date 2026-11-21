@@ -2,7 +2,7 @@
 
 *Project Folio* è il titolo di lavoro di un roguelite di dadi ambientato nella Venezia di Aldo Manuzio. Di giorno un incisore prepara le xilografie per la stampa. Di notte sogna che le figure prendano posto al tavolo e lo sfidino ai dadi.
 
-Nel prototipo puoi giocare a Farkle sul **tavolo da gioco**. L'avversario generico si chiama **Rivale**; **Mercante** indica soltanto un eventuale personaggio specifico, non il nemico predefinito. Lanci sei dadi fisici, scegli quali accantonare e decidi se incassare o rilanciare. Se il lancio non produce combinazioni valide, perdi i punti del turno.
+Nel prototipo puoi giocare a Farkle sul **tavolo da gioco**. L'avversario generico si chiama **Rivale**; **Opponent** indica soltanto un eventuale personaggio specifico, non il nemico predefinito. Lanci sei dadi fisici, scegli quali accantonare e decidi se incassare o rilanciare. Se il lancio non produce combinazioni valide, perdi i punti del turno.
 
 ## Come giocare
 
