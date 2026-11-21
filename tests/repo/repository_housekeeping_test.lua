@@ -17,7 +17,8 @@ for _,path in ipairs{
 
  'resources/ui/startup_splash/love.png',
  'resources/dice/1.png',
- 'resources/models/marble_topped_centre_table.glb',
+ 'resources/models/wooden_table_mesh.lua',
+ 'resources/models/WOODEN_TABLE_CREDITS.md',
  'resources/models/old_wooden_table.glb',
  'src/engine3d/g3d/live.lua',
  'src/engine3d/physics.lua',
@@ -28,6 +29,7 @@ for _,path in ipairs{
 end
 -- Three inactive scans stay in Git history at commit 33f8afea35.
 for _,path in ipairs{
+ 'resources/models/marble_topped_centre_table.glb',
  'resources/models/aged_alchemical_book_mid_poly.glb',
  'resources/models/de_humani_corporis_fabrica.glb',
  'resources/models/old_roman_coin_ueinbaiva_mid.glb',
@@ -36,7 +38,8 @@ for _,path in ipairs{
 end
 -- Historical texture/prop samples are absent from the live asset map.
 -- Source commits: d767b7c8 (wood_floor), 33f8afea (doubloon).
--- Keep the live wood.png and marble table GLB checked above.
+-- The retired marble GLB was removed from main; the active wooden
+-- silhouette and its CC BY attribution are protected above.
 for _,path in ipairs{
  'resources/textures/wood_floor.png',
  'resources/models/doubloon.glb',
