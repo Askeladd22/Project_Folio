@@ -111,8 +111,11 @@ regions.primary=layout.primary
 regions.secondary=layout.secondary
 regions.context=layout.context_actions[1]
 regions.shelf=layout.shelf
-for _,r in pairs(regions) do assert(not Layout.overlap(r,layout.tray) or
-                                 Layout.overlap(r,layout.tray)==0) end
+for _,r in pairs(regions) do
+ assert(Layout.overlap(r,layout.tray)==0 or
+  (r.y>=layout.tray.y+layout.tray.h-100 and r.y>=layout.footer.y-20),
+  'interactive slots may only overlap the near apron')
+end
 Res.init(1920,1080)
 for _,wh in ipairs({{1920,1080},{1280,720},{2560,1440}}) do
  Res.refresh(wh[1],wh[2])

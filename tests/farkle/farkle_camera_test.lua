@@ -33,24 +33,24 @@ for _,width in ipairs{1280,1920,2560} do
  local right=V.project(extents[2]+.4,extents[3]-.4,scene.box.border_height)
  local farScale=select(4,V.project(0,region.y_back,.6))
  local nearScale=select(4,V.project(0,region.y_front,.6))
- -- In the player-seat 0.80 rad preset, depth foreshortening is
+ -- In the player-seat 0.90 rad preset, depth foreshortening is
  -- milder than the previous 1.16 rad near/far ratio.
  assert(nearScale/farScale>1.16 and nearScale/farScale<1.22,
   'player-seat camera must preserve perspective without excessive flattening')
  local fraction=(right-left)*k/width
- assert(fraction>=.63 and fraction<=.70,'table must occupy 63–70% of screen width')
+ assert(fraction>=.75 and fraction<=.82,'rear board should occupy 75–82% of screen width')
  assert(math.abs(cy+rear*k-(layout.host.y+layout.host.h)*factor)<1,'rear rail disconnected from portrait')
  -- Compare actual projected surfaces, not the larger render viewport.
  local seamLeft=V.project(extents[1]-.4,extents[3],0)
  local seamRight=V.project(extents[2]+.4,extents[3],0)
  assert(math.abs((cx+seamLeft*k)+(cx+seamRight*k)-width)<1 and
-  cx+seamLeft*k>300*factor and cx+seamLeft*k<360*factor,
+  cx+seamLeft*k>175*factor and cx+seamLeft*k<250*factor,
   'reframed rear wood must stay symmetric around the table')
  local _,apron=V.project(0,extents[4]+.4,-scene.box.border_height)
  local gap=layout.footer.y*factor-(cy+apron*k)
- assert(gap>=0 and gap<=20*factor,'command plaque too far from the visible front plank')
+ assert(gap<=0 and gap>=-105*factor,'command plaque should overlap only the near wooden lip')
  local instructionGap=layout.idle_message.y*factor-(cy+apron*k)
- assert(instructionGap>=0 and instructionGap<=24*factor,'idle instruction detached from the visible table')
+ assert(instructionGap<=0 and instructionGap>=-105*factor,'idle status must stay on the lower wooden rail')
  local savedLove=love
  local time=0
  love={timer={getTime=function() return time end}}

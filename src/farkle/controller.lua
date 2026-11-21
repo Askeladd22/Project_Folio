@@ -12,6 +12,38 @@ local MouseThrow=Interaction.single
 local Marquee=Interaction.selection
 local GroupThrow=Interaction.group
 local Toasts=require('src.farkle.presentation').toast_messages
+-- Production policy is intentionally self-contained. The independently
+-- tested laboratory remains in its own directory; runtime must not import it.
+local MerchantAI = {}
+local outcome = {
+ [1]={6,4,15}, [2]={36,16,180}, [3]={216,60,1850},
+ [4]={1296,204,18310}, [5]={7776,600,197195},
+ [6]={46656,1080,2399175},
+}
+function MerchantAI.best_option(options)
+ local best
+ for _,o in ipairs(options) do
+  if not best or o.points>best.points
+   or (o.points==best.points and o.remaining>best.remaining)
+   or (o.points==best.points and o.remaining==best.remaining and o.mask<best.mask) then
+   best=o
+  end
+ end
+ return best
+end
+function MerchantAI.decide(s)
+ if s.score.merchant+s.pot>=s.target then
+  return 'bank','Raggiungo l’obiettivo.'
+ end
+ local available=0
+ for i=1,6 do if not s.used[i] then available=available+1 end end
+ if available==0 then available=6 end
+ local o=outcome[available]
+ if o[3]<=o[2]*s.pot then
+  return 'bank',('Rischio %d/%d, meglio incassare.'):format(o[2],o[1])
+ end
+ return 'roll',('Rischio %d/%d, tento un rilancio.'):format(o[2],o[1])
+end
 -- The new folio interface is the only gameplay HUD.
 -- No environment-controlled HUD variant and no F6 layout switch.
 local U={state='waiting',buttons={},dice_results={}}
@@ -33,7 +65,7 @@ function U:enter(params)
   self:setOpponentVisual(params.opponent_id)
  end
  if not self.game or (params and params.new_run) then
-  self:reset('build')
+  self:reset(params and params.mode or 'build')
  end
 end
 function U:log(event,detail)
@@ -61,7 +93,10 @@ function U:reset(mode)
  self.manualRoll=nil
  self.marquee=nil
  self.dragSelected=nil
- self.game=R.new(mode);self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
+ self.game=R.new(mode)
+ if mode=='duel' then self.game.duel_target=500 end
+ self.duel=mode=='duel' and {actor='player',scores={player=0,merchant=0},target=self.game.duel_target,wait=0,intent='Il Mercante attende il tuo lancio.'} or nil
+ self.pending={};self.retry=nil;self.activePhysical=nil;self.dice_results={};self.medalHeld=nil
  self.modal=nil;self.lastLoss=nil;self.lastBank=nil;self.physicalFailure=nil;self.physicalNotice=nil
  self.id=os.date('%Y%m%d-%H%M%S')..'-'..math.floor(love.timer.getTime()*1000)
  self.logicalRollId=0;self.physicalAttemptId=0
@@ -69,6 +104,16 @@ function U:reset(mode)
  D.stage_opening(dice)
  self:sync();self:log('new')
  self:log('session_seed',self.sessionSeed or 'unknown')
+end
+function U:duel_bank()
+ local s=self.game
+ if not self.duel or s.mode~='duel' or not R.bank_status(s) then return false end
+ if next(s.selected) and not R.take(s) then return false end
+ s.bank=s.bank+s.pot
+ s.pot=0
+ s.phase=s.bank>=self.duel.target and 'won' or 'ended'
+ s.last='Punti incassati nel duello.'
+ return true
 end
 function U:act(name,fn)
  local pot=self.game.pot;local bank=self.game.bank
@@ -80,6 +125,15 @@ function U:act(name,fn)
   if name=='bank' then self.lastBank=self.game.bank-bank;self.lastLoss=nil end
   if name=='next' then self.lastLoss=nil;self.lastBank=nil end
   self:sync();self:log(name)
+  if self.duel and name=='bank' then
+   local d=self.duel
+   d.scores[d.actor]=self.game.bank
+   d.wait=.95
+   if self.game.phase=='won' then
+    d.winner=d.actor
+    d.intent=d.actor=='player' and 'Hai battuto il Mercante!' or 'Il Mercante ha vinto la sfida.'
+   else d.intent=d.actor=='player' and 'Hai incassato. Tocca al Mercante.' or 'Il Mercante ha incassato.' end
+  end
   if name=='bank' then Toasts.show('Punti incassati: +'..(self.lastBank or 0))
    elseif name=='accept_bust' then Toasts.show('Farkle: punti a rischio perduti') end
  end
@@ -151,14 +205,65 @@ function U:onPhysicalFailure(event)
  self.mouseThrow=nil
  self.marquee=nil
  self.dragSelected=nil
- self.state='physics_error';self:log('physical_failure',event.reason)
+ self.state='physics_error';self.physicalFailure=event and event.reason or 'Errore fisico: riprova il tiro';self:log('physical_failure',self.physicalFailure)
 end
 function U:retry_physical()
  if self.state~='physics_error' then return end
  local indices={}
  for i=1,#dice do if self.activePhysical and self.activePhysical[i] then indices[#indices+1]=i end end
  if #indices==0 then return false end
+ self.physicalFailure=nil
  self:begin_physical(indices,true)
+end
+function U:update_duel(dt)
+ local d,s=self.duel,self.game
+ if not d or d.winner or self.modal or self.physicalFailure or self.retry or s.phase=='rolling' then return end
+ d.wait=math.max(0,(d.wait or 0)-math.max(0,dt or 0))
+ if d.wait>0 then return end
+ if s.phase=='ended' then
+  d.scores[d.actor]=s.bank
+  assert(R.next_turn(s),'duel turn must close before actor swap')
+  s.turn=1 -- do not import the solo four-turn limit into a symmetric duel
+  d.actor=d.actor=='player' and 'merchant' or 'player'
+  s.bank=d.scores[d.actor]
+  s.entered=s.bank>0
+  self.lastLoss=nil;self.lastBank=nil
+  self.presentation=Presentation.new(s)
+  D.stage_opening(dice)
+  self:sync()
+  d.intent=d.actor=='player' and 'Tocca a te: sfida il Mercante.' or 'Il Mercante prepara il lancio.'
+  d.wait=.7
+  self:log('duel_actor',d.actor)
+  return
+ end
+ if d.actor~='merchant' then return end
+ if s.phase=='fresh' then
+  d.intent='Il Mercante lancia i dadi.'
+  assert(self:request(),'merchant physical roll must start')
+ elseif s.phase=='ready' and not s.scored then
+  local option=MerchantAI.best_option(R.options(s))
+  assert(option,'ready throw needs at least one legal option')
+  for _,id in ipairs(option.ids) do assert(R.toggle(s,id)) end
+  self:act('take',function() return R.take(s) end)
+  d.intent=('Il Mercante accantona %d punti.'):format(option.points)
+  d.wait=.95
+ elseif s.phase=='ready' and s.scored then
+  if not d.pending_action then
+   local action,reason=MerchantAI.decide({phase='decision',pot=s.pot,
+    actor='merchant',score={merchant=s.bank},target=d.target,used=s.used})
+   d.pending_action=action
+   d.intent=(action=='bank' and 'Il Mercante incassa. ' or 'Il Mercante rilancia. ')..reason
+   d.wait=.95 -- reveal intention before the action, not afterwards
+   return
+  end
+  local action=d.pending_action
+  d.pending_action=nil
+  if action=='bank' then
+   self:act('bank',function() return self:duel_bank() end)
+  else
+   assert(self:request(),'merchant physical reroll must start')
+  end
+ end
 end
 function U:update(dt)
  if self.mouseThrow then
@@ -181,6 +286,7 @@ function U:update(dt)
  self:sync_presentation()
  if self.presentation then Presentation.update(self.presentation,dt,RuntimeUI.reduced_animations()) end
  Toasts.update(dt)
+ self:update_duel(dt)
  if self.retry then
   self.retry=self.retry-dt
   if self.retry<=0 then self.retry=nil;self:begin_physical({1},true) end
@@ -214,6 +320,10 @@ function U:onDiceSettled(values)
  if s.phase=='ended' or s.phase=='lost' then self.lastLoss=pot end
  self.activePhysical=nil;self.manualRoll=nil;self.marquee=nil;self.dragSelected=nil;self.dice_results={};self:sync();self:log('settled',table.concat(s.hand,'/'))
  if s.phase=='ended' or s.phase=='lost' then
+  if self.duel then
+   self.duel.intent=self.duel.actor=='merchant' and 'Il Mercante fa Farkle.' or 'Farkle: perdi i punti a rischio.'
+   self.duel.wait=.9
+  end
   Toasts.show('Farkle: turno concluso')
  end
  return true
@@ -244,6 +354,16 @@ local function in_tray(x,y)
 end
 
 function U:mousepressed(x,y,b)
+ if self.duel and (self.duel.actor=='merchant' or self.duel.winner) and not self.modal then
+  if b==1 and self.state~='rolling' then
+   local vx,vy=Res.to_virtual(x,y)
+   for id,r in pairs(self.buttons) do
+    if (id=='help' or id=='runmenu' or id=='retryphysical') and r.enabled and
+     vx>=r.x and vx<=r.x+r.w and vy>=r.y and vy<=r.y+r.h then r.fn();return end
+   end
+  end
+  return
+ end
  if b==2 then
   if self.mouseThrow or self.marquee or not can_grab(self) then return end
   local clicked=Bridge.pickTrayDie(x,y)
@@ -289,6 +409,17 @@ function U:mousepressed(x,y,b)
  end
 
  if b~=1 or self.mouseThrow then return end
+ -- The near wooden lip now sits behind the command plaque. Action hitboxes
+ -- must win over drag-to-throw inside that small overlapping screen area.
+ if not self.modal and not H.reward_active(self.game) and self.state~='rolling' then
+  local vx,vy=Res.to_virtual(x,y)
+  for _,button in pairs(self.buttons) do
+   if button.enabled and type(button.x)=='number' and type(button.y)=='number' and
+      type(button.w)=='number' and type(button.h)=='number' and
+      vx>=button.x and vx<=button.x+button.w and
+      vy>=button.y and vy<=button.y+button.h then button.fn();return end
+  end
+ end
  -- A click on the tray is handled on release so that clicking still selects
  -- Farkle scoring dice, whereas an actual drag creates a group marquee.
  if can_grab(self) and in_tray(x,y) then
@@ -413,7 +544,7 @@ function U:keypressed(k)
  if self.state=='rolling' then return end
  -- Keep the experimental medal laboratory for developers, but not in the
  -- normal pause menu. It remains separate from the selected game's mode.
- if k=='f7' and not self.modal then
+ if k=='f7' and not self.modal and not self.duel then
   self.modal='medals';self.medalPage=1;self.medalPreview=nil
   return
  end
@@ -422,6 +553,7 @@ function U:keypressed(k)
   return
  end
  if k=='?' or k=='/' or k=='slash' then self.modal='help';return end
+ if self.duel and (self.duel.actor=='merchant' or self.duel.winner) then return end
  if k=='f' then self.modal='folio';return end
  local i=tonumber(k);if i and i>=1 and i<=6 then self:toggle(i);return end
  if k=='space' then

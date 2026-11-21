@@ -64,7 +64,7 @@ return {
             yaw = 0.00,
             -- Player-seat view: a genuinely overhead angle exposes
             -- useful tabletop depth while preserving the same g3d physics.
-            pitch = 0.80,
+            pitch = 0.90,
             distance = 52,
         },
         box = {

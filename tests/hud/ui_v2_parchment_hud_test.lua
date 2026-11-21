@@ -90,8 +90,9 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  for _,id in ipairs{'roll','help','runmenu'} do
   local rect=ui.buttons[id]
   assert(Surface.within(rect,1920,1080),'off-viewport '..id)
-  assert(Layout.overlap(layout.tray,rect)==0,
-   'an action obscures the physical 3D dice plane: '..id)
+  assert(Layout.overlap(layout.tray,rect)==0 or
+   (rect.y>=layout.footer.y and rect.y>=layout.tray.y+layout.tray.h-100),
+   'action must not obscure the central D6 field: '..id)
  end
  assert(ui.buttons.roll.x==layout.single_action.x and
    ui.buttons.roll.y==layout.single_action.y and

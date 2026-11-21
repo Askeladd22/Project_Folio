@@ -358,8 +358,16 @@ return {
     campaigns = {
         {
             id = "farkle-prototype",
+            mode = "build",
             title = "Farkle Roguelite",
             detail = "Playable prototype · three commissions",
+            implemented = true,
+        },
+        {
+            id = "merchant-duel",
+            mode = "duel",
+            title = "Duello al Mercante",
+            detail = "Sei D6 · primo a 500 punti · sfida sperimentale",
             implemented = true,
         },
     },

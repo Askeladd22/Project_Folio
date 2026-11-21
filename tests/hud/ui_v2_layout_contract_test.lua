@@ -6,9 +6,9 @@ local Scene=require('src.data.dice_schema').scene
 local layout=Layout.build()
 assert(layout.name=='table_minimal','shipping Merchant layout must have its canonical identity')
 assert(Layout.validate(layout),'shipping Merchant table layout is invalid')
-assert(layout.tray.x==60 and layout.tray.y==470
- and layout.tray.w==1800 and layout.tray.h==494
- and layout.tray.y+layout.tray.h==964,
+assert(layout.tray.x==8 and layout.tray.y==505
+ and layout.tray.w==1904 and layout.tray.h==545
+ and layout.tray.y+layout.tray.h==1050,
  'shared screen-space picking viewport must cover the raised board')
 local region=Scene.regions.unified
 assert(region.x_center==0 and region.y_back==-6.05 and
@@ -18,9 +18,11 @@ assert(region.x_center==0 and region.y_back==-6.05 and
 assert(layout.folio==nil and layout.context==nil,
  'retired sidebar geometry must not return to the shipping table')
 assert(Layout.overlap(layout.tray,layout.score_panel)==0)
-assert(Layout.overlap(layout.tray,layout.footer)==0)
-assert(Layout.overlap(layout.tray,layout.primary)==0)
-assert(Layout.overlap(layout.tray,layout.secondary)==0)
+assert(Layout.overlap(layout.tray,layout.footer)>0 and
+ layout.footer.y>=layout.tray.y+layout.tray.h-100,
+ 'only the near 100px lip may be overlapped by the action plaque')
+assert(layout.primary.y>=layout.footer.y and layout.secondary.y>=layout.footer.y,
+ 'no primary decision may block the central D6 playfield')
 
 -- Screen mapping is independent from the removed P1 visual comparison.
 local keys={'tray','score_panel','footer','shelf','primary','secondary','help','runmenu'}

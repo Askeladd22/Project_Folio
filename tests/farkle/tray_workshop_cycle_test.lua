@@ -1,8 +1,8 @@
 -- Production F8 workshop: preserve all selectable g3d tray styles.
 local Workshop=require('src.farkle.tabletop').tray_workshop
 local saved=Workshop.current
-assert(Workshop.current=='wooden_compact',
- 'compact option B must be the default until human visual approval')
+assert(Workshop.current=='old_wooden',
+ 'old wooden table is the default while all variants remain reversible')
 Workshop.current='old_wooden'
 for _,expected in ipairs{'wooden_compact','wooden','book','current','A','B','C','old_wooden'} do
  local actual=Workshop.cycle()

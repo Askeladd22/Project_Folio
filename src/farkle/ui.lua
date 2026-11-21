@@ -124,11 +124,11 @@ function M.build(which)
    header=rect(44,20,1832,72),
    -- Raise the playing surface into the central viewport,
    -- without moving the g3d picking rectangle or the physical board.
-   host=rect(0,0,1920,520),
+   host=rect(0,0,1920,565),
    -- Let the rival meet the rear rail instead of floating above it.
    -- Draw order still puts the 3D table in front of the PNG portrait.
-   portrait_lift=40,
-   rear_span=1280,
+   portrait_lift=35,
+   rear_span=1740,
    -- One unified scorecard: the risk total is not stranded below the table.
    score_panel=rect(38,18,540,205),
    -- One engraved progress track shows what is saved vs still at risk.
@@ -138,6 +138,8 @@ function M.build(which)
    -- The wagering figures are large enough to read at a glance.
    -- The 3D floor and its physical hitbox stay completely separate.
    single_action=rect(720,993,480,75),
+   merchant_panel=rect(1410,114,454,151),
+   duel_turn=rect(655,38,610,54),
    secured_caption=rect(60,27,216,22),
    secured_value=rect(60,51,216,52),
    risk_caption=rect(313,27,235,22),
@@ -161,7 +163,7 @@ function M.build(which)
    -- Include the exposed rear of the board in the same input/render
    -- viewport. Keep the *front* border aligned with the command rail.
    -- This is screen-space picking only: no world or physics changes.
-  tray=rect(60,470,1800,494),
+  tray=rect(8,505,1904,545),
   message=rect(470,969,980,20),
   idle_message=rect(470,969,980,20),
   context_actions={rect(414,993,185,36),rect(414,1032,185,36)},
@@ -198,7 +200,8 @@ function M.validate(layout)
    'risk_caption','risk_value','objective_caption','objective_value',
    'turns_caption','turns_value','shelf_label','score_panel',
    'stakes_caption','stakes_track',
-   'footer','footer_trim','single_action','idle_message'}
+   'footer','footer_trim','single_action','idle_message',
+   'merchant_panel','duel_turn'}
   for _,name in ipairs(required) do
    local r=layout[name]
    if not r or r.w<=0 or r.h<=0 or not M.contains(bounds,r) then
@@ -206,7 +209,7 @@ function M.validate(layout)
    end
   end
   if not M.contains(layout.book,layout.page_main) or
-     not M.contains(layout.page_main,layout.tray) or
+     not M.contains(bounds,layout.tray) or
      not M.contains(layout.page_main,layout.shelf) or
      not M.contains(layout.header,layout.help) or
      not M.contains(layout.header,layout.runmenu) then
@@ -239,7 +242,6 @@ function M.validate(layout)
      M.overlap(layout.score_panel,layout.help)>0 or
      not M.contains(layout.footer,layout.footer_trim) or
      layout.footer.h>110 or layout.footer.w>1160 or
-     layout.footer.y<layout.tray.y+layout.tray.h or
      not M.contains(layout.footer,layout.primary) or
      not M.contains(layout.footer,layout.secondary) or
      not M.contains(layout.footer,layout.single_action) or
@@ -247,10 +249,11 @@ function M.validate(layout)
      not M.contains(layout.footer,layout.idle_message) then
    return false,'invalid unified scorecard or compact command rail'
   end
-  for _,r in ipairs{layout.shelf,layout.header,layout.message,
+  for _,r in ipairs{layout.header,layout.message,
     layout.primary,layout.secondary,layout.single_action,
     layout.idle_message,layout.help,layout.runmenu} do
-   if M.overlap(r,layout.tray)>0 then
+   if M.overlap(r,layout.tray)>0 and
+     (r.y<layout.footer.y or r.y<layout.tray.y+layout.tray.h-100) then
     return false,'minimal controls overlap the physical D6 field'
    end
   end
@@ -269,11 +272,14 @@ function M.validate(layout)
      M.overlap(layout.message,layout.primary)>0 or
      M.overlap(layout.message,layout.secondary)>0 or
      M.overlap(layout.shelf,layout.footer)>0 or
-     M.overlap(layout.idle_message,layout.tray)>0 then
+     (M.overlap(layout.idle_message,layout.tray)>0 and
+      layout.idle_message.y<layout.footer.y) then
    return false,'overlapping minimal table actions'
   end
   for _,r in ipairs(layout.context_actions) do
-   if not M.contains(bounds,r) or M.overlap(r,layout.tray)>0 or
+   if not M.contains(bounds,r) or
+     (M.overlap(r,layout.tray)>0 and
+      (r.y<layout.footer.y or r.y<layout.tray.y+layout.tray.h-100)) or
      M.overlap(r,layout.primary)>0 or M.overlap(r,layout.secondary)>0 or
      M.overlap(r,layout.message)>0 then
     return false,'invalid minimal contextual action'
@@ -479,8 +485,8 @@ function S.portrait_bounds(w,h,layout)
  -- slips behind the g3d table top, avoiding floating or pasted-on figures.
  local bottom=(layout.host and layout.host.y+layout.host.h or layout.tray.y)+35
   -(layout.portrait_lift or 0)
- local maxHeight=math.max(1,math.min(470,bottom-12))
- local scale=math.min(800/w,maxHeight/h)
+ local maxHeight=math.max(1,math.min(500,bottom-12))
+ local scale=math.min(850/w,maxHeight/h)
  local outW,outH=w*scale,h*scale
  local x=layout.tray.x+layout.tray.w*.5-outW*.5
  return {x=x,y=bottom-outH,w=outW,h=outH}
@@ -1067,10 +1073,11 @@ function M.build(u)
  local function add(id,label,enabled,fn,slot,detail)
   a[#a+1]=entry(id,label,enabled,fn,slot,detail)
  end
- local block=s.phase=='rolling'
+ local block=s.phase=='rolling' and u.state~='physics_error'
  if H.reward_active(s) then return a end
  add('help','Regole [?]',not block,function() u.modal='help' end,'header')
  add('runmenu','Pausa [Esc]',not block,function() u.modal='run' end,'header')
+ if u.duel and (u.duel.actor=='merchant' or u.duel.winner or s.phase=='ended') and not u.physicalFailure then return a end
  -- Folio remains accessible with [F] via the modal dispatcher.
  if s.medal~='none' then
   local d=Medals.get(s.medal)
@@ -1135,7 +1142,9 @@ function M.build(u)
    bank_detail='Incasso non disponibile'
   end
   add('bank','Incassa '..total..' pt',ok,
-   function() u:act('bank',function() return R.bank_turn(s) end) end,
+   function() u:act('bank',function()
+    return u.duel and u:duel_bank() or R.bank_turn(s)
+   end) end,
    'secondary',bank_detail)
  end
  return a
@@ -1391,6 +1400,9 @@ local function compact_status(u)
   return Actions.state(u)
  end
  if u.physicalFailure then return 'Tiro non valido: usa Riprova tiro fisico.' end
+ if u.duel and u.duel.winner then return u.duel.winner=='player' and 'VITTORIA · Hai battuto il Mercante!' or 'SCONFITTA · Il Mercante ha vinto.' end
+ if u.duel and u.duel.actor=='merchant' then return u.duel.intent or 'Il Mercante sta giocando.' end
+ if u.duel and s.phase=='ended' then return 'Turno concluso · Il Mercante prepara i dadi.' end
  if s.phase=='rolling' then return 'I dadi stanno rotolando…' end
  if s.phase=='fresh' then
   return 'Spazio: lancio rapido · Destro: afferra · Trascina sinistro: seleziona gruppo'
@@ -1482,8 +1494,8 @@ local function draw_table_shadow(g)
  if not table_shadow and g.newMesh then
   local c=Art.rgb('earth_dark')
   local function v(x,y,a) return {x,y,0,0,c[1],c[2],c[3],a} end
-  local top={v(170,976,0),v(260,976,.62),v(1660,976,.62),v(1750,976,0)}
-  local low={v(130,1060,0),v(260,1060,0),v(1660,1060,0),v(1790,1060,0)}
+  local top={v(20,1016,0),v(110,1016,.50),v(1810,1016,.50),v(1900,1016,0)}
+  local low={v(0,1076,0),v(100,1076,0),v(1820,1076,0),v(1920,1076,0)}
   local tris={}
   for i=1,3 do
    for _,p in ipairs({top[i],top[i+1],low[i+1],top[i],low[i+1],low[i]}) do
@@ -1618,20 +1630,37 @@ function V.draw(u)
  g.line(298,29,298,164)
  g.line(56,110,560,110)
  panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
- write_fitted('ASSICURATI',layout.secured_caption,21,15,paper_muted)
- write_fitted(s.bank..' pt',layout.secured_value,47,27,paper_ink)
+ write_fitted(u.duel and 'TU · ASSICURATI' or 'ASSICURATI',layout.secured_caption,21,15,paper_muted)
+ write_fitted((u.duel and u.duel.scores.player or s.bank)..' pt',layout.secured_value,47,27,paper_ink)
  write_fitted('A RISCHIO',layout.risk_caption,21,15,paper_muted)
- write_fitted(s.pot..' pt',layout.risk_value,47,27,paper_warning)
- local c=R.contracts[s.stage]
+ write_fitted((u.duel and (u.duel.actor=='player' and s.pot or 0) or s.pot)..' pt',layout.risk_value,47,27,paper_warning)
+ local d=u.duel
+ local c=d and {target=d.target,limit=0} or R.contracts[s.stage]
+ if d then
+  local mr=layout.merchant_panel
+  panel(mr,Art.rgba('surface',.93),border_ink,6)
+  write_fitted('MERCANTE',{x=mr.x+18,y=mr.y+8,w=mr.w-36,h=26},22,16,paper_ink)
+  write_fitted('Sicuri: '..d.scores.merchant..' pt',{x=mr.x+18,y=mr.y+43,w=mr.w-36,h=33},28,20,paper_ink)
+  write_fitted('A rischio: '..(d.actor=='merchant' and s.pot or 0)..' pt',
+   {x=mr.x+18,y=mr.y+82,w=mr.w-36,h=23},20,15,paper_warning)
+  write_fitted(d.actor=='merchant' and 'STA GIOCANDO' or 'IN ATTESA',
+   {x=mr.x+18,y=mr.y+117,w=mr.w-36,h=23},18,14,paper_muted)
+  panel(layout.duel_turn,Art.rgba('earth_dark',.86),Art.rgba('ochre',.65),4)
+  write_fitted(d.winner and (d.winner=='player' and 'HAI VINTO IL DUELLO' or 'IL MERCANTE VINCE')
+   or ('TURNO · '..(d.actor=='player' and 'TU' or 'MERCANTE')),
+   layout.duel_turn,24,17,Art.rgba('paper'),'center')
+ end
  write_fitted('OBIETTIVO',layout.objective_caption,18,14,paper_muted)
  write_fitted(c.target..' pt',layout.objective_value,29,20,paper_gold)
- write_fitted('TURNI RIMASTI',layout.turns_caption,18,14,paper_muted)
- write_fitted(turns_remaining(s,c),layout.turns_value,29,20,paper_ink)
+ write_fitted(u.duel and 'TURNO' or 'TURNI RIMASTI',layout.turns_caption,18,14,paper_muted)
+ write_fitted(u.duel and (u.duel.actor=='player' and 'TU' or 'RIVALE') or turns_remaining(s,c),
+  layout.turns_value,29,20,paper_ink)
  g.setColor(unpack(Art.rgba('border',.40)))
  g.line(56,171,560,171)
  write_fitted('VERSO L’OBIETTIVO  ·  SALVATI / A RISCHIO',
    layout.stakes_caption,17,13,paper_muted)
- draw_stakes_track(s,c.target,layout)
+ draw_stakes_track(u.duel and {bank=u.duel.scores.player,pot=u.duel.actor=='player' and s.pot or 0}
+   or s,c.target,layout)
  for _,a in ipairs(actions) do
   if a.slot=='header' then
    action_button(u,a,a.id=='help' and layout.help or layout.runmenu)

@@ -35,7 +35,9 @@ assert(#slots==6)
 for i=1,6 do
  local rect=slots[i]
  assert(Layout.contains(base.shelf,rect),'accepted slot outside V2 shelf')
- assert(Layout.overlap(rect,base.tray)==0,'accepted slot covers physical dice')
+ assert(Layout.overlap(rect,base.tray)==0 or
+  (rect.y>=base.tray.y+base.tray.h-100 and rect.y>=base.footer.y-20),
+  'accepted register may rest only on the near wooden lip')
  if i>1 then assert(Layout.overlap(rect,slots[i-1])==0) end
 end
 

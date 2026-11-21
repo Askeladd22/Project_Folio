@@ -77,6 +77,19 @@ Punti e requisito possono essere incassati in turni differenti. Tris, poker, cin
 
 Dopo il Salterio si sceglie la modifica del dado 1; dopo il Libro di ore il Correttore oppure nessuna medaglia. In «Senza mod» si prosegue senza queste ricompense.
 
+## Modalità proposta: Duello al Mercante (branch 0.1.98)
+
+**Stato sperimentale, non canonico per le commissioni.** La sfida
+opzionale usa gli stessi sei D6 e la stessa tabella delle combinazioni.
+I due contendenti alternano turni, incassano punti separatamente,
+perdono soltanto i provvisori con Farkle; hot dice immutati. Vince
+chi raggiunge per primo **500 punti assicurati**. Non applica soglie
+di ingresso né i limiti di turni delle commissioni, non assegna medaglie
+e non modifica gli esiti fisici. Il Mercante sceglie combinazioni
+valide e incasso/rilancio con una policy probabilistica one-step.
+La soglia 500 è un parametro di **playtest non bilanciato**.
+Questa sezione documenta il branch; non sostituisce la visione canonica.
+
 ## Integrazione futura con gli incontri — nessuna modifica alle regole presenti
 
 **Direzione approvata:** le figure di un libro potranno diventare avversari che utilizzano intenzioni e Segni, mentre il giocatore manterrà il Farkle con i suoi dadi e l'incasso. Le regole di punteggio, la disgiunzione delle combinazioni, il significato del Farkle, gli hot dice, le mappe fisiche delle facce e i modificatori esistenti **restano la fonte canonica**. Nessuna conversione punti→danno, costo di sigillatura/rasura, salute, limitazione di rilanci o condizione speciale di vittoria è approvata da questo documento.

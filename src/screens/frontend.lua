@@ -1016,7 +1016,7 @@ end
 local function start_campaign(campaign_id)
     for _, item in ipairs(Campaigns) do
         if item.id == campaign_id and item.implemented then
-            Navigation.go(CAMPAIGN_MODULE, {new_run = true})
+            Navigation.go(CAMPAIGN_MODULE, {new_run = true, mode = item.mode or 'build', opponent_id = item.mode=='duel' and 'merchant' or nil})
             return
         end
     end
