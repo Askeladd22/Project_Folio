@@ -70,7 +70,9 @@ local function mock_font(pt)
   getWrap=function(_,s)return #tostring(s)*pt*.48,{tostring(s)}end,
  }
 end
-love={graphics=setmetatable({
+love={filesystem={getInfo=function(path)
+ return path=='resources/scenes/printshop-room.png' and {type='file'} or nil
+end},graphics=setmetatable({
  getDimensions=function()return width,height end,
  getWidth=function()return width end,
  getHeight=function()return height end,
