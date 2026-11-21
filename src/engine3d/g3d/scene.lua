@@ -327,8 +327,41 @@ local FLOORS={
  A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
 }
 function S.floor_vertices(mesh,extents,style)
+ local x1,x2,y1,y2=unpack(extents)
  local color=FLOORS[style] or FLOORS.book
- local out=mesh.floor_vertices(extents[1],extents[2],extents[3],extents[4])
+ local out=mesh.floor_vertices(x1,x2,y1,y2)
+ -- Full GLB: leave its own UV-mapped albedo visible; this dark receiver
+ -- sits below the physical floor and fills rare gaps in the imported mesh.
+ if style=='wooden_full' then
+  for _,v in ipairs(out) do
+   v[3]=-.018
+   v[9],v[10],v[11],v[12]=.47,.39,.32,1
+  end
+  return out
+ end
+ -- Bundled fallback: eight subtle planks and narrow inlaid joints.
+ -- Only rendered geometry changes; no extra colliders or picking surface.
+ if style=='wooden' then
+  for _,v in ipairs(out) do
+   v[9],v[10],v[11],v[12]=.30,.23,.18,1
+  end
+  local count,gap=8,.022
+  for i=1,count do
+   local a=y1+(y2-y1)*(i-1)/count+gap
+   local b=y1+(y2-y1)*i/count-gap
+   local plank=mesh.floor_vertices(x1,x2,a,b)
+   local shade=({.82,.77,.85,.79,.83,.76,.84,.80})[i]
+   for _,v in ipairs(plank) do
+    v[3]=.006
+    -- UV V must remain continuous across the entire tabletop. Reusing
+    -- 0..1 per plank duplicated the texture's dark border eight times.
+    v[5]=(v[2]-y1)/(y2-y1)
+    v[9],v[10],v[11],v[12]=shade,shade*.93,shade*.86,1
+    out[#out+1]=v
+   end
+  end
+  return out
+ end
  for _,v in ipairs(out) do
   v[9],v[10],v[11],v[12]=color[1],color[2],color[3],1
  end

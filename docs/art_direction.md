@@ -70,6 +70,22 @@ I colori delle facce dei dadi, dello stato di selezione e dei
 pulsanti devono restare leggibili in alto contrasto. Nessun
 filtro fotografico indiscriminato per fingere materiali storici.
 
+## Tavolo in noce: contatto fisico e assi (v0.1.94)
+
+La board Pixel Life è già la variante iniziale. Il fallback ora
+mostra otto assi in legno con sottili giunzioni, concentrando la
+decorazione lontano dalle facce dei sei dadi.
+Per evitare che i dadi sembrino affondati, la silhouette resta
+0,018 unità sotto il piano di contatto (z=0) e le assi
+decorative solo 0,006 sopra. Il GLB completo opzionale
+usa invece le proprie UV e la texture originale, allineando
+il piano superiore a z=+0,005.
+
+Un GLB derivato ottimizzato dall'originale (4538 triangoli,
+texture colore a 1024²) è consegnato come ZIP separato.
+La PR non include il binario: il fallback integrato funziona
+senza installazioni aggiuntive.
+
 ## Tavolo di gioco (laboratorio v0.1.93)
 
 La candidata principale è la silhouette del tavolo in legno

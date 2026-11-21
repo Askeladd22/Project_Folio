@@ -10,6 +10,32 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.94] - 2026-11-21
+
+**Stato:** allineamento del tavolo in legno Pixel Life, PR
+`feat/wooden-table-surface-alignment-0.1.94`.
+
+### Migliorato
+- Otto assi in noce con giunzioni sottili nel fallback incluso;
+  nessuna decorazione invasiva nella zona centrale.
+- Contatto grafico: fallback -0,018 con assi +0,006
+  rispetto al piano fisico z=0; GLB completo +0,005
+  e ricevitore per ombre separato a -0,018.
+- Preparato e verificato un GLB ottimizzato separato
+  (4538 triangoli, texture colore 1024², ~1,6 MB)
+  per il percorso di caricamento originale già esistente.
+  Il file binario non è parte della PR.
+- Documentazione artistica, tecnica e crediti aggiornati.
+
+### Invariato
+- Sei D6, fisica, collisioni, Farkle, RNG, camera,
+  picking e confronto reversibile F8.
+
+### Verifiche
+- Regressione geometrica aggiornata per entrambi i percorsi.
+- **CI e screenshot Mesa da verificare sul commit finale;**
+  prova del lancio su Windows non eseguita.
+
 ## [0.1.93] - 2026-11-21
 
 **Stato:** tavolo in legno sperimentale, default reversibile con F8
