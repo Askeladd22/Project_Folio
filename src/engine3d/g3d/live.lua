@@ -291,26 +291,41 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   -- The former floor and carving JPGs were deleted with that art split:
   -- only the retained shared wood texture is part of the GPU tray.
   local floor_texture=self.white
-  if style=='merchant' then
+  if style=='merchant' or style=='wooden' then
    if not self.merchantWood then
     self.merchantWood=g.newImage('resources/textures/wood.png',{mipmaps=true})
     self.merchantWood:setFilter('linear','linear')
     self.merchantWood:setMipmapFilter('linear')
    end
    floor_texture=self.merchantWood
-   -- Optional decorative GLB table; physics walls and picking never see it.
-   local prop=Scenery.table_prop
-   if love.filesystem.getInfo(prop.path,'file') then
-    self.table_prop=require('src.engine3d.g3d.glb_loader').load(self.g3d,prop.path,function(model)
-     if prop.remap then Scenery.remap_axes(model,prop.remap) end
-     Scenery.place_table(model,extents,.28)
-    end,prop)
-    self.table_shader=self.table_shader or g.newShader(prop.shader,'lib/g3d/g3d.vert')
-    self.table_shader:send('tableCenter',{
-     (extents[1]+extents[2])*.5,(extents[3]+extents[4])*.5})
-    self.table_shader:send('tableHalf',{
-     (extents[2]-extents[1])*.5,(extents[4]-extents[3])*.5})
-    self.table_prop.shader=self.table_shader
+   if style=='wooden' then
+    -- Full user-supplied GLB is optional; a small source-derived silhouette
+    -- is tracked in Lua for a complete, portable gameplay comparison.
+    local modelpath='resources/models/wooden_table_game_ready_asset.glb'
+    if love.filesystem.getInfo(modelpath,'file') then
+     self.table_prop=require('src.engine3d.g3d.glb_loader').load(self.g3d,modelpath,function(model)
+      Scenery.place_table(model,extents,.28,.24)
+     end,{max_texture=2048})
+    else
+     local model=require('resources.models.wooden_table_mesh').mesh()
+     Scenery.place_table(model,extents,.28,.24)
+     self.table_prop=self.g3d.newModel(model.verts,self.merchantWood)
+    end
+   else
+    -- Keep the previous marble table available as the F8 'book' variant.
+    local prop=Scenery.table_prop
+    if love.filesystem.getInfo(prop.path,'file') then
+     self.table_prop=require('src.engine3d.g3d.glb_loader').load(self.g3d,prop.path,function(model)
+      if prop.remap then Scenery.remap_axes(model,prop.remap) end
+      Scenery.place_table(model,extents,.28)
+     end,prop)
+     self.table_shader=self.table_shader or g.newShader(prop.shader,'lib/g3d/g3d.vert')
+     self.table_shader:send('tableCenter',{
+      (extents[1]+extents[2])*.5,(extents[3]+extents[4])*.5})
+     self.table_shader:send('tableHalf',{
+      (extents[2]-extents[1])*.5,(extents[4]-extents[3])*.5})
+     self.table_prop.shader=self.table_shader
+    end
    end
   end
   self.floor_model=self.g3d.newModel(
@@ -420,7 +435,12 @@ function M:_draw_scene(args)
    -- Opaque floor writes depth first. Transparent shadows then test it
    -- without writing depth; the actual 3D walls and dice always occlude.
    g.setDepthMode('lequal',true)
-   if self.table_prop then self.table_prop:draw() else self.floor_model:draw() end
+   if self.table_prop then
+    -- Wooden models have an open/irregular low-poly surface. The unchanged
+    -- physics-aligned floor must still receive dice shadows without gaps.
+    if args.style=='wooden' then self.floor_model:draw() end
+    self.table_prop:draw()
+   else self.floor_model:draw() end
    g.setDepthMode('lequal',false)
    -- A shadow may darken an opaque floor pixel, but cannot create tray pixels
    -- beyond its edge. Keep the receiver alpha when blending pure black.

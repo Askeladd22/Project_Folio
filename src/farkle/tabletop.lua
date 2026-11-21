@@ -2,8 +2,8 @@ local Bundle = {}
 Bundle.tray_workshop = (function()
 -- Temporary visual workshop. No physics, gameplay, camera or RNG ownership.
 -- First visual book silhouette. F8 preserves access to the original variants.
-local W={current='book'}
-local order={'book','current','A','B','C'}
+local W={current='wooden'}
+local order={'wooden','book','current','A','B','C'}
 -- F8 remains the gameplay-facing switch for g3d book/tray skins.
 function W.cycle()
  for i,id in ipairs(order) do

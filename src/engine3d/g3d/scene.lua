@@ -315,13 +315,15 @@ local S={}
 -- Merchant tints multiply wood.png: walnut gaming top, ink-blackened
 -- press furniture around it (the dream merges table and press bed).
 local PALETTE={
- merchant={.24,.22,.24},book={.76,.67,.51},current={.35,.215,.12},
+ merchant={.24,.22,.24},wooden={.34,.22,.14},
+ book={.76,.67,.51},current={.35,.215,.12},
  A={.31,.18,.095},B={.48,.33,.20},C={.52,.43,.255},
 }
 -- Plain, non-textured floors keep the physical dice visually prominent.
 -- Unlike the old painter's manuscript rubrics these meshes share g3d depth.
 local FLOORS={
- merchant={.70,.62,.60},book={.88,.79,.64},current={.36,.29,.22},
+ merchant={.70,.62,.60},wooden={.80,.73,.64},
+ book={.88,.79,.64},current={.36,.29,.22},
  A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
 }
 function S.floor_vertices(mesh,extents,style)
@@ -343,7 +345,8 @@ function S.style_vertices(mesh,extents,height,style)
  local x1,x2,y1,y2=unpack(extents)
  -- Thin decorative housing; the underlying collision walls do not change.
  local width=style=='book' and .32 or style=='current' and .28
-  or style=='C' and .13 or style=='merchant' and .28 or .40
+  or style=='C' and .13 or style=='merchant' and .28
+  or style=='wooden' and .14 or .40
  local v=mesh.tray_border_vertices(x1,x2,y1,y2,width,height,8)
  local colors=PALETTE[style]
  -- All wall sections retain the same physical heights; only the skin changes.
@@ -446,7 +449,7 @@ local TABLE_LIGHT={0.25,-0.4,0.88}
 -- Scales a Z-up table so its top spans the tray and rim, flush at z=0 where
 -- the flat floor used to be. Lit models get baked shading (g3d is unlit);
 -- scans with baked light only receive the warm night tint.
-function S.place_table(model,extents,rim)
+function S.place_table(model,extents,rim,top_lift)
  local x1,x2,y1,y2=extents[1],extents[2],extents[3],extents[4]
  local mn,mx=model.min,model.max
  local half=math.max(x2-x1,1)*.5+(rim or .28)+.4
@@ -454,7 +457,9 @@ function S.place_table(model,extents,rim)
  -- Depth may be shortened up to 30% so the top does not swallow the rival.
  local depth=math.max(scale*.7,((y2-y1)*.5+(rim or .28)+.8)/((mx[2]-mn[2])*.5))
  local ox,oy=(x1+x2)*.5-(mn[1]+mx[1])*.5*scale,(y1+y2)*.5-(mn[2]+mx[2])*.5*depth
- local oz=-mx[3]*scale
+ -- The real table has a raised rail above its flat plank surface.
+ -- Lift the ornamental rim slightly while the physical floor stays at z=0.
+ local oz=-mx[3]*scale+(top_lift or 0)
  local cx,cy=(x1+x2)*.5,(y1+y2)*.5
  local hx,hy=(x2-x1)*.5,(y2-y1)*.5
  for _,v in ipairs(model.verts) do
@@ -471,7 +476,7 @@ function S.place_table(model,extents,rim)
    math.min(1,shade*(model.unlit and .74 or .60))
  end
  model.min={mn[1]*scale+ox,mn[2]*depth+oy,mn[3]*scale+oz}
- model.max={mx[1]*scale+ox,mx[2]*depth+oy,0}
+ model.max={mx[1]*scale+ox,mx[2]*depth+oy,top_lift or 0}
  return model
 end
 function S.face_color(die,i)

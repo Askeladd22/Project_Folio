@@ -10,6 +10,47 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.93] - 2026-11-21
+
+**Stato:** tavolo in legno sperimentale, default reversibile con F8
+sul branch `feat/wooden-game-ready-board-0.1.93`.
+Nessuna integrazione in `main` senza UAT e approvazione.
+
+### Aggiunto
+- Variante visiva `wooden` basata sulla silhouette dell'asset
+  `wooden_table_game_ready_asset.glb` allegato dall'utente:
+  243 vertici quantizzati, 497 triangoli con fallback tracciato in
+  `resources/models/wooden_table_mesh.lua`. La texture
+  originale completa non è inclusa; il fallback usa
+  `resources/textures/wood.png` e la palette walnut del progetto.
+- Caricamento opzionale del GLB completo dall'omonimo percorso in
+  `resources/models/`, con loader glTF già esistente.
+- Attribuzione e modifiche Pixel Life, licenza CC BY 4.0, in
+  `resources/models/WOODEN_TABLE_CREDITS.md`.
+- Test geometria e licenza dell'asset, test di separazione decorazione/
+  collisioni, e verifica CI Python del payload compresso.
+
+### Modificato
+- `wooden` è la prima skin F8. `book` mantiene il tavolo precedente;
+  `current`, `A`, `B`, `C` restano confrontabili senza riavviare.
+- Il rendering mantiene il `floor_model` fisico sul piano `z=0`
+  anche con la mesh decorativa, per preservare ombre e continuità
+  del contatto; il bordo dell'arredo sale di 0,24 unità mondo.
+- Documentazione artistica e mappa tecnica aggiornate.
+
+### Non modificato
+- Sei D6, collisioni, gravità, impulsi, skill del lancio, picking,
+  camera, Farkle, RNG e HUD numerico. Nessuna carta, HP o nuova posta.
+
+### Verifiche e gate
+- Baseline letta: `main@00a80db58dcf84fc8e81ab678c0988ef60efc584`.
+- **Test e CI da verificare sul commit della PR**: non dichiarare PASS
+  prima dei risultati. UAT Windows 720p/1080p/ultrawide,
+  picking del retro, lancio manuale, contrasto dei dadi e
+  confronto screenshot tavolo originale vs walnut restano aperti.
+- Prima di redistribuire un asset di terzi, verificare attribuzione
+  e disponibilità della licenza sul sito originale.
+
 ## [0.1.92] - 2026-11-20
 
 **Stato:** revisione della composizione 2.5D, ancora sperimentale

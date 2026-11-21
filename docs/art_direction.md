@@ -70,6 +70,23 @@ I colori delle facce dei dadi, dello stato di selezione e dei
 pulsanti devono restare leggibili in alto contrasto. Nessun
 filtro fotografico indiscriminato per fingere materiali storici.
 
+## Tavolo di gioco (laboratorio v0.1.93)
+
+La candidata principale è la silhouette del tavolo in legno
+di **Pixel Life**, ridotta e reinterpretata nel materiale per
+privilegiare il contrasto con i sei dadi. Il piano centrale
+resta relativamente uniforme, il bordo meno monumentale della
+precedente decorazione; il Rivale PNG rimane indipendente.
+La variante precedente è disponibile con **F8**: nessuna
+decisione artistica è definitiva finché le due schermate non
+sono confrontate in una prova giocata.
+
+La geometria derivata e il GLB originale sono materiali di terzi
+con attribuzione CC BY 4.0: la documentazione è in
+`resources/models/WOODEN_TABLE_CREDITS.md`. Non scambiare
+il fallback a bassa poligonizzazione per un export identico
+all'asset originale.
+
 ## Riferimenti e accuratezza
 
 L'*Hypnerotomachia Poliphili* (1499) è un riferimento per
