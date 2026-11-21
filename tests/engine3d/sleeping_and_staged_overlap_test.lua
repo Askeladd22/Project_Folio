@@ -18,7 +18,7 @@ end
 -- bodies are asleep (the previous solver skipped exactly this case).
 do
  local w=world()
- w[1]=die(0,0,3);w[2]=die(.40,0,3)
+ w[1]=die(0,0,.5);w[2]=die(.40,0,.5)
  w[1].asleep=true;w[2].asleep=true
  assert(Collision.overlap(w[1],w[2]))
  w:update(.01)
@@ -26,7 +26,10 @@ do
  assert(not overlap or overlap.depth<.001,
   'two sleeping cubes remained penetrated after SAT passes')
  assert(w[1].asleep and w[2].asleep,
-  'separating resting cubes must not introduce a jittering wake-up')
+  'separating supported resting cubes must not trigger a wake-up')
+ for _=1,30 do w:update(.01) end
+ assert(w[1].asleep and w[2].asleep,
+  'overlap correction must remain stable over 30 fixed ticks')
 end
 -- Staging a scored cube in an occupied rear slot must find empty
 -- geometry instead of leaving an immovable collider inside its neighbour.
