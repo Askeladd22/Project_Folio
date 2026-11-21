@@ -36,8 +36,8 @@ branch `feat/immersive-merchant-duel-ui-0.1.98`. Nessun merge in
   selezione e picking mantengono la stessa trasformazione prospettica.
 
 ### Corretto
-- Validazione Farkle di un full house 4+2 privo di 1/5:
-  il verificatore usa lo scorer ufficiale, non un secondo algoritmo parziale.
+- Il punteggio e il regolamento di produzione restano byte-identici
+  alla baseline, per non invalidare il laboratorio P4ND0RA.
 - Test datato del tavolo default: il preset attuale è `old_wooden`
   come previsto dalla 0.1.96, non `wooden_compact`.
 - Recupero del lancio fisico fallito accessibile anche durante
@@ -51,6 +51,9 @@ branch `feat/immersive-merchant-duel-ui-0.1.98`. Nessun merge in
   e leggibilità 1280×720, 1920×1080, ultrawide.
 - Calibrazione probabilistica, giocabilità e bilanciamento AI
   **non dimostrati** dai test del codice.
+- **Debito preesistente distinto**: nel regolamento di produzione il
+  riconoscimento di Farkle non copre ancora il full house 4+2 senza 1/5,
+  benché la tabella premi 200 punti. Richiede fix canonico separato.
 
 ## [0.1.97] - 2026-11-21
 
