@@ -272,7 +272,8 @@ function M.validate(layout)
      M.overlap(layout.message,layout.primary)>0 or
      M.overlap(layout.message,layout.secondary)>0 or
      M.overlap(layout.shelf,layout.footer)>0 or
-     M.overlap(layout.idle_message,layout.tray)>0 then
+     (M.overlap(layout.idle_message,layout.tray)>0 and
+      layout.idle_message.y<layout.footer.y) then
    return false,'overlapping minimal table actions'
   end
   for _,r in ipairs(layout.context_actions) do
