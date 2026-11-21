@@ -16,6 +16,6 @@ Install [LÖVE 11.x](https://love2d.org/). On Windows, run `run_game.cmd`; other
 
 ## Code and design
 
-The production Lua source is under `src/`: [controller](src/farkle/controller.lua), [HUD](src/farkle/ui.lua), [Farkle rules](src/farkle/rules.lua), [3D dice](src/farkle/dice.lua), and [main menu](src/screens/frontend.lua). Historical research prototypes remain in `experiments/`, not as alternate playable modes.
+The production code comprises **30 Lua source files** under `src/`: [controller](src/farkle/controller.lua), [HUD](src/farkle/ui.lua), [Farkle rules](src/farkle/rules.lua), [3D dice](src/farkle/dice.lua), and [main menu](src/screens/frontend.lua). Historical research prototypes remain in `experiments/`, not as alternate playable modes.
 
 [Technical map](docs/technical.md) · [Farkle rules / historical baseline](docs/farkle_rules.md) · [Vision](docs/project_vision.md) · [Changelog](CHANGELOG.md) · [Third-party licenses](lib/licenses/)
