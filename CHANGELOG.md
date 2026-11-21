@@ -10,6 +10,41 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.96] - 2026-11-21
+
+**Stato:** esperimento visivo Old Wooden Table di Alex Krush,
+branch `feat/old-wooden-alex-krush-0.1.96`. Nessun merge diretto
+in `main`.
+
+### Aggiunto
+- Preset `old_wooden` per il tavolo da dadi, con confronto F8
+  a `wooden_compact` e alle varianti precedenti.
+- Percorso GLB originale opzionale:
+  `resources/models/old_wooden_table_game_ready_asset.glb`.
+  Il file binario non è incluso nella PR: viene consegnato
+  separatamente con il percorso di installazione pronto.
+- Geometria di riserva in `resources/models/old_wooden_table_fallback.lua`,
+  **approssimazione originale**, non replica esatta della mesh
+  allegata dall'utente. Consente una build funzionante senza GLB.
+- Funzione `Scenery.keep_old_support_proportions` per mantenere
+  la proporzione delle gambe mentre il piano superiore si adatta
+  ai confini esistenti del tavolo fisico.
+- Crediti e provenienza in `resources/models/OLD_WOODEN_TABLE_CREDITS.md`.
+- Regressione sulla profondità, la superficie fisica, le normali
+  e la reversibilità della scelta F8.
+
+### Invariato
+- Sei D6, camera, fisica, collisioni, gravità, spin, picking,
+  Farkle, RNG e scorecard. Nessuna nuova risorsa o carta.
+- Il vecchio tavolo Pixel Life resta disponibile e ripristinabile.
+
+### Gate
+- Controlli Lua/LuaJIT e Mesa e verifica screenshot da eseguire
+  sull'head della PR. Nessun risultato inventato.
+- Modello GLB opzionale: texture/materiali/rotazione ancora da
+  verificare in LÖVE/Windows perché il binario non è nella CI.
+- Playtest umano e conferma estetica obbligatori prima del merge.
+
 ## [0.1.95] - 2026-11-21
 
 **Stato:** variante B — Compatta del tavolo da dadi, proposta
