@@ -4,8 +4,8 @@ local Scenery=require('src.engine3d.g3d.scene').scenery
 local Scheme=require('src.data.dice_schema').scene
 local model=require('resources.models.wooden_table_mesh')
 local saved=Workshop.current
-assert(saved=='wooden_compact',
- 'new game must start on the reversible compact player-seat table')
+assert(saved=='old_wooden',
+ 'new game must start on the reversible old wooden table')
 assert(model.vertex_count==243 and model.face_count==497,
  'the source-derived low-poly geometry metadata must remain stable')
 assert(Scheme.box.border_height==.74 and
