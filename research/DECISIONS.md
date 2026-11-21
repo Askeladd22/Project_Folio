@@ -79,3 +79,11 @@ Introdotta una struttura di ricerca e validazione **documentale**, non è stata 
   controllo che la vecchia denominazione non sia più utilizzata nei componenti attivi.
 - **Storia:** non riscrivere i commit precedenti né i titoli storici dei log;
   le sigle dei branch originali rimangono identificatori di provenienza.
+
+## D-003 — Single Opponent Duel entry and legible turns (21 November 2026)
+
+- **Baseline:** `main@3864304e84175eca31569949fe5ee0b950aacd16`, v0.1.100.
+- **Approved in chat:** replace the two game entries with a single Opponent Duel, English-only game UI, scored physical dice left on the tabletop and slower, explained Opponent decisions.
+- **Unchanged:** canonical six-D6 Farkle scoring, g3d physics and AI bank/reroll policy. The old solo commission mode is kept internally for regression and R&D only; no new health, cards or permanent roguelite progression is implied.
+- **Presentation:** show selection preview, set-aside gain, current unbanked total, secure score and risk decision in separate timed beats.
+- **Gate:** full Lua/LuaJIT, Mesa and Windows LÖVE visual/manual tests before merge. Not a claim of measured competitiveness or a finished run structure.

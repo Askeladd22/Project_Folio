@@ -4,7 +4,17 @@ Percorsi di produzione ricontrollati il 18 novembre 2026. Documento tecnico di r
 Questo documento descrive i componenti del prototipo corrente.
 La [visione](project_vision.md) raccoglie la direzione narrativa e progettuale.
 
-## Modalità sperimentale: duello al Opponent (branch 0.1.98)
+## Current player-facing mode — Opponent Duel (0.1.101)
+
+New Game routes directly to `scriptorium` with `mode='duel'` and generic ID `opponent`. The old three-commission prototype remains in the rules for regression and R&D comparison but is **not selectable in the game menu**. The live UI and help are English-only; historical research records retain their original language.
+
+Both sides use the canonical six-D6 scorer and the same g3d accepted physical results. The player uses direct right-click pickup/release only. A scored die stays on the tabletop: `D.stage_kept` parks its physical body along the rear edge while the existing kinematic input guard prevents movement during subsequent throws. Kept IDs/faces remain authoritative, and the old detached 2D accepted-dice register is hidden during duels.
+
+The Opponent follows observable phases: review settled roll → highlight scoring dice and preview points → set aside and display the at-risk total → announce bank/reroll decision and risk reasoning → act. Dedicated panels show the last gain, banked score, current pot and action. Timed beats change presentation only, not Farkle scoring or AI decision thresholds.
+
+**Gates:** full Lua/LuaJIT and Python regression suites, Mesa screenshots and Windows LÖVE visual/manual tests with six hot dice, actor change, Farkle, pausing during intentions, 50 physical throws, large text and 1280×720/1920×1080/ultrawide displays. CI passing does not replace playtest.
+
+## Historical prototype: Opponent Duel at 0.1.98
 
 **Stato: proposta in PR, non ancora stabilizzata.** Dal selettore
 partita, `mode='duel'` avvia una sfida a 500 punti assicurati con

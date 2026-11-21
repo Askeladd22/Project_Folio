@@ -10,6 +10,20 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.101] - 2026-11-21
+
+**Status:** Opponent Duel as the sole player-facing mode; English HUD; visible table-kept dice; readable staged AI actions. Branch `feat/unified-opponent-duel-english-0.1.101`.
+
+### Changed
+- New Game launches the six-D6 Opponent Duel directly (first to bank 500 points). The standalone Farkle Roguelite menu option is retired; historical commission logic remains for tests/research.
+- Scored dice remain visible on the physical g3d tabletop, parked at the back instead of appearing only as separate 2D portraits.
+- Opponent now reviews the roll, highlights chosen dice, sets them aside, explains the bank/reroll decision and acts in legible beats. The HUD shows last set-aside gain, secure score, at-risk pot and action reasoning.
+- Translated gameplay notices, modal controls, help and HUD into English.
+
+### Verification
+- **Pending for this commit:** Lua 5.4/LuaJIT regression, LÖVE/Mesa screenshot, Python source checks.
+- **Manual gate remains:** Windows real pickup, all dice/hot dice, collision behavior, AI pace, pause, high contrast/big text and 1280×720/1920×1080/ultrawide screenshots.
+
 ## [0.1.100] - 2026-11-21
 
 **Stato:** follow-up di coerenza a 0.1.99, sul branch `fix/opponent-naming-audit-0.1.100`, senza variazioni a punteggi, fisica o gameplay.

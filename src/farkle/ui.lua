@@ -139,6 +139,7 @@ function M.build(which)
    -- The 3D floor and its physical hitbox stay completely separate.
    single_action=rect(720,993,480,75),
    opponent_panel=rect(1410,114,454,151),
+   opponent_action=rect(1410,281,454,110),
    duel_turn=rect(655,38,610,54),
    secured_caption=rect(60,27,216,22),
    secured_value=rect(60,51,216,52),
@@ -201,7 +202,7 @@ function M.validate(layout)
    'turns_caption','turns_value','shelf_label','score_panel',
    'stakes_caption','stakes_track',
    'footer','footer_trim','single_action','idle_message',
-   'opponent_panel','duel_turn'}
+   'opponent_panel','opponent_action','duel_turn'}
   for _,name in ipairs(required) do
    local r=layout[name]
    if not r or r.w<=0 or r.h<=0 or not M.contains(bounds,r) then
@@ -731,9 +732,9 @@ function M.draw(u,hits)
   local pts=math.max(14,math.min(27,math.floor(16*UI.scale()*
        (UI.big_text() and 1.2 or 1)+.5)))
   if not fonts[pts] then fonts[pts]=g.newFont(pts) end
-  local title=hand.shaken and 'SCOSSA RILEVATA · LASCIA PER LANCIARE'
-    or hand.count>1 and (hand.count..' DADI IN MANO · SCUOTI O LANCIA')
-    or 'DADO IN MANO · SCUOTI O LANCIA'
+  local title=hand.shaken and 'SHAKE DETECTED · RELEASE TO THROW'
+    or hand.count>1 and (hand.count..' DICE HELD · SHAKE OR THROW')
+    or 'DIE HELD · SHAKE OR THROW'
   local width=fonts[pts]:getWidth(title)+20
   local height=pts+16
   local x=hand.x+22
@@ -885,44 +886,44 @@ local function draw_pause(u)
     high_contrast=RuntimeUI.high_contrast()})
   local closeRect=confirming and ModalLayout.pause_confirm_close
     or ModalLayout.pause_close
-  pause_button(u,'close','Chiudi [Esc]',closeRect,
+  pause_button(u,'close','Close [Esc]',closeRect,
     function() u.modal=confirming and 'run' or nil end)
   if not confirming then
-    fitted('PARTITA IN PAUSA',ModalLayout.pause_title,33,22,ink,'left')
-    fitted('Scegli come proseguire.',ModalLayout.pause_intro,
+    fitted('GAME PAUSED',ModalLayout.pause_title,33,22,ink,'left')
+    fitted('Choose how to continue.',ModalLayout.pause_intro,
       21,15,muted,'left')
     local items=ModalLayout.pause_items
-    pause_button(u,'resume','Riprendi la partita',items[1],
+    pause_button(u,'resume','Resume Game',items[1],
       function() u.modal=nil end,true)
-    pause_button(u,'settings','Impostazioni',items[2],
+    pause_button(u,'settings','Settings',items[2],
       function()
         u.modal=nil
         Navigation.go('settings',{return_to='scriptorium'})
       end)
-    pause_button(u,'restart','Ricomincia la partita',items[3],
+    pause_button(u,'restart','Restart Duel',items[3],
       function() u.modal='run_restart_confirm' end)
-    pause_button(u,'mainmenu','Torna al menu principale',items[4],
+    pause_button(u,'mainmenu','Return to Main Menu',items[4],
       function() u.modal='run_exit_confirm' end)
-    paragraph('La partita non dispone ancora di un salvataggio automatico.',
+    paragraph('Autosave is not available yet.',
       frame.x+54,frame.y+508,frame.w-108,64,19,14,muted,'center')
   else
     local restarting=u.modal=='run_restart_confirm'
-    fitted(restarting and 'RICOMINCIARE?' or 'TORNARE AL MENU?',
+    fitted(restarting and 'RESTART DUEL?' or 'RETURN TO MENU?',
       ModalLayout.pause_confirm_title,31,19,ink,'left')
     paragraph(restarting
-      and 'I progressi della partita corrente andranno perduti. La modalità di gioco resterà invariata.'
-      or 'I progressi non salvati andranno perduti. Potrai iniziare una nuova partita dal menu principale.',
+      and 'Current duel progress will be lost. You will restart the same mode.'
+      or 'Unsaved progress will be lost. Start another duel from the main menu.',
       frame.x+55,frame.y+132,frame.w-110,126,24,16,muted,'left')
-    pause_button(u,'cancel','Annulla',ModalLayout.pause_confirm_actions[1],
+    pause_button(u,'cancel','Cancel',ModalLayout.pause_confirm_actions[1],
       function() u.modal='run' end,true)
     if restarting then
-      pause_button(u,'confirmrestart','Conferma riavvio',
+      pause_button(u,'confirmrestart','Confirm Restart',
         ModalLayout.pause_confirm_actions[2],function()
-          local mode=(u.game and u.game.mode) or 'build'
+          local mode=(u.game and u.game.mode) or 'duel'
           u:reset(mode)
         end)
     else
-      pause_button(u,'confirmexit','Conferma uscita',
+      pause_button(u,'confirmexit','Confirm Exit',
         ModalLayout.pause_confirm_actions[2],function()
           u.modal=nil
           Navigation.go('main_menu')
@@ -1002,8 +1003,10 @@ if H.reward_active(s) then reward(u);return end
     txt('THE MANUSCRIPT',425,180,750,30)
     -- Same folio renderer used by the in-game side panel; the previous
     -- unbound manuscript(...) call crashed every time this modal opened.
-    FolioView.draw(s,u.presentation,665,245,510,625,txt,R.contracts[s.stage].target)
-    paragraph(R.contracts[s.stage].condition,435,882,1050,49,24,15)
+    FolioView.draw(s,u.presentation,665,245,510,625,txt,
+      u.duel and u.duel.target or R.contracts[s.stage].target)
+    paragraph(u.duel and 'First to bank 500 points wins. No commissions or medals in this duel.'
+      or R.contracts[s.stage].condition,435,882,1050,49,24,15)
  else
   txt('FARKLE RULES',425,180,800,30)
   local sections=H.help_sections(s);u.helpTab=math.max(1,math.min(3,u.helpTab or 1))
@@ -1066,47 +1069,47 @@ function M.build(u)
  end
  local block=s.phase=='rolling' and u.state~='physics_error'
  if H.reward_active(s) then return a end
- add('help','Regole [?]',not block,function() u.modal='help' end,'header')
- add('runmenu','Pausa [Esc]',not block,function() u.modal='run' end,'header')
+ add('help','Rules [?]',not block,function() u.modal='help' end,'header')
+ add('runmenu','Pause [Esc]',not block,function() u.modal='run' end,'header')
  if u.duel and (u.duel.actor=='opponent' or u.duel.winner or s.phase=='ended') and not u.physicalFailure then return a end
  -- Folio remains accessible with [F] via the modal dispatcher.
  if s.medal~='none' then
   local d=Medals.get(s.medal)
   local uses=Medals.remaining(s)
-  add('medaluse',(d and d.label or 'Correttore')..' · '..uses..' usi',
+  add('medaluse',(d and d.label or 'Corrector')..' · '..uses..' uses',
     d~=nil and not block and not H.commission_closed(s),
     function() u.medalDice={};u.modal='medaluse' end,'context')
  end
 
  if u.physicalFailure then
-  add('retryphysical','Riprova tiro fisico',true,
-   function() u:retry_physical() end,'primary','Recupero tecnico, non Farkle')
+  add('retryphysical','Retry Physical Throw',true,
+   function() u:retry_physical() end,'primary','Technical recovery, not a Farkle')
  elseif s.phase=='rescue' then
-  add('rescue','Usa Correttore [M]',true,
-   function() u:request(true,nil,true) end,'primary','Salva il turno · poi afferra i dadi')
-  add('fail','Accetta Farkle',true,
+  add('rescue','Usa Corrector [M]',true,
+   function() u:request(true,nil,true) end,'primary','Save this turn · then grab the dice')
+  add('fail','Accept Farkle',true,
    function() u:act('accept_bust',function() return R.fail(s) end) end,
-   'secondary','Perdi i punti a rischio')
+   'secondary','Lose your unbanked points')
  elseif H.commission_closed(s) then
   if s.phase=='advance' then
-   add('next','Prossima commissione [N]',true,
+   add('next','Next Commission [N]',true,
      function() u:act('next',function() return R.advance(s) end) end,'primary')
   end
  elseif s.phase=='ended' then
-  add('next','Prossimo turno [N]',true,
+  add('next','Next Turn [N]',true,
    function() u:act('next',function() return R.next_turn(s) end) end,'primary')
  else
   local option=R.selection_option(s)
   local pts=option and option.points
   local has_selection=next(s.selected)~=nil
   if has_selection then
-   local label=pts and ('Accantona · '..pts..' pt')
-     or (H.can_complete(s) and 'Completa la combinazione' or 'Selezione non valida')
-   local detail='[A] · Completa o correggi la selezione'
+   local label=pts and ('Set Aside · '..pts..' pt')
+     or (H.can_complete(s) and 'Complete the combination' or 'Invalid selection')
+   local detail='[A] · Complete or correct the selection'
    if pts then
     local free=option.remaining
-    detail='[A] · '..(s.pot+pts)..' a rischio · '..
-      (free==0 and '6 dadi caldi' or free..' dadi liberi')
+    detail='[A] · '..(s.pot+pts)..' at risk · '..
+      (free==0 and '6 hot dice' or free..' dice left')
    end
    add('take',label,
      pts~=nil,function() u:act('take',function() return R.take(s) end) end,
@@ -1117,13 +1120,13 @@ function M.build(u)
   -- directly, without forcing a separate Set aside action first.
   local bank_detail
   if ok then
-   bank_detail='[Invio] · Al sicuro · termina il turno'
+   bank_detail='[Enter] · Secures points and ends turn'
   elseif total<min then
-   bank_detail='Soglia '..min..' pt · ne mancano '..(min-total)
+   bank_detail='Minimum '..min..' pt · ne mancano '..(min-total)
   else
-   bank_detail='Incasso non disponibile'
+   bank_detail='Bank unavailable'
   end
-  add('bank','Incassa '..total..' pt',ok,
+  add('bank','Bank '..total..' pt',ok,
    function() u:act('bank',function()
     return u.duel and u:duel_bank() or R.bank_turn(s)
    end) end,
@@ -1135,19 +1138,19 @@ end
 function M.state(u)
  if u.mouseThrow then
   local count=u.mouseThrow.held and #u.mouseThrow.held or 1
-  return (count>1 and ('GRUPPO DI '..count..' DADI') or 'DADO')..
-    ' IN MANO · Scuoti per ruotare · Rilascia per lanciare · Esc annulla'
+  return (count>1 and ('GRUPPO DI '..count..' DICE') or 'DADO')..
+    ' HELD · Shake to rotate · Release to throw · Esc cancels'
  end
  if u.marquee and Marquee.dragged(u.marquee) then
-  return 'SELEZIONE FISICA · Trascina sui dadi e rilascia'
+  return 'PHYSICAL SELECTION · Drag over dice and release'
  end
  local count=Marquee.count(u.dragSelected)
  if count>0 and (u.manualRoll or R.can_roll(u.game)) then
-  return count..(count==1 and ' DADO PRONTO' or ' DADI PRONTI')..
-    ' · Tasto destro per afferrare · Esc annulla'
+  return count..(count==1 and ' DIE PRONTO' or ' DICE PRONTI')..
+    ' · Right-click to grab · Esc cancels'
  end
  if u.manualRoll then
-  return 'LANCIO MANUALE · '..u.manualRoll.count..' dadi ancora da lanciare'
+  return 'MANUAL THROW · '..u.manualRoll.count..' dice left to throw'
  end
  return H.state_text(u)
 end
@@ -1188,7 +1191,8 @@ end
 
 function M.draw(u)
  local s=u and u.game
- if not s or not s.used then return end
+ -- The duel displays accepted dice as physical 3D bodies on the table.
+ if not s or not s.used or u.duel then return end
  local g=love.graphics
  local slots=M.slots(Layout.build())
  local p=u.presentation
@@ -1381,43 +1385,43 @@ local function compact_status(u)
    (u.dragSelected and next(u.dragSelected) and R.can_roll(s)) then
   return Actions.state(u)
  end
- if u.physicalFailure then return 'Tiro non valido: usa Riprova tiro fisico.' end
- if u.duel and u.duel.winner then return u.duel.winner=='player' and 'VITTORIA · Hai battuto il Opponent!' or 'SCONFITTA · Il Opponent ha vinto.' end
- if u.duel and u.duel.actor=='opponent' then return u.duel.intent or 'Il Opponent sta giocando.' end
- if u.duel and s.phase=='ended' then return 'Turno concluso · Il Opponent prepara i dadi.' end
- if s.phase=='rolling' then return 'I dadi stanno rotolando…' end
+ if u.physicalFailure then return 'Tiro non valido: usa Retry Physical Throw.' end
+ if u.duel and u.duel.winner then return u.duel.winner=='player' and 'VICTORY · You beat the Opponent!' or 'DEFEAT · Opponent won the duel.' end
+ if u.duel and u.duel.actor=='opponent' then return u.duel.intent or 'Opponent is playing.' end
+ if u.duel and s.phase=='ended' then return 'Turn over · Opponent prepares to throw.' end
+ if s.phase=='rolling' then return 'The dice are rolling…' end
  if s.phase=='fresh' then
-  return 'Tasto destro: afferra e rilascia il dado · Sinistro: seleziona un gruppo'
+  return 'Right-click: grab and throw · Left-drag: select a group'
  end
- if s.phase=='rescue' then return 'FARKLE · Usa il Correttore o accetta la perdita.' end
- if s.phase=='ended' then return 'Turno concluso · Continua con [N].' end
- if s.phase=='lost' then return 'Partita terminata · Nessun turno rimasto.' end
- if s.phase=='won' then return 'Partita completata.' end
- if s.phase=='advance' then return 'Obiettivo raggiunto · Prosegui con [N].' end
+ if s.phase=='rescue' then return 'FARKLE · Usa il Corrector o accetta la perdita.' end
+ if s.phase=='ended' then return 'Turn over · Continue with [N].' end
+ if s.phase=='lost' then return 'Game over · No turns left.' end
+ if s.phase=='won' then return 'Game complete.' end
+ if s.phase=='advance' then return 'Target reached · Continue with [N].' end
  if s.phase=='upgrade' or s.phase=='medal' then
-  return 'Obiettivo raggiunto · Scegli una ricompensa.'
+  return 'Target reached · Choose a reward.'
  end
- if s.hot then return 'Dadi caldi · Rilancia tutti e sei oppure incassa.' end
+ if s.hot then return 'Hot dice · Throw all six again or bank.' end
  if next(s.selected) then
   local pts=R.selection(s)
   if pts then
    local can_bank,total,minimum=R.bank_status(s)
    if can_bank then return '' end
-   return 'Incasso ancora bloccato · Soglia '..minimum..' pt'
+   return 'Incasso ancora bloccato · Minimum '..minimum..' pt'
   end
-  if H.can_complete(s) then return 'Aggiungi i dadi che completano la combinazione.' end
-  return 'Deseleziona i dadi che non fanno parte di una combinazione.'
+  if H.can_complete(s) then return 'Add dice to complete the combination.' end
+  return 'Deselect any dice that do not score.'
  end
  if s.scored then
   local can_bank,total,minimum=R.bank_status(s)
   if can_bank then return '' end
-  return 'Soglia '..minimum..' pt · Incasso non ancora possibile'
+  return 'Minimum '..minimum..' pt · Bank not yet available'
  end
  local eligible=H.eligible(s)
  local keys={}
  for i=1,6 do if eligible[i] then keys[#keys+1]='['..i..']' end end
  if #keys==0 then return '' end
- return 'Scegli i dadi segnati · clic o tasti '..table.concat(keys,' ')
+ return 'Select highlighted dice · Click or press '..table.concat(keys,' ')
 end
 local opponent_room,room_edges,active_room_path
 local atmosphere_shader
@@ -1548,8 +1552,8 @@ local function draw_table_footer(u,layout,actions)
   end
  end
  -- Only real accepted dice are painted on this unobtrusive register.
- if next(s.used) then
-  write_fitted('DADI ACCANTONATI',layout.shelf_label,16,12,Art.rgba('ochre_light'))
+ if next(s.used) and not u.duel then
+  write_fitted('DICE SET ASIDE',layout.shelf_label,16,12,Art.rgba('ochre_light'))
  end
  local choosing=s.phase=='ready' and not s.scored and not next(s.selected) and not u.physicalFailure
  local notice_rect=(visible_controls==0 or choosing)
@@ -1612,9 +1616,9 @@ function V.draw(u)
  g.line(298,29,298,164)
  g.line(56,110,560,110)
  panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
- write_fitted(u.duel and 'TU · ASSICURATI' or 'ASSICURATI',layout.secured_caption,21,15,paper_muted)
+ write_fitted(u.duel and 'YOU · BANKED' or 'BANKED',layout.secured_caption,21,15,paper_muted)
  write_fitted((u.duel and u.duel.scores.player or s.bank)..' pt',layout.secured_value,47,27,paper_ink)
- write_fitted('A RISCHIO',layout.risk_caption,21,15,paper_muted)
+ write_fitted('AT RISK',layout.risk_caption,21,15,paper_muted)
  write_fitted((u.duel and (u.duel.actor=='player' and s.pot or 0) or s.pot)..' pt',layout.risk_value,47,27,paper_warning)
  local d=u.duel
  local c=d and {target=d.target,limit=0} or R.contracts[s.stage]
@@ -1622,24 +1626,31 @@ function V.draw(u)
   local mr=layout.opponent_panel
   panel(mr,Art.rgba('surface',.93),border_ink,6)
   write_fitted('OPPONENT',{x=mr.x+18,y=mr.y+8,w=mr.w-36,h=26},22,16,paper_ink)
-  write_fitted('Sicuri: '..d.scores.opponent..' pt',{x=mr.x+18,y=mr.y+43,w=mr.w-36,h=33},28,20,paper_ink)
-  write_fitted('A rischio: '..(d.actor=='opponent' and s.pot or 0)..' pt',
+  write_fitted('Banked: '..d.scores.opponent..' pt',{x=mr.x+18,y=mr.y+43,w=mr.w-36,h=33},28,20,paper_ink)
+  write_fitted('At risk: '..(d.actor=='opponent' and s.pot or 0)..' pt',
    {x=mr.x+18,y=mr.y+82,w=mr.w-36,h=23},20,15,paper_warning)
-  write_fitted(d.actor=='opponent' and 'STA GIOCANDO' or 'IN ATTESA',
-   {x=mr.x+18,y=mr.y+117,w=mr.w-36,h=23},18,14,paper_muted)
+  local last=d.selected_points and ('Selecting: +'..d.selected_points..' pt')
+    or d.last_take and ('Last set aside: +'..d.last_take..' pt ('..d.last_count..' dice)')
+    or (d.actor=='opponent' and 'PREPARING' or 'WAITING')
+  write_fitted(last,{x=mr.x+18,y=mr.y+113,w=mr.w-36,h=27},18,13,paper_muted)
+  local ar=layout.opponent_action
+  panel(ar,Art.rgba('surface',.94),border_ink,5)
+  write_fitted('OPPONENT MOVE',{x=ar.x+15,y=ar.y+9,w=ar.w-30,h=21},16,13,paper_muted)
+  write_fitted(d.move or 'WAITING',{x=ar.x+15,y=ar.y+34,w=ar.w-30,h=31},23,17,paper_ink)
+  write_fitted(d.intent or '',{x=ar.x+15,y=ar.y+75,w=ar.w-30,h=22},17,12,paper_muted)
   panel(layout.duel_turn,Art.rgba('earth_dark',.86),Art.rgba('ochre',.65),4)
-  write_fitted(d.winner and (d.winner=='player' and 'HAI VINTO IL DUELLO' or 'IL OPPONENT VINCE')
-   or ('TURNO · '..(d.actor=='player' and 'TU' or 'OPPONENT')),
+  write_fitted(d.winner and (d.winner=='player' and 'YOU WON THE DUEL' or 'OPPONENT WINS')
+   or ('TURN · '..(d.actor=='player' and 'YOU' or 'OPPONENT')),
    layout.duel_turn,24,17,Art.rgba('paper'),'center')
  end
- write_fitted('OBIETTIVO',layout.objective_caption,18,14,paper_muted)
+ write_fitted('TARGET',layout.objective_caption,18,14,paper_muted)
  write_fitted(c.target..' pt',layout.objective_value,29,20,paper_gold)
- write_fitted(u.duel and 'TURNO' or 'TURNI RIMASTI',layout.turns_caption,18,14,paper_muted)
- write_fitted(u.duel and (u.duel.actor=='player' and 'TU' or 'RIVALE') or turns_remaining(s,c),
+ write_fitted(u.duel and 'TURN' or 'TURNS LEFT',layout.turns_caption,18,14,paper_muted)
+ write_fitted(u.duel and (u.duel.actor=='player' and 'YOU' or 'OPPONENT') or turns_remaining(s,c),
   layout.turns_value,29,20,paper_ink)
  g.setColor(unpack(Art.rgba('border',.40)))
  g.line(56,171,560,171)
- write_fitted('VERSO L’OBIETTIVO  ·  SALVATI / A RISCHIO',
+ write_fitted('VERSO L’TARGET  ·  SALVATI / AT RISK',
    layout.stakes_caption,17,13,paper_muted)
  draw_stakes_track(u.duel and {bank=u.duel.scores.player,pot=u.duel.actor=='player' and s.pot or 0}
    or s,c.target,layout)

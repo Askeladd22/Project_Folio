@@ -1,23 +1,21 @@
 # Project Folio
 
-*Project Folio* è il titolo di lavoro di un roguelite di dadi ambientato nella Venezia di Aldo Manuzio. Di giorno un incisore prepara le xilografie per la stampa. Di notte sogna che le figure prendano posto al tavolo e lo sfidino ai dadi.
+*Project Folio* is a work-in-progress dice roguelite set in Renaissance Venice. An engraver works on woodcuts by day; at night, figures from books challenge the player to dice duels.
 
-Nel prototipo puoi giocare a Farkle sul **tavolo da gioco**. L'avversario generico è **Opponent**: un'identità neutra che potrà essere sostituita da personaggi distinti. Lanci sei dadi fisici, scegli quali accantonare e decidi se incassare o rilanciare. Se il lancio non produce combinazioni valide, perdi i punti del turno.
+## Play
 
-## Come giocare
+**Opponent Duel** is the only player-facing mode. **New Game** enters the table directly. You and the Opponent take turns playing the same six-D6 Farkle rules. The first to bank **500 points** wins. A Farkle loses only unbanked turn points; previously secured scores carry between turns.
 
-Installa [LÖVE 11.x](https://love2d.org/) e scarica il repository. Su Windows apri `run_game.cmd`. Da terminale, esegui `love .` nella cartella del progetto.
+**Right-click** to grab a die, then move and release to throw it. **Left-drag** to select a group before grabbing, or click dice to choose a scoring combination. **A** sets selected scoring dice aside; they remain visible on the **rear of the 3D tabletop**. **Enter** banks points and **?** opens the rules.
 
-**Tasto destro** per afferrare un dado, muovi il mouse e rilascia per lanciarlo. Trascina con il **sinistro** per selezionare più dadi prima della presa, oppure clicca per selezionare una combinazione valida. Premi **A** per accantonare o **Invio** per incassare; **?** apre le regole. Il lancio rapido tramite Spazio non è più disponibile.
+The Opponent pauses between reading its roll, highlighting chosen dice, setting them aside and announcing whether to bank or reroll. The HUD shows its banked points, at-risk total, last set-aside gain and next action. No cards, health bars or automatic dice-launch button are required.
 
-## Dove trovare il codice
+## Run locally
 
-La produzione è raccolta in **30 file Lua** sotto `src`. I principali punti
-di ingresso sono [controller](src/farkle/controller.lua),
-[interfaccia](src/farkle/ui.lua),
-[tavolo](src/farkle/tabletop.lua),
-[menu e impostazioni](src/screens/frontend.lua) e
-[regole](src/farkle/rules.lua).
-La [mappa tecnica](docs/technical.md) elenca tutti i moduli e le loro sezioni.
+Install [LÖVE 11.x](https://love2d.org/). On Windows, run `run_game.cmd`; otherwise run `love .` from the repository root.
 
-[Fantasy del giocatore](docs/player_fantasy.md) · [Documentazione](docs/README.md) · [Mappa del codice](docs/technical.md) · [Regole Farkle](docs/farkle_rules.md) · [Visione del progetto](docs/project_vision.md) · [Changelog](CHANGELOG.md) · [Crediti e licenze di terzi](lib/licenses/)
+## Code and design
+
+The production Lua source is under `src/`: [controller](src/farkle/controller.lua), [HUD](src/farkle/ui.lua), [Farkle rules](src/farkle/rules.lua), [3D dice](src/farkle/dice.lua), and [main menu](src/screens/frontend.lua). Historical research prototypes remain in `experiments/`, not as alternate playable modes.
+
+[Technical map](docs/technical.md) · [Farkle rules / historical baseline](docs/farkle_rules.md) · [Vision](docs/project_vision.md) · [Changelog](CHANGELOG.md) · [Third-party licenses](lib/licenses/)

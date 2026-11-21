@@ -14,7 +14,7 @@ return {
     ["main_menu.modal.no_save"] = "No saved game found. Start a New Game instead.",
     ["main_menu.modal.wishlist_fallback"] = "Open the store to wishlist the game: {url}",
 
-    ["campaign_select.subtitle"] = "Choose Commission",
+    ["campaign_select.subtitle"] = "Start a Duel",
     ["campaign_select.item.back"] = "Back",
     ["campaign_select.detail.folios"] = "{count} folios",
     ["campaign_select.detail.dirty_threshold"] = "{folios} | Dirty threshold: {threshold}+ stains",
