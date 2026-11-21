@@ -43,6 +43,7 @@ function D.stage_opening(entries)
   b.position[3]=-lowest
   for axis=1,3 do b.velocity[axis]=0;b.angular[axis]=0 end
   b.asleep=true;b._grabbed=nil;b._manual_pending=nil
+  b._kept_solid=nil -- returned to the physical hand
  end
 end
 -- Keep scored dice physically on the board instead of replacing them with UI icons.
@@ -61,9 +62,10 @@ function D.stage_kept(entries,used)
      b.position[3]=-lowest
      for axis=1,3 do b.velocity[axis]=0;b.angular[axis]=0 end
      b.asleep=true;b.sleep_timer=999
-     -- The existing solver treats an unreleased body as kinematic, keeping
-     -- accepted faces stable while other dice physically roll nearby.
+     -- Distinguish a stable scored collider from an ordinary held die:
+     -- both are kinematic, but only the scored one is solid to active dice.
      b._manual_pending=true
+     b._kept_solid=true
     end
    end
   end

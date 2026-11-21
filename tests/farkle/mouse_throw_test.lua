@@ -53,8 +53,9 @@ assert(physics:find('if s._manual_pending then',1,true))
 local pairs=source('src/engine3d/die_collision.lua')
 assert(physics:find('DieCollisions.solve(self,old_positions,sub_dt,emitted_pairs)',1,true),
  'physical pair solver must use the production oriented D6 contacts')
-assert(pairs:find('if not a._manual_pending then',1,true) and
- pairs:find('if not b._manual_pending and',1,true),
- 'both queued and held bodies must remain excluded from pair impulses')
+assert(pairs:find('if not a._manual_pending or a._kept_solid then',1,true) and
+ pairs:find('not b._manual_pending or b._kept_solid',1,true) and
+ pairs:find('not (a._kept_solid and b._kept_solid)',1,true),
+ 'unreleased hand stays noncolliding, but scored D6 must be solid to moving dice')
 assert(not package.loaded['lib.g3d'],'physics tests must not need a GPU')
 print('PASS tabletop individual dice: physical hold/rotate/release, queue, cancel, and delayed Farkle scoring')

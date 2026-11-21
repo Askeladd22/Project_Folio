@@ -585,3 +585,19 @@ nuovamente la presa diretta, senza aggiungere un tasto di lancio rapido.
 I laboratori a screening G3 negativo [Battute Gemelle](../research/EX-BG-001.md)
 e [Tre Prove / Riserva](../research/EX-TP-001.md) restano tracciati nella ricerca;
 i relativi sorgenti eseguibili, test e workflow sono archiviati nella cronologia Git.
+
+## 0.1.103 — Solid set-aside dice, consolidated rival UI
+
+`D.stage_kept` marks scored physical D6 as `_kept_solid`. The existing
+SAT/CCD solver keeps them in collision detection while physics integration
+remains disabled; inverse mass and inertia are zero, so only rolling dice
+receive the bounce/penetration correction. On hot dice or next turn,
+the mark is cleared. Ordinary held dice do not collide.
+
+The HUD removes the redundant centre `duel_turn` and the extra
+`opponent_action` paper. The smaller `opponent_panel` combines the
+banked score, at-risk pot, chosen gain, physical action and explanation,
+while the left score sheet already names the current actor.
+
+**Gate:** Lua 5.4/LuaJIT regression, Mesa screenshots and human Windows
+check of blocking, no tunnelling, table perspective and small text.

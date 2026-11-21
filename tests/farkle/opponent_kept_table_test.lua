@@ -16,7 +16,7 @@ for i,entry in ipairs(entries) do
  if used[i] then
   assert(math.abs(body.position[1]-(i-3.5)*2.0)<1e-9)
   assert(body.position[2]==-4.45 and body.position[3]==0.5)
-  assert(body.asleep and body._manual_pending)
+  assert(body.asleep and body._manual_pending and body._kept_solid)
   for axis=1,3 do assert(body.velocity[axis]==0 and body.angular[axis]==0) end
  else
   assert(body.position[1]==i and body.position[2]==0 and not body._manual_pending)

@@ -10,6 +10,18 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.103] - 2026-11-21
+
+**Status:** proposed follow-up on `fix/diegetic-hud-solid-kept-dice-0.1.103`, no main merge.
+
+### Fixed
+- Scored dice remain stable, *solid* kinematic bodies in SAT/CCD, so released dice collide with them instead of passing through. Ordinary unreleased dice remain non-colliding; fresh turns/hot dice restore normal dynamics.
+- Removed the top-centre TURN banner and combined both floating Opponent score/move overlays into one smaller parchment ledger on the right. Player score, actor, Opponent banked/at-risk points and explanation remain legible.
+
+### Verification
+- Lua 5.4, LuaJIT, Mesa and Windows real-mouse tests pending for this commit.
+- New fantasy idea (real people imprinted as woodblocks after losing) remains unapproved R&D, not gameplay or canon.
+
 ## [0.1.102] - 2026-11-21
 
 **State:** continuation of draft PR #158 on `feat/unified-opponent-duel-english-0.1.101`. No merge to main.
