@@ -3,7 +3,7 @@
 **Data:** 20 novembre 2026  
 **Stato:** proposta R&D, non decisione canonica né feature implementata  
 **Baseline di lettura:** `main@b315bf57f2c5e11608608baccca2b1f28342d556`  
-**Fonti:** slide fornite dall'utente (20/11/2026); `docs/project_vision.md`, `docs/art_direction.md`, `docs/farkle_rules.md`; codice del Tavolo del Mercante alla baseline.
+**Fonti:** slide fornite dall'utente (20/11/2026); `docs/project_vision.md`, `docs/art_direction.md`, `docs/farkle_rules.md`; codice del Tavolo del Opponent alla baseline.
 
 ## Domanda falsificabile
 
@@ -21,7 +21,7 @@ Una promessa espressa in termini di desiderio e azioni del giocatore, anziché i
 | Candidata | Promessa al giocatore | Interazione già presente | Rischio / elemento ancora assente |
 |---|---|---|---|
 | F1 — «La sorte nelle mie mani» | Tiro davvero i dadi, scelgo quali salvare e quando rischiare | sei D6 fisici, presa/lancio, selezione, incasso/Farkle | Se la fisica ruba attenzione al significato dei punti, la fantasy è solo gesto |
-| F2 — «Le immagini mi sfidano» | Le xilografie dei libri prendono vita e diventano rivali con un proprio carattere | stanza e ritratto PNG, tavolo condiviso | Il Mercante non è ancora un avversario competitivo completo nel gioco principale |
+| F2 — «Le immagini mi sfidano» | Le xilografie dei libri prendono vita e diventano rivali con un proprio carattere | stanza e ritratto PNG, tavolo condiviso | Il Opponent non è ancora un avversario competitivo completo nel gioco principale |
 | F3 — «Lascio il segno nel libro» | Le mie vittorie producono qualcosa di visibile e mio nella run | Folio consultabile, progressione per commissioni provvisorie | La ricomposizione delle xilografie è da progettare, non implementata |
 
 **Sintesi candidata:** «In una Venezia sognata, le figure dei libri mi sfidano a un tavolo di dadi. Con le mie mani decido quanto rischiare; ogni vittoria potrebbe lasciare un segno sull'edizione che prende vita».
@@ -67,7 +67,7 @@ La PR UI associata a questa ricerca implementa solo il feedback `Accantona / Inc
 
 ## Obiezioni red-team
 
-- Una bella scena rinascimentale non sostituisce una relazione strategica tra giocatore e Mercante.
+- Una bella scena rinascimentale non sostituisce una relazione strategica tra giocatore e Opponent.
 - «Controllare la sorte» potrebbe suggerire dadi truccati o esiti deterministici: la promessa deve riguardare le **decisioni**, non l'esito del lancio.
 - Copiare una struttura missione/upgrade senza una posta comprensibile potrebbe moltiplicare i sottosistemi e indebolire *Simplicity*.
 - Materiali Steam, wishlists o conversioni **non sono stati misurati**: “marketable” resta una domanda, non un risultato.
@@ -82,7 +82,7 @@ La PR UI associata a questa ricerca implementa solo il feedback `Accantona / Inc
 - Registrare risposte corrette, tempo di risposta, azioni errate e motivazione; il campione pilota va dichiarato in anticipo e non autorizza conclusioni sulla popolazione.
 - Playtest separato sulla fantasy: mostrare una descrizione con «Farkle roguelite» e una con la promessa esperienziale; raccogliere comprensione, aspettativa e discrepanza rispetto alla build effettiva, senza promuovere la frase solo per preferenza del team.
 - **STOP** se le nuove etichette invadono il campo di lancio, producono numeri errati o indicano come incassabile una selezione non valida.
-- Prima di promuovere F2/F3: definire e testare l'azione autonoma del Mercante e il contratto competitivo; nessun merge di laboratori in `src/` per inerzia.
+- Prima di promuovere F2/F3: definire e testare l'azione autonoma del Opponent e il contratto competitivo; nessun merge di laboratori in `src/` per inerzia.
 
 ## Decisione provvisoria
 

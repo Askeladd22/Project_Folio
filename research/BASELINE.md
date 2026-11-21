@@ -6,7 +6,7 @@ Fonte: README e codice dei laboratori della main al commit 2239cd55bb7e66b520ea2
 | Prototipo | Decisione del giocatore | Agenzia del rivale | Risorsa / esito | Punti critici da verificare |
 |---|---|---|---|---|
 | Farkle attuale | scelta subset, incasso/rilancio | nessun avversario completo: commissioni | punti, soglie, commissione | limite dell'esperienza solitaria e crescita della mastery |
-| Merchant Wager V4 | Farkle, incasso, rialzo monetario volontario | cassa di 20 token pubblica, offerte/controfferte | denari (posta) separati dai punti | X iniziale, spiegabilità delle controfferte, effetto reale del rialzo |
+| Opponent Wager V4 | Farkle, incasso, rialzo monetario volontario | cassa di 20 token pubblica, offerte/controfferte | denari (posta) separati dai punti | X iniziale, spiegabilità delle controfferte, effetto reale del rialzo |
 | Encounter A | divisione di offerte fra due prove | il rivale sceglie una delle due | sigilli e maggioranze | tradeoff genuino o scelta ottimale ovvia? |
 | Encounter C | scegliere dove investire su tre prove | risposta del rivale secondo priorità pubbliche | sigilli, conquista di 2 categorie | leggibilità vs prevedibilità, rischio di strategia dominante |
 | P4ND0RA 1:1 | Farkle, opzioni di conversione | token asimmetrici con attacchi/difesa | HP/Resistenza **solo nel lab** | scostamento dall'identità non-combat e costo cognitivo |
@@ -17,7 +17,7 @@ Il README V4 documenta una simulazione **precedente** di 200 seed con policy bal
 
 ## Confronti prioritari
 
-**C1 — Chiarezza dell'avversario:** su Encounter C e Merchant V4, mostrare ai tester lo stato e chiedere di prevedere la prossima risposta del rivale prima che avvenga. Misurare accuratezza, motivazione espressa e sorpresa negativa.
+**C1 — Chiarezza dell'avversario:** su Encounter C e Opponent V4, mostrare ai tester lo stato e chiedere di prevedere la prossima risposta del rivale prima che avvenga. Misurare accuratezza, motivazione espressa e sorpresa negativa.
 
 **C2 — Qualità delle decisioni:** per il medesimo stato, confrontare policy alternative e loro valore atteso, identificando scelte dominanti e decisioni senza effetto.
 
