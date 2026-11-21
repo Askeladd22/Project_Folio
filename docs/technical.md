@@ -4,6 +4,31 @@ Percorsi di produzione ricontrollati il 18 novembre 2026. Documento tecnico di r
 Questo documento descrive i componenti del prototipo corrente.
 La [visione](project_vision.md) raccoglie la direzione narrativa e progettuale.
 
+## Modalità sperimentale: duello al Mercante (branch 0.1.98)
+
+**Stato: proposta in PR, non ancora stabilizzata.** Dal selettore
+partita, `mode='duel'` avvia una sfida a 500 punti assicurati con
+turni alternati. `src/farkle/rules.lua` mantiene il punteggio canonico
+e applica le sole eccezioni del duello (niente commissioni o limite
+turni, vittoria immediata al target). Il controller esegue l'IA
+`experiments/merchant_duel/ai.lua` durante il turno avversario, ma
+lancia sempre i medesimi dadi fisici tramite
+`U:request → onRollRequest → dice.roll_accepted`, evitando un RNG
+separato o facce artificiali. La semantica dei comandi di lancio manuale
+rimane esclusiva del giocatore.
+
+La scena viene proiettata con `pitch=0.90` radianti,
+`tray=(8,505,1904,545)` nel viewport virtuale 1920×1080,
+`rear_span=1740` e bordo posteriore vincolato al Mercante. Il cartiglio
+si sovrappone agli ultimi 100 px della zona di gioco: il controller
+testa le hitbox dei comandi prima dei gesti di presa del dado in quella
+striscia. **Gate umano obbligatorio:** verificare che nessun dado
+fisico rimanga occultato dal cartiglio in condizioni normali.
+
+La UI mostra punteggi separati e intenzione del rivale; il simulatore
+sperimentale precedente resta in `experiments/`. La qualità e
+l'equità dell'IA non sono ancora misurate su lanci 3D reali.
+
 ## Avvio e responsabilità
 
 `love .` o `run_game.cmd` eseguono `main.lua`. Il controller Farkle viene
