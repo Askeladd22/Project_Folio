@@ -1315,6 +1315,20 @@ local function panel(r,fill,stroke,radius)
   g.rectangle('line',r.x+.8,r.y+.8,r.w-1.6,r.h-1.6,radius or 5)
  end
 end
+-- Paper slips are part of the printshop scene, not floating status cards.
+-- A shared style keeps the players' ledgers and turn note coherent; these
+-- marks do not participate in hit-testing or the physical dice projection.
+local function ledger_sheet(r,fill)
+ local g=love.graphics
+ g.setColor(unpack(Art.rgba('ink',.24)))
+ g.rectangle('fill',r.x+4,r.y+5,r.w,r.h,2)
+ panel(r,fill or Art.rgba('surface',.93),border_ink,2)
+ g.setColor(unpack(Art.rgba('ochre_dark',.72)))
+ g.rectangle('fill',r.x+13,r.y+7,r.w-26,2)
+ g.setColor(unpack(Art.rgba('border',.42)))
+ g.setLineWidth(1)
+ g.line(r.x+13,r.y+r.h-9,r.x+r.w-13,r.y+r.h-9)
+end
 local function pointer_over(rect)
  if not (love.mouse and love.mouse.getPosition) then return false end
  local mx,my=love.mouse.getPosition()
@@ -1377,6 +1391,12 @@ local function draw_stakes_track(s,target,layout)
  g.setColor(unpack(Art.rgba('border',.85)))
  g.setLineWidth(1)
  g.rectangle('line',r.x,r.y,r.w,r.h,3)
+ -- A scored ledger ruler: fine engraved divisions, never a health bar.
+ g.setColor(unpack(Art.rgba('border',.52)))
+ for mark=1,9 do
+  local x=r.x+r.w*mark/10
+  g.line(x,r.y+2,x,r.y+r.h-2)
+ end
 end
 local function compact_status(u)
  local s=u.game
@@ -1610,13 +1630,12 @@ function V.draw(u)
  OpponentScene.draw_portrait(visual,layout,g,depth)
  draw_table_shadow(g)
  -- Keep both sides of the wager in one legible scorecard.
- panel(layout.score_panel,Art.rgba('surface',.93),border_ink,7)
+ ledger_sheet(layout.score_panel,Art.rgba('surface',.93))
  g.setColor(unpack(Art.rgba('border',.48)))
  g.setLineWidth(1)
  g.line(298,29,298,164)
  g.line(56,110,560,110)
- panel({x=1494,y=20,w=382,h=72},Art.rgba('surface',.93),border_ink,7)
- write_fitted(u.duel and 'YOU · BANKED' or 'BANKED',layout.secured_caption,21,15,paper_muted)
+  write_fitted(u.duel and 'YOU · BANKED' or 'BANKED',layout.secured_caption,21,15,paper_muted)
  write_fitted((u.duel and u.duel.scores.player or s.bank)..' pt',layout.secured_value,47,27,paper_ink)
  write_fitted('AT RISK',layout.risk_caption,21,15,paper_muted)
  write_fitted((u.duel and (u.duel.actor=='player' and s.pot or 0) or s.pot)..' pt',layout.risk_value,47,27,paper_warning)
@@ -1624,7 +1643,7 @@ function V.draw(u)
  local c=d and {target=d.target,limit=0} or R.contracts[s.stage]
  if d then
   local mr=layout.opponent_panel
-  panel(mr,Art.rgba('surface',.93),border_ink,6)
+  ledger_sheet(mr,Art.rgba('surface',.93))
   write_fitted('OPPONENT',{x=mr.x+18,y=mr.y+8,w=mr.w-36,h=26},22,16,paper_ink)
   write_fitted('Banked: '..d.scores.opponent..' pt',{x=mr.x+18,y=mr.y+43,w=mr.w-36,h=33},28,20,paper_ink)
   write_fitted('At risk: '..(d.actor=='opponent' and s.pot or 0)..' pt',
@@ -1634,14 +1653,14 @@ function V.draw(u)
     or (d.actor=='opponent' and 'PREPARING' or 'WAITING')
   write_fitted(last,{x=mr.x+18,y=mr.y+113,w=mr.w-36,h=27},18,13,paper_muted)
   local ar=layout.opponent_action
-  panel(ar,Art.rgba('surface',.94),border_ink,5)
+  ledger_sheet(ar,Art.rgba('surface',.94))
   write_fitted('OPPONENT MOVE',{x=ar.x+15,y=ar.y+9,w=ar.w-30,h=21},16,13,paper_muted)
   write_fitted(d.move or 'WAITING',{x=ar.x+15,y=ar.y+34,w=ar.w-30,h=31},23,17,paper_ink)
   write_fitted(d.intent or '',{x=ar.x+15,y=ar.y+75,w=ar.w-30,h=22},17,12,paper_muted)
-  panel(layout.duel_turn,Art.rgba('earth_dark',.86),Art.rgba('ochre',.65),4)
+  ledger_sheet(layout.duel_turn,Art.rgba('surface',.94))
   write_fitted(d.winner and (d.winner=='player' and 'YOU WON THE DUEL' or 'OPPONENT WINS')
    or ('TURN · '..(d.actor=='player' and 'YOU' or 'OPPONENT')),
-   layout.duel_turn,24,17,Art.rgba('paper'),'center')
+   layout.duel_turn,24,17,paper_ink,'center')
  end
  write_fitted('TARGET',layout.objective_caption,18,14,paper_muted)
  write_fitted(c.target..' pt',layout.objective_value,29,20,paper_gold)

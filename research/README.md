@@ -49,3 +49,18 @@ Ogni record include ID, data, commit SHA, autore/revisore, collegamenti a fonti 
 **Pulizia 0.1.99:** i report EX-BG-001 ed EX-TP-001 rimangono prove storiche,
 mentre i due laboratori eseguibili con gate negativo sono rimossi dalla working tree.
 I risultati non diventano conclusioni canoniche, e gli SHA originari restano recuperabili.
+
+## Audit di conservazione — 0.1.102 (21 novembre 2026)
+
+La pagina `campaign_select` non era più raggiungibile dopo l'unificazione
+del duello in 0.1.101: rimossi schermata, schema, etichette di traduzione,
+registrazione e verifiche specifiche. Le nuove decisioni di produzione
+sono in `CHANGELOG.md`, `research/DECISIONS.md` e `docs/technical.md`.
+Il testo di verifica 0.1.98 sulla vecchia selezione è recuperabile
+dalla cronologia Git, non resta come procedura corrente.
+
+**File mantenuti intenzionalmente:** `EX-*.md`, `FPS-FIX-*.md`,
+`RQ-002_FANTASY_FIRST_UI.md`, `BASELINE.md` e `SIMULATIONS.md`
+conservano metodi, risultati, confronti e gate storici, anche quando
+i relativi esperimenti non sono attivi. Gli studi e i template non sono
+codice morto; nessun file di ricerca viene cancellato solo per età.

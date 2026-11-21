@@ -8,7 +8,6 @@ GM.new=function(...) manager=new(...);return manager end
 local N=require('src.core.navigation')
 local Menu=require('src.screens.frontend').main_menu
 local Settings=require('src.screens.frontend').settings
-local Choose=require('src.screens.frontend').campaign_select
 local U=require('src.farkle.controller')
 local State=require('src.core.runtime_state').settings
 local assets={}
@@ -77,7 +76,7 @@ function love.load()
  if baseline then
   manager:register('startup_splash',require('src.screens.startup_splash'))
   local frontend=require('src.screens.frontend')
-  for _,name in ipairs{'main_menu','settings','campaign_select'} do manager:register(name,frontend.modules[name]) end
+  for _,name in ipairs{'main_menu','settings'} do manager:register(name,frontend.modules[name]) end
   manager:register('scriptorium',U)
   N.go('startup_splash')
  else assert(manager.current_name=='startup_splash','normal boot must start at splash') end

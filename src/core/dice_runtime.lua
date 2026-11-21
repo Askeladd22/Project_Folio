@@ -855,7 +855,7 @@ local function setup_game_manager()
     game_manager:register("scriptorium", Scriptorium)
     game_manager:register("startup_splash", require("src.screens.startup_splash"))
     local frontend = require("src.screens.frontend")
-    for _, name in ipairs({"main_menu", "campaign_select", "settings"}) do
+    for _, name in ipairs({"main_menu", "settings"}) do
         game_manager:register(name, frontend.modules[name])
     end
 end

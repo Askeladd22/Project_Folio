@@ -1,10 +1,10 @@
 # Architettura e verifica tecnica di Project Folio
 
-Percorsi di produzione ricontrollati il 18 novembre 2026. Documento tecnico di riferimento, non cronologia delle singole milestone UI.
+Percorsi di produzione ricontrollati il 21 novembre 2026. Documento tecnico di riferimento, non cronologia delle singole milestone UI.
 Questo documento descrive i componenti del prototipo corrente.
 La [visione](project_vision.md) raccoglie la direzione narrativa e progettuale.
 
-## Current player-facing mode — Opponent Duel (0.1.101)
+## Current player-facing mode — Opponent Duel (0.1.102)
 
 New Game routes directly to `scriptorium` with `mode='duel'` and generic ID `opponent`. The old three-commission prototype remains in the rules for regression and R&D comparison but is **not selectable in the game menu**. The live UI and help are English-only; historical research records retain their original language.
 
@@ -14,36 +14,19 @@ The Opponent follows observable phases: review settled roll → highlight scorin
 
 **Gates:** full Lua/LuaJIT and Python regression suites, Mesa screenshots and Windows LÖVE visual/manual tests with six hot dice, actor change, Farkle, pausing during intentions, 50 physical throws, large text and 1280×720/1920×1080/ultrawide displays. CI passing does not replace playtest.
 
-## Historical prototype: Opponent Duel at 0.1.98
-
-**Stato: proposta in PR, non ancora stabilizzata.** Dal selettore
-partita, `mode='duel'` avvia una sfida a 500 punti assicurati con
-turni alternati. `src/farkle/rules.lua` mantiene il punteggio canonico
-e applica le sole eccezioni del duello (niente commissioni o limite
-turni, vittoria immediata al target). Il controller usa una policy interna, ricavata e verificata nel
-laboratorio `experiments/opponent_duel/ai.lua`, durante il turno avversario, ma
-lancia sempre i medesimi dadi fisici tramite
-`U:request → onRollRequest → dice.roll_accepted`, evitando un RNG
-separato o facce artificiali. La semantica dei comandi di lancio manuale
-rimane esclusiva del giocatore.
-
-La scena viene proiettata con `pitch=0.90` radianti,
-`tray=(8,505,1904,545)` nel viewport virtuale 1920×1080,
-`rear_span=1740` e bordo posteriore vincolato al Opponent. Il cartiglio
-si sovrappone agli ultimi 100 px della zona di gioco: il controller
-testa le hitbox dei comandi prima dei gesti di presa del dado in quella
-striscia. **Gate umano obbligatorio:** verificare che nessun dado
-fisico rimanga occultato dal cartiglio in condizioni normali.
-
-La UI mostra punteggi separati e intenzione del rivale; il simulatore
-sperimentale precedente resta in `experiments/`. La qualità e
-l'equità dell'IA non sono ancora misurate su lanci 3D reali.
+La camera corrente usa `pitch=0.965` rad, `yaw=0`, `distance=52`,
+`tray=(8,505,1904,545)` e il medesimo `tray_view.fit` per
+proiezione g3d e picking. I dati delle mani restano intatti. Gli
+indicatori banca/rischio e le intenzioni del rivale sono stampati su
+fogli diegetici, senza introdurre un secondo modello di stato.
+Le decisioni della 0.1.98 restano consultabili nel changelog e nella
+cronologia Git, non come una modalità o specifica concorrente.
 
 ## Avvio e responsabilità
 
 `love .` o `run_game.cmd` eseguono `main.lua`. Il controller Farkle viene
 iniettato in `src/core/dice_runtime.lua`, che registra splash, menu,
-selezione della partita e impostazioni. La navigazione apre prima
+impostazioni (nessuna schermata separata di selezione partita). La navigazione apre prima
 `startup_splash`. L'identificatore interno della partita è `scriptorium`.
 
 | Percorso | Responsabilità |
@@ -55,7 +38,7 @@ selezione della partita e impostazioni. La navigazione apre prima
 | [`src/farkle/presentation.lua`](../src/farkle/presentation.lua) | Provenienza dei risultati, stato HUD (`hud_model`), folio (`folio_view`), medaglie (`medal_panel`) e notifiche (`toast_messages`) |
 | [`src/farkle/ui.lua`](../src/farkle/ui.lua) | HUD (`hud`, con `actions` e `accepted`), geometria (`layout`), testo (`text_fit`), indicatori (`overlay`), finestre (`dialogs`) e avversario (`opponent_scene`) |
 | [`src/farkle/tabletop.lua`](../src/farkle/tabletop.lua) | Inquadratura prospettica fissa (`tray_view`), workshop diagnostico (`tray_workshop`) |
-| [`src/screens/frontend.lua`](../src/screens/frontend.lua) | Menu principale (`main_menu`), selezione partita (`campaign_select`) e impostazioni (`settings`); registrazione tramite `modules` |
+| [`src/screens/frontend.lua`](../src/screens/frontend.lua) | Menu principale (`main_menu`) e impostazioni (`settings`); registrazione tramite `modules` |
 | [`src/screens/folio_surface.lua`](../src/screens/folio_surface.lua) | Superfici condivise (`menu_surface`), impaginazione (`page_layout`), testo animato (`folio_ink_text`), figure e post-effetti 2D |
 | [`src/screens/startup_splash.lua`](../src/screens/startup_splash.lua) | Intro LÖVE e transizione al menu |
 | [`src/core/dice_runtime.lua`](../src/core/dice_runtime.lua) | Bootstrap LÖVE, lancio, presa, simulazione e collegamento a g3d |

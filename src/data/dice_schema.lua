@@ -62,9 +62,10 @@ return {
         tray_camera = {
             locked = true,
             yaw = 0.00,
-            -- Player-seat view: a genuinely overhead angle exposes
-            -- useful tabletop depth while preserving the same g3d physics.
-            pitch = 0.90,
+            -- A restrained raised player-seat view: larger far-side dice
+            -- and less foreground dominance, with the same g3d projection
+            -- used for dice picking, throwing and the visible board.
+            pitch = 0.965,
             distance = 52,
         },
         box = {

@@ -1,14 +1,17 @@
-local schema=require('src.data.frontend_schema').campaign.campaigns
-assert(#schema==1 and schema[1].id=='opponent-duel'
- and schema[1].mode=='duel' and schema[1].implemented,
- 'only the Opponent Duel may appear in the playable menu')
-local h=assert(io.open('src/data/frontend_schema.lua','rb'))
-local cfg=h:read('*a');h:close()
-assert(cfg:find('navigation_new_game = "scriptorium"',1,true))
-local f=assert(io.open('src/screens/frontend.lua','rb'))
-local code=f:read('*a');f:close()
-assert(code:find('mode = "duel", opponent_id = "opponent"',1,true),
- 'New Game must launch the duel directly')
-assert(not code:find('src.content.commissions',1,true))
-assert(not code:find('SaveState',1,true),'menu must not load old persistence')
-print('PASS one playable Opponent Duel: direct New Game and no legacy campaign selector')
+-- Live New Game has one destination, with no orphaned campaign selector.
+local cfg=require('src.data.frontend_schema')
+local front=require('src.screens.frontend')
+assert(cfg.campaign==nil,'unused campaign page schema still exported')
+assert(front.campaign_select==nil and front.modules.campaign_select==nil,
+ 'unused campaign selector must not be registered')
+local file=assert(io.open('src/data/frontend_schema.lua','rb'))
+local schema=file:read('*a');file:close()
+assert(schema:find('navigation_new_game = "scriptorium"',1,true))
+file=assert(io.open('src/screens/frontend.lua','rb'))
+local source=file:read('*a');file:close()
+assert(source:find('mode = "duel", opponent_id = "opponent"',1,true),
+ 'New Game must start the single six-D6 duel')
+assert(not source:find('Bundle.campaign_select',1,true))
+assert(not source:find('src.content.commissions',1,true))
+assert(not source:find('SaveState',1,true))
+print('PASS single playable duel, no orphaned selector or chromatic persistence')

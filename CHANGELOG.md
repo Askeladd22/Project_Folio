@@ -10,6 +10,20 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.102] - 2026-11-21
+
+**State:** continuation of draft PR #158 on `feat/unified-opponent-duel-english-0.1.101`. No merge to main.
+
+### Changed
+- Raised the player-seat perspective from 0.90 to 0.965 rad, preserving one physical g3d/picking projection, a fixed rear seam and accessible D6 scale.
+- Restyled the player/opponent banked-risk ledger and Opponent move as ink-on-parchment sheets; added engraved stakes divisions and removed an unused backdrop behind header actions.
+- Removed the unreachable campaign-selection frontend (~344 source lines), its schema/localization/registration and its obsolete menu-specific tests. New Game still enters only Opponent Duel.
+- Synced active technical/art-direction docs and preserved historical research records instead of deleting experimental provenance.
+
+### Verification
+- Automated Lua 5.4/LuaJIT, Python and Mesa gates: pending for this commit.
+- Windows LÖVE UAT and human assessment of physical dice/paper hierarchy: not run.
+
 ## [0.1.101] - 2026-11-21
 
 **Status:** Opponent Duel as the sole player-facing mode; English HUD; visible table-kept dice; readable staged AI actions. Branch `feat/unified-opponent-duel-english-0.1.101`.
