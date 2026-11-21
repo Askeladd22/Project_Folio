@@ -34,8 +34,13 @@ con i dadi fisici g3d o l'HUD di produzione.
 - Nessuna conversione di punti in danni, nessun HP o carte.
 
 ### Verifiche
-- Test dichiarati nel laboratorio, **in attesa di esito CI**.
-- Mancano test LÖVE/Windows, simulazioni appaiate e playtest umano.
+- **PASS**: test Mercante dedicato con Lua 5.4 e LuaJIT su
+  GitHub Actions #44892339140 (50 seed ripetuti per ciascuna esecuzione).
+- **FAIL preesistente**: suite generale bloccata da
+  `tests/engine3d/wooden_board_contract_test.lua:7`, che esige
+  `wooden_compact` mentre il preset su `main` è `old_wooden`.
+  Il branch Mercante non modifica né questa assertion né il default.
+- Mancano test LÖVE/Windows, simulazioni appaiate tra strategie e playtest umano.
 - Il Mercante non è ancora disponibile nell'interfaccia 3D.
 
 ## [0.1.96] - 2026-11-21
