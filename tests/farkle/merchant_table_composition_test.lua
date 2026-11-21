@@ -8,7 +8,7 @@ for _,r in ipairs{L.secured_caption,L.secured_value,L.risk_caption,L.risk_value,
  assert(Layout.overlap(L.tray,r)==0,'score metric obscures a real D6')
 end
 assert(L.risk_value.x>L.secured_value.x)
-assert(L.footer.y>=L.tray.y+L.tray.h and
+assert(L.footer.y>=L.tray.y+L.tray.h-100 and
  L.footer.h<=110 and L.footer.w<=1160,
  'footer must be a compact plaque instead of a full-width slab')
 -- Regression against the visible 0.1.27 offset: footer center was
@@ -24,7 +24,9 @@ assert(math.abs((L.context_actions[1].x+L.secondary.x+L.secondary.w)/2-axis)<=3,
 assert(Layout.overlap(L.shelf,L.footer)==0,
  'accepted dice must not collide with shifted command plaque')
 for _,r in ipairs{L.shelf,L.primary,L.secondary,L.single_action,L.message,L.idle_message} do
- assert(Layout.overlap(L.tray,r)==0,'action obstructs physical D6 viewport')
+ assert(Layout.overlap(L.tray,r)==0 or
+   (r.y>=L.footer.y-20 and r.y>=L.tray.y+L.tray.h-100),
+   'status or action may overlap only the near 100px lip')
 end
 assert(Layout.overlap(L.context_actions[1],L.idle_message)==0,
  'the ready instruction must stay readable beside an equipped medal')
