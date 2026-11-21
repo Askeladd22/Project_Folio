@@ -292,19 +292,19 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   -- The former floor and carving JPGs were deleted with that art split:
   -- only the retained shared wood texture is part of the GPU tray.
   local floor_texture=self.white
-  if style=='merchant' or style=='wooden' then
+  if style=='merchant' or style=='wooden' or style=='wooden_compact' then
    if not self.merchantWood then
     self.merchantWood=g.newImage('resources/textures/wood.png',{mipmaps=true})
     self.merchantWood:setFilter('linear','linear')
     self.merchantWood:setMipmapFilter('linear')
    end
    floor_texture=self.merchantWood
-   if style=='wooden' then
+   if style=='wooden' or style=='wooden_compact' then
     -- A user-provided optimized/original GLB keeps its atlas. The bundled
     -- low-poly fallback gets a readable plank floor instead of a faux slab.
     -- The physics plane remains at z=0: never raise the visual tabletop.
     local modelpath='resources/models/wooden_table_game_ready_asset.glb'
-    if love.filesystem.getInfo(modelpath,'file') then
+    if style=='wooden' and love.filesystem.getInfo(modelpath,'file') then
      self.table_prop=require('src.engine3d.g3d.glb_loader').load(self.g3d,modelpath,function(model)
       Scenery.place_table(model,extents,.28,.005)
      end,{max_texture=2048})
@@ -312,6 +312,9 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
     else
      local model=require('resources.models.wooden_table_mesh').mesh()
      Scenery.place_table(model,extents,.28,-.018)
+     if style=='wooden_compact' then
+      Scenery.compact_table(model,.22)
+     end
      self.table_prop=self.g3d.newModel(model.verts,self.merchantWood)
     end
    else
@@ -443,7 +446,9 @@ function M:_draw_scene(args)
    if self.table_prop then
     -- Wood's support surface and the imported geometry share the physical
     -- tabletop height; shadows never land on an invisible raised slab.
-    if args.style=='wooden' then self.floor_model:draw() end
+    if args.style=='wooden' or args.style=='wooden_compact' then
+     self.floor_model:draw()
+    end
     self.table_prop:draw()
    else self.floor_model:draw() end
    g.setDepthMode('lequal',false)
