@@ -20,7 +20,6 @@ for _,path in ipairs{
  'resources/models/wooden_table_mesh.lua',
  'resources/models/old_wooden_table_fallback.lua',
  'resources/models/WOODEN_TABLE_CREDITS.md',
- 'resources/models/old_wooden_table.glb',
  'src/engine3d/g3d/live.lua',
  'src/engine3d/physics.lua',
  'src/farkle/rules.lua',
@@ -28,6 +27,14 @@ for _,path in ipairs{
 } do
  assert(exists(path),'protected production source/asset missing: '..path)
 end
+-- The bundled test-only 9 MiB GLB sample was retired in 0.1.104.
+-- Loader correctness remains covered by its tiny generated GLB fixture;
+-- the externally installable original is still documented in its credits.
+assert(not exists('resources/models/old_wooden_table.glb'),
+ 'historical GLB parsing fixture must not be reintroduced as a shipping asset')
+assert(not exists('scripts/run_hud_comparison.py'),
+ 'retired Standard-vs-Minimal-HUD comparison runner must stay removed')
+
 -- Three inactive scans stay in Git history at commit 33f8afea35.
 for _,path in ipairs{
  'resources/models/marble_topped_centre_table.glb',

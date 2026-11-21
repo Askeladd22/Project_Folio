@@ -4,23 +4,17 @@
 risultati fisici e dalle regole Farkle; il 2.5D è una proposta, non un
 nuovo renderer approvato.
 
-## Identità
+## Identità minima (brief 21 novembre 2026)
 
-Una **bottega tipografica veneziana tra fine XV e inizio XVI secolo**,
-nell'ambiente di Aldo Manuzio: fogli, matrici xilografiche, torchio,
-correttori, caratteri mobili, legno, pigmenti e inchiostro.
-**Non** uno scriptorium monastico o un fantasy medievale generico.
-
-Il protagonista è un **artista originale ispirato al profilo di
-Albrecht Dürer** — disegnatore e incisore, curioso e colto — non Dürer
-stesso e non un ritratto della sua biografia. È muto e non gli si
-impongono dialoghi. Il legame con la bottega aldina è narrativa di
-finzione, non attribuzione di un episodio storico documentato.
-
-Il sogno trae forza da poche anomalie legate a carta, xilografie,
-inchiostro e tavolo. La tensione deve essere quella dell'azzardo:
-**incasso o rilancio?** Non horror, maledizioni, effetti neon o
-ornamenti decorativi ripetuti senza funzione.
+**Unico vincolo creativo:** il giocatore interpreta un **incisore nella
+Venezia rinascimentale**. Botteghe, matrici, torchi, carte e legno
+offrono un linguaggio materiale autentico da esplorare. L'ambientazione
+attuale manuziana, lo stile xilografico, il sogno e il tono non horror
+descrivono la **build 0.1.103**, non gli obblighi del gioco futuro.
+La scena e il picking 3D devono restare coerenti finché questo
+prototipo viene utilizzato per il confronto. I principi visivi di un
+eventuale redesign devono essere motivati e playtestati prima di
+sostituire gli asset attuali.
 
 ## Tavolo e livelli della scena
 
@@ -40,9 +34,8 @@ identiche per mesh, silhouette e input. La lieve elevazione dell'occhio
 riduce l'imponenza della fascia anteriore, senza trasformare la scena
 in un piano dall'alto.
 
-**0.1.102 — UI diegetica:** due fogli-contabilità appoggiati alla
-composizione della bottega raccontano banca e rischio; un foglietto
-separato illustra il turno e le scelte dell'Opponent. Pergamena,
+**0.1.103 — UI diegetica corrente:** un foglio-contabilità per il giocatore
+e un foglio più compatto per l'Opponent mostrano banca, rischio e scelta. Pergamena,
 inchiostro, doppie righe sottili e righello inciso sostituiscono il
 lessico dei pannelli digitali senza perdere accessibilità, numeri,
 azioni o stato del tiro. La nota delle scelte dell'Opponent compare
@@ -69,7 +62,7 @@ ricomposizione delle xilografie, **non** una barra da colorare per
 raggiungere una soglia di punti. Il sistema competitivo finale
 degli incontri non è ancora definito.
 
-## Palette canonica
+## Palette del prototipo corrente (reversibile)
 
 Il file autoritativo è `src/data/frontend_schema.lua`, sezione `palette`.
 Toni opachi, contrasti funzionali, superfici artigianali:
@@ -88,74 +81,14 @@ I colori delle facce dei dadi, dello stato di selezione e dei
 pulsanti devono restare leggibili in alto contrasto. Nessun
 filtro fotografico indiscriminato per fingere materiali storici.
 
-## Tavolo in uso — Old Wooden Table (proposta v0.1.96)
+## Modelli del tavolo nel prototipo
 
-Il candidato originale dell'utente, attribuito ad Alex Krush,
-viene preferito alla pesante cornice Pixel Life per il suo
-aspetto da tavolo di gioco vissuto e non da banco da lavoro.
-Il piano è ampio quanto il campo fisico dei sei D6, mentre
-gambe e fascia mantengono proporzioni autonome; una cornice
-grafica sottile suggerisce i limiti della superficie senza
-nascondere i dadi. La scena, il Opponent e la camera non cambiano.
-
-**Stato artistico non canonico:** la variante F8 `old_wooden`
-mostra l'asset originale solo se installato localmente.
-Senza GLB viene caricata una struttura di riserva creata
-per il progetto, non l'asset di Alex Krush. L'integrazione
-ufficiale richiede confronto su screenshot reali, texture
-leggibile a 720p e test del lancio Windows.
-
-Licenza e distinzione dei materiali in
-`resources/models/OLD_WOODEN_TABLE_CREDITS.md`.
-
-## Tavolo — Variante B «Compatta» (v0.1.95)
-
-**Obiettivo visivo:** tavolo da gioco ravvicinato, non banco da lavoro.
-Manteniamo il Pixel Life come base, ma riduciamo il mobile visibile
-sotto il piano: gambe e fascia frontale vengono schiacciate nel
-rendering 3D, senza deformare il piano su cui toccano i D6.
-Il bordo è sottile ma continua a coincidere con le pareti fisiche,
-e le giunzioni delle assi sono più discrete.
-
-La scelta iniziale in laboratorio è `wooden_compact`. Il confronto
-con `wooden` resta disponibile via F8; l'esito è provvisorio fino a
-una prova reale sul monitor Windows e all'approvazione della composizione.
-Non sono previste carte, HUD supplementari, cambi RNG o nuove
-meccaniche. In particolare il tavolo **non** viene ridotto
-indipendentemente dalla zona fisica per non creare collisioni invisibili.
-
-## Tavolo in noce: contatto fisico e assi (v0.1.94)
-
-La board Pixel Life è già la variante iniziale. Il fallback ora
-mostra otto assi in legno con sottili giunzioni, concentrando la
-decorazione lontano dalle facce dei sei dadi.
-Per evitare che i dadi sembrino affondati, la silhouette resta
-0,018 unità sotto il piano di contatto (z=0) e le assi
-decorative solo 0,006 sopra. Il GLB completo opzionale
-usa invece le proprie UV e la texture originale, allineando
-il piano superiore a z=+0,005.
-
-Un GLB derivato ottimizzato dall'originale (4538 triangoli,
-texture colore a 1024²) è consegnato come ZIP separato.
-La PR non include il binario: il fallback integrato funziona
-senza installazioni aggiuntive.
-
-## Tavolo di gioco (laboratorio v0.1.93)
-
-La candidata principale è la silhouette del tavolo in legno
-di **Pixel Life**, ridotta e reinterpretata nel materiale per
-privilegiare il contrasto con i sei dadi. Il piano centrale
-resta relativamente uniforme, il bordo meno monumentale della
-precedente decorazione; il Rivale PNG rimane indipendente.
-La variante precedente è disponibile con **F8**: nessuna
-decisione artistica è definitiva finché le due schermate non
-sono confrontate in una prova giocata.
-
-La geometria derivata e il GLB originale sono materiali di terzi
-con attribuzione CC BY 4.0: la documentazione è in
-`resources/models/WOODEN_TABLE_CREDITS.md`. Non scambiare
-il fallback a bassa poligonizzazione per un export identico
-all'asset originale.
+La build corrente offre il tavolo `old_wooden` con
+`resources/models/old_wooden_table_fallback.lua` e la variante
+`wooden_compact`. I dettagli delle prove 0.1.93–0.1.96, la
+comparazione dei modelli e le relative misure sono nella
+[revisione 0.1.103](https://github.com/Askeladd22/Project_Folio/blob/ac814220a721f2946914d5c4a1ac9e389f40a8f6/docs/art_direction.md).
+La presenza dei modelli non vincola la nuova fantasy.
 
 ## Riferimenti e accuratezza
 
@@ -256,39 +189,14 @@ Usare trasparenza RGBA, busto coerente e proporzioni leggibili;
 il motore usa un'area di ancoraggio comune senza distorcere
 il rapporto d'aspetto.
 
-### Selezione dell'avversario
+### Identità del rivale corrente
 
-L'identità di default è **Rivale** (`opponent_id='rival'`), un
-segnaposto neutro: **Opponent** non è il nome di tutti gli avversari.
-Il PNG `opponent.png` è ancora usato *provvisoriamente* per il default
-finché non esisterà `resources/opponents/rival.png`, che verrà preferito
-automaticamente. La grafica esistente non attribuisce al default le
-meccaniche del Opponent.
-
-```lua
-require('src.core.navigation').go('scriptorium',{new_run=true})
--- Soltanto quando si vuole esplicitamente il personaggio Opponent:
-require('src.core.navigation').go('scriptorium',{new_run=true,opponent_id='opponent'})
--- Oppure nella scena corrente:
-require('src.farkle.controller'):setOpponentVisual('opponent')
-```
-
-Il modulo `src/farkle/ui.lua`, sezione `opponent_scene`, risolve
-fondale e ritratto. Un ID non disponibile non deve mostrare il
-Opponent dietro a un altro personaggio: in assenza dell'immagine
-richiesta il loader segnala l'errore esplicitamente.
-
-Il vecchio composito `resources/opponent/table-host.jpg` resta un
-**fallback tecnico di compatibilità** per `rival` quando non sono disponibili
-gli asset modulari, e per `opponent` quando è selezionato esplicitamente.
-Il composito contiene già il Opponent: non è un ritratto neutro e non
-va impiegato per creare altri personaggi. In produzione si preferisce
-sempre la stanza pulita con un PNG indipendente.
-
-**Confine di design:** sostituire un PNG non crea un bot, una
-scommessa o un encounter competitivo. Quei sistemi restano aperti
-nella [visione](project_vision.md). I ritratti e la stanza non
-devono alterare le hitbox o la fisica dei dadi.
+L'Opponent visibile nella baseline si identifica con
+`opponent_id='opponent'` e usa il PNG separato
+`resources/opponents/opponent.png`. L'architettura distingue
+ritratto, room e fisica; sostituire un'immagine non aggiunge
+comportamenti dell'IA. Nessun roster narrativo è vincolante
+per il redesign.
 
 ### 0.1.103 — Compact Opponent ledger
 

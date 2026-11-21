@@ -1,4 +1,10 @@
-# Project Folio — collaudo tecnico Windows (UI V2 / g3d)
+# Project Folio — collaudo tecnico Windows (prototipo Farkle / g3d)
+
+> **Stato al 21 novembre 2026:** le prove e le schermate delle versioni
+> iniziali costituiscono evidenza storica, non approvazione visiva della
+> build 0.1.103. Con la direzione creativa riaperta (D-005), questo è
+> ancora il gate tecnico del **prototipo in produzione**, non dei futuri
+> concept. Per la nuova fantasy vedere [project_vision.md](project_vision.md).
 
 **Versione di riferimento:** 0.1.1 · **Data piano:** 3 novembre 2026  
 **Repository:** [Askeladd22/Project_Folio](https://github.com/Askeladd22/Project_Folio)  

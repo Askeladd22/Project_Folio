@@ -64,3 +64,13 @@ dalla cronologia Git, non resta come procedura corrente.
 conservano metodi, risultati, confronti e gate storici, anche quando
 i relativi esperimenti non sono attivi. Gli studi e i template non sono
 codice morto; nessun file di ricerca viene cancellato solo per età.
+
+## Direzione aggiornata — 21 novembre 2026 (D-005)
+
+Unica premessa creativa fissa: **incisore nella Venezia rinascimentale**.
+La precedente fantasy del giocatore di dadi e i principi narrativi non
+sono più obblighi della futura build. `src/` resta la baseline giocabile
+v0.1.103; i risultati precedenti non vanno rietichettati come conferme
+della nuova visione. I report e i protocolli storici conservano il loro
+valore anche quando i relativi laboratori vengono ritirati: la storia
+Git preserva i sorgenti cancellati con SHA, senza duplicarli nel tree.
