@@ -252,7 +252,8 @@ function M.validate(layout)
   for _,r in ipairs{layout.header,layout.message,
     layout.primary,layout.secondary,layout.single_action,
     layout.idle_message,layout.help,layout.runmenu} do
-   if M.overlap(r,layout.tray)>0 and r~=layout.primary and r~=layout.secondary and r~=layout.single_action and r~=layout.message and r~=layout.idle_message then
+   if M.overlap(r,layout.tray)>0 and
+     (r.y<layout.footer.y or r.y<layout.tray.y+layout.tray.h-100) then
     return false,'minimal controls overlap the physical D6 field'
    end
   end
@@ -276,6 +277,8 @@ function M.validate(layout)
   end
   for _,r in ipairs(layout.context_actions) do
    if not M.contains(bounds,r) or
+     (M.overlap(r,layout.tray)>0 and
+      (r.y<layout.footer.y or r.y<layout.tray.y+layout.tray.h-100)) or
      M.overlap(r,layout.primary)>0 or M.overlap(r,layout.secondary)>0 or
      M.overlap(r,layout.message)>0 then
     return false,'invalid minimal contextual action'
