@@ -327,3 +327,14 @@ while the left score sheet already names the current actor.
 
 **Gate:** Lua 5.4/LuaJIT regression, Mesa screenshots and human Windows
 check of blocking, no tunnelling, table perspective and small text.
+
+## 0.1.106 — Scored dice keep their physical location
+
+A later Farkle scoring action calls `src/farkle/dice.lua:stage_kept`
+for the whole current used mask. A previously scored, solid D6 must
+not move just because its preferred rear-row slot later becomes empty.
+Collision probes now restore the original XY after examining a slot;
+a scored die stays where it was if its existing pose is collision-free.
+Only newly scored or genuinely obstructed dice receive a new slot.
+SAT/CCD, actual throws and scoring probabilities are unchanged.
+Regression: `tests/engine3d/six_die_crowding_test.lua`.

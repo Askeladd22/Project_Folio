@@ -58,15 +58,21 @@ function D.stage_kept(entries,used)
  local function vacant(entry,index,x,y)
   local body=entry.body
   if #body<8 then return true end -- miniature fixtures cannot support SAT
+  -- Probing a candidate must not itself teleport the visible D6.
+  -- In particular, a failed probe must leave a previously scored D6
+  -- at its settled position rather than at the last rejected slot.
+  local old_x,old_y=body.position[1],body.position[2]
   body.position[1],body.position[2]=x,y
+  local free=true
   for j,other in ipairs(entries) do
    local test=other.body
    if j~=index and test and test.position and #test>=8
      and Collision.overlap(body,test) then
-    return false
+    free=false;break
    end
   end
-  return true
+  body.position[1],body.position[2]=old_x,old_y
+  return free
  end
  for i,entry in ipairs(entries or {}) do
   if used and used[i] then
@@ -76,18 +82,25 @@ function D.stage_kept(entries,used)
     for _,v in ipairs(b) do lowest=math.min(lowest,v[3]) end
     if lowest<math.huge then
      local target_x=(i-3.5)*2.0
-     local chosen_x
-     -- Prefer the familiar numbered rear-row slot. If an unscored
-     -- stationary die occupies it, choose another place in that row.
-     -- Eleven safe alternate locations cover the six-D6 board without
-     -- nudging the already scored dice or changing their faces.
-     local candidates={target_x,-10,-8,-6,-4,-2,0,2,4,6,8,10}
+     local chosen_x,chosen_y
      b.position[3]=-lowest
-     for _,x in ipairs(candidates) do
-      if vacant(entry,i,x,rear_y) then chosen_x=x;break end
+     -- A previously scored body is already an object on the table.
+     -- Re-scoring another die must not silently teleport that object
+     -- back toward its preferred numbered slot.
+     if b._kept_solid and vacant(entry,i,b.position[1],b.position[2]) then
+      chosen_x,chosen_y=b.position[1],b.position[2]
+     else
+      -- Preserve the familiar rear row for newly scored dice. Probe
+      -- each slot without mutating the body until one is proven free.
+      local candidates={target_x,-10,-8,-6,-4,-2,0,2,4,6,8,10}
+      for _,x in ipairs(candidates) do
+       if vacant(entry,i,x,rear_y) then
+        chosen_x,chosen_y=x,rear_y;break
+       end
+      end
      end
      assert(chosen_x,'no collision-free rear slot for a kept D6')
-     b.position[1],b.position[2]=chosen_x,rear_y
+     b.position[1],b.position[2]=chosen_x,chosen_y
      for axis=1,3 do b.velocity[axis]=0;b.angular[axis]=0 end
      b.asleep=true;b.sleep_timer=999
      -- A scored D6 is kinematic but SOLID to the next moving die;

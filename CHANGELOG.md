@@ -10,6 +10,22 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.106] - 2026-11-21
+
+**Status:** draft follow-up on `test/dice-pile-stability-0.1.106`; `main` is unchanged.
+
+### Fixed
+- The staged-scoring probe now preserves a die's position after every rejected SAT slot: testing candidate locations cannot teleport a visible D6.
+- Previously scored, collision-free solid dice remain **at their current location** when a later scoring action adds another kept die. If their current location is occupied, the normal deterministic rear-row search still applies.
+- The physical SAT/CCD impulses, six-D6 Farkle rules and mouse pickup are unchanged.
+
+### Added
+- A deterministic six-D6 pressure test: mixed resting piles, repeated staging, stable scored solids struck by moving dice and identical-seed replay.
+
+### Verification
+- GitHub Actions Lua 5.4, LuaJIT, Python and LÖVE/Mesa: **pending on this commit**.
+- Manual Windows mouse / table visual and GUI launcher UAT: **not performed**.
+
 ## [0.1.105] - 2026-11-21
 
 **Status:** branch `fix/dice-penetration-and-quiet-windows-launch-0.1.105`; draft PR. No main merge.
