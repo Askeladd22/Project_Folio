@@ -10,8 +10,8 @@ La [visione](project_vision.md) raccoglie la direzione narrativa e progettuale.
 partita, `mode='duel'` avvia una sfida a 500 punti assicurati con
 turni alternati. `src/farkle/rules.lua` mantiene il punteggio canonico
 e applica le sole eccezioni del duello (niente commissioni o limite
-turni, vittoria immediata al target). Il controller esegue l'IA
-`experiments/merchant_duel/ai.lua` durante il turno avversario, ma
+turni, vittoria immediata al target). Il controller usa una policy interna, ricavata e verificata nel
+laboratorio `experiments/merchant_duel/ai.lua`, durante il turno avversario, ma
 lancia sempre i medesimi dadi fisici tramite
 `U:request → onRollRequest → dice.roll_accepted`, evitando un RNG
 separato o facce artificiali. La semantica dei comandi di lancio manuale
