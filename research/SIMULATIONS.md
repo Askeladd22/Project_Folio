@@ -10,18 +10,18 @@ Eseguire i comandi dalla root del repository. Su Windows utilizzare un ambiente 
 
 ~~~powershell
 # Test di regressione isolati
-lua5.4 tests/labs/merchant_wager_v3_test.lua
-lua5.4 tests/labs/merchant_duel_money_test.lua
-lua5.4 tests/labs/merchant_offer_calibration_test.lua
+lua5.4 tests/labs/opponent_wager_v3_test.lua
+lua5.4 tests/labs/opponent_duel_money_test.lua
+lua5.4 tests/labs/opponent_offer_calibration_test.lua
 lua5.4 tests/labs/encounter_ac_test.lua
 lua5.4 tests/labs/encounter_ac_ui_test.lua
 lua5.4 tests/labs/p4ndora_farkle_test.lua
 
-# Merchant V4: con/senza rialzo volontario; prudente, bilanciata, aggressiva
-lua5.4 -e "print(require('experiments.merchant_wager_lab.money_simulate').report(100,101))"
+# Opponent V4: con/senza rialzo volontario; prudente, bilanciata, aggressiva
+lua5.4 -e "print(require('experiments.opponent_wager_lab.money_simulate').report(100,101))"
 
 # Profili della cassa e valori dei token
-lua5.4 -e "print(require('experiments.merchant_wager_lab.money_simulate').calibration_report(100,101))"
+lua5.4 -e "print(require('experiments.opponent_wager_lab.money_simulate').calibration_report(100,101))"
 
 # Encounter A/C
 lua5.4 -e "print(require('experiments.encounter_ac_lab.simulate').report(60,101))"

@@ -2,7 +2,7 @@
 -- Both competitors play 6 own Farkle turns with six D6.
 -- All score/select/bank/bust behavior delegates to src.farkle.rules.
 local Rules=require('src.farkle.rules')
-local RNG=require('experiments.merchant_wager_lab.rng')
+local RNG=require('experiments.opponent_wager_lab.rng')
 local Policy=require('experiments.ex003_duel_lab.policy')
 local D={}
 D.rounds=6

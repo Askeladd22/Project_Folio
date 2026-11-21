@@ -101,4 +101,4 @@ A e C. Non sono giocatori umani né rappresentano strategie ottime.
 Verificare determinismo, vittorie/pareggi, numero di Farkle e
 decisioni dominanti: **la percentuale di vittorie non basta**.
 Non fondere nel gioco principale senza playtest e valutazione della
-qualità delle scelte. Nessun conflitto intenzionale con Merchant Wager V4.
+qualità delle scelte. Nessun conflitto intenzionale con Opponent Wager V4.
