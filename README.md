@@ -2,13 +2,13 @@
 
 *Project Folio* è il titolo di lavoro di un roguelite di dadi ambientato nella Venezia di Aldo Manuzio. Di giorno un incisore prepara le xilografie per la stampa. Di notte sogna che le figure prendano posto al tavolo e lo sfidino ai dadi.
 
-Nel prototipo puoi giocare a Farkle sul **tavolo da gioco**. L'avversario generico si chiama **Rivale**; **Opponent** indica soltanto un eventuale personaggio specifico, non il nemico predefinito. Lanci sei dadi fisici, scegli quali accantonare e decidi se incassare o rilanciare. Se il lancio non produce combinazioni valide, perdi i punti del turno.
+Nel prototipo puoi giocare a Farkle sul **tavolo da gioco**. L'avversario generico è **Opponent**: un'identità neutra che potrà essere sostituita da personaggi distinti. Lanci sei dadi fisici, scegli quali accantonare e decidi se incassare o rilanciare. Se il lancio non produce combinazioni valide, perdi i punti del turno.
 
 ## Come giocare
 
 Installa [LÖVE 11.x](https://love2d.org/) e scarica il repository. Su Windows apri `run_game.cmd`. Da terminale, esegui `love .` nella cartella del progetto.
 
-Premi **Spazio** per lanciare, clicca sui dadi per selezionarli, premi **A** per accantonarli o **Invio** per incassare. Con **?** apri le regole.
+**Tasto destro** per afferrare un dado, muovi il mouse e rilascia per lanciarlo. Trascina con il **sinistro** per selezionare più dadi prima della presa, oppure clicca per selezionare una combinazione valida. Premi **A** per accantonare o **Invio** per incassare; **?** apre le regole. Il lancio rapido tramite Spazio non è più disponibile.
 
 ## Dove trovare il codice
 
