@@ -75,8 +75,12 @@ dadi offre un valore futuro maggiore.
 
 **Implementato nel branch sperimentale:** `ai.lua`, `duel.lua`,
 CLI e test. Non è ancora un avversario nel tavolo g3d.
-Nessun test runtime o playtest viene dichiarato superato qui
-prima della verifica CI e dell'esecuzione su Windows.
+**QA verificata:** test dedicato Mercante PASS con Lua 5.4 e LuaJIT
+su GitHub Actions run 44892339140, incluso replay degli stessi 50 seed.
+**Suite generale FAIL** su `wooden_board_contract_test.lua:7`:
+`main` avvia `old_wooden`, il test richiede `wooden_compact`.
+La discrepanza precede questo esperimento; nessuna verifica grafica
+Windows o confronto appaiato di strategie è stata eseguita.
 
 ## Decisione e prossimo gate
 
