@@ -1069,11 +1069,11 @@ function M.build(u)
  local function add(id,label,enabled,fn,slot,detail)
   a[#a+1]=entry(id,label,enabled,fn,slot,detail)
  end
- local block=s.phase=='rolling'
+ local block=s.phase=='rolling' and u.state~='physics_error'
  if H.reward_active(s) then return a end
  add('help','Regole [?]',not block,function() u.modal='help' end,'header')
  add('runmenu','Pausa [Esc]',not block,function() u.modal='run' end,'header')
- if u.duel and (u.duel.actor=='merchant' or u.duel.winner or s.phase=='ended') then return a end
+ if u.duel and (u.duel.actor=='merchant' or u.duel.winner or s.phase=='ended') and not u.physicalFailure then return a end
  -- Folio remains accessible with [F] via the modal dispatcher.
  if s.medal~='none' then
   local d=Medals.get(s.medal)
