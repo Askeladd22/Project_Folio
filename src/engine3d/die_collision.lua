@@ -270,12 +270,15 @@ function C.solve(world,old_positions,dt,emitted_pairs)
    local a=world[i]
    -- Held dice are excluded; scored dice have zero inverse mass,
    -- retain their orientation, but remain genuine collision obstacles.
+   -- Sleeping is NOT proof of non-penetration: a pair can already be
+   -- overlapping on the frame it settles or after staging/containment.
+   -- Resolve those static overlaps without waking a quiet pair.
    if not a._manual_pending or a._kept_solid then
     for j=i+1,#world do
      local b=world[j]
      if (not b._manual_pending or b._kept_solid)
        and not (a._kept_solid and b._kept_solid)
-       and not (a.asleep and b.asleep) then
+       then
       local hit
       if pass==1 and old_positions and old_positions[i] and old_positions[j] then
        hit=C.sweep(a,b,old_positions[i],old_positions[j])

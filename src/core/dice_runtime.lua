@@ -1,6 +1,7 @@
 
 require('lib.core')
 local Physics = require("src.engine3d.physics")
+local DieCollisions = require("src.engine3d.die_collision")
 local FpsBounds = require('src.engine3d.bounds').fps
 local Geometry = require("src.engine3d.geometry")
 local view = require("src.engine3d.view")
@@ -688,7 +689,11 @@ local function configure_dice_box()
         play_physical_impact(kind, first, second, speed)
     end
     box.after_step = function(_,dt)
+        -- Boundary correction can put a die back inside another die.
+        -- Finalise contacts AFTER containment and BEFORE telling the
+        -- rules that the physical roll has settled. No new RNG or toss.
         constrain_dice_to_regions()
+        DieCollisions.solve(box,nil,dt)
         if physicalResolution then checkDiceSettled(dt) end
     end
 end
