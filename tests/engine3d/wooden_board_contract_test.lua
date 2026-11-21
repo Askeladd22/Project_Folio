@@ -25,6 +25,8 @@ assert(#floor==6+8*6 and floor[1][3]==0,
 for i=7,#floor do
  assert(math.abs(floor[i][3]-.006)<1e-9,
   'decorative planks must remain almost flush with the collision plane')
+ assert(math.abs(floor[i][5]-(floor[i][2]+6.05)/12.10)<1e-9,
+  'the walnut grain must not restart at every plank joint')
 end
 local full=Scenery.floor_vertices(geo,{-14,14,-6.05,6.05},'wooden_full')
 assert(#full==6 and full[1][3]==-.018,
