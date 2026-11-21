@@ -122,8 +122,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
   return false
  end
  assert(painted(layout.score_panel),'shared scorecard not drawn')
- assert(painted(layout.footer),'compact command plaque not drawn')
- assert(painted(layout.footer_trim),'command plaque trim not drawn')
+ assert(not painted(layout.footer),'a launcher-only plaque must not appear before physical pickup')
+ assert(not painted(layout.footer_trim),'unused launcher trim must not occupy the table')
  for _,obsolete in ipairs{'COMMISSIONE','MANOSCRITTO','STRUMENTI','FOLIO 1'} do
   assert(not labels:find(obsolete,1,true),
    'obsolete panel visible on player table: '..obsolete)
