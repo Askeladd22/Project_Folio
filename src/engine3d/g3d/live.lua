@@ -282,6 +282,7 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
   if self.floor_model and self.floor_model.mesh then self.floor_model.mesh:release() end
   if self.table_prop and self.table_prop.mesh then self.table_prop.mesh:release() end
   self.table_prop=nil
+  self.wooden_full=false
   if self.walls and self.walls.mesh then self.walls.mesh:release() end
   if self.lines and self.lines.mesh then self.lines.mesh:release() end
   if self.divider_model and self.divider_model.mesh then self.divider_model.mesh:release() end
@@ -299,16 +300,18 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
    end
    floor_texture=self.merchantWood
    if style=='wooden' then
-    -- Full user-supplied GLB is optional; a small source-derived silhouette
-    -- is tracked in Lua for a complete, portable gameplay comparison.
+    -- A user-provided optimized/original GLB keeps its atlas. The bundled
+    -- low-poly fallback gets a readable plank floor instead of a faux slab.
+    -- The physics plane remains at z=0: never raise the visual tabletop.
     local modelpath='resources/models/wooden_table_game_ready_asset.glb'
     if love.filesystem.getInfo(modelpath,'file') then
      self.table_prop=require('src.engine3d.g3d.glb_loader').load(self.g3d,modelpath,function(model)
-      Scenery.place_table(model,extents,.28,.24)
+      Scenery.place_table(model,extents,.28,.005)
      end,{max_texture=2048})
+     self.wooden_full=true
     else
      local model=require('resources.models.wooden_table_mesh').mesh()
-     Scenery.place_table(model,extents,.28,.24)
+     Scenery.place_table(model,extents,.28,-.018)
      self.table_prop=self.g3d.newModel(model.verts,self.merchantWood)
     end
    else
@@ -329,7 +332,9 @@ function M:_ensure(entries,extents,border,viewport,style,divider)
    end
   end
   self.floor_model=self.g3d.newModel(
-   Scenery.floor_vertices(self.mesh,extents,style),floor_texture)
+   Scenery.floor_vertices(self.mesh,extents,
+    style=='wooden' and self.wooden_full and 'wooden_full' or style),
+   floor_texture)
   self.walls=self.g3d.newModel(
    Scenery.style_vertices(self.mesh,extents,border,style),floor_texture)
   -- Do not overlay ruling lines across the play surface in the clean mode.
@@ -436,8 +441,8 @@ function M:_draw_scene(args)
    -- without writing depth; the actual 3D walls and dice always occlude.
    g.setDepthMode('lequal',true)
    if self.table_prop then
-    -- Wooden models have an open/irregular low-poly surface. The unchanged
-    -- physics-aligned floor must still receive dice shadows without gaps.
+    -- Wood's support surface and the imported geometry share the physical
+    -- tabletop height; shadows never land on an invisible raised slab.
     if args.style=='wooden' then self.floor_model:draw() end
     self.table_prop:draw()
    else self.floor_model:draw() end
