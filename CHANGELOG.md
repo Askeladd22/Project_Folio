@@ -10,6 +10,48 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.98] - 2026-11-21
+
+**Stato:** proposta giocabile UI/UX + primo Mercante con dadi fisici,
+branch `feat/immersive-merchant-duel-ui-0.1.98`. Nessun merge in
+`main` prima di CI completa e playtest umano.
+
+### Aggiunto
+- Nuova scelta nel menu: **Duello al Mercante**, primo a 500 punti
+  assicurati, punteggi separati, stessi sei D6 e scorer canonico.
+- Turnazione autonoma con IA della ricerca 0.1.97: il Mercante
+  seleziona i dadi, decide se incassare/rilanciare e usa il
+  **medesimo runtime fisico g3d** per i risultati accettati.
+- HUD della sfida con pannello TU/MERCANTE, turno corrente,
+  punti a rischio, intenzioni, vittoria/sconfitta e regole specifiche.
+- Regressioni su modalità duello e configurazione visuale.
+
+### Modificato
+- Inquadratura del tavolo a 0.90 rad (+5.7 gradi) e scena
+  riproiettata in una zona più ampia: `tray=(8,505,1904,545)`,
+  `rear_span=1740`, raccordo al ritratto riallineato e modello
+  del Mercante più vicino.
+- Il cartiglio dei comandi copre esclusivamente la fascia anteriore
+  del tavolo. Gli hitbox pulsanti hanno precedenza sui gesti fisici;
+  selezione e picking mantengono la stessa trasformazione prospettica.
+
+### Corretto
+- Validazione Farkle di un full house 4+2 privo di 1/5:
+  il verificatore usa lo scorer ufficiale, non un secondo algoritmo parziale.
+- Test datato del tavolo default: il preset attuale è `old_wooden`
+  come previsto dalla 0.1.96, non `wooden_compact`.
+- Recupero del lancio fisico fallito accessibile anche durante
+  il turno automatico del Mercante.
+
+### Verifiche
+- Test statici e automatici: **IN ATTESA DI CI su questo branch**.
+- **DA VERIFICARE MANUALMENTE** su Windows/LÖVE: contatto visivo
+  Mercante/tavolo, selezione e gesto fisico su tutti i bordi,
+  cartiglio non invasivo, corretta turnazione, vittoria/sconfitta
+  e leggibilità 1280×720, 1920×1080, ultrawide.
+- Calibrazione probabilistica, giocabilità e bilanciamento AI
+  **non dimostrati** dai test del codice.
+
 ## [0.1.97] - 2026-11-21
 
 **Stato:** prima fase sperimentale del Mercante AI a Farkle,
