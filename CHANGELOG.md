@@ -10,6 +10,34 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.97] - 2026-11-21
+
+**Stato:** prima fase sperimentale del Mercante AI a Farkle,
+branch `experiments/merchant-ai-farkle-0.1.97`.
+L'esperimento è **separato dal gioco principale**: nessuna integrazione
+con i dadi fisici g3d o l'HUD di produzione.
+
+### Aggiunto
+- `experiments/merchant_duel/`: duello a turni contro il Mercante,
+  con CLI giocabile e scorecard separate.
+- Policy deterministica e spiegabile: migliore subset attuale dal
+  valutatore Farkle ufficiale e decisione incasso/rilancio mediante
+  rischio teorico one-step su D6 ordinari; nessun risultato forzato.
+- Test Lua per Farkle, selezioni illegali, hot dice, vittoria,
+  soglie decisionali, enumerazione a 3 dadi e replay seedati.
+- Ricerca con fonti KCD2 e limiti dell'analisi REA
+  in `research/merchant_ai_kcd2_2026-11-21.md`.
+
+### Invariato
+- `src/`, commissioni solitarie, sei D6 fisici, camera, UI, fisica,
+  punteggi e modalità disponibili nel gioco principale.
+- Nessuna conversione di punti in danni, nessun HP o carte.
+
+### Verifiche
+- Test dichiarati nel laboratorio, **in attesa di esito CI**.
+- Mancano test LÖVE/Windows, simulazioni appaiate e playtest umano.
+- Il Mercante non è ancora disponibile nell'interfaccia 3D.
+
 ## [0.1.96] - 2026-11-21
 
 **Stato:** esperimento visivo Old Wooden Table di Alex Krush,
