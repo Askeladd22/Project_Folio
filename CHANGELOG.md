@@ -21,7 +21,7 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 - Translated gameplay notices, modal controls, help and HUD into English.
 
 ### Verification
-- **Pending for this commit:** Lua 5.4/LuaJIT regression, LÖVE/Mesa screenshot, Python source checks.
+- **PASS on code commit `17a5209e8754e299588ca6dd448dbbce0b9e3b5c`:** GitHub Actions [run 44909332235](https://github.com/Askeladd22/Project_Folio/actions/runs/44909332235), version/changelog, syntax, Lua 5.4, LuaJIT, lint, Python, LÖVE/Mesa dice and Opponent table smoke, with screenshot artifact. The documentation-only follow-up commit requires its own CI confirmation.
 - **Manual gate remains:** Windows real pickup, all dice/hot dice, collision behavior, AI pace, pause, high contrast/big text and 1280×720/1920×1080/ultrawide screenshots.
 
 ## [0.1.100] - 2026-11-21
