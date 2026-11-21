@@ -44,9 +44,9 @@ u.dragSelected={[1]=true,[2]=true,[3]=true,
 selection=Model.build(u,physical)
 assert(selection.physicalCount==6 and
        count_kind(selection,'physical')==6)
-assert(Actions.state(u):find('6 DADI PRONTI',1,true),
+assert(Actions.state(u):find('6 DICE READY',1,true),
  'group selected for physical throwing must have a visible affordance')
-assert(Actions.state({game=game,marquee=marquee}):find('SELEZIONE FISICA',1,true),
+assert(Actions.state({game=game,marquee=marquee}):find('PHYSICAL SELECTION',1,true),
  'marquee must be described as a physical selection, not scoring')
 u.mouseThrow={group=true,held={1,2,3,4,5,6},
  x0=120,y0=300,x=580,y=360}
