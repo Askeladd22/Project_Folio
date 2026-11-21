@@ -1,7 +1,7 @@
 -- EX-001 only. The canonical Farkle evaluator and original V4 remain authoritative.
-local Money=require('experiments.merchant_wager_lab.money_duel')
+local Money=require('experiments.opponent_wager_lab.money_duel')
 local Rules=require('src.farkle.rules')
-local RNG=require('experiments.merchant_wager_lab.rng')
+local RNG=require('experiments.opponent_wager_lab.rng')
 local M={}
 M.modes={'baseline','redraw'}
 M.policies={'prudent','balanced','daring','random_legal'}
@@ -23,7 +23,7 @@ function M.play(seed,mode,policy)
  for step=1,400 do
   if m.phase=='over' then
    Money.Wager.assert_conservation(m.wager)
-   assert(m.wager.pot==0 and m.wager.wallet.artist+m.wager.wallet.merchant==480)
+   assert(m.wager.pot==0 and m.wager.wallet.artist+m.wager.wallet.opponent==480)
    assert(#m.base.completed_hands==#m.wager.hands)
    return m,chosen_actions
   elseif m.phase=='betting' then
@@ -48,7 +48,7 @@ function M.play(seed,mode,policy)
     if should_bank then assert(Money.bank(m))
     else assert(Money.take(m)) end
    else error('EX-001 unexpected Farkle state '..tostring(t.phase)) end
-  elseif m.phase=='merchant_decision' then assert(Money.advance_merchant(m))
+  elseif m.phase=='opponent_decision' then assert(Money.advance_opponent(m))
   elseif m.phase=='hand_end' then assert(Money.next_hand(m))
   else error('EX-001 unknown phase '..tostring(m.phase)) end
   Money.Wager.assert_conservation(m.wager)
@@ -78,8 +78,8 @@ function M.pilot(first,last,dir)
  if dir then
   mf=assert(io.open(dir..'/ex001_matches.csv','w'))
   hf=assert(io.open(dir..'/ex001_hands.csv','w'))
-  mf:write('seed,policy,mode,winner,hand_count,artist_denari,merchant_denari,opening_x,auto_hands,player_choices\n')
-  hf:write('seed,policy,mode,hand,winner,end_reason,opening_draws,opening_x,initial_offer,player_result,player_actions,merchant_counteroffers,merchant_withdrawals\n')
+  mf:write('seed,policy,mode,winner,hand_count,artist_denari,opponent_denari,opening_x,auto_hands,player_choices\n')
+  hf:write('seed,policy,mode,hand,winner,end_reason,opening_draws,opening_x,initial_offer,player_result,player_actions,opponent_counteroffers,opponent_withdrawals\n')
  end
  local report={}
  for _,p in ipairs(M.policies) do
@@ -117,16 +117,16 @@ function M.pilot(first,last,dir)
      local is_auto=h.end_reason=='initial_x' and 1 or 0
      auto=auto+is_auto;k.auto=k.auto+is_auto
      k.counteroffers=k.counteroffers+(h.counteroffers or 0)
-     k.withdrawals=k.withdrawals+(h.merchant_withdrawals or 0)
+     k.withdrawals=k.withdrawals+(h.opponent_withdrawals or 0)
      if #h.player_decisions>0 then k.hands_with_actions=k.hands_with_actions+1 end
      if hf then
       hf:write(csv_line(seed,p,mode,h.number,h.winner,h.end_reason,h.opening_draw_count,
        hx,h.initial_offer,h.player_result or 0,#h.player_decisions,
-       h.counteroffers or 0,h.merchant_withdrawals or 0))
+       h.counteroffers or 0,h.opponent_withdrawals or 0))
      end
     end
     if mf then mf:write(csv_line(seed,p,mode,m.winner,#m.base.completed_hands,
-      m.wager.wallet.artist,m.wager.wallet.merchant,opening_x,auto,choices)) end
+      m.wager.wallet.artist,m.wager.wallet.opponent,opening_x,auto,choices)) end
    end
    diffs[#diffs+1]=wins.redraw-wins.baseline
   end

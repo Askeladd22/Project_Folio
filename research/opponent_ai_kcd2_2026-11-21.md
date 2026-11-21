@@ -7,7 +7,7 @@ nessuna validazione della qualità ludica o del comportamento fisico.
 
 ## Domanda falsificabile
 
-Un Mercante Farkle simmetrico, che mostra i motivi per cui incassa
+Un Opponent Farkle simmetrico, che mostra i motivi per cui incassa
 o rilancia e usa solo il punteggio canonico, è distinguibile da
 un lanciatore casuale e produce scelte comprensibili senza trucchi?
 
@@ -59,14 +59,14 @@ dadi offre un valore futuro maggiore.
 - Guadagno `E[max(selectable_points)]` di un solo lancio, con
   Farkle che perde il provvisorio corrente; confronto
   `gain_sum > bust_count * pot`. In parità, incassa.
-- Nessun buff/nerf nascosto al dado del Mercante, niente guardare
+- Nessun buff/nerf nascosto al dado del Opponent, niente guardare
   il futuro, niente vantaggi legati al risultato del giocatore.
 - Simulare match **appaiati** con le stesse sequenze per le politiche,
   confrontare vittorie, durata, Farkle per incontro, rischio
   complessivo e frequenza di hot dice; non affermare risultati
   fino a esecuzione effettiva.
 - Playtest: mostrare prima dell'azione pot, dadi residui e motivo
-  del Mercante; chiedere di anticipare azione e motivazione.
+  del Opponent; chiedere di anticipare azione e motivazione.
 - Exploit da cercare: hot dice ripetuti, policy troppo prudente a
   1–2 dadi, sottoselezione sempre dominata, obiettivo troppo basso
   e partita finita dopo un singolo turno.
@@ -75,7 +75,7 @@ dadi offre un valore futuro maggiore.
 
 **Implementato nel branch sperimentale:** `ai.lua`, `duel.lua`,
 CLI e test. Non è ancora un avversario nel tavolo g3d.
-**QA verificata:** test dedicato Mercante PASS con Lua 5.4 e LuaJIT
+**QA verificata:** test dedicato Opponent PASS con Lua 5.4 e LuaJIT
 su GitHub Actions run 44892339140, incluso replay degli stessi 50 seed.
 **Suite generale FAIL** su `wooden_board_contract_test.lua:7`:
 `main` avvia `old_wooden`, il test richiede `wooden_compact`.
