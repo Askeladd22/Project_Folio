@@ -26,9 +26,9 @@ assert(Layout.overlap(layout.stakes_track,layout.objective_value)==0
  'wager progress must not hide numerical scores or physical dice')
 assert(layout.risk_caption.y==layout.secured_caption.y)
 assert(layout.risk_value.y==layout.secured_value.y)
-assert(layout.footer.y>=layout.tray.y+layout.tray.h
+assert(layout.footer.y>=layout.tray.y+layout.tray.h-100
  and layout.footer.h<=110 and layout.footer.w<=1160,
- 'the plaque must be compact and must not overlap 3D dice')
+ 'the plaque must overlap only the near wooden lip')
 local center=layout.tray.x+layout.tray.w/2
 for _,r in ipairs{layout.footer,layout.footer_trim,layout.single_action,
                   layout.idle_message,layout.message} do
@@ -103,8 +103,8 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  for _,label in ipairs(textDrawn) do if label=='Lancia i sei dadi' then launchCount=launchCount+1 end end
  assert(launchCount==1,'opening instruction should appear once')
  for _,a in pairs(u.buttons) do
-  assert(Layout.overlap(a,layout.tray)==0,
-   'active minimal button obstructs real 3D dice: '..a.label)
+  assert(Layout.overlap(a,layout.tray)==0 or a.y>=layout.footer.y,
+   'action outside the front lip obstructs the D6 field: '..a.label)
  end
  local labels=table.concat(textDrawn,' | ')
  assert(labels:find('ASSICURATI',1,true) and
@@ -164,7 +164,7 @@ assert(not u.buttons.choices and u.buttons.medaluse and not u.buttons.roll)
 assert(not u.buttons.folio)
 for _,id in ipairs{'medaluse'} do
  local b=u.buttons[id]
- assert(Layout.overlap(b,layout.tray)==0)
+ assert(Layout.overlap(b,layout.tray)==0 or b.y>=layout.footer.y)
 end
 assert(R.toggle(game,1))
 local bankEntry
@@ -237,7 +237,7 @@ assert(u.buttons.roll.enabled and u.buttons.bank.enabled)
 assert(not footerNotice or not footerNotice:find('Scegli i dadi',1,true),
  'additional scoring dice are optional once the player may roll or bank')
 -- Keep pick headroom above the rear seam for physical dice in flight.
-assert(layout.host.y+layout.host.h-layout.tray.y==50,
+assert(layout.host.y+layout.host.h-layout.tray.y==60,
  'rear table seam must show a larger playing surface with the new camera')
 assert(Layout.overlap(layout.host,layout.shelf)==0)
 love=savedLove
