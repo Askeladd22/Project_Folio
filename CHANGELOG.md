@@ -10,6 +10,38 @@ aggiornati insieme; le istruzioni sono in [`docs/versioning.md`](docs/versioning
 > retrospettiva** tramite PR verificabili, **non** come release pubblicate.
 > La versione del documento di game design è indipendente da quella del software.
 
+## [0.1.95] - 2026-11-21
+
+**Stato:** variante B — Compatta del tavolo da dadi, proposta
+su `feat/compact-dice-table-0.1.95` e da verificare con
+screenshot/playtest. Nessun merge automatico in `main`.
+
+### Modificato
+- `wooden_compact` è il preset iniziale della scena; `wooden`
+  (precedente tavolo grande) resta selezionabile immediatamente con F8.
+- Fascia anteriore e sostegni della mesh decorativa compressi
+  verticalmente al 22% dell'altezza precedente: il piano
+  superiore resta alla stessa quota, con normali trasformate.
+- Cornice decorativa ridotta da 0.14 a 0.08 unità, senza
+  ridurre l'altezza delle pareti o modificare il contorno fisico.
+- Piano con sei assi invece di otto, giunzioni più discrete,
+  venature continue; viene riutilizzata la texture esistente.
+
+### Conservato
+- Dimensioni e quota della superficie di lancio, sei D6, collisioni,
+  gravità, impulso, selezione/picking, Farkle, RNG, camera e HUD.
+  Nessuna modifica alle probabilità o ai risultati dei dadi.
+
+### Test e gate
+- Aggiornati `tray_workshop_cycle_test.lua`,
+  `wooden_board_contract_test.lua` e `g3d_live_test.lua`
+  per distinguere cornice grafica/limiti fisici, fascia e F8.
+- **CI e confronto screenshot non ancora verificati alla scrittura
+  di questa voce**; registrare gli esiti esatti nella PR.
+- Gate aperti: prova visiva Windows 1280×720 e 1920×1080,
+  lancio e presa, leggibilità dei dadi in movimento, controllo
+  che la cornice non mascheri i D6 vicino ai bordi.
+
 ## [0.1.94] - 2026-11-21
 
 **Stato:** allineamento del tavolo in legno Pixel Life, PR
