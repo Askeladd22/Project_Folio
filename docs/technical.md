@@ -359,3 +359,24 @@ Regression: `tests/engine3d/six_die_crowding_test.lua`.
   shared-geometry layout design.
 - CI gates: layout/visual scale at 720p/1080p, Lua and headless Mesa
   smoke. Windows gameplay and screenshot match require human review.
+
+## 0.1.108 — HUD clarity follow-up (presentation only)
+
+- Edited `src/farkle/ui.lua` only for compact ledger rectangles,
+  visual turn accent, opponent note typography and high-contrast
+  front-apron help. Same `Layout.build()` supplies all hitbox/render
+  coordinates; no duplicate view state or imported UI framework.
+- Player scoreboard rail: virtual `{x=38,y=20,w=540,h=154}`;
+  rival rail `{x=38,y=190,w=540,h=164}`. Ink-dark wood and
+  light typography replace the two opaque paper cards. Neither
+  touches the 3D picking
+  viewport `{x=8,y=580,w=1904,h=475}`. The actor marker and
+  instruction slip are strictly non-interactive.
+- Rendering and physics of the g3d table, camera matrix, 6 D6,
+  gameplay controller and Farkle scoring remain byte-identical.
+- External survey of `666mayn/LOVE2d-g3d-map-editor`: a voxel
+  scene editor and runtime loader (MIT code; BoldPixels font has
+  independent CC BY-SA licensing). Editor input and level format
+  do not solve the main game's HUD issue; no assets or code imported.
+- QA: new compact HUD contract + existing display, input and game
+  regression tests. CI and manual Windows review remain distinct.

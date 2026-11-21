@@ -27,6 +27,18 @@ presente sopra un tavolo compatto, mentre punteggio e comandi restano
 fissi sullo schermo. La prospettiva del tavolo e il picking condividono
 la stessa proiezione; il cambiamento è solo di inquadratura.
 
+**0.1.108 — Riduzione dell'ingombro HUD (sperimentale):** in risposta
+allo screenshot reale a 1605×896, i due registri mantengono i dati del
+duello ma occupano meno altezza: 154 px giocatore, 164 px rivale,
+separati da 16 px. Il trattamento conclusivo usa una superficie
+bruno-inchiostro con lettering chiaro e sottili righe ottone,
+più integrata nel legno della bottega rispetto alla carta opaca. Il tavolo, il ritratto e la pressa rimangono
+gli elementi principali. Il contrasto delle istruzioni è aumentato
+sul bordo vicino, senza applicare sfocature o introdurre pop-up
+decorativi. L'attivazione del turno è una sottile riga di colore,
+non un'animazione obbligatoria. Questa scelta è in prova: da
+validare visivamente a risoluzione Windows e con testo ingrandito.
+
 **0.1.107 — Tavolo di riferimento:** la camera prospettica
 vincolata usa `pitch=0.90`, `yaw=0`, `distance=24`. Il bordo
 posteriore scende alla quota virtuale 650/1080 mentre la superficie

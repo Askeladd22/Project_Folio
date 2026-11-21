@@ -63,7 +63,7 @@ local function matchingFill(rect)
  for _,call in ipairs(drawCalls) do
   if call.mode=='fill' and call.x==rect.x and call.y==rect.y
     and call.w==rect.w and call.h==rect.h
-    and sameRgb(call.c,'surface') then
+    and sameRgb(call.c,'earth_dark') then
    return true
   end
  end
@@ -81,7 +81,7 @@ for _,size in ipairs{{1920,1080},{1280,720},{2560,1440}} do
  local oldBank,oldPot,oldPhase=game.bank,game.pot,game.phase
  Hud.draw(ui)
  assert(pushes==pops,'Folio HUD leaked graphics state')
- assert(matchingFill(layout.score_panel),'scorecard must use ink-on-parchment')
+ assert(matchingFill(layout.score_panel),'scorecard must use high-contrast inked walnut')
  assert(ui.buttons.help and ui.buttons.help.enabled,'help must remain interactive')
  assert(not activeFill(layout.secondary),'disabled action should never show hover')
  assert(not ui.buttons.roll and not ui.buttons.bank)
