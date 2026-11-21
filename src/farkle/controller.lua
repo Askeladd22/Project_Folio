@@ -205,9 +205,16 @@ function U:update_duel(dt)
   d.intent=('Il Mercante accantona %d punti.'):format(option.points)
   d.wait=.95
  elseif s.phase=='ready' and s.scored then
-  local action,reason=MerchantAI.decide({phase='decision',pot=s.pot,
-   actor='merchant',score={merchant=s.bank},target=d.target,used=s.used})
-  d.intent=(action=='bank' and 'Il Mercante incassa. ' or 'Il Mercante rilancia. ')..reason
+  if not d.pending_action then
+   local action,reason=MerchantAI.decide({phase='decision',pot=s.pot,
+    actor='merchant',score={merchant=s.bank},target=d.target,used=s.used})
+   d.pending_action=action
+   d.intent=(action=='bank' and 'Il Mercante incassa. ' or 'Il Mercante rilancia. ')..reason
+   d.wait=.95 -- reveal intention before the action, not afterwards
+   return
+  end
+  local action=d.pending_action
+  d.pending_action=nil
   if action=='bank' then
    self:act('bank',function() return R.bank_turn(s) end)
   else
