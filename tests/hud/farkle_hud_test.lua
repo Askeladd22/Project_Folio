@@ -24,7 +24,7 @@ print('PASS HUD combinations omit spent dice, remain presentation-only, and hot 
 for _,phase in ipairs({'lost','won','upgrade','medal','advance'}) do
  s.phase=phase;s.hot=true;s.selected={[1]=true}
  local message=H.state_text({game=s,lastLoss=0,lastBank=100})
- assert(H.commission_closed(s));assert(not message:find('FARKLE') and not message:find('HOT DICE') and not message:find('Incassa'))
+ assert(H.commission_closed(s));assert(not message:find('FARKLE') and not message:find('HOT DICE') and not message:find('Bank'))
 end
 s.phase='ended';s.hot=false
 assert(H.state_text({game=s,lastLoss=0}):find('no points accumulated'))

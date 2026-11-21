@@ -10,8 +10,8 @@ local Res=require('src.core.navigation').resolution
 local function mock_width(str,px)
  return #tostring(str)*px*.57,px*1.16
 end
-local plain,px,cut=Fit.fit('Incassa 100 pt',mock_width,24,12,610,34)
-assert(plain=='Incassa 100 pt' and not cut and px<=24)
+local plain,px,cut=Fit.fit('Bank 100 pt',mock_width,24,12,610,34)
+assert(plain=='Bank 100 pt' and not cut and px<=24)
 local shrunk,small,cut2=Fit.fit('Prossima commissione [N]',
  mock_width,48,12,390,34)
 assert(not cut2 and shrunk=='Prossima commissione [N]' and small<48)
