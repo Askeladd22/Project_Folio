@@ -315,14 +315,14 @@ local S={}
 -- Merchant tints multiply wood.png: walnut gaming top, ink-blackened
 -- press furniture around it (the dream merges table and press bed).
 local PALETTE={
- merchant={.24,.22,.24},wooden={.34,.22,.14},
+ merchant={.24,.22,.24},wooden={.34,.22,.14},wooden_compact={.34,.22,.14},
  book={.76,.67,.51},current={.35,.215,.12},
  A={.31,.18,.095},B={.48,.33,.20},C={.52,.43,.255},
 }
 -- Plain, non-textured floors keep the physical dice visually prominent.
 -- Unlike the old painter's manuscript rubrics these meshes share g3d depth.
 local FLOORS={
- merchant={.70,.62,.60},wooden={.80,.73,.64},
+ merchant={.70,.62,.60},wooden={.80,.73,.64},wooden_compact={.80,.73,.64},
  book={.88,.79,.64},current={.36,.29,.22},
  A={.32,.23,.17},B={.29,.35,.31},C={.45,.39,.30},
 }
@@ -341,16 +341,18 @@ function S.floor_vertices(mesh,extents,style)
  end
  -- Bundled fallback: eight subtle planks and narrow inlaid joints.
  -- Only rendered geometry changes; no extra colliders or picking surface.
- if style=='wooden' then
+ if style=='wooden' or style=='wooden_compact' then
+  local compact=style=='wooden_compact'
   for _,v in ipairs(out) do
    v[9],v[10],v[11],v[12]=.30,.23,.18,1
   end
-  local count,gap=8,.022
+  local count,gap=compact and 6 or 8,compact and .012 or .022
   for i=1,count do
    local a=y1+(y2-y1)*(i-1)/count+gap
    local b=y1+(y2-y1)*i/count-gap
    local plank=mesh.floor_vertices(x1,x2,a,b)
-   local shade=({.82,.77,.85,.79,.83,.76,.84,.80})[i]
+   local shade=(compact and {.82,.80,.83,.81,.82,.80} or
+    {.82,.77,.85,.79,.83,.76,.84,.80})[i]
    for _,v in ipairs(plank) do
     v[3]=.006
     -- UV V must remain continuous across the entire tabletop. Reusing
@@ -379,6 +381,7 @@ function S.style_vertices(mesh,extents,height,style)
  -- Thin decorative housing; the underlying collision walls do not change.
  local width=style=='book' and .32 or style=='current' and .28
   or style=='C' and .13 or style=='merchant' and .28
+  or style=='wooden_compact' and .08
   or style=='wooden' and .14 or .40
  local v=mesh.tray_border_vertices(x1,x2,y1,y2,width,height,8)
  local colors=PALETTE[style]
@@ -510,6 +513,24 @@ function S.place_table(model,extents,rim,top_lift)
  end
  model.min={mn[1]*scale+ox,mn[2]*depth+oy,mn[3]*scale+oz}
  model.max={mx[1]*scale+ox,mx[2]*depth+oy,top_lift or 0}
+ return model
+end
+-- Pure decorative adjustment: compress the supporting structure and apron
+-- *below* the tabletop. The planar six-D6 collider remains untouched.
+-- The affine transform preserves top height and updates normals correctly.
+function S.compact_table(model,factor)
+ factor=factor or .22
+ assert(factor>0 and factor<=1,'invalid decorative support compression')
+ local top=model.max[3]
+ for _,v in ipairs(model.verts) do
+  v[3]=top+(v[3]-top)*factor
+  local x,y,z=v[6],v[7],v[8]/factor
+  local len=math.sqrt(x*x+y*y+z*z)
+  if len>1e-8 then
+   v[6],v[7],v[8]=x/len,y/len,z/len
+  end
+ end
+ model.min[3]=top+(model.min[3]-top)*factor
  return model
 end
 function S.face_color(die,i)
