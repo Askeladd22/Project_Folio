@@ -63,11 +63,11 @@ Il Farkle attuale è un **mezzo** per incarnare la fantasy. Non dobbiamo conserv
 
 | Momento | Informazione essenziale | Indicazione visiva | Cosa evitare |
 |---|---|---|---|
-| Prima del tiro | Dadi disponibili, presa fisica e lancio rapido | Gesti del mouse riconoscibili, comandi brevi | Tutorial invasivo, HUD che copre il piano |
+| Prima del tiro | Dadi disponibili e presa fisica obbligatoria | Gesti del mouse riconoscibili, comandi brevi | Tutorial invasivo, HUD che copre il piano |
 | Dado in mano | Numero di dadi, scuotimento **davvero** rilevato, possibilità di rilascio | Badge vicino alla mano, nei bordi schermo | Feedback fittizio su «lancio perfetto» |
 | Dadi fermi | Facce leggibili e selezioni valide / parziali / non valide | Contorni sull'oggetto reale | Linee decorative scollegate dai dadi |
 | Dopo una scelta | Punti al sicuro, punti a rischio, obiettivo | **Un'unica scorecard** e barra proporzionale `sicuri + provvisori` | Numeri ripetuti in cinque pannelli |
-| Incassa / rilancia | Valore esatto e conseguenza del comando | Due azioni prominenti e contestuali | Raccomandazione automatica «scelta migliore» |
+| Incassa / rilancia | Valore esatto e conseguenza del comando | Incassa come scelta esplicita; rilancio mediante presa diretta | Raccomandazione automatica «scelta migliore» |
 | Farkle | Perdita **solo** del provvisorio, separata dai punti già assicurati | Contrasto e testo chiaro, senza ambiguità | Animazione che suggerisce una regola diversa |
 
 La barra introdotta nella proposta `v0.1.91` mostra esclusivamente **punti effettivamente incassati** e **provvisorio già accantonato** rispetto all'obiettivo. Un dado semplicemente selezionato non crea ancora provvisorio. I segmenti sono limitati all'obiettivo: i valori numerici nella scorecard rimangono autorevoli anche se il totale lo supera.
