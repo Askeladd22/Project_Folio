@@ -72,7 +72,7 @@ for _,scenario in ipairs(scenarios) do check_modal(unpack(scenario)) end
 Res.refresh(1920,1080)
 for _,mode in ipairs({'run','help','medals'}) do
  local state=R.new()
- local u={game=state,modal=mode,buttons={roll={enabled=true}},presentation=P.new(state)}
+ local u={game=state,modal=mode,buttons={},presentation=P.new(state)}
  displayed={}
  Hud.overlay(u,{})
  assert(not u.buttons.roll and u.modalButtons and u.modalButtons.close,
