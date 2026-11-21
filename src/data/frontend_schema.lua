@@ -364,9 +364,9 @@ return {
             implemented = true,
         },
         {
-            id = "merchant-duel",
+            id = "opponent-duel",
             mode = "duel",
-            title = "Duello al Mercante",
+            title = "Duello al Opponent",
             detail = "Sei D6 · primo a 500 punti · sfida sperimentale",
             implemented = true,
         },
