@@ -70,6 +70,22 @@ I colori delle facce dei dadi, dello stato di selezione e dei
 pulsanti devono restare leggibili in alto contrasto. Nessun
 filtro fotografico indiscriminato per fingere materiali storici.
 
+## Tavolo — Variante B «Compatta» (v0.1.95)
+
+**Obiettivo visivo:** tavolo da gioco ravvicinato, non banco da lavoro.
+Manteniamo il Pixel Life come base, ma riduciamo il mobile visibile
+sotto il piano: gambe e fascia frontale vengono schiacciate nel
+rendering 3D, senza deformare il piano su cui toccano i D6.
+Il bordo è sottile ma continua a coincidere con le pareti fisiche,
+e le giunzioni delle assi sono più discrete.
+
+La scelta iniziale in laboratorio è `wooden_compact`. Il confronto
+con `wooden` resta disponibile via F8; l'esito è provvisorio fino a
+una prova reale sul monitor Windows e all'approvazione della composizione.
+Non sono previste carte, HUD supplementari, cambi RNG o nuove
+meccaniche. In particolare il tavolo **non** viene ridotto
+indipendentemente dalla zona fisica per non creare collisioni invisibili.
+
 ## Tavolo in noce: contatto fisico e assi (v0.1.94)
 
 La board Pixel Life è già la variante iniziale. Il fallback ora
